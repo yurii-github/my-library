@@ -1,6 +1,6 @@
 
 IIS fix for bootstrap
-<mimeMap fileExtension=".woff2" mimeType="application/font-woff2" />
+<pre><mimeMap fileExtension=".woff2" mimeType="application/font-woff2" /></pre>
 
 It is book library written in PHP for personal usage. Main purpose is to manage own book library as excel table with ratings and other stuff
 

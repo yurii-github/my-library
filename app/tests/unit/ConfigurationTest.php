@@ -1,8 +1,8 @@
 <?php
-namespace tests\frontend\components;
+namespace tests\components;
 
-use \common\components\Configuration;
-use \org\bovigo\vfs\vfsStream;
+use app\components\Configuration;
+use org\bovigo\vfs\vfsStream;
 use yii\db\ActiveRecord;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
@@ -12,12 +12,13 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 	/* @var $config Configuration */
 	private $config;
 	
+	private $cfg_file = 'config/libconfig.json'; //rel to @app
 	
 	protected function setUp()
 	{
-		$this->base = vfsStream::setup('base', null, ['data' => ['books' => [] ], ]);
-		\Yii::$aliases['@mybase'] = vfsStream::url('base');
-		$this->config = new Configuration(['config_file' => '@mybase/data/mylib.json' ]);
+		$this->base = vfsStream::setup('base', null, ['config' => ['books' => [] ], ]);
+		\Yii::$aliases['@app'] = vfsStream::url('base');
+		$this->config = new Configuration(['config_file' => "@app/{$this->cfg_file}" ]);
 	}
 	
 	
@@ -30,18 +31,18 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 	public function test_save()
 	{
 		$this->config->save();
-		$this->assertTrue($this->base->hasChild('data/mylib.json'), 'config file was not saved');
+		$this->assertTrue($this->base->hasChild($this->cfg_file), 'config file was not saved');
 		
 		/* @var $default Configuration */
 		/* @var $saved Configuration */
-		$default = json_decode(file_get_contents(dirname(dirname(__DIR__)).'/data/default_config.json'));
-		$saved = json_decode(file_get_contents($this->base->getChild('data/mylib.json')->url()));
+		$default = json_decode(file_get_contents(dirname(__DIR__).'/data/default_config.json'));
+		$saved = json_decode(file_get_contents($this->base->getChild($this->cfg_file)->url()));
 		$this->assertEquals($default, $saved, 'saved config file doesnt match default one');
 		
 		//check changes are saved
 		$this->config->system->language = 'yo-yo';
 		$this->config->save();
-		$changed = json_decode(file_get_contents($this->base->getChild('data/mylib.json')->url()));
+		$changed = json_decode(file_get_contents($this->base->getChild($this->cfg_file)->url()));
 		$this->assertEquals($this->config->system->language, 'yo-yo', 'config object was not changed');
 		$this->assertEquals($this->config->system->language, $changed->system->language, 'config change was not saved to file');
 	}
@@ -52,7 +53,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 		$default_config = $this->config->getDefaultCfg();
 		$default_config->system->new_param = 'some value';
 		
-		$mock_cfg = $this->getMockBuilder('\common\components\Configuration')
+		$mock_cfg = $this->getMockBuilder('\app\components\Configuration')
 			->disableOriginalConstructor()
 			->setMethods(['getDefaultCfg'])
 			->getMock();

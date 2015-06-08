@@ -1,0 +1,12 @@
+/.buildpath
+/.project
+/.settings/*
+/app/config/libconfig.json
+/app/config/local.php
+/app/public/assets/admin-lte/*
+/composer.lock
+/vendor/*
+!/app/data/books/empty
+!/app/data/logs/empty
+/app/data/*
+

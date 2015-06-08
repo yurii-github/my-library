@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.7/phpunit.xsd"
+bootstrap="tests/bootstrap.php"
+stopOnFailure="false"
+convertErrorsToExceptions="true" 
+convertNoticesToExceptions="true"
+convertWarningsToExceptions="true">
+	<testsuites>
+		<testsuite name="unit">
+			<directory>unit</directory>
+		</testsuite>
+		<testsuite name="functional">
+			<directory>functional</directory>
+		</testsuite>
+	</testsuites>
+	
+	<php>
+		<var name="dsn" value="sqlite::memory:"/>
+		<var name="dsn22" value="mysql:host=localhost;dbname=mylib_test"/>
+		<var name="login" value="root"/>
+		<var name="password" value="phoenix"/>
+	</php>
+	
+	<!-- codecoverage filters -->
+	<filter>
+		<blacklist>
+			<directory>vendor</directory>
+		</blacklist>
+		<whitelist>
+		</whitelist>
+	</filter>
+</phpunit>
+
+
+<!-- 
+<logging>
+<log type="coverage-html" target="/reports" />
+</logging>
+ -->
+

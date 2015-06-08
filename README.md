@@ -4,13 +4,21 @@ It is book library manager written in PHP based on JqueryUI for personal usage. 
 
 <img src="http://s29.postimg.org/hdzobbo5z/cfg.jpg" />
 
-IIS fix for bootstrap (boostrap currently not used)
-<pre><mimeMap fileExtension=".woff2" mimeType="application/font-woff2" /></pre>
+<h3>Requirements</h3>
+
+php 5.4+
+url rewrite
+mysqlite or mysql
+
 
 <h3>Setup</h3>
 
 <pre>composer create-project  yurii-github/yii2-mylib  --stability=dev --no-dev</pre>
 remove --no-dev to get dev required stuff
+
+entry point is located at
+<pre>PROJECT/app/public/index.php</pre>
+
 
 <h3>functionality</h3>
 
@@ -32,6 +40,11 @@ remove --no-dev to get dev required stuff
 - admin page. base
 - authors, publishers, categories
 - in sqlite run VACUUM for space saving
+- - CDN fallbacks
 - unit tests
 - user tests
 </pre>
+
+
+IIS fix for bootstrap (boostrap currently not used)
+<pre><mimeMap fileExtension=".woff2" mimeType="application/font-woff2" /></pre>

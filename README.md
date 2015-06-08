@@ -1,4 +1,4 @@
-It is book library manager written in PHP based on JqueryUI for personal usage. Main purpose is to manage own book library as excel table with ratings and other stuff like filename syncronizations and more.
+It is book library manager written in PHP based on JqueryUI for personal usage. Main purpose is to manage own book library as excel table with ratings and other stuff like filename syncronizations of your books and more.
 
 Most js/css come from CDN networks, so you probably eager to check code at /app/assets/*
 

@@ -1,8 +1,11 @@
+It is book library written in PHP based on JqueryUI for personal usage. Main purpose is to manage own book library as excel table with ratings and other stuff
 
-IIS fix for bootstrap
+http://s11.postimg.org/d49yava9d/Untitled.jpg
+http://s29.postimg.org/hdzobbo5z/cfg.jpg
+
+IIS fix for bootstrap (boostrap currently not used)
 <pre><mimeMap fileExtension=".woff2" mimeType="application/font-woff2" /></pre>
 
-It is book library written in PHP for personal usage. Main purpose is to manage own book library as excel table with ratings and other stuff
 
 
 (+) implemented

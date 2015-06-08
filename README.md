@@ -14,6 +14,8 @@ IIS fix for bootstrap (boostrap currently not used)
 
 <h3>functionality</h3>
 
+<pre>
+
 + excel table is sortable, pagable
 + books CRUD
 + book cover
@@ -29,4 +31,4 @@ IIS fix for bootstrap (boostrap currently not used)
 - admin page. base
 - authors, publishers, categories
 - in sqlite run VACUUM for space saving
-
+</pre>

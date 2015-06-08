@@ -2,7 +2,7 @@ It is book library manager written in PHP based on JqueryUI for personal usage. 
 
 Most js/css come from CDN networks, so you probably eager to check code at /app/assets/*
 
-<img src="http://s11.postimg.org/agya5qldf/lib.jpg" />
+<img src="http://s24.postimg.org/fhvfecmjp/lib.jpg" />
 
 <img src="http://s29.postimg.org/hdzobbo5z/cfg.jpg" />
 

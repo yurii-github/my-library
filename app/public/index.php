@@ -19,5 +19,6 @@ if (YII_ENV == 'test') {
 
 
 (new yii\web\Application(
-	\yii\helpers\ArrayHelper::merge(require $basedir.'/app/config/config.php', require $basedir.'/app/config/local.php')
+	\yii\helpers\ArrayHelper::merge(require $basedir.'/app/config/config.php',
+	(file_exists($basedir.'/app/config/local.php') ? require $basedir.'/app/config/local.php' : [])) // for dev
 ))->run();

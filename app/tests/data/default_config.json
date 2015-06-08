@@ -1,0 +1,27 @@
+{
+    "system": {
+        "email": false,
+        "emailto": null,
+        "theme": "smoothness",
+        "timezone": "Europe\/Kiev",
+        "language": "en-US"
+    },
+    "library": {
+        "codepage": "cp1251",
+        "directory": "vfs:\/\/base\/data\/books\/",
+        "sync": false
+    },
+    "database": {
+        "format": "sqlite",
+        "filename": "vfs:\/\/base\/data\/mydb.s3db",
+        "host": "localhost",
+        "dbname": "mylib",
+        "login": "",
+        "password": ""
+    },
+    "book": {
+        "covermaxwidth": 800,
+        "covertype": "image\/jpeg",
+        "nameformat": "{year}, ''{title}'', {publisher} [{isbn13}].{ext}"
+    }
+}

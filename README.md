@@ -1,14 +1,21 @@
+It is book library manager written in PHP based on JqueryUI for personal usage. Main purpose is to manage own book library as excel table with ratings and other stuff like filename syncronizations and more
 
-IIS fix for bootstrap
-<mimeMap fileExtension=".woff2" mimeType="application/font-woff2" />
+<img src="http://s11.postimg.org/agya5qldf/lib.jpg" />
 
-It is book library written in PHP for personal usage. Main purpose is to manage own book library as excel table with ratings and other stuff
+<img src="http://s29.postimg.org/hdzobbo5z/cfg.jpg" />
 
+IIS fix for bootstrap (boostrap currently not used)
+<pre><mimeMap fileExtension=".woff2" mimeType="application/font-woff2" /></pre>
 
-(+) implemented
-(-) not implemented
+<h3>Setup</h3>
+
+<pre>composer create-project  yurii-github/yii2-mylib  --stability=dev --no-dev</pre>
+remove --no-dev to get dev required stuff
 
 <h3>functionality</h3>
+
+<pre>
+(+) implemented | (-) not implemented
 
 + excel table is sortable, pagable
 + books CRUD
@@ -25,4 +32,6 @@ It is book library written in PHP for personal usage. Main purpose is to manage 
 - admin page. base
 - authors, publishers, categories
 - in sqlite run VACUUM for space saving
-
+- unit tests
+- user tests
+</pre>

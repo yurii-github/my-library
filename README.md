@@ -1,6 +1,7 @@
 It is book library written in PHP based on JqueryUI for personal usage. Main purpose is to manage own book library as excel table with ratings and other stuff
 
-<img src="http://s11.postimg.org/d49yava9d/Untitled.jpg" />
+<img src="http://s11.postimg.org/agya5qldf/lib.jpg" />
+
 <img src="http://s29.postimg.org/hdzobbo5z/cfg.jpg" />
 
 IIS fix for bootstrap (boostrap currently not used)

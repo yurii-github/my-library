@@ -108,9 +108,13 @@ class Books extends ActiveRecord
 			
 			['book_cover', 'image', 'skipOnEmpty' => true, 'extensions' => 'gif,jpg,png', 'on' => ['edit'] ],
 			
+			//import from fs
+			[['title', 'filename'], 'safe', 'on' => 'import'],
+			
 			// add
 			[['created_date', 'updated_date', 'book_guid', 'favorite', 'read', 'year', 'title', 'isbn13', 'author', 'publisher',
 			 'ext', 'filename'], 'safe', 'on' => 'add'],
+			
 			[['updated_date', 'favorite', 'read', 'year', 'title', 'isbn13', 'author',
 			 'publisher', 'ext', 'filename'], 'safe', 'on' => 'edit']
 		];
@@ -152,7 +156,9 @@ class Books extends ActiveRecord
 			
 			if($insert) {//inserting, make guid
 				$this->book_guid = self::com_create_guid();
-				$this->filename = $new_filename;
+				if ($this->getScenario() != 'import') {
+					$this->filename = $new_filename;
+				}
 			} else { //updating
 				//syncing
 				if (!empty($this->filename) && \Yii::$app->mycfg->library->sync) {

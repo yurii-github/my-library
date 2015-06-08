@@ -125,7 +125,7 @@ class ConfigController extends Controller
 			$arr_added = [];
 			try {
 				foreach ($post as $f) {
-					$book = new Books(['scenario' => 'add']);
+					$book = new Books(['scenario' => 'import']);
 					$book->filename = $book->title = $f;
 					$book->insert();
 					$arr_added[] = $f;

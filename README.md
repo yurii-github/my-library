@@ -12,12 +12,10 @@ IIS fix for bootstrap (boostrap currently not used)
 <pre>composer create-project  yurii-github/yii2-mylib  --stability=dev --no-dev</pre>
 remove --no-dev to get dev required stuff
 
-(+) implemented
-(-) not implemented
-
 <h3>functionality</h3>
 
 <pre>
+(+) implemented | (-) not implemented
 
 + excel table is sortable, pagable
 + books CRUD

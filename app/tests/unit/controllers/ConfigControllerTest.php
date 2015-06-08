@@ -1,19 +1,19 @@
 <?php
-namespace tests\frontend;
+namespace tests\controllers;
 
-use frontend\controllers\ConfigController;
-use \common\components\Configuration;
+use app\controllers\ConfigController;
+use app\components\Configuration;
+use org\bovigo\vfs\vfsStream;
 
-use \org\bovigo\vfs\vfsStream;
-
-
-class ConfigControllerTest extends \tests\DbTestCase
+class ConfigControllerTest extends \tests\AppTestCase
 {
-	/* @var $base \org\bovigo\vfs\vfsStreamDirectory   */
-	private $base;
+
+	private $cfg_file = 'config/libconfig.json'; //rel to @app
 	
 	protected function setUp()
 	{
+		$this->mockYiiApplication([]);
+		
 		$this->dataset = [
 			'books' =>  [
 				//db only
@@ -23,18 +23,10 @@ class ConfigControllerTest extends \tests\DbTestCase
 				['book_guid' => 3, 'filename' => 'file-3', 'created_date' => '2014-01-01 00:00:00', 'updated_date' => '2014-01-01 00:00:00',  ]
 			]//tbl books
 		];
-		
-		$this->base = vfsStream::setup('base', null, ['data' => ['books' => [] ], ]);
+
 		file_put_contents(vfsStream::url('base/data/books/file-3'), 'some data'); // db and fs
 		file_put_contents(vfsStream::url('base/data/books/file-4'), 'some data'); //fs only
-		
-		\Yii::$aliases['@mybase'] = vfsStream::url('base');
-		$this->mockYiiApplication([
-			'components' => [
-				'mycfg' => new Configuration(['config_file'=>'@mybase/data/mylib.json'])
-			]
-		]);
-		
+
 		parent::setUp();
 	}
 	
@@ -68,6 +60,7 @@ class ConfigControllerTest extends \tests\DbTestCase
 	{
 		$c = new ConfigController('config', \Yii::$app);
 		$resp = json_decode($c->actionCheckFiles());
+
 		$this->assertEquals(2, count($resp->db), 'db only records does not match');
 		$this->assertArraySubset(['file-1','file-2'], $resp->db, 'filename of db only files does not match');
 		$this->assertEquals(1, count($resp->fs), 'file system only file count does not match');

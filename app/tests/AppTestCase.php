@@ -1,16 +1,21 @@
 <?php
 namespace tests;
 
-class DbTestCase extends \PHPUnit_Extensions_Database_TestCase
+use app\components\Configuration;
+use org\bovigo\vfs\vfsStream;
+
+class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 {
 	static $dbc;
 	static $pdo;
 	protected $dataset = [];
 	
+	private $is_fs_init = false;
+
 	public function getPdo()
 	{
 		if (empty(self::$pdo)) {
-			self::$pdo = new \PDO($GLOBALS['dsn'], $GLOBALS['login'], $GLOBALS['password'], [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]);
+			self::$pdo = new \PDO('sqlite::memory:', null, null, [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]);
 			self::$pdo->query(file_get_contents(__DIR__.'/data/db.sqlite.txt')); //init tables
 		}
 		
@@ -36,10 +41,11 @@ class DbTestCase extends \PHPUnit_Extensions_Database_TestCase
 		parent::tearDown();
 		$this->destroyApplication();
 	}
-		
 	
 	protected function mockYiiApplication($config = [])
 	{
+		$this->initAppFileSystem();
+		
 		new \yii\web\Application(\yii\helpers\ArrayHelper::merge([
 			'id' => 'testapp',
 			'basePath' => __DIR__,
@@ -51,6 +57,7 @@ class DbTestCase extends \PHPUnit_Extensions_Database_TestCase
 					'scriptFile' => __DIR__ .'/index.php',
 					'scriptUrl' => '/index.php',
 				],
+				'mycfg' => new Configuration(['config_file' => '@app/config/libconfig.json' ])
 			]
 		], $config));
 	}
@@ -60,6 +67,33 @@ class DbTestCase extends \PHPUnit_Extensions_Database_TestCase
 	{
 		\Yii::$app = null;
 	}
+	
+	
+
+	// - - - - - - FS - - - - >
+	protected function getConfigFilename()
+	{
+		return \Yii::getAlias('@app/config/libconfig.json');
+	}
+	
+	protected function initAppFileSystem()
+	{
+		if ($this->is_fs_init) {
+			return;
+		}
+	
+		vfsStream::setup('base', null, [
+			'config' => [], 
+			'data' => [
+				'books' => []
+			]
+		]);
+		
+		\Yii::$aliases['@app'] = vfsStream::url('base');
+	}
+	
+	// < - - - - - - FS - - - - -
+	
 	
 	
 }

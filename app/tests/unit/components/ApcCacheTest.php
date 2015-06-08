@@ -1,9 +1,9 @@
 <?php
-namespace tests;
+namespace tests\components;
 
-use \common\components\ApcCache;
+use app\components\ApcCache;
 
-class ApcCacheTest extends DbTestCase
+class ApcCacheTest extends \tests\AppTestCase
 {
 	public function test_buildKey()
 	{

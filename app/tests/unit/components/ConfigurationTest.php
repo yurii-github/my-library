@@ -5,20 +5,15 @@ use app\components\Configuration;
 use org\bovigo\vfs\vfsStream;
 use yii\db\ActiveRecord;
 
-class ConfigurationTest extends \PHPUnit_Framework_TestCase
+class ConfigurationTest extends \tests\AppTestCase
 {
-	/* @var $base \org\bovigo\vfs\vfsStreamDirectory   */
-	private $base;
 	/* @var $config Configuration */
 	private $config;
-	
-	private $cfg_file = 'config/libconfig.json'; //rel to @app
-	
+
 	protected function setUp()
 	{
-		$this->base = vfsStream::setup('base', null, ['config' => ['books' => [] ], ]);
-		\Yii::$aliases['@app'] = vfsStream::url('base');
-		$this->config = new Configuration(['config_file' => "@app/{$this->cfg_file}" ]);
+		$this->initAppFileSystem();
+		$this->config = new Configuration(['config_file' => $this->getConfigFilename()]);
 	}
 	
 	
@@ -31,18 +26,18 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 	public function test_save()
 	{
 		$this->config->save();
-		$this->assertTrue($this->base->hasChild($this->cfg_file), 'config file was not saved');
+		$this->assertTrue(file_exists($this->getConfigFilename()), 'config file was not saved');
 		
 		/* @var $default Configuration */
 		/* @var $saved Configuration */
-		$default = json_decode(file_get_contents(dirname(__DIR__).'/data/default_config.json'));
-		$saved = json_decode(file_get_contents($this->base->getChild($this->cfg_file)->url()));
+		$default = json_decode(file_get_contents($GLOBALS['basedir'].'/app/tests/data/default_config.json'));
+		$saved = json_decode(file_get_contents($this->getConfigFilename()));
 		$this->assertEquals($default, $saved, 'saved config file doesnt match default one');
 		
 		//check changes are saved
 		$this->config->system->language = 'yo-yo';
 		$this->config->save();
-		$changed = json_decode(file_get_contents($this->base->getChild($this->cfg_file)->url()));
+		$changed = json_decode(file_get_contents($this->getConfigFilename()));
 		$this->assertEquals($this->config->system->language, 'yo-yo', 'config object was not changed');
 		$this->assertEquals($this->config->system->language, $changed->system->language, 'config change was not saved to file');
 	}

@@ -126,7 +126,14 @@ return [
 			'fileTransportPath' => '@runtime/mail',
 			'htmlLayout' => 'layouts/html',
 			'textLayout' => 'layouts/text',
-			'transport' => null // see local.config or setup your own
+			'transport' => [
+				'class' => 'Swift_SmtpTransport',
+				'host' => 'smtp.sample.com',
+				'username' => 'test',
+				'password' => 'test',
+				'port' => '465',
+				'encryption' => 'ssl' // ssl | tls
+			]
 		],
 		'mycfg' => [
 			'class' => 'app\components\Configuration',

@@ -7,7 +7,10 @@ It is book library manager written in PHP based on JqueryUI for personal usage. 
 IIS fix for bootstrap (boostrap currently not used)
 <pre><mimeMap fileExtension=".woff2" mimeType="application/font-woff2" /></pre>
 
+<h3>Setup</h3>
 
+<pre>composer create-project  yurii-github/yii2-mylib  --stability=dev --no-dev</pre>
+remove --no-dev to get dev required stuff
 
 (+) implemented
 (-) not implemented

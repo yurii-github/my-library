@@ -31,4 +31,6 @@ IIS fix for bootstrap (boostrap currently not used)
 - admin page. base
 - authors, publishers, categories
 - in sqlite run VACUUM for space saving
+- unit tests
+- user tests
 </pre>

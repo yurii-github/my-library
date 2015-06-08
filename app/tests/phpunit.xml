@@ -19,17 +19,27 @@ bootstrap="bootstrap.php">
 	<!-- codecoverage filters -->
 	<filter>
 		<blacklist>
-			<directory>vendor</directory>
+			<directory>../../vendor</directory>
 		</blacklist>
 		<whitelist>
+			<directory>../</directory>
+			<exclude>
+				
+				<directory>../config</directory>
+				<directory>../data</directory>
+				<directory>../emails</directory>
+				<directory>../i18n</directory>
+				<directory>../runtime</directory>
+				<directory>../views</directory>
+				<directory>../tests</directory>
+			</exclude>
 		</whitelist>
 	</filter>
+	
+	<!--  
+	<logging>
+		<log type="coverage-html" target="reports" />
+	</logging>-->
+	
+	
 </phpunit>
-
-
-<!-- 
-<logging>
-<log type="coverage-html" target="/reports" />
-</logging>
- -->
-

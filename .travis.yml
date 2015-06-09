@@ -9,10 +9,17 @@ php: 5.6
 before_install: composer self-update
 install:        composer update
 before_script:
-script:         cd app/tests; phpunit
+script:         cd app/tests; phpunit; cd ../..; $? pwd
 after_success:
 after_failure:
 after_script:
 before_deployment:
 deployment:
 after_deployment:
+#
+# cache on success. life?
+#
+cache: true
+  - composer
+  directories: vendor/*
+  

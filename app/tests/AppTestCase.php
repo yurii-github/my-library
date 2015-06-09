@@ -51,6 +51,9 @@ class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 			'id' => 'testapp',
 			'basePath' => $GLOBALS['basedir'].'/app',
 			'vendorPath' => $GLOBALS['basedir'] . '/vendor',
+			'aliases' => [
+				'@runtime' => '@app/runtime'
+			],
 			'components' => [
 				'db' => (new \yii\db\Connection(['pdo' => $this->getPdo()])),
 				'request' => [
@@ -87,6 +90,9 @@ class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 			'config' => [], 
 			'data' => [
 				'books' => []
+			],
+			'runtime' => [
+				'logs' => []
 			],
 			'public' => [
 				'assets' => []

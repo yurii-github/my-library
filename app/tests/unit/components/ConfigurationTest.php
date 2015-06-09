@@ -4,6 +4,8 @@ namespace tests\components;
 use app\components\Configuration;
 use org\bovigo\vfs\vfsStream;
 use yii\db\ActiveRecord;
+use app\components\configuration\Library;
+use app\components\configuration\Database;
 
 class ConfigurationTest extends \tests\AppTestCase
 {
@@ -17,9 +19,11 @@ class ConfigurationTest extends \tests\AppTestCase
 	}
 	
 	
-	public function test_getVersion()
+	public function test_gets()
 	{
 		$this->assertTrue(is_string($this->config->getVersion()));
+		$this->assertInstanceOf(Library::class, $this->config->getLibrary());
+		$this->assertInstanceOf(Database::class, $this->config->getDatabase());
 	}
 	
 	
@@ -45,17 +49,18 @@ class ConfigurationTest extends \tests\AppTestCase
 	// test introduction of new option into default config, via reflection
 	public function test_load()
 	{
-		$default_config = $this->config->getDefaultCfg();
-		$default_config->system->new_param = 'some value';
+		// set clean config file, must load defaults from default config
+		file_put_contents($this->config->config_file, '{}'); //empty json
+
+		$def_config = $this->config->getDefaultCfg(); // cfg will be used for loading as default
+		$def_config->system->level2 = 'value 2'; // test new level 2. must be added
 		
-		$mock_cfg = $this->getMockBuilder('\app\components\Configuration')
-			->disableOriginalConstructor()
-			->setMethods(['getDefaultCfg'])
-			->getMock();
+		$mock_cfg = $this->getMockBuilder('\app\components\Configuration')->disableOriginalConstructor()->setMethods(['getDefaultCfg'])->getMock();
+		$mock_cfg->expects($this->any())->method('getDefaultCfg')->willReturn($def_config);
+		$mock_cfg->load($this->config->config_file); // load old config, our modified default config must apply level1 and level2 params
 		
-		$mock_cfg->expects($this->any())->method('getDefaultCfg')->willReturn($default_config);
-		$mock_cfg->load($this->config->config_file); // must reflect new parameter in hardcoded default config
-		$this->assertEquals($mock_cfg->system->new_param, 'some value');
+		$this->assertInstanceOf(Library::class, $mock_cfg->library);
+		$this->assertEquals($mock_cfg->system->level2, 'value 2');
 	}
 	
 	

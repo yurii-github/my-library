@@ -6,6 +6,6 @@
 /app/public/assets/admin-lte/*
 /composer.lock
 /vendor/*
-
+/app/tests/reports/*
 
 

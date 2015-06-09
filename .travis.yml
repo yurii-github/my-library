@@ -1,0 +1,9 @@
+-- 
+-- https://travis-ci.org/getting_started
+-- 
+language: php
+php:
+	- 5.4
+	- 5.5
+	
+script: phpunit app/tests

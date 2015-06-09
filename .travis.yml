@@ -14,5 +14,5 @@ after_success:
 after_failure:
 after_script:
 before_deployment:
-OPTIONAL deployment:
-OPTIONAL after_deployment:
+deployment:
+after_deployment:

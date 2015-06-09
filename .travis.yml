@@ -1,6 +1,6 @@
--- 
--- https://travis-ci.org/getting_started
--- 
+# 
+# https://travis-ci.org/getting_started
+# 
 language: php
 php:
 	- 5.4

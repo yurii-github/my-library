@@ -2,10 +2,8 @@
 # https://travis-ci.org/getting_started
 # 
 language: PHP
-
 PHP:
-    - 5.6
-
+  - 5.6
 script:
-    - cd app/tests
-    - phpunit
+  - cd app/tests
+  - phpunit

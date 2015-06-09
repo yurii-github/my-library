@@ -1,7 +1,9 @@
 # 
 # https://travis-ci.org/getting_started
 # 
-language: php
-php:
+language: PHP
+
+PHP:
     - 5.5
+
 script: phpunit app/tests

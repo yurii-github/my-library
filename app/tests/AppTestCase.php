@@ -46,10 +46,14 @@ class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 	{
 		$this->initAppFileSystem();
 		
+		
 		new \yii\web\Application(\yii\helpers\ArrayHelper::merge([
 			'id' => 'testapp',
-			'basePath' => __DIR__,
-			'vendorPath' => dirname(__DIR__) . '/vendor',
+			'basePath' => $GLOBALS['basedir'].'/app',
+			'vendorPath' => $GLOBALS['basedir'] . '/vendor',
+			'aliases' => [
+				'@runtime' => '@app/runtime'
+			],
 			'components' => [
 				'db' => (new \yii\db\Connection(['pdo' => $this->getPdo()])),
 				'request' => [
@@ -86,10 +90,17 @@ class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 			'config' => [], 
 			'data' => [
 				'books' => []
+			],
+			'runtime' => [
+				'logs' => []
+			],
+			'public' => [
+				'assets' => []
 			]
 		]);
 		
 		\Yii::$aliases['@app'] = vfsStream::url('base');
+		//\Yii::$aliases['@webroot'] = vfsStream::url('base/public');
 	}
 	
 	// < - - - - - - FS - - - - -

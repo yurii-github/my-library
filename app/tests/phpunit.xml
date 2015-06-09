@@ -39,7 +39,7 @@ bootstrap="bootstrap.php">
 	<!--  
 	<logging>
 		<log type="coverage-html" target="reports" />
-	</logging>-->
-	
+	</logging>
+	-->
 	
 </phpunit>

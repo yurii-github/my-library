@@ -1,6 +1,7 @@
 <?php
 namespace app\assets;
 
+// https://developers.google.com/speed/libraries/
 class Jquery extends AssetBundle
 {
 	public $sourcePath = null;

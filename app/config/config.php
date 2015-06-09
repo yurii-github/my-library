@@ -48,10 +48,7 @@ return [
 				'frontend/*' => [
 					'class' => 'yii\i18n\PhpMessageSource',
 					'basePath' => '@app/i18n',
-					'sourceLanguage' => 'en-US',
-					//filemap [alias=>file]
-					'on missingTranslation' =>
-					['app\components\TranslationEventHandler', 'handleMissingTranslation']
+					'sourceLanguage' => 'en-US'
 				]
 			],
 		],

@@ -13,6 +13,10 @@ use yii\helpers\VarDumper;
 	 */
 	public function formatMessage($message)
 	{
+		if (!$this->with_microtime) {
+			return parent::formatMessage($message);
+		}
+		
 		list($text, $level, $category, $timestamp) = $message;
 		$level = \yii\log\Logger::getLevelName($level);
 		if (!is_string($text)) {
@@ -27,8 +31,8 @@ use yii\helpers\VarDumper;
 
 		$prefix = $this->getMessagePrefix($message);
 		
-		return (date('Y-m-d H:i:s', $timestamp) . 
-			($this->with_microtime ? ':' . round(($timestamp - floor($timestamp))*1000000) : ''))
+		return
+			(new \DateTime())->setTimestamp($timestamp)->format('Y-m-d H:i:s') . ':' . str_pad(round(($timestamp - floor($timestamp))*1000000), 6, '0', STR_PAD_RIGHT)
 			. " {$prefix}[$level][$category] $text"
 			. (empty($traces) ? '' : "\n    " . implode("\n    ", $traces));
 	}

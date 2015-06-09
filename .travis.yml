@@ -1,5 +1,5 @@
 # 
-# Continious Integration by https://travis-ci.org
+# Continuous Integration and Deployment: https://travis-ci.org
 # 
 language: php
 php: 5.6

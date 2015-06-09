@@ -1,8 +1,8 @@
 # 
 # https://travis-ci.org
 # 
-language: PHP
-PHP:
+language: php
+php:
   - 5.6
 script:
   - cd app/tests

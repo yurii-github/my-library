@@ -26,9 +26,7 @@
 		"phpunit/phpunit": "4.4.*",
 		"phpunit/dbunit": "*",
 		"facebook/webdriver": "dev-master",
-		"mockery/mockery": "*",
 		"mikey179/vfsStream": "1.5.0@stable",
-		"yiisoft/yii2-codeception": "*",
 		"yiisoft/yii2-debug": "~2.0.0"
 	}
 }

@@ -1,12 +1,13 @@
 <?php
-namespace tests\frontend;
+namespace tests\models;
 
-use frontend\models\Books;
+use app\models\Books;
 
-class BooksTest extends \tests\DbTestCase
+class BooksTest extends \tests\AppTestCase
 {
 	protected function setUp()
 	{
+
 		$this->dataset = ['books' =>  [  
 				['book_guid' => 1, 'created_date' => '2014-01-01 00:00:00', 'updated_date' => '2014-01-01 00:00:00', 'favorite' => 1, 'title' => 'title book #1'],
 				['book_guid' => 2, 'created_date' => '2014-01-01 00:00:00', 'updated_date' => '2014-01-01 00:00:00', 'favorite' => 1, 'title' => 'title book #2']

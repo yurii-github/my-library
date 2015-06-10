@@ -32,14 +32,15 @@ bootstrap="bootstrap.php">
 				<directory>../runtime</directory>
 				<directory>../views</directory>
 				<directory>../tests</directory>
+				<directory>../public</directory>
 			</exclude>
 		</whitelist>
 	</filter>
 	
-	<!--  
-	<logging>
-		<log type="coverage-html" target="reports" />
+	<!--  		<logging>
+		<log  type="coverage-html" target="reports" />
 	</logging>
-	-->
+  -->
+
 	
 </phpunit>

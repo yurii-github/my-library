@@ -2,7 +2,9 @@
 # Continuous Integration and Deployment: https://travis-ci.org
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 language: php
-php: 5.6
+php:
+  - 5.6
+  - nightly
 #
 # Parallelizing builds
 #
@@ -14,7 +16,9 @@ env:
 before_install: composer self-update
 install:        composer update
 before_script:
-script:         cd app/tests; phpunit --testsuite=$TEST_SUITE --colors; cd ../..;
+script:
+  - cd app/tests
+  - ../../vendor/bin/phpunit --testsuite=$TEST_SUITE --colors
 after_success:
 after_failure:
 after_script:
@@ -25,6 +29,5 @@ after_deployment:
 # cache on success. lifetime?
 #
 cache:
-  composer
   directories:
     - vendor

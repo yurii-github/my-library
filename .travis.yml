@@ -14,7 +14,7 @@ env:
 # build lifecycle
 #
 before_install: chmod +x .travis-install.sh
-install: .travis-install.sh
+install: ./.travis-install.sh
 before_script:
 script:
   - cd app/tests

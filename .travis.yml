@@ -20,7 +20,7 @@ before_install:
 install:        composer update
 before_script:
 script:
-  - tree /home/travis -I 'build' -a -L 2
+  - tree $HOME -I build -L 2 -a
 #  - cd app/tests
 #  - ../../vendor/bin/phpunit --testsuite=$TEST_SUITE --colors
 after_success:

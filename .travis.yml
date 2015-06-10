@@ -14,13 +14,12 @@ env:
 # build lifecycle
 #
 before_install:
-  - whereis composer
   - composer self-update
   - sudo apt-get install tree
-install:        composer update
+install:
+  - composer install --prefer-dist
 before_script:
 script:
-  - tree $HOME -I build -L 2 -a
 #  - cd app/tests
 #  - ../../vendor/bin/phpunit --testsuite=$TEST_SUITE --colors
 after_success:
@@ -35,4 +34,5 @@ after_deployment:
 cache:
   apt
   directories:
+    - /home/travis/.composer
     - vendor

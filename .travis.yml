@@ -19,13 +19,20 @@ install:
 before_script:
 script:
   - cd app/tests
-  - ../../vendor/bin/phpunit --testsuite=$TEST_SUITE --colors --strict
+  - ../../vendor/bin/phpunit --testsuite=$TEST_SUITE --colors --strict --coverage-clover 
 after_success:
 after_failure:
 after_script:
+  - vendor/bin/test-reporter
 before_deployment:
 deployment:
 after_deployment:
+#
+# other 
+#
+addons:
+  code_climate:
+    repo_token: c68155affdbf8dd8d28e2a5c55f67ca43474429dae16b097f19e117b1da4194b
 #
 # cache on success. lifetime?
 # 

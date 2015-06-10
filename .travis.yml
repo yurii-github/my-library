@@ -31,5 +31,4 @@ after_deployment:
 # 
 cache:
   directories:
-    - composer.lock
     - vendor

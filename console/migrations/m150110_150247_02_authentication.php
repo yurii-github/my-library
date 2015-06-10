@@ -3,6 +3,17 @@ class m150110_150247_02_authentication extends \yii\db\Migration
 {
 	private $tbname = '{{%users}}';
 
+	public function createTable_Users()
+	{
+		$this->createTable($this->tbname, [
+			'username' => 'VARCHAR(255) PRIMARY KEY',
+			'password' => 'VARCHAR(255)',
+			'access_token' => 'VARCHAR(2000)',
+			'auth_key' => 'VARCHAR(255)'
+		]);
+	}
+	
+	
     public function safeUp()
     {
     	//run first!!!!
@@ -30,12 +41,7 @@ class m150110_150247_02_authentication extends \yii\db\Migration
     	//
     	
     	
-    	$this->createTable($this->tbname, [
-    		'username' => 'VARCHAR(255) PRIMARY KEY',
-    		'password' => 'VARCHAR(255)',
-    		'access_token' => 'VARCHAR(2000)',
-    		'auth_key' => 'VARCHAR(255)'
-    	]);
+    	$this->createTable_Users();
     	
     	$this->batchInsert($this->tbname, ['username', 'password'], [
     		['root', \Yii::$app->getSecurity()->generatePasswordHash('root')] ]);

@@ -6,10 +6,12 @@ use yii\web\IdentityInterface;
 
 
 /**
+ * 
  * @property string  $username
  * @property string $password
  * @property string $auth_key
  * @property string $access_token
+ * 
  */
 class Users extends ActiveRecord implements IdentityInterface
 {
@@ -85,7 +87,7 @@ class Users extends ActiveRecord implements IdentityInterface
 	{
 		if (parent::beforeSave($insert)) {
 			if ($this->isNewRecord) {
-				$this->auth_key = Yii::$app->getSecurity()->generateRandomString();
+				$this->auth_key = \Yii::$app->getSecurity()->generateRandomString();
 			}
 			return true;
 		}

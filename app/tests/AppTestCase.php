@@ -52,6 +52,7 @@ class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 			'basePath' => $GLOBALS['basedir'].'/app',
 			'vendorPath' => $GLOBALS['basedir'] . '/vendor',
 			'aliases' => [
+				'@app' => vfsStream::url('base'),
 				'@runtime' => '@app/runtime'
 			],
 			'components' => [

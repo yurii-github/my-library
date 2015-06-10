@@ -19,7 +19,8 @@ install:
   - [ ! -d vendor ] && composer install --prefer-dist
 before_script:
 script:
-  - cd app/tests && ../../vendor/bin/phpunit --testsuite=$TEST_SUITE --colors
+  - cd app/tests
+  - ../../vendor/bin/phpunit --testsuite=$TEST_SUITE --colors
 after_success:
 after_failure:
 after_script:

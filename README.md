@@ -1,4 +1,4 @@
-travic-ci [![Build Status](https://travis-ci.org/yurii-github/yii2-mylib.svg?branch=master)](https://travis-ci.org/yurii-github/yii2-mylib)
+[![Build Status](https://travis-ci.org/yurii-github/yii2-mylib.svg?branch=master)](https://travis-ci.org/yurii-github/yii2-mylib)
 
 
 <h2>WARNING! IT IS VERY RAW</h2>

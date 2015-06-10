@@ -4,17 +4,17 @@ stopOnFailure="true"
 convertErrorsToExceptions="true" 
 convertNoticesToExceptions="true"
 convertWarningsToExceptions="true"
+strict="true"
+colors="true" 
 bootstrap="bootstrap.php">
 	<testsuites>
 		<testsuite name="unit">
 			<directory>unit</directory>
 		</testsuite>
-		<testsuite name="functional">
-			<directory>tests/functional</directory>
+		<testsuite name="integration">
+			<directory>tests/integration</directory>
 		</testsuite>
 	</testsuites>
-	
-
 	
 	<!-- codecoverage filters -->
 	<filter>
@@ -24,7 +24,6 @@ bootstrap="bootstrap.php">
 		<whitelist>
 			<directory>../</directory>
 			<exclude>
-				
 				<directory>../config</directory>
 				<directory>../data</directory>
 				<directory>../emails</directory>
@@ -37,10 +36,10 @@ bootstrap="bootstrap.php">
 		</whitelist>
 	</filter>
 	
-	<!--  		<logging>
+	<!--
+	<logging>
 		<log  type="coverage-html" target="reports" />
 	</logging>
-  -->
+  	-->
 
-	
 </phpunit>

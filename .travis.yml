@@ -14,9 +14,11 @@ env:
 # build lifecycle
 #
 before_install:
-  - php /home/travis/.phpenv/versions/5.6/composer.phar self-update
+  - composer --version
+  - composer self-update
+#  - php /home/travis/.phpenv/versions/5.6/composer.phar self-update
 #  - sudo apt-get install tree
-install:
+install: composer --version
 #tree /home/travis -I build -a L 2
 #  - composer install --prefer-dist
 before_script:
@@ -31,9 +33,10 @@ deployment:
 after_deployment:
 #
 # cache on success. lifetime?
-#
+# /home/travis/build/yurii-github/yii2-mylib/vendor
 cache:
   directories:
+    - /home/travis/.phpenv/shims/composer
     - /home/travis/.phpenv/versions/5.6/composer.phar
     - /home/travis/.composer
     - vendor

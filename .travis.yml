@@ -15,8 +15,9 @@ env:
 #
 before_install:
   - composer self-update
-  - sudo apt-get install tree
-install: tree /home/travis -I build -a L 2
+#  - sudo apt-get install tree
+install:
+#tree /home/travis -I build -a L 2
 #  - composer install --prefer-dist
 before_script:
 script:
@@ -32,7 +33,6 @@ after_deployment:
 # cache on success. lifetime?
 #
 cache:
-#  apt
   directories:
-#    - $HOME/.composer
+    - /home/travis/.composer
     - vendor

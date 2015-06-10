@@ -36,7 +36,7 @@ after_deployment:
 # 
 cache:
   directories:
-    - /home/travis/.phpenv/versions/5.6/bin/composer
     - /home/travis/.phpenv/versions/5.6/composer.phar
+    - /home/travis/.composer
     # app
     - /home/travis/build/yurii-github/yii2-mylib/vendor

@@ -192,11 +192,11 @@ class Books extends ActiveRecord
 	public static function jgridBooks(array $data)
 	{
 		//defaults
-		$data['sort_column'] = empty(@$data['sort_column']) ? 'created_date' : $data['sort_column'];
-		$data['sort_order'] = @$data['sort_order'] == 'desc' ? SORT_DESC : SORT_ASC; //+secure
-		$data['limit'] = @$data['limit'] <= 0 || @$data['limit'] > 30 ? 10 : $data['limit'];
-		$data['page'] = @$data['page'] <= 0 ? 1 : $data['page'];
-		$filters = json_decode(@$data['filters']);
+		$data['sort_column'] = empty($data['sort_column']) ? 'created_date' : $data['sort_column'];
+		$data['sort_order'] = !empty($data['sort_order']) &&  $data['sort_order']  == 'desc' ? SORT_DESC : SORT_ASC; //+secure
+		$data['limit'] = empty($data['limit']) || $data['limit'] <= 0 || $data['limit'] > 30 ? 10 : $data['limit'];
+		$data['page'] = empty($data['page']) || $data['page'] <= 0 ? 1 : $data['page'];
+		$filters = empty($data['filters']) ? null : json_decode($data['filters']);
 		$q = Books::find();
 		
 		if ($filters instanceof \stdClass && ! empty($filters->rules)) {

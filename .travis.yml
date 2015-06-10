@@ -34,5 +34,5 @@ after_deployment:
 cache:
   apt
   directories:
-    - /home/travis/.composer
+    - $HOME/.composer
     - vendor

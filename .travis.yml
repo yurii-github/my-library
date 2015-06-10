@@ -4,7 +4,7 @@
 language: php
 php:
   - 5.6
-  - nightly
+#  - nightly
 #
 # Parallelizing builds
 #
@@ -13,7 +13,9 @@ env:
 #
 # build lifecycle
 #
-before_install: composer self-update
+before_install:
+  - whereis composer
+  - composer self-update
 install:        composer update
 before_script:
 script:

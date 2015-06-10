@@ -24,6 +24,6 @@ after_deployment:
 #
 # cache on success. lifetime?
 #
-cache: true
+cache:
   directories:
     - vendor

@@ -13,9 +13,9 @@ Most js/css come from CDN networks, so you probably eager to check code at /app/
 
 <h3>Requirements</h3>
 
-php 5.4+
-url rewrite
-mysqlite or mysql
++ php >=5.5
++ url rewrite
++ mysqlite or mysql
 
 
 <h3>Setup</h3>

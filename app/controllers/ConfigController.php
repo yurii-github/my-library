@@ -20,8 +20,8 @@ class ConfigController extends Controller
 	{
 		$files = [];
 		try {
-			$d = new \DirectoryIterator(\Yii::$app->mycfg->library->directory);
-			foreach ($d as $file) {
+			$libDir = new \DirectoryIterator(\Yii::$app->mycfg->library->directory);
+			foreach ($libDir as $file) {
 				if ($file->isFile()) {
 					$files[] = \Yii::$app->mycfg->Decode($file->getFilename());
 				}
@@ -70,11 +70,11 @@ class ConfigController extends Controller
 	// return list of users
 	public function actionUsers()
 	{
-		$a = Yii::$app->authManager;	
+		$auth = Yii::$app->authManager;	
 		$data = [];
-		$roles = $a->getRoles();
+		$roles = $auth->getRoles();
 		foreach ($roles as $r) {
-			$perms = $a->getChildren($r->name);
+			$perms = $auth->getChildren($r->name);
 			foreach ($perms as $p) {
 				$data[$r->name][ $p->name] = $p;
 			}
@@ -103,21 +103,10 @@ class ConfigController extends Controller
 
 	public function actionImportFiles()
 	{
-
 		if (\Yii::$app->request->getMethod() == 'GET') {
-			// TODO: read with iterator, not all. may use too much memory
-			$files_db = [];
-			$books = Books::find()->select(['filename'])->asArray()->all();
-			//var_dump($books); die;
-			foreach ($books as $book) {
-				$files_db[] = $book['filename'];
-			}
-			$files = $this->getLibraryBookFilenames();
-			$arr_fs_only = array_values(array_diff($files, $files_db));
-			return json_encode($arr_fs_only, JSON_UNESCAPED_UNICODE);
+			return json_encode($this->getFiles_FileSystemOnly(), JSON_UNESCAPED_UNICODE);
 		}
-		
-		//TODO: duplicate check
+
 		if (\Yii::$app->request->getMethod() == 'POST') {
 			$error = '';
 			$post = \Yii::$app->request->post('post');
@@ -138,6 +127,23 @@ class ConfigController extends Controller
 			return json_encode(['data'=> $arr_added, 'result' => true, 'error' => ''], JSON_UNESCAPED_UNICODE);
 		}
 	}
+	
+	protected function getFiles_FileSystemOnly()
+	{
+		// TODO: read with iterator, not all. may use too much memory
+		$files_db = [];
+		$books = Books::find()->select(['filename'])->asArray()->all();
+		//var_dump($books); die;
+		foreach ($books as $book) {
+			$files_db[] = $book['filename'];
+		}
+		$files = $this->getLibraryBookFilenames();
+		$arr_fs_only = array_values(array_diff($files, $files_db));
+		return $arr_fs_only;
+	}
+	
+	
+	
 
 	public function actionClearDbFiles()
 	{

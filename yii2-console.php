@@ -23,4 +23,4 @@ unset($cfg_main);
 
 $application = new yii\console\Application(yii\helpers\ArrayHelper::merge($config, $cfg_fixed));
 $exitCode = $application->run();
-exit($exitCode);
+//exit($exitCode);

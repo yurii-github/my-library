@@ -337,4 +337,4 @@ $this->title = "MyLibrary ~ {$this->title}";
 <?php $this->endBody(); ?>
 </body>
 </html>
-<?php $this->endPage(); ?>
+<?php $this->endPage();

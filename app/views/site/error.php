@@ -6,4 +6,4 @@ code: <?= $exception->getCode()?>
 <br/>
 message: <?= $exception->getMessage();?>
 <br/>
-file: <?=$exception->getFile()?> : <?=$exception->getLine()?>
+file: <? echo $exception->getFile() . ' : ' . $exception->getLine();

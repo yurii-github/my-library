@@ -168,7 +168,7 @@ class Books extends ActiveRecord
 						if (!file_exists($this->filename)) {
 							throw new \Exception('Sync for file failed. Source file does not exist');
 						}
-						if (!@rename(
+						if (!rename(
 							\Yii::$app->mycfg->Encode(\Yii::$app->mycfg->library->directory.'/'.$this->filename),
 							\Yii::$app->mycfg->Encode(\Yii::$app->mycfg->library->directory.'/'.$new_filename))) {
 								throw new \Exception('Sync for file failed.<br /><br />' . \error_get_last()['message']);
@@ -184,6 +184,43 @@ class Books extends ActiveRecord
 	}
 	
 	
+	protected static function jqgridPepareQuery(array $data)
+	{
+		//defaults
+		$data['sort_column'] = empty($data['sort_column']) ? 'created_date' : $data['sort_column'];
+		$data['sort_order'] = !empty($data['sort_order']) &&  $data['sort_order']  == 'desc' ? SORT_DESC : SORT_ASC; //+secure
+		$filters = empty($data['filters']) ? null : json_decode($data['filters']);
+		$query = Books::find();
+		
+		if ($filters instanceof \stdClass && ! empty($filters->rules)) {
+			$conditions = ['bw'=>'like','eq'=>'='];
+			foreach ($filters->rules as $rule) {
+				if ($filters->groupOp == 'AND') {
+					$query->andFilterWhere([$conditions[$rule->op], $rule->field, $rule->data]);
+				} else {
+					$query->orFilterWhere([$conditions[$rule->op], $rule->field, $rule->data]);
+				}
+			}
+		}
+		if (in_array($data['sort_column'], ['favorite', 'read', 'year', 'title', 'created_date', 'isbn13', 'author', 'publisher'])) {
+			$query->orderBy([$data['sort_column'] => $data['sort_order'] ]);
+		}
+		$query->select(['created_date', 'book_guid', 'favorite', 'read', 'year', 'title', 'isbn13', 'author', 'publisher', 'ext', 'filename']);
+		
+		return $query;
+	}
+	
+	protected static function jqgridPrepareResponse($page, $total, $records, $rows)
+	{
+		$response = new \stdClass();
+		$response->page = $page + 1; //jgrid fix
+		$response->total = $total;
+		$response->records = $records;
+		$response->rows = $rows;
+		return $response;
+	}
+	
+	
 	/**
 	 * 
 	 * @param array $data [page, limit, sort_column, sort_order, filters=json] 
@@ -191,49 +228,28 @@ class Books extends ActiveRecord
 	 */
 	public static function jgridBooks(array $data)
 	{
-		//defaults
-		$data['sort_column'] = empty(@$data['sort_column']) ? 'created_date' : $data['sort_column'];
-		$data['sort_order'] = @$data['sort_order'] == 'desc' ? SORT_DESC : SORT_ASC; //+secure
-		$data['limit'] = @$data['limit'] <= 0 || @$data['limit'] > 30 ? 10 : $data['limit'];
-		$data['page'] = @$data['page'] <= 0 ? 1 : $data['page'];
-		$filters = json_decode(@$data['filters']);
-		$q = Books::find();
+		$query = self::jqgridPepareQuery($data);
+		$data['limit'] = empty($data['limit']) || $data['limit'] <= 0 || $data['limit'] > 30 ? 10 : $data['limit'];
+		$data['page'] = empty($data['page']) || $data['page'] <= 0 ? 1 : $data['page'];
 		
-		if ($filters instanceof \stdClass && ! empty($filters->rules)) {
-			$conditions = ['bw'=>'like','eq'=>'='];
-			foreach ($filters->rules as $rule) {
-				if ($filters->groupOp == 'AND') {
-					$q->andFilterWhere([$conditions[$rule->op], $rule->field, $rule->data]);
-				} else {
-					$q->orFilterWhere([$conditions[$rule->op], $rule->field, $rule->data]);
-				}
-			}
-		}
-		if (in_array($data['sort_column'], ['favorite', 'read', 'year', 'title', 'created_date', 'isbn13', 'author', 'publisher'])) {
-			$q->orderBy([$data['sort_column'] => $data['sort_order'] ]);
-		}
-		$q->select(['created_date', 'book_guid', 'favorite', 'read', 'year', 'title', 'isbn13', 'author', 'publisher', 'ext', 'filename']);
-		
-		$ad = new ActiveDataProvider([
-			'query' => $q,
+		$provider = new ActiveDataProvider([
+			'query' => $query,
 			'pagination' => [
 				'pageSize' => $data['limit'],
 				'page' => --$data['page'] //jgrid fix
 			],
 		]);
-		//$ad->pagination->
-		$books = $ad->getModels();
 		
-		//return $books;
-		
-		$to_array = function ($obj_arr, $q) {
+		$books = $provider->getModels();
+
+		$to_array = function ($obj_arr, $query) {
 			$ar = [];
 			foreach ($obj_arr as $o) {
 				/* @var $o Books */
 				$book = [];
 				$attr = $o->getAttributes($o->fields());
 				//jgrid required no assoc array same order
-				foreach ($q->select as $col) {
+				foreach ($query->select as $col) {
 					if ($col == 'created_date') {
 						$book[] = \Yii::$app->formatter->asDate($attr[$col], 'php:d-m-Y');
 					} else {
@@ -245,13 +261,8 @@ class Books extends ActiveRecord
 			return $ar;
 		};
 		
-		$response = new \stdClass();
-		$response->page = $ad->getPagination()->getPage()+1;//jgrid fix
-		$response->total = $ad->getPagination()->getPageCount();
-		$response->records = $ad->getTotalCount();
-		$response->rows = $to_array($books, $q);
 		
-		return $response;
+		return self::jqgridPrepareResponse($provider->getPagination()->getPage(), $provider->getPagination()->getPageCount(), $provider->getTotalCount(), $to_array($books, $query));
 	}
 	
 	public function attributeLabels()
@@ -298,24 +309,17 @@ class Books extends ActiveRecord
 	}
 	
 	
-	
 	public function getPublishers()
 	{
-		/* @var $q \yii\db\ActiveQuery */
-		$q = $this->hasOne(Publishers::className(), ['publisher_id' => 'publisher_id']);
-		
-		//$q->eagerLoading = true;
-		return $q;
+		return $this->hasOne(Publishers::className(), ['publisher_id' => 'publisher_id']);
 	}
+	
 	
 	public function attributes()
 	{
-	
 		return array_merge(parent::attributes(), ['publishers.name']);
 	}
-	
-	
-	
+
 
 }
 

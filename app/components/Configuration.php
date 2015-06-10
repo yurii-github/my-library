@@ -58,9 +58,9 @@ namespace app\components
 			// silently injects newly introduced option into current config from default config
 			//
 			$def_config = $this->getDefaultCfg();
-			$rf = new \ReflectionObject($def_config);
+			$rf1 = new \ReflectionObject($def_config);
 			/* @var $p_base \ReflectionProperty */
-			foreach ($rf->getProperties() as $p_base) {// lvl-1: system, book ...
+			foreach ($rf1->getProperties() as $p_base) {// lvl-1: system, book ...
 				$lvl1 = $p_base->name;
 				if (empty($this->config->$lvl1)) {
 					$this->config->$lvl1 = $def_config->$lvl1;

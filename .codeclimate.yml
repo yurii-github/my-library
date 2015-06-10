@@ -9,3 +9,5 @@ languages:
 exclude_paths:
   - app/i18n/*
   - app/public/*
+  - app/emails/*
+  - app/tests/*

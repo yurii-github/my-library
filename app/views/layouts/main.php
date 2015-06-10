@@ -61,4 +61,4 @@ if(\Yii::$app->user->isGuest) { // append login form
 <?php $this->endBody(); ?>
 </body>
 </html>
-<?php $this->endPage(); ?>
+<?php $this->endPage();

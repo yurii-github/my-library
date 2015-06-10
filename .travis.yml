@@ -16,11 +16,13 @@ env:
 before_install:
   - whereis composer
   - composer self-update
+  - apt-get install tree
 install:        composer update
 before_script:
 script:
-  - cd app/tests
-  - ../../vendor/bin/phpunit --testsuite=$TEST_SUITE --colors
+  - tree -d $HOME
+#  - cd app/tests
+#  - ../../vendor/bin/phpunit --testsuite=$TEST_SUITE --colors
 after_success:
 after_failure:
 after_script:

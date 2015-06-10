@@ -18,7 +18,8 @@ install:
   - bash .travis-install.sh
 before_script:
 script:
-  - vendor/bin/phpunit app/tests --testsuite=$TEST_SUITE --colors
+  - cd app/tests
+  - ../../vendor/bin/phpunit --testsuite=$TEST_SUITE --colors --strict
 after_success:
 after_failure:
 after_script:
@@ -30,4 +31,5 @@ after_deployment:
 # 
 cache:
   directories:
+    - composer.lock
     - vendor

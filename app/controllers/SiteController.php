@@ -235,7 +235,7 @@ TXT
 	public function actionManage()
 	{
 		/* @var $book Books */	
-		switch ($_POST['oper']) {
+		switch (\Yii::$app->request->post('oper')) {
 			case 'add':
 				$book = new Books(['scenario'=>'add']);
 				$book->attributes = \Yii::$app->request->post();

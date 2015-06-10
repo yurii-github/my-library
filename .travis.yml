@@ -20,7 +20,7 @@ before_install:
 install:        composer update
 before_script:
 script:
-  - tree -d $HOME
+  - tree /home/travis -I 'build' -a -L 2
 #  - cd app/tests
 #  - ../../vendor/bin/phpunit --testsuite=$TEST_SUITE --colors
 after_success:
@@ -33,5 +33,6 @@ after_deployment:
 # cache on success. lifetime?
 #
 cache:
+  apt
   directories:
     - vendor

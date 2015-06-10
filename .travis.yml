@@ -19,7 +19,7 @@ install:
 before_script:
 script:
   - cd app/tests
-  - ../../vendor/bin/phpunit --testsuite=$TEST_SUITE --colors --strict --coverage-clover 
+  - ../../vendor/bin/phpunit --testsuite=$TEST_SUITE --colors --strict --coverage-clover build/logs/clover.xml 
 after_success:
 after_failure:
 after_script:

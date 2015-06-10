@@ -73,12 +73,7 @@ class ConfigurationTest extends \tests\AppTestCase
 		$this->assertEquals($filename, $dec, 'filename encode/decode has failed');
 	}
 	
-	// file exists
-	public function test_load_in_constructor()
-	{
-		$config2 = new Configuration(['config_file' => $this->config->config_file]);
-	}
-	
+
 	/**
 	 * @expectedException yii\base\InvalidCallException
 	 */

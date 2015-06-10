@@ -168,7 +168,7 @@ class Books extends ActiveRecord
 						if (!file_exists($this->filename)) {
 							throw new \Exception('Sync for file failed. Source file does not exist');
 						}
-						if (!@rename(
+						if (!rename(
 							\Yii::$app->mycfg->Encode(\Yii::$app->mycfg->library->directory.'/'.$this->filename),
 							\Yii::$app->mycfg->Encode(\Yii::$app->mycfg->library->directory.'/'.$new_filename))) {
 								throw new \Exception('Sync for file failed.<br /><br />' . \error_get_last()['message']);
@@ -197,43 +197,41 @@ class Books extends ActiveRecord
 		$data['limit'] = empty($data['limit']) || $data['limit'] <= 0 || $data['limit'] > 30 ? 10 : $data['limit'];
 		$data['page'] = empty($data['page']) || $data['page'] <= 0 ? 1 : $data['page'];
 		$filters = empty($data['filters']) ? null : json_decode($data['filters']);
-		$q = Books::find();
+		$query = Books::find();
 		
 		if ($filters instanceof \stdClass && ! empty($filters->rules)) {
 			$conditions = ['bw'=>'like','eq'=>'='];
 			foreach ($filters->rules as $rule) {
 				if ($filters->groupOp == 'AND') {
-					$q->andFilterWhere([$conditions[$rule->op], $rule->field, $rule->data]);
+					$query->andFilterWhere([$conditions[$rule->op], $rule->field, $rule->data]);
 				} else {
-					$q->orFilterWhere([$conditions[$rule->op], $rule->field, $rule->data]);
+					$query->orFilterWhere([$conditions[$rule->op], $rule->field, $rule->data]);
 				}
 			}
 		}
 		if (in_array($data['sort_column'], ['favorite', 'read', 'year', 'title', 'created_date', 'isbn13', 'author', 'publisher'])) {
-			$q->orderBy([$data['sort_column'] => $data['sort_order'] ]);
+			$query->orderBy([$data['sort_column'] => $data['sort_order'] ]);
 		}
-		$q->select(['created_date', 'book_guid', 'favorite', 'read', 'year', 'title', 'isbn13', 'author', 'publisher', 'ext', 'filename']);
+		$query->select(['created_date', 'book_guid', 'favorite', 'read', 'year', 'title', 'isbn13', 'author', 'publisher', 'ext', 'filename']);
 		
-		$ad = new ActiveDataProvider([
-			'query' => $q,
+		$provider = new ActiveDataProvider([
+			'query' => $query,
 			'pagination' => [
 				'pageSize' => $data['limit'],
 				'page' => --$data['page'] //jgrid fix
 			],
 		]);
-		//$ad->pagination->
-		$books = $ad->getModels();
 		
-		//return $books;
-		
-		$to_array = function ($obj_arr, $q) {
+		$books = $provider->getModels();
+
+		$to_array = function ($obj_arr, $query) {
 			$ar = [];
 			foreach ($obj_arr as $o) {
 				/* @var $o Books */
 				$book = [];
 				$attr = $o->getAttributes($o->fields());
 				//jgrid required no assoc array same order
-				foreach ($q->select as $col) {
+				foreach ($query->select as $col) {
 					if ($col == 'created_date') {
 						$book[] = \Yii::$app->formatter->asDate($attr[$col], 'php:d-m-Y');
 					} else {
@@ -246,10 +244,10 @@ class Books extends ActiveRecord
 		};
 		
 		$response = new \stdClass();
-		$response->page = $ad->getPagination()->getPage()+1;//jgrid fix
-		$response->total = $ad->getPagination()->getPageCount();
-		$response->records = $ad->getTotalCount();
-		$response->rows = $to_array($books, $q);
+		$response->page = $provider->getPagination()->getPage()+1;//jgrid fix
+		$response->total = $provider->getPagination()->getPageCount();
+		$response->records = $provider->getTotalCount();
+		$response->rows = $to_array($books, $query);
 		
 		return $response;
 	}

@@ -1,6 +1,6 @@
-# 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Continuous Integration and Deployment: https://travis-ci.org
-# 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 language: php
 php: 5.6
 #
@@ -14,7 +14,7 @@ env:
 before_install: composer self-update
 install:        composer update
 before_script:
-script:         cd app/tests; phpunit --testsuite=unit --colors; cd ../..; $? pwd
+script:         cd app/tests; phpunit --testsuite=$TEST_SUITE --colors; cd ../..; pwd$?
 after_success:
 after_failure:
 after_script:
@@ -22,5 +22,8 @@ before_deployment:
 deployment:
 after_deployment:
 #
-# cache on success. life?
+# cache on success. lifetime?
 #
+cache: true
+  directories:
+    - vendor

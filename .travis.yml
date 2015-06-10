@@ -16,15 +16,15 @@ env:
 before_install:
   - composer --version
   - /home/travis/.phpenv/versions/5.6/bin/composer self-update
-#  - php /home/travis/.phpenv/versions/5.6/composer.phar self-update
 #  - sudo apt-get install tree
-install: composer --version
+install: 
+  - composer --version
+  - composer install --prefer-dist
 #tree /home/travis -I build -a L 2
-#  - composer install --prefer-dist
 before_script:
 script:
-#  - cd app/tests
-#  - ../../vendor/bin/phpunit --testsuite=$TEST_SUITE --colors
+  - cd app/tests
+  - ../../vendor/bin/phpunit --testsuite=$TEST_SUITE --colors
 after_success:
 after_failure:
 after_script:

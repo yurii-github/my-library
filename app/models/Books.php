@@ -184,18 +184,11 @@ class Books extends ActiveRecord
 	}
 	
 	
-	/**
-	 * 
-	 * @param array $data [page, limit, sort_column, sort_order, filters=json] 
-	 * @return multitype:multitype:Ambigous <NULL> multitype:unknown string   |\stdClass
-	 */
-	public static function jgridBooks(array $data)
+	protected static function jqgridPepareQuery(array $data)
 	{
 		//defaults
 		$data['sort_column'] = empty($data['sort_column']) ? 'created_date' : $data['sort_column'];
 		$data['sort_order'] = !empty($data['sort_order']) &&  $data['sort_order']  == 'desc' ? SORT_DESC : SORT_ASC; //+secure
-		$data['limit'] = empty($data['limit']) || $data['limit'] <= 0 || $data['limit'] > 30 ? 10 : $data['limit'];
-		$data['page'] = empty($data['page']) || $data['page'] <= 0 ? 1 : $data['page'];
 		$filters = empty($data['filters']) ? null : json_decode($data['filters']);
 		$query = Books::find();
 		
@@ -213,6 +206,31 @@ class Books extends ActiveRecord
 			$query->orderBy([$data['sort_column'] => $data['sort_order'] ]);
 		}
 		$query->select(['created_date', 'book_guid', 'favorite', 'read', 'year', 'title', 'isbn13', 'author', 'publisher', 'ext', 'filename']);
+		
+		return $query;
+	}
+	
+	protected static function jqgridPrepareResponse($page, $total, $records, $rows)
+	{
+		$response = new \stdClass();
+		$response->page = $page + 1; //jgrid fix
+		$response->total = $total;
+		$response->records = $records;
+		$response->rows = $rows;
+		return $response;
+	}
+	
+	
+	/**
+	 * 
+	 * @param array $data [page, limit, sort_column, sort_order, filters=json] 
+	 * @return multitype:multitype:Ambigous <NULL> multitype:unknown string   |\stdClass
+	 */
+	public static function jgridBooks(array $data)
+	{
+		$query = self::jqgridPepareQuery($data);
+		$data['limit'] = empty($data['limit']) || $data['limit'] <= 0 || $data['limit'] > 30 ? 10 : $data['limit'];
+		$data['page'] = empty($data['page']) || $data['page'] <= 0 ? 1 : $data['page'];
 		
 		$provider = new ActiveDataProvider([
 			'query' => $query,
@@ -243,13 +261,8 @@ class Books extends ActiveRecord
 			return $ar;
 		};
 		
-		$response = new \stdClass();
-		$response->page = $provider->getPagination()->getPage()+1;//jgrid fix
-		$response->total = $provider->getPagination()->getPageCount();
-		$response->records = $provider->getTotalCount();
-		$response->rows = $to_array($books, $query);
 		
-		return $response;
+		return self::jqgridPrepareResponse($provider->getPagination()->getPage(), $provider->getPagination()->getPageCount(), $provider->getTotalCount(), $to_array($books, $query));
 	}
 	
 	public function attributeLabels()
@@ -296,24 +309,17 @@ class Books extends ActiveRecord
 	}
 	
 	
-	
 	public function getPublishers()
 	{
-		/* @var $q \yii\db\ActiveQuery */
-		$q = $this->hasOne(Publishers::className(), ['publisher_id' => 'publisher_id']);
-		
-		//$q->eagerLoading = true;
-		return $q;
+		return $this->hasOne(Publishers::className(), ['publisher_id' => 'publisher_id']);
 	}
+	
 	
 	public function attributes()
 	{
-	
 		return array_merge(parent::attributes(), ['publishers.name']);
 	}
-	
-	
-	
+
 
 }
 

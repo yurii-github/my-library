@@ -58,24 +58,24 @@ class APCu extends Model
 			return $str;
 		};
 		
-		$c = apcu_cache_info();
-		$s = apcu_sma_info();
+		$apcu_cache = apcu_cache_info();
+		$apcu_sma = apcu_sma_info();
 	
 		$this->apcu_version = phpversion('apcu');
 		$this->php_version = phpversion();
-		$this->memory_type = $c['memory_type'];
-		$this->variables_size = $c['mem_size'];
-		$this->start_time = date('Y-m-d H:i:s', $c['start_time']);
-		$this->uptime = $duration($c['start_time']);
-		$this->file_upload_progress = $c['file_upload_progress'] == 1 ? 'Yes' : 'No';
-		$this->hits = $c['num_hits'];
-		$this->misses = $c['num_misses'];
-		$this->inserts = $c['num_inserts'];
-		$this->entries = $c['num_entries'];
-	//	var_dump($c['cache_list']);
-		$this->memory_available = $s['avail_mem'];
-		$this->memory_segments = $s['num_seg'];
-		$this->memory_segment_size = $s['seg_size'];
+		$this->memory_type = $apcu_cache['memory_type'];
+		$this->variables_size = $apcu_cache['mem_size'];
+		$this->start_time = date('Y-m-d H:i:s', $apcu_cache['start_time']);
+		$this->uptime = $duration($apcu_cache['start_time']);
+		$this->file_upload_progress = $apcu_cache['file_upload_progress'] == 1 ? 'Yes' : 'No';
+		$this->hits = $apcu_cache['num_hits'];
+		$this->misses = $apcu_cache['num_misses'];
+		$this->inserts = $apcu_cache['num_inserts'];
+		$this->entries = $apcu_cache['num_entries'];
+	//	var_dump($apcu_cache['cache_list']);
+		$this->memory_available = $apcu_sma['avail_mem'];
+		$this->memory_segments = $apcu_sma['num_seg'];
+		$this->memory_segment_size = $apcu_sma['seg_size'];
 		$this->memory_total_size = $this->memory_segments * $this->memory_segment_size;
 		$this->memory_used = $this->memory_total_size - $this->memory_available;
 	}

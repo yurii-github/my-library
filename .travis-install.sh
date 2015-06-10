@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ -d vendor ]
+if [ -d vendor/bin ]
 then
   echo 'using cache. nothing to do.';
 else

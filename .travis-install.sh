@@ -1,7 +1,9 @@
 #!/bin/bash
 
-# if cache is not set, download dependencies
-if [ ! -d vendor ]
+if [ -d vendor ]
 then
-    composer install --prefer-dist
+  echo 'using cache. nothing to do.';
+else
+ echo 'downloading dependencies..';
+ composer install --prefer-dist
 fi

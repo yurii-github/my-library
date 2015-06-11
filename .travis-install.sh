@@ -2,7 +2,7 @@
 
 if [ -d vendor/bin ]
 then
-  echo "^[[0;37;43musing cache. nothing to do";
+  printf "^[[0;34;40musing cache. nothing to do";
 else
   echo "^[[0;37;43mgetting latest PHPUnit";
   wget https://phar.phpunit.de/phpunit.phar -O yurii/phpunit.phar --no-check-certificate

@@ -22,8 +22,8 @@ class ConfigurationTest extends \tests\AppTestCase
 	public function test_gets()
 	{
 		$this->assertTrue(is_string($this->config->getVersion()));
-		$this->assertInstanceOf(Library::class, $this->config->getLibrary());
-		$this->assertInstanceOf(Database::class, $this->config->getDatabase());
+		$this->assertInstanceOf(Library::class, $this->config->library);
+		$this->assertInstanceOf(Database::class, $this->config->database);
 	}
 	
 	

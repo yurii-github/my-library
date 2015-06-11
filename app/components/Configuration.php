@@ -24,6 +24,8 @@ namespace app\components
 		private $version = '1.1';
 		private $config;
 		public $config_file;
+		
+		private $options = ['system', 'database', 'library', 'book'];
 
 		public function __construct($config = [])
 		{
@@ -36,6 +38,41 @@ namespace app\components
 				$this->load($this->config_file);
 			}
 			
+		}
+		
+		/**
+		 * (non-PHPdoc)
+		 * @see \yii\base\Object::__get()
+		 */
+		public function __get($name)
+		{
+			if (in_array($name, $this->options)) {
+				return $this->config->$name;
+			}
+				
+			return parent::__get($name);
+		}
+		
+		/**
+		 * (non-PHPdoc)
+		 * @see \yii\base\Object::__set()
+		 */
+		public function __set($name, $value)
+		{
+			if (in_array($name, $this->options)) {
+				 throw new \yii\base\InvalidCallException('Setting read-only property: ' . get_class($this) . '::' . $name);
+			}
+			
+			parent::__set($name, $value);
+		}
+
+		/**
+		 * 
+		 * @return string
+		 */
+		public function getVersion()
+		{
+			return $this->version;
 		}
 		
 		protected function saveDefaultCfg()
@@ -137,42 +174,6 @@ namespace app\components
 			file_put_contents($filename, Json::encode($this->config, JSON_PRETTY_PRINT));			
 		}
 
-
-		public function getVersion()
-		{
-			return $this->version;
-		}
-		
-		/**
-		 * @return \frontend\components\configuration\System
-		 */
-		public function getSystem()
-		{
-			return $this->config->system;
-		}
-
-		
-		/**
-		 * @return \frontend\components\configuration\Library
-		 */
-		public function getLibrary()
-		{
-			return $this->config->library;
-		}
-		/**
-		 * @return \frontend\components\configuration\Database
-		 */
-		public function getDatabase()
-		{
-			return $this->config->database;
-		}
-		/**
-		 * @return \frontend\components\configuration\Book
-		 */
-		public function getBook()
-		{
-			return $this->config->book;
-		}
 	}
 }
 

@@ -83,39 +83,20 @@ return [
 			]
 		],
 		'urlManager' => [
-			'class' => 'app\components\UrlManager',
-			'use_cache' => false,
+			'class' => \yii\web\UrlManager::class,
 			'enablePrettyUrl' => true,
 			'showScriptName' => false,
 			'enableStrictParsing' => false,
 			'rules' => [
 				'admin' => 'admin-site/index',
 				'admin/site/cover/<id>' => 'admin/site/cover',
-			//	['class' => 'common\components\AdminRule'],
 				'' => 'site/index',
 				'config' => 'config/index',
 				'about' => 'site/about',
 				'install' => 'install/install',
 				'dbadmin' => 'site/dbadmin',
-				'<controller:\w+>s' => '<controller>/index',
-				//'<_lang:\w{2}>/<controller>/<action>' => '<controller>/<action>',
-				//'<controller:\w+>s' => '<controller>/index',
-				//'' => 'site/index',
-				//'cover/<book_guid>' => 'site/cover',
-				//'<n>/<c>' => '<c>',
-				//'<admin:\w+>/<controller:\w+>/<action:\w+>' // => '<controller>/<action>',
-				//	'<admin:admin>/<controller>/' => '<controller>/index',
-				//	'<admin:admin>/<controller>/<action>' => '<controller>/<action>',
-				//'index' => 'backend/site/index'
-			//
-			//
-			//'cover/<book_guid>' => 'site/cover',
-			//'config' => 'config/index',
-			//'about' => 'site/about',
-			//'install' => 'install/install',
-			//'dbadmin' => 'site/dbadmin'
 			]
-			],
+		],
 		'mailer' => [
 			'class' => 'yii\swiftmailer\Mailer',
 			'useFileTransport' => false,

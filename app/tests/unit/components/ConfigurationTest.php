@@ -7,6 +7,14 @@ use yii\db\ActiveRecord;
 use app\components\configuration\Library;
 use app\components\configuration\Database;
 
+class mockConfiguration extends Configuration
+{
+	public function getDefaultCfg()
+	{
+		return parent::getDefaultCfg();
+	}
+}
+
 class ConfigurationTest extends \tests\AppTestCase
 {
 	/* @var $config Configuration */
@@ -15,15 +23,15 @@ class ConfigurationTest extends \tests\AppTestCase
 	protected function setUp()
 	{
 		$this->initAppFileSystem();
-		$this->config = new Configuration(['config_file' => $this->getConfigFilename()]);
+		$this->config = new mockConfiguration(['config_file' => $this->getConfigFilename()]);
 	}
 	
 	
 	public function test_gets()
 	{
 		$this->assertTrue(is_string($this->config->getVersion()));
-		$this->assertInstanceOf(Library::class, $this->config->getLibrary());
-		$this->assertInstanceOf(Database::class, $this->config->getDatabase());
+		$this->assertEquals(\Yii::getAlias('@app/data/books/'), $this->config->library->directory);
+		$this->assertEquals(\Yii::getAlias('@app/data/mydb.s3db'), $this->config->database->filename);
 	}
 	
 	
@@ -59,7 +67,7 @@ class ConfigurationTest extends \tests\AppTestCase
 		$mock_cfg->expects($this->any())->method('getDefaultCfg')->willReturn($def_config);
 		$mock_cfg->load($this->config->config_file); // load old config, our modified default config must apply level1 and level2 params
 		
-		$this->assertInstanceOf(Library::class, $mock_cfg->library);
+		$this->assertEquals('cp1251', $mock_cfg->library->codepage);
 		$this->assertEquals($mock_cfg->system->level2, 'value 2');
 	}
 	

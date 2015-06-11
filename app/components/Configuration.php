@@ -24,6 +24,8 @@ namespace app\components
 		private $version = '1.1';
 		private $config;
 		public $config_file;
+		
+		private $options = ['system', 'database', 'library', 'book'];
 
 		public function __construct($config = [])
 		{
@@ -36,6 +38,41 @@ namespace app\components
 				$this->load($this->config_file);
 			}
 			
+		}
+		
+		/**
+		 * (non-PHPdoc)
+		 * @see \yii\base\Object::__get()
+		 */
+		public function __get($name)
+		{
+			if (in_array($name, $this->options)) {
+				return $this->config->$name;
+			}
+				
+			return parent::__get($name);
+		}
+		
+		/**
+		 * (non-PHPdoc)
+		 * @see \yii\base\Object::__set()
+		 */
+		public function __set($name, $value)
+		{
+			if (in_array($name, $this->options)) {
+				 throw new \yii\base\InvalidCallException('Setting read-only property: ' . get_class($this) . '::' . $name);
+			}
+			
+			parent::__set($name, $value);
+		}
+
+		/**
+		 * 
+		 * @return string
+		 */
+		public function getVersion()
+		{
+			return $this->version;
 		}
 		
 		protected function saveDefaultCfg()
@@ -79,31 +116,41 @@ namespace app\components
 		}
 		
 	
-		public function getDefaultCfg()
+		protected function getDefaultCfg()
 		{
-			$cfg = new \stdClass();
-			$cfg->system = new System();
-			$cfg->system->email = false;
-			$cfg->system->emailto = null;
-			$cfg->system->theme = 'smoothness';
-			$cfg->system->timezone = 'Europe/Kiev';
-			$cfg->system->language = 'en-US';
-			$cfg->library = new Library();
-			$cfg->library->codepage = 'cp1251';
-			$cfg->library->directory = \Yii::getAlias('@app/data/books/');
-			$cfg->library->sync = false;
-			$cfg->database = new Database();
-			$cfg->database->format = 'sqlite';
-			$cfg->database->filename = \Yii::getAlias('@app/data/mydb.s3db'); //used by sqlite
-			$cfg->database->host = 'localhost';
-			$cfg->database->dbname = 'mylib';
-			$cfg->database->login = '';
-			$cfg->database->password = '';
-			$cfg->book = new Book();
-			$cfg->book->covermaxwidth = 800;
-			$cfg->book->covertype = 'image/jpeg';
-			$cfg->book->nameformat = "{year}, ''{title}'', {publisher} [{isbn13}].{ext}";
-			return $cfg;
+			$directory = addslashes(\Yii::getAlias('@app/data/books/'));
+			$filename = addslashes(\Yii::getAlias('@app/data/mydb.s3db'));
+			$json = 
+			<<<JSON
+{
+    "system": {
+        "email": false,
+        "emailto": null,
+        "theme": "smoothness",
+        "timezone": "Europe\/Kiev",
+        "language": "en-US"
+    },
+    "library": {
+        "codepage": "cp1251",
+        "directory": "$directory",
+        "sync": false
+    },
+    "database": {
+        "format": "sqlite",
+        "filename": "$filename",
+        "host": "localhost",
+        "dbname": "mylib",
+        "login": "",
+        "password": ""
+    },
+    "book": {
+        "covermaxwidth": 800,
+        "covertype": "image\/jpeg",
+        "nameformat": "{year}, ''{title}'', {publisher} [{isbn13}].{ext}"
+    }
+}
+JSON;
+			return json_decode($json);
 		}
 
 		
@@ -137,42 +184,6 @@ namespace app\components
 			file_put_contents($filename, Json::encode($this->config, JSON_PRETTY_PRINT));			
 		}
 
-
-		public function getVersion()
-		{
-			return $this->version;
-		}
-		
-		/**
-		 * @return \frontend\components\configuration\System
-		 */
-		public function getSystem()
-		{
-			return $this->config->system;
-		}
-
-		
-		/**
-		 * @return \frontend\components\configuration\Library
-		 */
-		public function getLibrary()
-		{
-			return $this->config->library;
-		}
-		/**
-		 * @return \frontend\components\configuration\Database
-		 */
-		public function getDatabase()
-		{
-			return $this->config->database;
-		}
-		/**
-		 * @return \frontend\components\configuration\Book
-		 */
-		public function getBook()
-		{
-			return $this->config->book;
-		}
 	}
 }
 

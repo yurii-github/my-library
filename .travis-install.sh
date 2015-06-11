@@ -6,5 +6,5 @@ then
 else
  echo 'downloading dependencies..';
  composer install --prefer-dist
- composer require codeclimate/php-test-reporter --dev
+ composer require codeclimate/php-test-reporter
 fi

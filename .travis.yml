@@ -19,7 +19,7 @@ install:
 before_script:
 script:
   - cd app/tests
-  - php ../../phpunit.phar --testsuite=$TEST_SUITE --coverage-clover ../../build/logs/clover.xml
+  - php ../../yurii-env/phpunit.phar --testsuite=$TEST_SUITE --coverage-clover ../../build/logs/clover.xml
   - cd ../..
 after_success:
 after_failure:
@@ -40,4 +40,4 @@ addons:
 cache:
   directories:
     - vendor
-    - phpunit.phar
+    - yurii-env

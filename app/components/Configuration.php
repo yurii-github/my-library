@@ -116,7 +116,7 @@ namespace app\components
 		}
 		
 	
-		public function getDefaultCfg()
+		protected function getDefaultCfg()
 		{
 			$cfg = new \stdClass();
 			$cfg->system = new System();

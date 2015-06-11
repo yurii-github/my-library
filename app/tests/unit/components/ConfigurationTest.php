@@ -7,6 +7,14 @@ use yii\db\ActiveRecord;
 use app\components\configuration\Library;
 use app\components\configuration\Database;
 
+class mockConfiguration extends Configuration
+{
+	public function getDefaultCfg()
+	{
+		return parent::getDefaultCfg();
+	}
+}
+
 class ConfigurationTest extends \tests\AppTestCase
 {
 	/* @var $config Configuration */
@@ -15,7 +23,7 @@ class ConfigurationTest extends \tests\AppTestCase
 	protected function setUp()
 	{
 		$this->initAppFileSystem();
-		$this->config = new Configuration(['config_file' => $this->getConfigFilename()]);
+		$this->config = new mockConfiguration(['config_file' => $this->getConfigFilename()]);
 	}
 	
 	

@@ -1,5 +1,5 @@
 
-CREATE TABLE `books` (
+CREATE TABLE books (
   `book_guid` char(36) NOT NULL,
   `created_date` datetime NOT NULL,
   `updated_date` datetime NOT NULL,
@@ -16,3 +16,10 @@ CREATE TABLE `books` (
   PRIMARY KEY (`book_guid`)
 );
 
+CREATE TABLE users (
+  username VARCHAR(255),
+  password VARCHAR(255),
+  access_token VARCHAR(2000),
+  auth_key VARCHAR(255),
+  PRIMARY KEY (username)
+);

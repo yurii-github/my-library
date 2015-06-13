@@ -8,7 +8,10 @@ class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 {
 	static $dbc;
 	static $pdo;
-	protected $dataset = [];
+	protected $dataset = [ //for clearing
+		'books' => [],
+		'users' => []
+	];
 	
 	private $is_fs_init = false;
 
@@ -16,7 +19,11 @@ class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 	{
 		if (empty(self::$pdo)) {
 			self::$pdo = new \PDO('sqlite::memory:', null, null, [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]);
-			self::$pdo->query(file_get_contents(__DIR__.'/data/db.sqlite.txt')); //init tables
+			
+			//init tables
+			foreach (explode(';', file_get_contents(__DIR__.'/data/db.sqlite.txt')) as $query) {
+				self::$pdo->query($query);
+			}
 		}
 		
 		return self::$pdo;
@@ -38,14 +45,15 @@ class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 	
 	protected function tearDown()
 	{
-		parent::tearDown();
+		
 		$this->destroyApplication();
+		parent::tearDown();
+		
 	}
 	
 	protected function mockYiiApplication($config = [])
 	{
 		$this->initAppFileSystem();
-		
 		
 		new \yii\web\Application(\yii\helpers\ArrayHelper::merge([
 			'id' => 'testapp',
@@ -56,6 +64,9 @@ class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 				'@runtime' => '@app/runtime'
 			],
 			'components' => [
+				'security' => [
+					'passwordHashStrategy' => 'password_hash',
+				],
 				'db' => (new \yii\db\Connection(['pdo' => $this->getPdo()])),
 				'request' => [
 					'cookieValidationKey' => 'key',
@@ -65,6 +76,7 @@ class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 				'mycfg' => new Configuration(['config_file' => '@app/config/libconfig.json' ])
 			]
 		], $config));
+
 	}
 
 	

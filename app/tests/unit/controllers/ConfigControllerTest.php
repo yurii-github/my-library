@@ -12,7 +12,7 @@ class ConfigControllerTest extends \tests\AppTestCase
 	
 	protected function setUp()
 	{
-		$this->mockYiiApplication([]);
+		$this->mockYiiApplication();
 		
 		$this->dataset = [
 			'books' =>  [

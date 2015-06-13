@@ -88,6 +88,7 @@ class Users extends ActiveRecord implements IdentityInterface
 		if (parent::beforeSave($insert)) {
 			if ($this->isNewRecord) {
 				$this->auth_key = \Yii::$app->getSecurity()->generateRandomString();
+				$this->password = \Yii::$app->getSecurity()->generatePasswordHash($this->password, 4); //TODO: set to 10 or make as parameter
 			}
 			return true;
 		}

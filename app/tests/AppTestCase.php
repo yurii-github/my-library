@@ -81,6 +81,13 @@ class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 		return \Yii::getAlias('@app/config/libconfig.json');
 	}
 	
+	protected function getBaseFileSystem()
+	{
+		$this->initAppFileSystem();
+		
+		return vfsStream::url('base');
+	}
+	
 	protected function initAppFileSystem()
 	{
 		if ($this->is_fs_init) {
@@ -102,6 +109,8 @@ class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 		
 		\Yii::$aliases['@app'] = vfsStream::url('base');
 		//\Yii::$aliases['@webroot'] = vfsStream::url('base/public');
+		
+		$this->is_fs_init = true;
 	}
 	
 	// < - - - - - - FS - - - - -

@@ -91,15 +91,6 @@ class ConfigurationTest extends \tests\AppTestCase
 	}
 	
 	/**
-	 * @expectedException yii\base\InvalidCallException
-	 */
-	function test_setSystem_NotAllowed()
-	{
-		$this->config->system = 'asd';
-	}
-	
-	
-	/**
 	 * @expectedException yii\base\InvalidValueException
 	 */
 	function test_load_WrongConfigFile()

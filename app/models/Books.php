@@ -165,12 +165,12 @@ class Books extends ActiveRecord
 					//TODO: better combine
 					if ($this->filename != $new_filename) { // update file in filesystem
 						//check file exists
-						if (!file_exists($this->filename)) {
+						if (!file_exists(\Yii::$app->mycfg->library->directory . $this->filename)) {
 							throw new \Exception('Sync for file failed. Source file does not exist');
 						}
 						if (!rename(
-							\Yii::$app->mycfg->Encode(\Yii::$app->mycfg->library->directory.'/'.$this->filename),
-							\Yii::$app->mycfg->Encode(\Yii::$app->mycfg->library->directory.'/'.$new_filename))) {
+							\Yii::$app->mycfg->Encode(\Yii::$app->mycfg->library->directory . $this->filename),
+							\Yii::$app->mycfg->Encode(\Yii::$app->mycfg->library->directory . $new_filename))) {
 								throw new \Exception('Sync for file failed.<br /><br />' . \error_get_last()['message']);
 						}
 					}

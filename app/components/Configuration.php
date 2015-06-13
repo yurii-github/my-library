@@ -1,8 +1,6 @@
 <?php
 namespace app\components
 {
-
-	//TODO: make attr config_file protected or private - cannot change after object creation!
 	use yii\base\Object;
 	use yii\helpers\Json;
 	use yii\base\InvalidValueException;
@@ -60,7 +58,8 @@ namespace app\components
 		public function __set($name, $value)
 		{
 			if (in_array($name, $this->options)) {
-				 throw new \yii\base\InvalidCallException('Setting read-only property: ' . get_class($this) . '::' . $name);
+				$this->config->$name = $value;
+				return;
 			}
 			
 			parent::__set($name, $value);
@@ -118,7 +117,7 @@ namespace app\components
 	
 		protected function getDefaultCfg()
 		{
-			$directory = addslashes(\Yii::getAlias('@app/data/books/'));
+			$directory = addslashes(\Yii::getAlias('@app/data/books/')); //TODO: must end with slash. need to force it on update
 			$filename = addslashes(\Yii::getAlias('@app/data/mydb.s3db'));
 			$json = 
 			<<<JSON

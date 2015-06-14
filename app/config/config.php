@@ -39,6 +39,10 @@ return [
 		'debug' => [ 'class' => 'yii\debug\Module']
 	],
 	'components' => [
+		'security' => [
+			'class' => app\components\Security::class,
+			'cost' => 10
+		],
 		/*'errorHandler' => [
 		 //'class' => 'yii\web\ErrorAction'
 		 //'errorAction' => 'site/error'

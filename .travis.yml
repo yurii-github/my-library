@@ -10,6 +10,7 @@ php:
 #
 env:
   - TEST_SUITE=unit
+  - COMPOSER_NO_INTERACTION=1
 #
 # build lifecycle
 #

@@ -4,9 +4,19 @@ stopOnFailure="true"
 convertErrorsToExceptions="true" 
 convertNoticesToExceptions="true"
 convertWarningsToExceptions="true"
-strict="true"
 colors="true" 
-bootstrap="bootstrap.php">
+bootstrap="bootstrap.php"
+
+checkForUnintentionallyCoveredCode="true"
+
+beStrictAboutTestsThatDoNotTestAnything="true"
+beStrictAboutTestSize="true"
+beStrictAboutOutputDuringTests="true"
+beStrictAboutTodoAnnotatedTests="true"
+beStrictAboutChangesToGlobalState="false"
+
+verbose="true"
+>
 	<testsuites>
 		<testsuite name="unit">
 			<directory>unit</directory>
@@ -25,6 +35,7 @@ bootstrap="bootstrap.php">
 			<directory>../</directory>
 			<exclude>
 				<directory>../config</directory>
+				<directory>../components/widgets/views</directory>
 				<directory>../data</directory>
 				<directory>../emails</directory>
 				<directory>../i18n</directory>
@@ -37,9 +48,12 @@ bootstrap="bootstrap.php">
 	</filter>
 	
 	<!--
+	 -->
+	 	 
 	<logging>
 		<log  type="coverage-html" target="reports" />
 	</logging>
-  	-->
+
+
 
 </phpunit>

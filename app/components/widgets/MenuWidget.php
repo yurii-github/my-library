@@ -10,7 +10,7 @@ class MenuWidget extends Widget
 	public function run()
 	{
 		if (!is_array($this->items)) {
-			throw new \Exception('MenuWidget: items must be array');
+			throw new \yii\base\Exception('MenuWidget: items must be array');
 		}
 		
 		return $this->render('menu', ['items' => $this->items]);

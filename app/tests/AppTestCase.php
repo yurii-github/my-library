@@ -65,7 +65,7 @@ class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 			],
 			'components' => [
 				'security' => [
-					'passwordHashStrategy' => 'password_hash',
+					'class' => \app\components\Security::class,
 				],
 				'db' => (new \yii\db\Connection(['pdo' => $this->getPdo()])),
 				'request' => [

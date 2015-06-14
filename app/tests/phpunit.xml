@@ -48,12 +48,12 @@ verbose="true"
 	</filter>
 	
 	<!--
-	 -->
+	
 	 	 
 	<logging>
 		<log  type="coverage-html" target="reports" />
 	</logging>
-
+ -->
 
 
 </phpunit>

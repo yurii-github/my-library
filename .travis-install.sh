@@ -3,7 +3,7 @@
 color="\e[0;34;40m";
 
 echo -e "${color}checking for [skip clover]..";
-if git log -1 --oneline | grep -iq "[skip clover]" 
+if git log -1 --oneline | grep -iqw "[skip clover]" 
 then
   echo -e "${color}message presented. skipping clover";
   export CLOVER='';

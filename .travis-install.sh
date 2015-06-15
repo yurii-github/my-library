@@ -5,9 +5,12 @@ color="\e[0;34;40m";
 echo -e "${color}checking for [skip clover]..";
 if git log -1 --oneline | grep -iq "[skip clover]" 
 then
-  export CLOVER=''
+  echo -e "${color}message presented. skipping clover";
+  export CLOVER='';
 else
+  echo -e "${color}message not presented. setting clover..";
   export CLOVER="--coverage-clover ../../build/logs/clover.xml";
+  echo -e "${color}clover set to $CLOVER";
 fi
 
 

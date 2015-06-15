@@ -13,10 +13,12 @@ then
 	if git log -1 --oneline | grep -qie "\[sc\]" 
 	then
 		echo -e "${color}[sc] presented. removing clover..";
-		export CLOVER='';
+		CLOVER='';
+		export CLOVER;
 	else
 		echo -e "${color}[sc] not presented. setting clover..";
-		export CLOVER="--coverage-clover ../../build/logs/clover.xml";
+		CLOVER="--coverage-clover ../../build/logs/clover.xml";
+		export CLOVER;
 	fi
 
 	# cache usage

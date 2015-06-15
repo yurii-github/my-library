@@ -7,7 +7,7 @@ if git log -1 --oneline | grep -iq "[skip clover]"
 then
   export CLOVER=''
 else
-  export CLOVER="--coverage-clover $HOME/build/logs/clover.xml";
+  export CLOVER="--coverage-clover ../../build/logs/clover.xml";
 fi
 
 

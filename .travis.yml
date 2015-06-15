@@ -40,3 +40,9 @@ addons:
 cache:
   directories:
     - vendor
+
+#
+# for Docker, use of new container-based stack
+#
+sudo: false
+

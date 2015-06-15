@@ -42,7 +42,7 @@ cache:
     - vendor
 
 #
-# for Docker
+# for Docker, use of new container-based stack
 #
 sudo: false
 

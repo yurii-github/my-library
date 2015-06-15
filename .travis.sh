@@ -12,11 +12,10 @@ then
 	echo -e "${color}checking for [sc] (skip clover)..";
 	if git log -1 --oneline | grep -qie "\[sc\]" 
 	then
-		echo -e "${color}[sc] presented. removing clover..";
-		unset CLOVER;
+		echo -e "${color}[sc] presented. clover will not be set";
 	else
 		echo -e "${color}[sc] not presented. setting clover..";
-		setenv CLOVER "--coverage-clover ../../build/logs/clover.xml";
+		export CLOVER="--coverage-clover ../../build/logs/clover.xml";
 	fi
 
 	# cache usage

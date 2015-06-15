@@ -10,7 +10,7 @@ then
 	# clover usage
 	#
 	echo -e "${color}checking for [sc] (skip clover)..";
-	if git log -1 --oneline | grep -iq "[sc]" 
+	if git log -1 --oneline | grep -iqw "[sc]" 
 	then
 		echo -e "${color}[sc] presented. removing clover..";
 		export CLOVER='';

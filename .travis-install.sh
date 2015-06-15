@@ -10,14 +10,17 @@ then
 	# clover usage
 	#
 	echo -e "${color}checking for [sc] (skip clover)..";
-	if git log -1 --oneline | grep -iqw "[sc]" 
+	if git log -1 --oneline | grep -iq "[sc]" 
 	then
+		echo -e "${color}[sc] presented. removing clover..";
 		export CLOVER='';
 	else
 		echo -e "${color}[sc] not presented. setting clover..";
 		export CLOVER="--coverage-clover ../../build/logs/clover.xml";
 	fi
 
+	# cache usage
+	#
 	if [ -d vendor/bin ]
 	then
 		echo -e "${color}using cache. nothing to do";

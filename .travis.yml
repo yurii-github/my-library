@@ -9,7 +9,7 @@ php:
 # Parallelizing builds
 #
 env:
-  -  TEST_SUITE=unit COMPOSER_NO_INTERACTION=1
+  -  TEST_SUITE=unit COMPOSER_NO_INTERACTION=1 
 #
 # build lifecycle
 #
@@ -19,12 +19,12 @@ install:
 before_script:
 script:
   - cd app/tests
-  - php ../../vendor/phpunit.phar --testsuite=$TEST_SUITE --coverage-clover ../../build/logs/clover.xml
+  - php ../../vendor/phpunit.phar --testsuite=$TEST_SUITE $CLOVER
   - cd ../..
 after_success:
 after_failure:
 after_script:
-  - vendor/bin/test-reporter
+  - if [ -n $CLOVER ]; then vendor/bin/test-reporter; else echo -e "\e[0;34;40m skipping codeclimate reporter as clover was disabled by commit message";
 before_deployment:
 deployment:
 after_deployment:
@@ -40,4 +40,3 @@ addons:
 cache:
   directories:
     - vendor
-

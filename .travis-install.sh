@@ -9,12 +9,12 @@ if [ "$1" == "install" ]
 then
 	# clover usage
 	#
-	echo -e "${color}checking for [skip clover]..";
-	if git log -1 --oneline | grep -iqw "[skip clover]" 
+	echo -e "${color}checking for [sc] (skip clover)..";
+	if git log -1 --oneline | grep -iqw "[sc]" 
 	then
 		export CLOVER='';
 	else
-		echo -e "${color}message presented. setting clover..";
+		echo -e "${color}[sc] not presented. setting clover..";
 		export CLOVER="--coverage-clover ../../build/logs/clover.xml";
 	fi
 

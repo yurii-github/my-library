@@ -55,7 +55,6 @@ then
 	#
 	if [ -n "$CLOVER" ]
 	then
-		echo -e "${color}CLOVER=$CLOVER";
 		vendor/bin/test-reporter
 	else
 		echo -e "${color}skipping codeclimate reporter as clover was disabled by commit message";

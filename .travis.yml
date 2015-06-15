@@ -14,30 +14,32 @@ env:
 # build lifecycle
 #
 before_install:
+  - if git log -1 --oneline | grep -qie "\[sc\]"; then echo -e "\e[0;34;40m[sc] is presented. clover will not be set"; else export CLOVER="--coverage-clover ../../build/logs/clover.xml"; fi
 install:
-  - bash .travis-install.sh
+  - bash .travis.sh install
 before_script:
 script:
-  - cd app/tests
-  - php ../../vendor/phpunit.phar --testsuite=$TEST_SUITE --coverage-clover ../../build/logs/clover.xml
-  - cd ../..
+  - bash .travis.sh script
 after_success:
 after_failure:
 after_script:
-  - vendor/bin/test-reporter
+  - bash .travis.sh after_script
 before_deployment:
 deployment:
 after_deployment:
 #
-# other 
+# other
 #
 addons:
   code_climate:
     repo_token: c68155affdbf8dd8d28e2a5c55f67ca43474429dae16b097f19e117b1da4194b
 #
 # cache on success. lifetime?
-# 
+#
 cache:
   directories:
     - vendor
-
+#
+# for Docker, use of new container-based stack
+#
+sudo: false

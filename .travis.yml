@@ -15,16 +15,14 @@ env:
 #
 before_install:
 install:
-  - bash .travis-install.sh
+  - bash .travis-install.sh install
 before_script:
 script:
-  - cd app/tests
-  - php ../../vendor/phpunit.phar --testsuite=$TEST_SUITE $CLOVER
-  - cd ../..
+  - bash .travis-install.sh script
 after_success:
 after_failure:
 after_script:
-  - if [ -n $CLOVER ]; then vendor/bin/test-reporter; else echo -e "\e[0;34;40m skipping codeclimate reporter as clover was disabled by commit message"; fi
+  - bash .travis-install.sh after_script
 before_deployment:
 deployment:
 after_deployment:

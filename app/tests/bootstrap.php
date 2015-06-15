@@ -1,7 +1,7 @@
 <?php
-define('YII_ENABLE_EXCEPTION_HANDLER', false);
+//define('YII_ENABLE_EXCEPTION_HANDLER', false);
 define('YII_ENABLE_ERROR_HANDLE', false);
-define('YII_DEBUG', false);
+define('YII_DEBUG', true);
 define('YII_ENV', 'test');
 
 $basedir = dirname(dirname(__DIR__));

@@ -14,11 +14,10 @@ class JqueryGridTest extends \tests\AppTestCase
 				'assetManager' => [
 					'class' => AssetManager::class,
 					'basePath' => '@app/public/assets',
-					'baseUrl' => '/assets',
+					'baseUrl' => '/assets'
 				]
 			]
 		]);
-		
 	}
 	
 	public function pSupportedLangs()

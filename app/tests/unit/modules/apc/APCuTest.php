@@ -16,6 +16,18 @@ class APCuMock extends APCu
 
 class APCuTest extends \tests\AppTestCase
 {
+	public function test_bsize()
+	{
+		$this->assertEquals('1.0 Kbyte', APCu::bsize(1024));
+		$this->assertEquals('2.0 Kbytes', APCu::bsize(2*1024));
+		
+		$this->assertEquals('1.0 Mbyte', APCu::bsize(1024*1024));
+		$this->assertEquals('2.0 Mbytes', APCu::bsize(2*1024*1024));
+		
+		$this->assertEquals('1.0 Gbyte', APCu::bsize(1024*1024*1024));
+		$this->assertEquals('2.0 Gbytes', APCu::bsize(2*1024*1024*1024));
+	}
+	
 	
 	public function test_getDuration()
 	{

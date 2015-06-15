@@ -24,6 +24,20 @@ class UsersTest extends \tests\AppTestCase
 			//['components' => [ 'authManager' => '\yii\rbac\DbManager' ] ]);
 	}
 	
+	
+	public function test_failInsert_event()
+	{
+		$user = new Users();
+		$user->on(Users::EVENT_BEFORE_INSERT, function ($e) { $e->isValid = false; });
+		
+		$user->username = 'yurii';
+		$user->password = 'pass';
+		$user->access_token = 'token';
+		$user->save(); // failed
+		
+		$this->assertEmpty(Users::findIdentity($user->username));
+	}
+	
 	public function test_finds()
 	{
 		$user = new Users();

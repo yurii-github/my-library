@@ -16,7 +16,7 @@ then
 		unset CLOVER;
 	else
 		echo -e "${color}[sc] not presented. setting clover..";
-		CLOVER=--coverage-clover ../../build/logs/clover.xml;
+		CLOVER="--coverage-clover ../../build/logs/clover.xml";
 		export CLOVER;
 	fi
 

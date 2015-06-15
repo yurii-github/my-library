@@ -24,7 +24,7 @@ script:
 after_success:
 after_failure:
 after_script:
-  - if [ -n $CLOVER ]; then vendor/bin/test-reporter; else echo -e "\e[0;34;40m skipping codeclimate reporter as clover was disabled by commit message";
+  - if [ -n $CLOVER ]; then vendor/bin/test-reporter; else echo -e "\e[0;34;40m skipping codeclimate reporter as clover was disabled by commit message"; fi
 before_deployment:
 deployment:
 after_deployment:

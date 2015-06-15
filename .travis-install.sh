@@ -41,7 +41,7 @@ then
 		composer show --installed
 	fi
 	
-	exit(0);
+	exit 0;
 fi
 
 
@@ -54,7 +54,7 @@ then
 	php ../../vendor/phpunit.phar --testsuite=$TEST_SUITE $CLOVER
 	cd ../..
 	
-	exit(0);
+	exit 0;
 fi
 
 #
@@ -71,7 +71,7 @@ then
 		echo -e "${color}skipping codeclimate reporter as clover was disabled by commit message";
 	fi
 	
-	exit(0);
+	exit 0;
 fi
 
 

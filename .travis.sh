@@ -16,8 +16,7 @@ then
 		unset CLOVER;
 	else
 		echo -e "${color}[sc] not presented. setting clover..";
-		CLOVER="--coverage-clover ../../build/logs/clover.xml";
-		export CLOVER;
+		setenv("CLOVER", "--coverage-clover ../../build/logs/clover.xml");
 	fi
 
 	# cache usage

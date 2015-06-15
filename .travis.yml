@@ -14,8 +14,7 @@ env:
 # build lifecycle
 #
 before_install:
-  - bash .travis.sh before_install
-  - if [ $? -eq 1 ]; then export CLOVER="--coverage-clover ../../build/logs/clover.xml"; fi
+  - bash .travis.sh before_install; if [ $? -eq 1 ]; then export CLOVER="--coverage-clover ../../build/logs/clover.xml"; fi
 install:
   - .travis.sh install
 before_script:

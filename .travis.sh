@@ -3,27 +3,6 @@
 color="\e[0;34;40m";
 
 #
-# BEFORE INSTALL
-#
-if [ "$1" == "before_install" ]
-then
-	# clover usage. cannot export env as subshell is closing. apply workaround
-	#
-	echo -e "${color}checking for [sc] (skip clover)..";
-	if git log -1 --oneline | grep -qie "\[sc\]" 
-	then
-		echo -e "${color}[sc] is presented. clover will not be set";
-		exit 0;
-	else
-		echo -e "${color}[sc] is not presented. setting clover..";
-		exit 1;
-	fi
-	
-	exit 0; #never reached
-fi
-
-
-#
 # ISNTALL 
 #
 if [ "$1" == "install" ]

@@ -13,8 +13,7 @@ then
 	if git log -1 --oneline | grep -qie "\[sc\]" 
 	then
 		echo -e "${color}[sc] presented. removing clover..";
-		CLOVER='';
-		export CLOVER;
+		unset CLOVER;
 	else
 		echo -e "${color}[sc] not presented. setting clover..";
 		CLOVER="--coverage-clover ../../build/logs/clover.xml";
@@ -53,6 +52,7 @@ fi
 #
 if [ "$1" == "script" ]
 then
+	echo -e "${color}CLOVER=$CLOVER";
 	cd app/tests
 	php ../../vendor/phpunit.phar --testsuite=$TEST_SUITE $CLOVER
 	cd ../..

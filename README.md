@@ -4,7 +4,7 @@
 <b>commits</b>
 
 + [skip ci]  - skips travis ci builds
-+ [skip clover] - skips sending clover report to codeclimate
++ [sc] - skips sending clover report to codeclimate
 
 <h2>WARNING! IT IS VERY RAW</h2>
 

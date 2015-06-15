@@ -41,3 +41,8 @@ cache:
   directories:
     - vendor
 
+#
+# for Docker
+#
+sudo: false
+

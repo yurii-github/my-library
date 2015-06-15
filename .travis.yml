@@ -16,14 +16,14 @@ env:
 before_install:
   - if git log -1 --oneline | grep -qie "\[sc\]"; then echo -e "${color}[sc] is presented. clover will not be set"; else export CLOVER="--coverage-clover ../../build/logs/clover.xml"; fi
 install:
-  - .travis.sh install
+  - bash .travis.sh install
 before_script:
 script:
   - bash .travis.sh script
 after_success:
 after_failure:
 after_script:
-  - bash . .travis.sh after_script
+  - bash .travis.sh after_script
 before_deployment:
 deployment:
 after_deployment:

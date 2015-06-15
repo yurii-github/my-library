@@ -3,12 +3,10 @@
 color="\e[0;34;40m";
 
 #
-# ISNTALL 
+# INSTALL 
 #
 if [ "$1" == "install" ]
 then
-
-
 	# cache usage
 	#
 	if [ -d vendor/bin ]

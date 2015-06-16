@@ -22,27 +22,7 @@ use \app\components\behaviors\EmailSupport;
 use \app\models\Books;
 
 class SiteController extends Controller
-{
-	function actionTest()
-	{
-		ob_start();
-		
-		$m = new \yii\db\Migration();
-		//clean
-		$m->dropTable('test');
-		// 1
-		$m->createTable('test', ['a' => 'int', 'b' => 'int']);
-		$m->insert('test', ['b' => 'b']); // 0 -- php conversion? why no error?
-		// 2
-		$m->alterColumn('test', 'b', 'text');
-		$m->insert('test', ['b' => 'b']); // 0 -- silent fail, per request s as schema object is never updated
-		// 3
-		$m->db->schema->getTableSchema('test',true);
-		$m->insert('test', ['b' => 'b']); // 'b' - OK
-		
-		echo str_replace("\n", '<br/>', ob_get_clean());
-	}
-	
+{	
 	public function behaviors()
 	{
 		return [
@@ -75,30 +55,7 @@ class SiteController extends Controller
 			]
 		];
 	}
-	
-	
-	/**
-	 * resamples image to match boundary limits by width. Height is not checked and will resampled according to width's change percentage
-	 *
-	 * @param string $img_blob image source as blob string
-	 * @param int $max_width max allowed width for picture in pixels
-	 * @return string image as string BLOB
-	 */
-	static public function getResampledImageByWidthAsBlob($img_blob, $max_width = 800)
-	{
-		list($src_w, $src_h) = \getimagesizefromstring($img_blob);
 
-		$src_image = \imagecreatefromstring($img_blob);
-		$dst_w = $src_w > $max_width ? $max_width : $src_w;
-		$dst_h = $src_w > $max_width ? ($max_width/$src_w*$src_h) : $src_h; //minimize height in percent to width
-		$dst_image = \imagecreatetruecolor($dst_w, $dst_h);
-		\imagecopyresized($dst_image, $src_image, 0, 0, 0, 0, $dst_w, $dst_h, $src_w, $src_h);
-		\ob_start();
-		\imagejpeg($dst_image);
-		return \ob_get_flush();
-	}
-	
-	
 	
 	public function actionDbadmin()
 	{

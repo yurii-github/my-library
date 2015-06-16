@@ -63,7 +63,17 @@ class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 				'@app' => vfsStream::url('base'),
 				'@runtime' => '@app/runtime'
 			],
-			'components' => [
+			'components' => [				
+				//'basePath' => \Yii::getAlias('@app/public/assets')
+				'i18n' => [
+					'translations' => [
+						'frontend/*' => [
+							'class' => \yii\i18n\PhpMessageSource::class,
+							'basePath' => $GLOBALS['basedir'] .'/i18n',
+							'sourceLanguage' => 'en-US'
+						]
+					],
+				],
 				'mailer' => [
 					'class' => \yii\swiftmailer\Mailer::class,
 					'useFileTransport' => true,

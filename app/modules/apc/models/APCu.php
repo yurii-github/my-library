@@ -93,8 +93,7 @@ class APCu extends Model
 	}
 	
 	/**
-	 * pretty printer for byte values
-	 * copy-pasted from original apc file
+	 * pretty printer for byte values in format " 1.0 Mbytes "
 	 * @param int $s bytes
 	 * @return string
 	 */
@@ -104,7 +103,7 @@ class APCu extends Model
 			if ($s < 1024) break;
 			$s/=1024;
 		}
-		return sprintf("%0.1f %sbytes", $s, $k);
+		return sprintf("%0.1f %sbyte".($s <= 1 ? '':'s'), $s, $k);
 	}
 }
 

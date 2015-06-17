@@ -57,8 +57,8 @@ class EmailSupportTest extends \tests\AppTestCase
 		$owner = new \yii\base\Component();
 		$owner->attachBehaviors(['email' => $es]);
 		
-		file_put_contents($this->getBaseFileSystem().'/emails/notification/html.php','html test');
-		file_put_contents($this->getBaseFileSystem().'/emails/notification/text.php','text test');
+		file_put_contents($this->initAppFileSystem().'/emails/notification/html.php','html test');
+		file_put_contents($this->initAppFileSystem().'/emails/notification/text.php','text test');
 		
 		\Yii::$app->mycfg->system->email = true;
 		\Yii::$app->mycfg->system->emailto = 'bad-email-format';
@@ -72,8 +72,8 @@ class EmailSupportTest extends \tests\AppTestCase
 		$owner = new \yii\base\Component();
 		$owner->attachBehaviors(['email' => $es]);
 
-		file_put_contents($this->getBaseFileSystem().'/emails/notification/html.php','html test');
-		file_put_contents($this->getBaseFileSystem().'/emails/notification/text.php','text test');
+		file_put_contents($this->initAppFileSystem().'/emails/notification/html.php','html test');
+		file_put_contents($this->initAppFileSystem().'/emails/notification/text.php','text test');
 
 		// disabled in config
 		$this->assertFalse($owner->sendEmail(['data' => 'msg content', 'subject' => 'msg subject', 'type' => 'notification']));

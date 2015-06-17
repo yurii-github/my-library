@@ -92,8 +92,6 @@ return [
 			'showScriptName' => false,
 			'enableStrictParsing' => false,
 			'rules' => [
-				'admin' => 'admin-site/index',
-				'admin/site/cover/<id>' => 'admin/site/cover',
 				'' => 'site/index',
 				'config' => 'config/index',
 				'about' => 'site/about',

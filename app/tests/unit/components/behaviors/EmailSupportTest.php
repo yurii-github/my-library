@@ -7,13 +7,34 @@ use Composer\Autoload\ClassLoader;
 
 class EmailSupportTest extends \tests\AppTestCase
 {
+	protected function setUp()
+	{
+		parent::setUp();
+		$this->mockYiiApplication(['components' => [
+			'mailer' => [
+				'class' => \yii\swiftmailer\Mailer::class,
+				'useFileTransport' => true,
+				'viewPath' => '@app/emails',
+				'fileTransportPath' => '@runtime/mail',
+				'htmlLayout' => false,
+				'textLayout' => false,
+				'transport' => [
+					'class' => \Swift_SmtpTransport::class,
+					'host' => 'smtp.sample.com',
+					'username' => 'test',
+					'password' => 'test',
+					'port' => '465',
+					'encryption' => 'ssl' // ssl | tls
+				]
+			]
+		]]);
+	}
 	
 	/**
 	 * @expectedException yii\base\InvalidParamException
 	 */
 	public function test_SendMail_badParams()
 	{
-		$this->mockYiiApplication();
 		$es = new EmailSupport();
 		$es->sendEmail(['subject' => 'asd']);
 	}
@@ -23,7 +44,6 @@ class EmailSupportTest extends \tests\AppTestCase
 	 */
 	public function test_SendMail_noBehaviorOwner()
 	{
-		$this->mockYiiApplication();
 		$es = new EmailSupport();
 		$es->sendEmail(['data' => 'msg content', 'subject' => 'msg subject', 'type' => 'notification']);
 	}
@@ -31,10 +51,8 @@ class EmailSupportTest extends \tests\AppTestCase
 	/**
 	 * @expectedException Swift_RfcComplianceException
 	 */
-	public function test_SendMail_BadMailFOrmat()
+	public function test_SendMail_BadMailFormat()
 	{
-		$this->mockYiiApplication();
-		
 		$es = new EmailSupport();
 		$owner = new \yii\base\Component();
 		$owner->attachBehaviors(['email' => $es]);
@@ -49,9 +67,7 @@ class EmailSupportTest extends \tests\AppTestCase
 	
 	
 	public function test_SendMail()
-	{
-		$this->mockYiiApplication();
-		
+	{		
 		$es = new EmailSupport();
 		$owner = new \yii\base\Component();
 		$owner->attachBehaviors(['email' => $es]);

@@ -1,5 +1,5 @@
 <?php
-namespace tests;
+namespace tests {
 
 use app\components\Configuration;
 use org\bovigo\vfs\vfsStream;
@@ -57,10 +57,9 @@ class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 		
 		new \yii\web\Application(\yii\helpers\ArrayHelper::merge([
 			'id' => 'testapp',
-			'basePath' => $GLOBALS['basedir'].'/app',
+			'basePath' => vfsStream::url('base'),
 			'vendorPath' => $GLOBALS['basedir'] . '/vendor',
 			'aliases' => [
-				'@app' => vfsStream::url('base'),
 				'@runtime' => '@app/runtime'
 			],
 			'components' => [				
@@ -73,22 +72,6 @@ class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 							'sourceLanguage' => 'en-US'
 						]
 					],
-				],
-				'mailer' => [
-					'class' => \yii\swiftmailer\Mailer::class,
-					'useFileTransport' => true,
-					'viewPath' => '@app/emails',
-					'fileTransportPath' => '@runtime/mail',
-					'htmlLayout' => false,
-					'textLayout' => false,
-					'transport' => [
-						'class' => \Swift_SmtpTransport::class,
-						'host' => 'smtp.sample.com',
-						'username' => 'test',
-						'password' => 'test',
-						'port' => '465',
-						'encryption' => 'ssl' // ssl | tls
-					]
 				],
 				'security' => [
 					'class' => \app\components\Security::class,
@@ -160,4 +143,14 @@ class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 	
 	
 	
+}
+
+}
+
+namespace yii\base {
+	//vsFS fix in MOdule
+	function realpath($path)
+	{
+		return $path;
+	}
 }

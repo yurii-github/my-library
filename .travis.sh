@@ -20,7 +20,6 @@ then
 		composer config -g github-oauth.github.com $GITHUB_TOKEN
 
 		echo -e "${color}removing dev deps as we have ones in CI or not required for testing";
-		composer remove almasaeed2010/adminlte --dev --no-update
 		composer remove yiisoft/yii2-debug --dev --no-update
 		composer remove  phpunit/phpunit phpunit/dbunit --dev --no-update
 		echo -e "${color}downloading required dependencies...";

@@ -39,7 +39,7 @@ entry point is located at
 
 + excel table is sortable, pagable
 + books CRUD
-+ book cover
++ book cover saved to database
 + themed
 + i18n
 + mysql and sqlite support

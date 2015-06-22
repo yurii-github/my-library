@@ -27,7 +27,10 @@ class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 			
 			//init tables
 			foreach (explode(';', file_get_contents(self::$baseTestDir."/data/db.$env_db.txt")) as $query) {
-				self::$pdo->query($query);
+				if (!empty($query)) {
+					self::$pdo->query($query);
+				}
+				
 			}
 			
 		}

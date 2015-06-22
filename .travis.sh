@@ -40,9 +40,10 @@ if [ "$1" == "script" ]
 then
 	cd app/tests
 	php ../../vendor/phpunit.phar $CLOVER
+	export RES=$?
 	cd ../..
 	
-	exit $?;
+	exit RES;
 fi
 
 #

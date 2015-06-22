@@ -29,7 +29,7 @@ then
 		composer show --installed
 	fi
 	
-	exit
+	exit $?
 fi
 
 
@@ -43,13 +43,13 @@ then
 	export RES=$?
 	cd ../..
 	
-	exit
+	exit $RES
 fi
 
 #
-# AFTER SCRIPT
+# AFTER SUCCESS
 #
-if [ "$1" == "after_script" ]
+if [ "$1" == "after_success" ]
 then
 	# clover usage
 	#
@@ -60,7 +60,7 @@ then
 		echo -e "${color}skipping codeclimate reporter as clover was disabled by commit message";
 	fi
 	
-	exit
+	exit $?
 fi
 
 

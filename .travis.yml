@@ -22,9 +22,9 @@ before_script:
 script:
   - bash .travis.sh script
 after_success:
+  - bash .travis.sh after_success
 after_failure:
 after_script:
-  - bash .travis.sh after_script
 before_deployment:
 deployment:
 after_deployment:

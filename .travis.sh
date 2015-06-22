@@ -29,7 +29,7 @@ then
 		composer show --installed
 	fi
 	
-	exit 0;
+	exit $?
 fi
 
 
@@ -40,15 +40,16 @@ if [ "$1" == "script" ]
 then
 	cd app/tests
 	php ../../vendor/phpunit.phar $CLOVER
+	export RES=$?
 	cd ../..
 	
-	exit 0;
+	exit $RES
 fi
 
 #
-# AFTER SCRIPT
+# AFTER SUCCESS
 #
-if [ "$1" == "after_script" ]
+if [ "$1" == "after_success" ]
 then
 	# clover usage
 	#
@@ -59,7 +60,7 @@ then
 		echo -e "${color}skipping codeclimate reporter as clover was disabled by commit message";
 	fi
 	
-	exit 0;
+	exit $?
 fi
 
 

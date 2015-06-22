@@ -1,4 +1,6 @@
 <?php
+// dataset to return
+$books = [ 'inserted' => [], 'expected' => [] ];
 
 // for dataset. mantain column order!
 $defaults = [
@@ -17,10 +19,6 @@ $defaults = [
 	'filename' => '?'
 ];
 
-
-$books = [];
-$books['insert'] = [];
-$books['expected'] = [];
 
 // - - - - - - - - - - - - - - - - - - - - insert - - - - - - - -
 $books['insert'] = [
@@ -48,7 +46,6 @@ $books['insert'] = [
 		'filename' => 'filename-3',
 	]
 ];
-
 // - - - - - - - - - - - - - - - - - - - - expected - - - - - - - -
 foreach ($books['insert'] as $book) {
 	$books['expected'][] = array_merge($defaults, $book);

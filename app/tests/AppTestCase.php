@@ -20,12 +20,16 @@ class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 	public function getPdo()
 	{
 		if (empty(self::$pdo)) {
-			self::$pdo = new \PDO('sqlite::memory:', null, null, [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]);
+			$env_db = getenv('DB_TYPE');
+			$db = $GLOBALS['db'][$env_db];
+
+			self::$pdo = new \PDO($db['dsn'], $db['username'], $db['password'], [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]);
 			
 			//init tables
-			foreach (explode(';', file_get_contents(__DIR__.'/data/db.sqlite.txt')) as $query) {
+			foreach (explode(';', file_get_contents(self::$baseTestDir."/data/db.$env_db.txt")) as $query) {
 				self::$pdo->query($query);
 			}
+			
 		}
 		
 		return self::$pdo;

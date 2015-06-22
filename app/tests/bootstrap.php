@@ -13,3 +13,22 @@ $autoloader->addPsr4("modules\\", $basedir . '/app/modules');
 $autoloader->addClassMap(['tests\AppTestCase' => __DIR__ . '/AppTestCase.php']);
 $autoloader->addClassMap(['tests\AppFunctionalTestCase' => __DIR__ . '/AppFunctionalTestCase.php']);
 
+
+// - - - - support for several databases to test
+// config
+$GLOBALS['db'] = [
+	'sqlite' => [
+		'dsn' => 'sqlite::memory:',
+		'username' => null,
+		'password' => null
+	],
+	'mysql' => [
+		'dsn' => 'mysql:host=127.0.0.1;dbname=test-mylib',
+		'username' => 'travis',
+		'password' => null
+	]
+];
+
+if (empty(getenv('DB_TYPE'))) {
+	putenv('DB_TYPE=sqlite');	
+}

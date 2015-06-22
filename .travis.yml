@@ -9,7 +9,8 @@ php:
 # Parallelizing builds
 #
 env:
-  -  COMPOSER_NO_INTERACTION=1
+  -  COMPOSER_NO_INTERACTION=1 DB_TYPE=sqlite
+  -  COMPOSER_NO_INTERACTION=1 DB_TYPE=mysql
 #
 # build lifecycle
 #

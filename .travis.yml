@@ -19,6 +19,7 @@ before_install:
 install:
   - bash .travis.sh install
 before_script:
+  - mysql -e "CREATE DATABASE IF NOT EXISTS `test-mylib`;" -uroot
 script:
   - bash .travis.sh script
 after_success:

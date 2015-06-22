@@ -15,14 +15,14 @@ beStrictAboutOutputDuringTests="true"
 beStrictAboutTodoAnnotatedTests="true"
 beStrictAboutChangesToGlobalState="false"
 
-verbose="true"
->
+verbose="true">
+
 	<testsuites>
 		<testsuite name="unit">
 			<directory>unit</directory>
 		</testsuite>
-		<testsuite name="integration">
-			<directory>tests/integration</directory>
+		<testsuite name="functional">
+			<directory>functional</directory>
 		</testsuite>
 	</testsuites>
 	
@@ -48,12 +48,12 @@ verbose="true"
 	</filter>
 	
 	<!--
-	
-	 	 
+
+		 
 	<logging>
 		<log  type="coverage-html" target="reports" />
 	</logging>
- -->
+	  -->
 
 
 </phpunit>

@@ -151,16 +151,13 @@ TXT
 		return $this->render('index');
 	}
 
-	// ajax
+	
+	/**
+	 * return list of books in jqgrid format 
+	 * @return string json
+	 */
 	public function actionBooks()
 	{
-	//	apcu_clear_cache();
-		/* @var $user \yii\web\user */
-//		$user = \Yii::$app->user; 
-//		if (!$user->can('list-books')) {
-//			throw new HttpException(403,'permission denided');
-//		}
-		//throw new \HttpException(403,'ssssssssss');
 		$data = [
 			'page' => \Yii::$app->request->get('page'),
 			'limit' => \Yii::$app->request->get('rows'),
@@ -170,6 +167,7 @@ TXT
 		];
 
 		\Yii::$app->session->set('jqgrid.page', $data['page']);
+		
 		return Json::encode(Books::jgridBooks($data));
 	}
 	

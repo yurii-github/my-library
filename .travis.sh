@@ -40,7 +40,7 @@ fi
 if [ "$1" == "script" ]
 then
 	cd app/tests
-	php ../../vendor/phpunit.phar --testsuite=$TEST_SUITE $CLOVER
+	php ../../vendor/phpunit.phar $CLOVER
 	cd ../..
 	
 	exit 0;

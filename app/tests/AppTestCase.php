@@ -6,6 +6,8 @@ use org\bovigo\vfs\vfsStream;
 
 class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 {
+	static $baseTestDir = __DIR__;
+	
 	static $dbc;
 	static $pdo;
 	protected $dataset = [ //for clearing
@@ -102,17 +104,10 @@ class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 		return \Yii::getAlias('@app/config/libconfig.json');
 	}
 	
-	protected function getBaseFileSystem()
-	{
-		$this->initAppFileSystem();
-		
-		return vfsStream::url('base');
-	}
-	
 	protected function initAppFileSystem()
 	{
 		if ($this->is_fs_init) {
-			return;
+			return vfsStream::url('base');
 		}
 	
 		vfsStream::setup('base', null, [
@@ -137,6 +132,8 @@ class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 		//\Yii::$aliases['@webroot'] = vfsStream::url('base/public');
 		
 		$this->is_fs_init = true;
+		
+		return vfsStream::url('base');
 	}
 	
 	// < - - - - - - FS - - - - -

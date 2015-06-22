@@ -11,4 +11,5 @@ require $basedir . '/vendor/yiisoft/yii2-dev/framework/Yii.php';
 $autoloader->addPsr4("app\\", $basedir . '/app');
 $autoloader->addPsr4("modules\\", $basedir . '/app/modules');
 $autoloader->addClassMap(['tests\AppTestCase' => __DIR__ . '/AppTestCase.php']);
+$autoloader->addClassMap(['tests\AppFunctionalTestCase' => __DIR__ . '/AppFunctionalTestCase.php']);
 

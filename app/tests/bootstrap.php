@@ -23,7 +23,7 @@ $GLOBALS['db'] = [
 		'password' => null
 	],
 	'mysql' => [
-		'dsn' => 'mysql:host=127.0.0.1;dbname=test-mylib',
+		'dsn' => 'mysql:host=127.0.0.1;dbname=test_mylib',
 		'username' => 'travis',
 		'password' => null
 	]

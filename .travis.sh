@@ -42,7 +42,7 @@ then
 	php ../../vendor/phpunit.phar $CLOVER
 	cd ../..
 	
-	exit 0;
+	exit $?;
 fi
 
 #

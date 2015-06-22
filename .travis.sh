@@ -43,7 +43,7 @@ then
 	export RES=$?
 	cd ../..
 	
-	exit RES;
+	exit $RES;
 fi
 
 #

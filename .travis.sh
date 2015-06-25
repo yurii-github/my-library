@@ -57,11 +57,11 @@ if [ "$1" == "after_success" ]
 then
 	# clover usage
 	#
-	if [ -n "$CLOVER" ]
+	if [ -n "$CLOVER" &&  $DB_TYPE == 'sqlite' ]
 	then
 		vendor/bin/test-reporter
 	else
-		echo -e "${color}skipping codeclimate reporter as clover was disabled by commit message";
+		echo -e "${color}skipping codeclimate reporter as clover was disabled by commit message or env DB_TYPE is not 'sqlite'";
 	fi
 	
 	exit $?

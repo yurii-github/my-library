@@ -39,6 +39,10 @@ fi
 if [ "$1" == "script" ]
 then
 	cd app/tests
+	if [ $DB_TYPE != 'sqlite' ]
+	then
+		$CLOVER = ''
+	fi
 	php ../../vendor/phpunit.phar $CLOVER
 	export RES=$?
 	cd ../..

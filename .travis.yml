@@ -9,8 +9,8 @@ php:
 # Parallelizing builds
 #
 env:
-  -  COMPOSER_NO_INTERACTION=1 DB_TYPE=sqlite
-  -  COMPOSER_NO_INTERACTION=1 DB_TYPE=mysql
+  - DB_TYPE=sqlite
+  - DB_TYPE=mysql
 #
 # build lifecycle
 #
@@ -19,7 +19,7 @@ before_install:
 install:
   - bash .travis.sh install
 before_script:
-  - mysql -e "CREATE DATABASE IF NOT EXISTS test_mylib;" -uroot
+  - mysql -e "CREATE DATABASE IF NOT EXISTS test_mylib" -utravis
 script:
   - bash .travis.sh script
 after_success:

@@ -16,9 +16,7 @@ CREATE TABLE `books` (
   `publisher` varchar(255) DEFAULT NULL,
   `ext` varchar(5) DEFAULT NULL,
   `filename` text,
-  `publisher_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`book_guid`),
-  KEY `FK_books_publishers_idx` (`publisher_id`)
+  PRIMARY KEY (`book_guid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

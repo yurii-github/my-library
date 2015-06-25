@@ -5,7 +5,6 @@ use app\controllers\ConfigController;
 
 class ConfigTest extends \tests\AppFunctionalTestCase
 {
-	private $cfg_file = 'config/libconfig.json'; //rel to @app
 	private $books; //fixture
 	
 	protected function setUp()
@@ -13,19 +12,15 @@ class ConfigTest extends \tests\AppFunctionalTestCase
 		file_put_contents($this->initAppFileSystem() .'/data/books/filename-3', 'some data'); // db and fs
 		file_put_contents($this->initAppFileSystem() .'/data/books/filename-4', 'some data'); //fs only
 		
-		$this->books = $this->getFixture('books');
-
-		$this->dataset = [
-			'books' => $this->books['insert']
-		];
-
+		$this->books = $this->setupFixture('books');
 		parent::setUp();
 	}
 
 	
 	public function test_getLibraryBookFilenames()
 	{
-		$c = new ConfigController('config', \Yii::$app);
+		$c = \Yii::$app->createControllerByID('config');
+		//$c = new ConfigController('config', \Yii::$app);
 		$resp = json_decode($c->actionCheckFiles());
 
 		$this->assertEquals(2, count($resp->db), 'db only records does not match');
@@ -39,7 +34,8 @@ class ConfigTest extends \tests\AppFunctionalTestCase
 	{
 		$_GET['count'] = 'all';
 		
-		$c = new ConfigController('config', \Yii::$app);
+		$c = \Yii::$app->createControllerByID('config');
+		//$c = new ConfigController('config', \Yii::$app);
 		$resp = json_decode($c->actionClearDbFiles()); // db only records cont
 		
 		$this->assertEquals(2, $resp);

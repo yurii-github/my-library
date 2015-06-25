@@ -8,7 +8,7 @@ $defaults = [
 	'created_date' => '?',
 	'updated_date' => '?',
 	'book_cover' => null,
-	'favorite' => 0.0,
+	'favorite' => '0.0',
 	'read' => 'no',
 	'year' => null,
 	'title' => null,
@@ -26,7 +26,7 @@ $books['insert'] = [
 		'book_guid' => 1,
 		'created_date' => '2014-01-01 00:00:00',
 		'updated_date' => '2014-01-01 00:00:00',
-		'favorite' => 1,
+		'favorite' => 1.0,
 		'title' => 'title book #1',
 		'filename' => 'filename-1'
 	],
@@ -34,7 +34,7 @@ $books['insert'] = [
 		'book_guid' => 2,
 		'created_date' => '2014-01-01 00:00:00',
 		'updated_date' => '2014-01-01 00:00:00',
-		'favorite' => 1,
+		'favorite' => '1.0',
 		'title' => 'title book #2',
 		'filename' => 'filename-2'
 	],
@@ -42,7 +42,7 @@ $books['insert'] = [
 		'book_guid' => 3,
 		'created_date' => '2014-01-01 00:00:00',
 		'updated_date' => '2014-01-01 00:00:00',
-		'favorite' => 0,
+		'favorite' => '0.0',
 		'filename' => 'filename-3',
 	]
 ];

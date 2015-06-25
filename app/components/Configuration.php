@@ -11,10 +11,10 @@ namespace app\components
 						
 	/**
 	 * @property string $version
-	 * @property \frontend\components\configuration\System $system
-	 * @property \frontend\components\configuration\Library $library
-	 * @property \frontend\components\configuration\Database $database
-	 * @property \frontend\components\configuration\Book $book
+	 * @property \app\components\configuration\System $system
+	 * @property \app\components\configuration\Library $library
+	 * @property \app\components\configuration\Database $database
+	 * @property \app\components\configuration\Book $book
 	 *        
 	 */
 	class Configuration extends Object

@@ -5,23 +5,14 @@ use app\models\Users;
 
 class UsersTest extends \tests\AppTestCase
 {
+	/**
+	 * (non-PHPdoc)
+	 * @see PHPUnit_Extensions_Database_TestCase::setUp()
+	 */
 	protected function setUp()
 	{
-		
-		$this->mockYiiApplication();
 		parent::setUp();
-		
-			
-			/*	'components' => [
-				'user'=> [
-					'identityClass' => 'app\models\Users',
-					'enableAutoLogin' => true,
-					'loginUrl' => ['site/index'],
-					'enableSession' => true
-				], ]*/
-			
-			
-			//['components' => [ 'authManager' => '\yii\rbac\DbManager' ] ]);
+		$this->mockYiiApplication();
 	}
 	
 	

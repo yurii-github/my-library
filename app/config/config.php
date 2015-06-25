@@ -191,7 +191,7 @@ return [
 			]
 		],
 		'db' => [
-			'class' => '\yii\db\Connection',
+			'class' => \yii\db\Connection::class,
 			'enableSchemaCache' => true,
 			'schemaCache' => 'cache',
 			'schemaCacheDuration' => 3600, 

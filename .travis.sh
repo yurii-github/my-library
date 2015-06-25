@@ -57,7 +57,7 @@ if [ "$1" == "after_success" ]
 then
 	# clover usage
 	#
-	if [ -n "$CLOVER" &&  $DB_TYPE == 'sqlite' ]
+	if [ -n "$CLOVER" ] && [ $DB_TYPE == 'sqlite' ]
 	then
 		vendor/bin/test-reporter
 	else

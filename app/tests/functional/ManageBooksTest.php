@@ -8,12 +8,7 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 	
 	protected function setUp()
 	{
-		$this->books = $this->getFixture('books');
-		
-		$this->dataset = [
-			'books' => $this->books['insert']
-		];
-		
+		$this->books = $this->setupFixture('books');		
 		parent::setUp();
 	}
 	

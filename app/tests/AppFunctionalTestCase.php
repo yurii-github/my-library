@@ -1,21 +1,38 @@
 <?php
 namespace tests;
 
+use \AD7six\Dsn\Dsn;
+
 class AppFunctionalTestCase extends AppTestCase
 {
 	protected function setUp()
 	{
 		parent::setUp();
-		
 		$this->mockYiiApplication();
 	}
 	
 	
 	protected function mockYiiApplication($config = [])
 	{
-		//work cfg
-		$cfg = require $GLOBALS['basedir'] . '/app/config/config.php';
+		$this->initAppFileSystem();
+		//
+		// create user's config file, as it will override apps config for database connection
+		//TODO: remove duplicates
+		$env_db = getenv('DB_TYPE');
+		$db = $GLOBALS['db'][$env_db];
+		/* @var $mycfg \app\components\Configuration  faking class */
+		$mycfg = json_decode(file_get_contents(self::$baseTestDir . '/data/default_config.json'));
+		$mycfg->database->dbname = @$db['dbname'];
+		$mycfg->database->filename = @$db['filename'];
+		$mycfg->database->format = $env_db;
+		$mycfg->database->host = @$db['host'];
+		$mycfg->database->login = @$db['username'];
+		$mycfg->database->password = @$db['password'];
+		file_put_contents($this->getConfigFilename(), json_encode($mycfg));
 		
+		//
+		//work cfg
+		$cfg = require dirname(self::$baseTestDir) . '/config/config.php';
 		// make work cfg testable
 		unset(
 			$cfg['id'],
@@ -23,14 +40,10 @@ class AppFunctionalTestCase extends AppTestCase
 			$cfg['vendorPath'],
 			$cfg['components']['db']
 		);
-		
-		return parent::mockYiiApplication(\yii\helpers\ArrayHelper::merge($cfg, $config));
-	}
-	
 
-	protected function getFixture($name)
-	{
-		return require self::$baseTestDir ."/data/fixtures/$name.php";
+		
+		parent::mockYiiApplication(\yii\helpers\ArrayHelper::merge($cfg, $config));
+		//var_dump(\Yii::$app->mycfg); die;
 	}
 	
 	

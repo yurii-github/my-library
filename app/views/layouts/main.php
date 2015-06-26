@@ -34,7 +34,6 @@ app\assets\JqueryGrid::register($this);
 		'items' => [//link, title, style, id
 			['link' => ['//site/index'], 'title' => \Yii::t('frontend/site', 'Library')],
 			['link' => ['//config/index'], 'title' => \Yii::t('frontend/site', 'Configuration')],
-			['link' => ['/dbadmin'], 'title' => \Yii::t('frontend/site', 'Db')],
 			['link' => ['/apc'], 'title' => 'APC'],
 			['link' => ['//site/about'], 'title' => \Yii::t('frontend/site', 'About {version}', ['version' => 'v.'.\Yii::$app->mycfg->version])],
 			Yii::$app->user->isGuest ?

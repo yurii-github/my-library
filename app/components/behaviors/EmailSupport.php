@@ -17,7 +17,7 @@ class EmailSupport extends Behavior
 	public function sendEmail(array $opt)
 	{
 		if (empty($opt['data']) || empty($opt['subject']) || empty($opt['type'])) {
-			throw new \yii\base\InvalidParamException('$opt must be an array and contain [data, subject, type]');
+			throw new \yii\base\InvalidParamException('$opt must be an array and contain [subject, data, type]');
 		}
 		
 		if (empty($this->owner)) {

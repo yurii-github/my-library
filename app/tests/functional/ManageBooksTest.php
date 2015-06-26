@@ -1,6 +1,7 @@
 <?php
 namespace tests\functional;
 
+use app\models\Books;
 class ManageBooksTest extends \tests\AppFunctionalTestCase
 {
 	// fixture
@@ -8,14 +9,15 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 	
 	protected function setUp()
 	{
-		$this->books = $this->setupFixture('books');		
+		$this->books = $this->setupFixture('books');
 		parent::setUp();
 	}
 	
+	/*
 	function test_BooksFixture()
 	{
 		$this->assertDataSetsEqual($this->createArrayDataSet(['books' => $this->books['expected']]), $this->getConnection()->createDataSet(['books']));
-	}
+	}*/
 	
 	
 	
@@ -55,4 +57,104 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
  */
 	
 	}
+	
+	
+	
+	function test_actionManage_delete()
+	{
+		/*
+		 * ACTION MUST:
+		 *
+		 * 1. remove record from books table based on book_guid
+		 * 
+		 * TODO:
+		 * 2. remove file if sync is ON
+		 */
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$_POST['oper'] = 'del';
+		$_POST['id'] = 3; // book_guid
+		
+		/* @var $controller \app\controllers\SiteController */
+		$controller = \Yii::$app->createControllerByID('site');
+		$controller->actionManage();
+		
+		unset($this->books['expected'][2]);
+		
+		$this->assertDataSetsEqual($this->createArrayDataSet(['books' => $this->books['expected']]), $this->getConnection()->createDataSet(['books']));
+	}
+	
+	
+	function test_actionManage_add()
+	{
+		/*
+		 * ACTION MUST:
+		 * 
+		 * 1. generate book guid
+		 * 2. generate filename based on title etc..
+		 * 3. generate created and updated date
+		 *  
+		 */
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$book_1 = $this->books['insert'][0];
+		$book_1_expected =  $this->books['expected'][0];
+		$_POST = $book_1;
+		$_POST['oper'] = 'add';
+		
+		/* @var $controller \app\controllers\SiteController */
+		$controller = \Yii::$app->createControllerByID('site');
+		$controller->actionManage();
+				
+		$newRecord = $this->getConnection()->createQueryTable('books', 'SELECT * FROM books WHERE book_guid NOT IN(1,2,3)')->getRow(0); //array
+		$oldRecords = $this->getConnection()->createQueryTable('books', 'SELECT * FROM books WHERE book_guid IN(1,2,3)');
+		
+		// check existing data did not change
+		$this->assertTrue($oldRecords->matches($this->createArrayDataSet(['books' => $this->books['expected']])->getTable('books')), 'old records does not match as they were changed');
+		
+		// pre verify
+		$this->assertTrue((bool)preg_match('/[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{12}/', $newRecord['book_guid']),
+			"book_guid '{$newRecord['book_guid']}' is in wrong format");
+		$this->assertEquals((new \DateTime())->format('Y-m-d'), \DateTime::createFromFormat('Y-m-d H:i:s', $newRecord['updated_date'])->format('Y-m-d'));
+		$this->assertEquals((new \DateTime())->format('Y-m-d'), \DateTime::createFromFormat('Y-m-d H:i:s', $newRecord['updated_date'])->format('Y-m-d'));
+		$this->assertEquals(", ''title book #1'',  [].", $newRecord['filename']);
+		
+		// mod expected with verified data
+		foreach (['book_guid','created_date','updated_date','filename'] as $k) {
+			$book_1_expected[$k] = $newRecord[$k];
+		}
+		
+		//verify
+		$this->assertArraySubset($book_1_expected, $newRecord);
+	}
+	
+	
+	function test_actionManage_edit()
+	{
+		$this->markTestIncomplete('not finished');
+		/*
+		 * ACTION MUST:
+		 *
+		 * 1. not allow changes of book_guid, created and updated date, filename
+		 * 2. generate filename based on title etc..
+		 * 3. generate updated_date
+		 * 4. rename file if sync is ON
+		 *
+		 */
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$book_1 = $this->books['insert'][0];
+		$book_1_expected =  $this->books['expected'][0];
+		
+		
+		$_POST = $book_1;
+		$_POST['oper'] = 'edit';
+		$_POST['id'] = $book_1['book_guid'];
+		
+		/* @var $controller \app\controllers\SiteController */
+		$controller = \Yii::$app->createControllerByID('site');
+		$controller->actionManage();
+		
+		
+	}
+	
+	
+	
 }

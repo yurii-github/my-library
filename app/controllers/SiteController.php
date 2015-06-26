@@ -157,10 +157,15 @@ class SiteController extends Controller
 	}
 	
 	
+	/**
+	 * add/delete/update functionality for books via jqGrid interface
+	 */
 	public function actionManage()
 	{
-		/* @var $book Books */	
-		switch (\Yii::$app->request->post('oper')) {
+		/* @var $book Books */
+		$action = \Yii::$app->request->post('oper');
+		
+		switch ($action) {
 			case 'add':
 				$book = new Books(['scenario'=>'add']);
 				$book->attributes = \Yii::$app->request->post();
@@ -182,8 +187,6 @@ class SiteController extends Controller
 				$book->save();
 				break;
 		}
-	
-		$this->sendEmail(['subject' => 'action: '. @$_POST['oper'],	'data' => 'current action was performed on']);
 	}	
 	
 

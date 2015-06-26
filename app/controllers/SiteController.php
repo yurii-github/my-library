@@ -57,35 +57,6 @@ class SiteController extends Controller
 	}
 
 	
-	public function actionDbadmin()
-	{
-		return $this->renderContent(
-<<<TXT
-<style type="text/css">
-iframe#db-admin {
-min-height: 100%;
-min-width: 100%;
-border: 0;
-}
-</style>
-<iframe id="db-admin" src="phpliteAdmin/phpliteAdmin.php"></iframe>
-<script type="text/javascript">
-function setIframeHeight(iframe) {
-    if (iframe) {
-        var iframeWin = iframe.contentWindow || iframe.contentDocument.parentWindow;
-        if (iframeWin.document.body) {
-            iframe.height = iframeWin.document.documentElement.scrollHeight || iframeWin.document.body.scrollHeight;
-        }
-    }
-}
-			window.onload = function () {
-    setIframeHeight(document.getElementById('db-admin'));
-};
-</script>
-TXT
-			);
-	}
-	
 	public function actionLogout()
 	{
 		\Yii::$app->user->logout();
@@ -126,7 +97,6 @@ TXT
 		$this->view->title = \Yii::t('frontend/site', 'About');
 		$projects = [
 			'Yii 2' => 'https://github.com/yiisoft/yii2',
-			'phpliteAdmin' => 'https://code.google.com/p/phpliteadmin',
 			'jQuery' => 'https://jquery.com',
 			'jQuery UI' => 'https://jqueryui.com',
 			'jQuery Grid' => 'http://www.trirand.com/blog',

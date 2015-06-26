@@ -96,7 +96,6 @@ return [
 				'config' => 'config/index',
 				'about' => 'site/about',
 				'install' => 'install/install',
-				'dbadmin' => 'site/dbadmin',
 			]
 		],
 		'mailer' => [

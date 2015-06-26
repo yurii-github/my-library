@@ -41,7 +41,7 @@ then
 	cd app/tests
 	if [ $DB_TYPE != 'sqlite' ]
 	then
-		$CLOVER = ''
+		export $CLOVER=
 	fi
 	php ../../vendor/phpunit.phar $CLOVER
 	export RES=$?

@@ -39,7 +39,7 @@ fi
 if [ "$1" == "script" ]
 then
 	cd app/tests
-	if [ $DB_TYPE != 'sqlite' ]
+	if [ $SEND_CLOVER != 1 ]
 	then
 		export CLOVER=
 	fi
@@ -57,11 +57,11 @@ if [ "$1" == "after_success" ]
 then
 	# clover usage
 	#
-	if [ -n "$CLOVER" ] && [ $DB_TYPE == 'sqlite' ]
+	if [ -n "$CLOVER" ]
 	then
 		vendor/bin/test-reporter
 	else
-		echo -e "${color}skipping codeclimate reporter as clover was disabled by commit message or env DB_TYPE is not 'sqlite'";
+		echo -e "${color}skipping codeclimate reporter as clover was disabled by commit message or env SEND_CLOVER";
 	fi
 	
 	exit $?

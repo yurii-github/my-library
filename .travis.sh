@@ -57,7 +57,7 @@ if [ "$1" == "after_success" ]
 then
 	# clover usage
 	#
-	if [ -n "$CLOVER" ] && [ $SEND_CLOVER -eq 1 ]
+	if [ -n "$CLOVER" ] && [ "$SEND_CLOVER" = "1" ]
 	then
 		vendor/bin/test-reporter
 	else

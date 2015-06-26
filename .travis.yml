@@ -9,7 +9,7 @@ php:
 # Parallelizing builds
 #
 env:
-  - DB_TYPE=sqlite
+  - DB_TYPE=sqlite SEND_CLOVER=1
   - DB_TYPE=mysql
 #
 # build lifecycle

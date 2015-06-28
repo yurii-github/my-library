@@ -193,7 +193,10 @@ class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 				'mail' => []
 			],
 			'public' => [
-				'assets' => []
+				'assets' => [
+					'app' => []
+				]
+				
 			]
 		]);
 		
@@ -218,5 +221,13 @@ namespace yii\base {
 	function realpath($path)
 	{
 		return $path;
+	}
+}
+
+
+namespace app\models {
+	//do not send header during tests
+	function header($s) {
+		return $s;
 	}
 }

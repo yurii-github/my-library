@@ -20,6 +20,35 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 	}*/
 	
 	
+	function test_Site_Cover_empty()
+	{
+		\Yii::$app->setAliases(['@webroot' => '@app/public']);
+		file_put_contents($this->initAppFileSystem() . '/public/assets/app/book-cover-empty.jpg', 'empty-cover-data');
+	
+		/* @var $controller \app\controllers\SiteController */
+		$controller = \Yii::$app->createControllerByID('site');
+		$book_guid = 1;
+		$cover = $controller->actionCover($book_guid);
+	
+		$this->assertEquals('empty-cover-data', $cover);
+	}
+	
+	
+	function test_Site_Cover_exists()
+	{
+		\Yii::$app->setAliases(['@webroot' => '@app/public']);
+		file_put_contents($this->initAppFileSystem() . '/public/assets/app/book-cover-empty.jpg', 'empty-cover-data');
+
+		/* @var $controller \app\controllers\SiteController */
+		$controller = \Yii::$app->createControllerByID('site');
+		$book_guid = 1;
+		$this->getPdo()->exec("UPDATE books SET book_cover='valid-cover-data' WHERE book_guid='$book_guid'");
+		$cover = $controller->actionCover($book_guid);
+	
+		$this->assertEquals('valid-cover-data', $cover);
+	}
+	
+	
 	
 	function test_Site_actionBooks()
 	{

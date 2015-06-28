@@ -309,12 +309,6 @@ class Books extends ActiveRecord
 	}
 	
 	
-	public function getPublishers()
-	{
-		return $this->hasOne(Publishers::className(), ['publisher_id' => 'publisher_id']);
-	}
-	
-	
 	public function attributes()
 	{
 		return array_merge(parent::attributes(), ['publishers.name']);

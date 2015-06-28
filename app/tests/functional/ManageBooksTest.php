@@ -61,8 +61,8 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		
 		//verify
 		$actual_cover = $this->getConnection()->createQueryTable('books', "SELECT * FROM books WHERE book_guid=$book_guid")->getRow(0)['book_cover'];
-		$this->assertLessThan(strlen($cover), strlen($actual_cover)); // smaller size
-		$this->assertEquals($actual_cover, file_get_contents(self::$baseTestDir.'/data/cover-resized.jpg'));
+		$this->assertLessThan(strlen($cover), strlen($actual_cover), 'resized image is not smaller than original'); // smaller size
+		$this->assertEquals(md5($actual_cover), md5_file(self::$baseTestDir.'/data/cover-resized.jpg'), 'resized image has different size as expected sample');
 	}
 	
 	

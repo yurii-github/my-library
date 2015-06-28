@@ -101,6 +101,9 @@ class Books extends ActiveRecord
 	public function rules()
 	{
 		return [
+			//cover update
+			[['book_cover'], 'string', 'on' => ['cover']],
+			
 			// edit
 			[['year', 'favorite'], 'integer', 'on' => ['edit']],
 			
@@ -148,11 +151,9 @@ class Books extends ActiveRecord
 	{
 		if (parent::beforeSave($insert)) { // ...custom code here...
 			$new_filename = $this->buildFilename();
-			if ($this->book_cover instanceof UploadedFile && !empty($this->book_cover->tempName)) {//resize
-				$this->book_cover = self::getResampledImageByWidthAsBlob(file_get_contents($this->book_cover->tempName), \Yii::$app->mycfg->book->covermaxwidth);
-			} else {
-				unset($this->book_cover); //dont remove if not set
-			}			
+			if ($this->book_cover) {//resize
+				$this->book_cover = self::getResampledImageByWidthAsBlob($this->book_cover, \Yii::$app->mycfg->book->covermaxwidth);
+			}
 			
 			if($insert) {//inserting, make guid
 				$this->book_guid = self::com_create_guid();
@@ -275,14 +276,7 @@ class Books extends ActiveRecord
 			
 		];
 	}
-	
-	
-	public function beforeValidate()
-	{
-		$this->book_cover = UploadedFile::getInstance($this, 'book_cover'); // Yii doesn't do it for us
-		return parent::beforeValidate();
-	}
-	
+		
 	
 	public static function getCover($id)
 	{

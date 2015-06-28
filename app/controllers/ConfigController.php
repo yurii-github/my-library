@@ -178,6 +178,7 @@ class ConfigController extends Controller
 	}
 	
 
+	
 	public function actionSave()
 	{
 		$resp = new \stdClass();
@@ -185,10 +186,10 @@ class ConfigController extends Controller
 		$resp->result = false;
 		$resp->title = '';
 		
-		list($group, $attr) = explode('_', \Yii::$app->request->post('field'));
+		$field = \Yii::$app->request->post('field');
 		$value = \Yii::$app->request->post('value');
-		
-		$resp->title = $group;
+		 
+		list($group, $attr) = explode('_', $field);
 		
 		try {
 			\Yii::$app->mycfg->$group->$attr = $value;
@@ -198,10 +199,13 @@ class ConfigController extends Controller
 		} catch (\Exception $e) {
 			$resp->msg = $e->getMessage();
 			$resp->result = false;
+		} finally {
+			$resp->title = $group;
 		}
 
 		return json_encode($resp);
 	}
+	
 	
 
 	public function actionPhpInfo()

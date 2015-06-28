@@ -148,12 +148,16 @@ class SiteController extends Controller
 	}
 	
 	
+	/**
+	 * saves cover for book via book_guid. cover is sent as request body
+	 */
 	public function actionCoverSave()
 	{
+		/* @var $b Books */
 		$b = Books::findOne(['book_guid' => \Yii::$app->request->get('book_guid')]);
-		$file = file_get_contents("php://input");
-		$b->setAttribute('book_cover', self::getResampledImageByWidthAsBlob($file, \Yii::$app->mycfg->book->covermaxwidth));
-		$b->save(false,['book_cover']);
+		$b->setScenario('cover');
+		$b->book_cover = \Yii::$app->request->getRawBody();
+		$b->save();
 	}
 	
 	

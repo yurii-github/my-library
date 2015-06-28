@@ -6,7 +6,7 @@ class PagesTest extends \tests\AppFunctionalTestCase
 
 	function test_Config_IndexPage()
 	{
-		/* @var $controller \app\controllers\SiteController */
+		/* @var $controller \app\controllers\ConfigController */
 		$controller = $this->mockController('config');
 		$args = $controller->actionIndex();
 		$this->assertEquals('index', $args[0]);

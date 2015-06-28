@@ -8,6 +8,5 @@ languages:
   Python: false
 exclude_paths:
   - app/i18n/*
-  - app/public/*
   - app/emails/*
   - app/tests/*

@@ -8,7 +8,7 @@ class PagesTest extends \tests\AppFunctionalTestCase
 	{
 		/* @var $controller \app\controllers\ConfigController */
 		$controller = $this->mockController('config');
-		$args = $controller->actionIndex();
+		$args = $controller->runAction('index');
 		$this->assertEquals('index', $args[0]);
 	}
 
@@ -16,7 +16,7 @@ class PagesTest extends \tests\AppFunctionalTestCase
 	{
 		/* @var $controller \app\controllers\SiteController */
 		$controller = $this->mockController('site');
-		$args = $controller->actionIndex();
+		$args = $controller->runAction('index');
 		$this->assertEquals('index', $args[0]);
 		$this->assertEquals('Books', $controller->view->title);
 	}
@@ -25,7 +25,7 @@ class PagesTest extends \tests\AppFunctionalTestCase
 	{
 		/* @var $controller \app\controllers\SiteController */
 		$controller = $this->mockController('site');
-		$args = $controller->actionAbout();
+		$args = $controller->runAction('about');
 		
 		$this->assertEquals('//about/index', $args[0]);
 		$this->assertArraySubset([

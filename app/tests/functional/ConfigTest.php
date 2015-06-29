@@ -6,31 +6,37 @@ use org\bovigo\vfs\vfsStreamDirectory;
 
 class mockConfigController extends ConfigController
 {
-	protected function getFiles_FileSystemOnly()
-	{
-		
-	}
+	protected function getFiles_FileSystemOnly() {}
 }
+
 
 class ConfigTest extends \tests\AppFunctionalTestCase
 {
 	private $books; //fixture
 	
+	/**
+	 * config controller
+	 * @var \app\controllers\ConfigController
+	 */
+	private $controller;
+	
+	
 	protected function setUp()
 	{
 		file_put_contents($this->initAppFileSystem() .'/data/books/filename-3', 'some data'); // db and fs
 		file_put_contents($this->initAppFileSystem() .'/data/books/filename-4', 'some data'); //fs only
-		
 		$this->books = $this->setupFixture('books');
+		
 		parent::setUp();
+		
+		//init config controller
+		$this->controller = \Yii::$app->createControllerByID('config');
 	}
 
 	
 	public function test_getLibraryBookFilenames()
 	{
-		$c = \Yii::$app->createControllerByID('config');
-		//$c = new ConfigController('config', \Yii::$app);
-		$resp = json_decode($c->actionCheckFiles());
+		$resp = json_decode($this->controller->runAction('check-files'));
 
 		$this->assertEquals(2, count($resp->db), 'db only records does not match');
 		$this->assertArraySubset(['filename-1','filename-2'], $resp->db, 'filename of db only files does not match');
@@ -43,9 +49,7 @@ class ConfigTest extends \tests\AppFunctionalTestCase
 	{
 		$_GET['count'] = 'all';
 		
-		$c = \Yii::$app->createControllerByID('config');
-		//$c = new ConfigController('config', \Yii::$app);
-		$resp = json_decode($c->actionClearDbFiles()); // db only records cont
+		$resp = json_decode($this->controller->runAction('clear-db-files')); // db only records count
 		
 		$this->assertEquals(2, $resp);
 	}
@@ -53,9 +57,7 @@ class ConfigTest extends \tests\AppFunctionalTestCase
 
 	public function test_actionClearDbFiles_clearDb()
 	{
-		// db cleared files that are not if fs, filename-3 left only
-		$c = new ConfigController('config', \Yii::$app);
-		$resp = json_decode($c->actionClearDbFiles());
+		$resp = json_decode($this->controller->runAction('clear-db-files')); // db cleared files that are not if fs, filename-3 left only
 	
 		$this->assertArraySubset([1,2], $resp);//removed ids
 		$this->assertEquals(1, $this->getConnection()->getRowCount('books'));
@@ -70,8 +72,7 @@ class ConfigTest extends \tests\AppFunctionalTestCase
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$_POST['post'] = ['filename-4'];
 		
-		$c = new ConfigController('config', \Yii::$app);
-		$resp = json_decode($c->actionImportFiles());
+		$resp = json_decode($this->controller->runAction('import-files'));
 		
 		$this->assertArraySubset($_POST['post'], $resp->data);
 		$this->assertTrue($resp->result);
@@ -90,8 +91,7 @@ class ConfigTest extends \tests\AppFunctionalTestCase
 		$_POST['field'] = 'system_language';
 		$_POST['value'] = 'uk-UA';
 		
-		$c = new ConfigController('config', \Yii::$app);
-		$resp = json_decode($c->actionSave());
+		$resp = json_decode($this->controller->runAction('save'));
 		
 		$this->assertEquals("<b>language</b> was successfully updated", $resp->msg);
 		$this->assertTrue($resp->result);
@@ -106,11 +106,10 @@ class ConfigTest extends \tests\AppFunctionalTestCase
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$_POST['field'] = 'system_language';
 		$_POST['value'] = 'uk-UA';
-
+		
 		chmod(\Yii::$app->mycfg->config_file, 0444);
 		
-		$c = new ConfigController('config', \Yii::$app);
-		$resp = json_decode($c->actionSave());
+		$resp = json_decode($this->controller->runAction('save'));
 		
 		$this->assertFalse($resp->result);
 	}

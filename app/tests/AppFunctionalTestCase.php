@@ -8,6 +8,8 @@ class AppFunctionalTestCase extends AppTestCase
 	protected function setUp()
 	{
 		parent::setUp();
+		
+		$_SERVER['SERVER_NAME'] = 'phpunit-locahost'; //for yii2 request init. WTF?
 		$this->mockYiiApplication();
 	}
 	
@@ -16,12 +18,13 @@ class AppFunctionalTestCase extends AppTestCase
 	{
 		$this->initAppFileSystem();
 		//
-		// create user's config file, as it will override apps config for database connection
+		// create user's config file, as it will override apps config for database connection in bootstrap
 		//TODO: remove duplicates
 		$env_db = getenv('DB_TYPE');
 		$db = $GLOBALS['db'][$env_db];
 		/* @var $mycfg \app\components\Configuration  faking class */
 		$mycfg = json_decode(file_get_contents(self::$baseTestDir . '/data/default_config.json'));
+		$mycfg->system->version = '1.1'; //to avoid migration install
 		$mycfg->database->dbname = @$db['dbname'];
 		$mycfg->database->filename = @$db['filename'];
 		$mycfg->database->format = $env_db;

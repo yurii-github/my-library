@@ -18,8 +18,30 @@ use yii\web\UploadedFile;
  * @property string $book_cover binary cover or yii\web\UploadedFile before save!
  */
 class Books extends ActiveRecord
-{
-	// public function tableName() {}
+{	
+	
+	/**
+	 * (non-PHPdoc)
+	 * @see \yii\base\Model::rules()
+	 */
+	public function rules()
+	{
+		return [
+			// - cover (get)
+			[['book_cover'], 'string', 'on' => ['cover']],
+			// - edit (update)
+			[['year'], 'integer', 'on' => ['edit']],
+			[['favorite'], 'number', 'on' => ['edit']],
+			[['favorite', 'read', 'year', 'title', 'isbn13', 'author', 'publisher', 'ext'], 'safe', 'on' => 'edit'],
+			['book_cover', 'image', 'skipOnEmpty' => true, 'extensions' => 'gif,jpg,png', 'on' => ['edit'] ],
+			// - filter (get)
+			[['title', 'publishers.name'], 'string', 'on' => ['filter'] /*  'message' => 'must be integer!'*/],
+			// - import (from fs, get)
+			[['title', 'filename'], 'safe', 'on' => 'import'],
+			// add (insert)
+			[['created_date', 'updated_date', 'book_guid', 'favorite', 'read', 'year', 'title', 'isbn13', 'author', 'publisher', 'ext', 'filename'], 'safe', 'on' => 'add']
+		];
+	}
 	
 	
 	/**
@@ -27,6 +49,7 @@ class Books extends ActiveRecord
 	 *
 	 * @param string $img_blob image source as blob string
 	 * @param int $max_width max allowed width for picture in pixels
+	 * 
 	 * @return string image as string BLOB
 	 */
 	static public function getResampledImageByWidthAsBlob($img_blob, $max_width = 800)
@@ -55,15 +78,9 @@ class Books extends ActiveRecord
 	{
 		mt_srand((double)microtime()*10000);
 		$charid = strtoupper(md5(uniqid(rand(), true)));
-		$hyphen = chr(45);// "-"
-		$uuid = substr($charid, 0, 8).$hyphen
-		.substr($charid, 8, 4).$hyphen
-		.substr($charid,12, 4).$hyphen
-		.substr($charid,16, 4).$hyphen
-		.substr($charid,20,12);
-			
-		return $uuid;
+		return substr($charid, 0, 8).'-'.substr($charid, 8, 4).'-'.substr($charid,12, 4).'-'.substr($charid,16, 4).'-'.substr($charid,20,12);
 	}
+	
 	
 	public function buildFilename()
 	{
@@ -93,95 +110,78 @@ class Books extends ActiveRecord
 				'class' => TimestampBehavior::className(),
 				'createdAtAttribute' => 'created_date',
 				'updatedAtAttribute' => 'updated_date',
-				'value' => function() { return \Yii::$app->formatter->asDatetime('now','php:Y-m-d H:i:s'); }
+				'value' => function() {
+					$r = \Yii::$app->formatter->asDatetime('now','php:Y-m-d H:i:s');
+					return $r;
+					//var_dump($r);die;
+				}
 			]
 		];
 	}
 	
-	public function rules()
-	{
-		return [
-			//cover update
-			[['book_cover'], 'string', 'on' => ['cover']],
-			
-			// edit
-			[['year', 'favorite'], 'integer', 'on' => ['edit']],
-			
-			[['title', 'publishers.name'], 'string', 'on' => ['filter'] /*  'message' => 'must be integer!'*/],
-			
-			['book_cover', 'image', 'skipOnEmpty' => true, 'extensions' => 'gif,jpg,png', 'on' => ['edit'] ],
-			
-			//import from fs
-			[['title', 'filename'], 'safe', 'on' => 'import'],
-			
-			// add
-			[['created_date', 'updated_date', 'book_guid', 'favorite', 'read', 'year', 'title', 'isbn13', 'author', 'publisher',
-			 'ext', 'filename'], 'safe', 'on' => 'add'],
-			
-			[['updated_date', 'favorite', 'read', 'year', 'title', 'isbn13', 'author',
-			 'publisher', 'ext', 'filename'], 'safe', 'on' => 'edit']
-		];
-	}
 
-	
-	public function beforeDelete()
-	{
-		if (parent::beforeDelete()) {// ...custom code here...
-			if (\Yii::$app->mycfg->library->sync && !file_exists(\Yii::$app->mycfg->Encode(\Yii::$app->mycfg->library->directory.'/'.$this->filename))) {
-				\Yii::warning('file "'. $this->filename .'" was removed before record deletion with sync enabled');
-			}
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	
+	/**
+	 * (non-PHPdoc)
+	 * @see \yii\db\BaseActiveRecord::afterDelete()
+	 */
 	public function afterDelete()
 	{
+		$filename_utf8 = \Yii::$app->mycfg->library->directory . $this->filename;
+		$filename_encoded = \Yii::$app->mycfg->Encode($filename_utf8);
+
 		if (\Yii::$app->mycfg->library->sync) {
-			unlink(\Yii::$app->mycfg->Encode(\Yii::$app->mycfg->library->directory.'/'.$this->filename));
+			if (!file_exists($filename_encoded)) {
+				\Yii::warning("file '{$filename_utf8}' was removed before record deletion with sync enabled");
+			} else {
+				unlink($filename_encoded);
+			}
 		}
+		
 		parent::afterDelete();
 	}
 	
-				
-				
+	
 	public function beforeSave($insert)
 	{
-		if (parent::beforeSave($insert)) { // ...custom code here...
-			$new_filename = $this->buildFilename();
-			if ($this->book_cover) {//resize
-				$this->book_cover = self::getResampledImageByWidthAsBlob($this->book_cover, \Yii::$app->mycfg->book->covermaxwidth);
-			}
-			
-			if($insert) {//inserting, make guid
-				$this->book_guid = self::com_create_guid();
-				if ($this->getScenario() != 'import') {
-					$this->filename = $new_filename;
-				}
-			} else { //updating
-				//syncing
-				if (!empty($this->filename) && \Yii::$app->mycfg->library->sync) {
-					//TODO: better combine
-					if ($this->filename != $new_filename) { // update file in filesystem
-						//check file exists
-						if (!file_exists(\Yii::$app->mycfg->library->directory . $this->filename)) {
-							throw new \Exception('Sync for file failed. Source file does not exist');
-						}
-						if (!rename(
-							\Yii::$app->mycfg->Encode(\Yii::$app->mycfg->library->directory . $this->filename),
-							\Yii::$app->mycfg->Encode(\Yii::$app->mycfg->library->directory . $new_filename))) {
-								throw new \Exception('Sync for file failed.<br /><br />' . \error_get_last()['message']);
-						}
-					}
-				}
-				$this->filename = $new_filename;
+		// yii2 event handling logic. do not remove!
+		if (!parent::beforeSave($insert)) { return false; }
+		
+		// INSERT
+		//
+		if($insert) {
+			$this->book_guid = self::com_create_guid();
+		
+			if ($this->getScenario() != 'import') {
+				$this->filename = $this->buildFilename();
 			}
 			return true;
-		} else {
-			return false;
 		}
+
+		// UPDATE
+		//
+		$old_filename = $this->getOldAttribute('filename');
+		$new_filename = $this->buildFilename();
+		
+		if ($this->book_cover) {//resize
+			$this->book_cover = self::getResampledImageByWidthAsBlob($this->book_cover, \Yii::$app->mycfg->book->covermaxwidth);
+		}
+		$this->filename = $new_filename;
+		//syncing
+		if (\Yii::$app->mycfg->library->sync && !empty($this->filename)) {
+			$filename_encoded_old = \Yii::$app->mycfg->Encode(\Yii::$app->mycfg->library->directory . $old_filename);
+			$filename_encoded_new = \Yii::$app->mycfg->Encode(\Yii::$app->mycfg->library->directory . $new_filename);
+			
+			if ($filename_encoded_old != $filename_encoded_new) { // update file in filesystem
+				//check file exists
+				if (!file_exists($filename_encoded_old)) {
+					//var_dump($new_filename);die;
+					throw new \yii\base\InvalidValueException("Sync for file failed. Source file '{$filename_encoded_old}' does not exist", 1);
+				}
+				rename($filename_encoded_old, $filename_encoded_new);
+			}
+		}
+		
+		return true;
 	}
 	
 	
@@ -191,12 +191,15 @@ class Books extends ActiveRecord
 		$data['sort_column'] = empty($data['sort_column']) ? 'created_date' : $data['sort_column'];
 		$data['sort_order'] = !empty($data['sort_order']) &&  $data['sort_order']  == 'desc' ? SORT_DESC : SORT_ASC; //+secure
 		$filters = empty($data['filters']) ? null : json_decode($data['filters']);
+		$conditions = ['bw'=>'like','eq'=>'='];
 		$query = Books::find();
 		
 		if ($filters instanceof \stdClass && ! empty($filters->rules)) {
-			$conditions = ['bw'=>'like','eq'=>'='];
 			foreach ($filters->rules as $rule) {
-				if ($filters->groupOp == 'AND') {
+				if (empty($conditions[$rule->op])) {
+					continue; // unknown condition, skip
+				}
+				if (!empty($filters->groupOp) && $filters->groupOp == 'AND') {
 					$query->andFilterWhere([$conditions[$rule->op], $rule->field, $rule->data]);
 				} else {
 					$query->orFilterWhere([$conditions[$rule->op], $rule->field, $rule->data]);
@@ -237,7 +240,7 @@ class Books extends ActiveRecord
 			'query' => $query,
 			'pagination' => [
 				'pageSize' => $data['limit'],
-				'page' => --$data['page'] //jgrid fix
+				'page' => $data['page']-1 //jgrid fix
 			],
 		]);
 		
@@ -305,7 +308,8 @@ class Books extends ActiveRecord
 	
 	public function attributes()
 	{
-		return array_merge(parent::attributes(), ['publishers.name']);
+		return parent::attributes();
+		//eturn array_merge(parent::attributes(), ['publishers.name']);
 	}
 
 

@@ -91,7 +91,7 @@ class ConfigurationTest extends \tests\AppTestCase
 	}
 	
 	/**
-	 * @expectedException yii\base\InvalidValueException
+	 * @expectedException \yii\base\InvalidValueException
 	 */
 	function test_load_WrongConfigFile()
 	{
@@ -99,7 +99,7 @@ class ConfigurationTest extends \tests\AppTestCase
 	}
 	
 	/**
-	 * @expectedException yii\base\InvalidValueException
+	 * @expectedException \yii\base\InvalidValueException
 	 */
 	function test_save_WrongConfigFile()
 	{

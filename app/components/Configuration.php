@@ -3,7 +3,6 @@ namespace app\components
 {
 	use yii\base\Object;
 	use yii\helpers\Json;
-	use yii\base\InvalidValueException;
 	use app\components\configuration\System;
 	use app\components\configuration\Library;
 	use app\components\configuration\Database;
@@ -180,11 +179,13 @@ JSON;
 			$config_dir = dirname($this->config_file);
 
 			if (file_exists($filename) && !is_writable($filename)) {
-				throw new \yii\base\ErrorException("file '$filename' is not writable");
+				throw new \yii\base\InvalidValueException("file '$filename' is not writable");
 			} elseif (is_dir($config_dir) && !is_writable($config_dir)) {
-				throw new \yii\base\ErrorException("condif directory '$config_dir' is not writable");
+				throw new \yii\base\InvalidValueException("condif directory '$config_dir' is not writable");
+			} elseif (!is_dir($config_dir)) {
+				throw new \yii\base\InvalidValueException("condif directory '$config_dir' does not exist");
 			}
-			
+			 
 			file_put_contents($filename, Json::encode($this->config, JSON_PRETTY_PRINT));			
 		}
 

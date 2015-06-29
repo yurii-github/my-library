@@ -177,9 +177,14 @@ JSON;
 		public function save()
 		{
 			$filename = $this->config_file;
-			if (!is_writable(dirname($filename))) {
-				throw new \yii\base\InvalidValueException('cannot write config file at this location: '.$filename);
+			$config_dir = dirname($this->config_file);
+
+			if (file_exists($filename) && !is_writable($filename)) {
+				throw new \yii\base\ErrorException("file '$filename' is not writable");
+			} elseif (is_dir($config_dir) && !is_writable($config_dir)) {
+				throw new \yii\base\ErrorException("condif directory '$config_dir' is not writable");
 			}
+			
 			file_put_contents($filename, Json::encode($this->config, JSON_PRETTY_PRINT));			
 		}
 

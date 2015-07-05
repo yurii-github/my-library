@@ -16,7 +16,7 @@ class AppFunctionalTestCase extends AppTestCase
 	{
 		$this->initAppFileSystem();
 		//
-		// create user's config file, as it will override apps config for database connection
+		// create user's config file, as it will override apps config for database connection in bootstrap
 		//TODO: remove duplicates
 		$env_db = getenv('DB_TYPE');
 		$db = $GLOBALS['db'][$env_db];

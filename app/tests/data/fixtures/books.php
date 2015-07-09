@@ -23,15 +23,15 @@ $defaults = [
 // - - - - - - - - - - - - - - - - - - - - insert - - - - - - - -
 $books['insert'] = [
 	[
-		'book_guid' => 1,
+		'book_guid' => '1',
 		'created_date' => '2014-01-01 00:00:00',
 		'updated_date' => '2014-01-01 00:00:00',
-		'favorite' => 1.0,
+		'favorite' => '1.0',
 		'title' => 'title book #1',
 		'filename' => 'filename-1'
 	],
 	[
-		'book_guid' => 2,
+		'book_guid' => '2',
 		'created_date' => '2014-01-01 00:00:00',
 		'updated_date' => '2014-01-01 00:00:00',
 		'favorite' => '1.0',
@@ -39,7 +39,7 @@ $books['insert'] = [
 		'filename' => 'filename-2'
 	],
 	[
-		'book_guid' => 3,
+		'book_guid' => '3',
 		'created_date' => '2014-01-01 00:00:00',
 		'updated_date' => '2014-01-01 00:00:00',
 		'favorite' => '0.0',

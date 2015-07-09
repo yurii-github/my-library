@@ -162,14 +162,14 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 	}
 	
 	
-	function test_action_Manage_Add()
+	public function test_action_Manage_Add()
 	{
 		/*
 		 * ACTION MUST:
 		 * 
 		 * 1. generate book guid
-		 * 2. generate filename based on title etc..
-		 * 3. generate created and updated date
+		 * 2. generate created and updated date
+		 * 3. generate filename based on title etc..
 		 *  
 		 */
 		$_SERVER['REQUEST_METHOD'] = 'POST';
@@ -189,10 +189,13 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		$this->assertTrue($oldRecords->matches($this->createArrayDataSet(['books' => $this->books['expected']])->getTable('books')), 'old records does not match as they were changed');
 		
 		// pre verify
+		// [ 1 ]
 		$this->assertTrue((bool)preg_match('/[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{12}/', $newRecord['book_guid']),
 			"book_guid '{$newRecord['book_guid']}' is in wrong format");
+		// [ 2 ]
 		$this->assertEquals((new \DateTime())->format('Y-m-d'), \DateTime::createFromFormat('Y-m-d H:i:s', $newRecord['updated_date'])->format('Y-m-d'));
 		$this->assertEquals((new \DateTime())->format('Y-m-d'), \DateTime::createFromFormat('Y-m-d H:i:s', $newRecord['updated_date'])->format('Y-m-d'));
+		// [ 3 ]
 		$this->assertEquals(", ''title book #1'',  [].", $newRecord['filename']);
 		
 		// mod expected with verified data
@@ -203,36 +206,67 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		//verify
 		$this->assertArraySubset($book_1_expected, $newRecord);
 	}
+
 	
-	
-	function test_action_Manage_Edit()
+	/**
+	 * @dataProvider pSync
+	 */
+	public function test_action_Manage_Edit($sync)
 	{
-		$this->markTestIncomplete('not finished');
 		/*
 		 * ACTION MUST:
-		 *
+		 * 
 		 * 1. not allow changes of book_guid, created and updated date, filename
-		 * 2. generate filename based on title etc..
+		 * 2. generate filename based on title
 		 * 3. generate updated_date
+		 * 
 		 * 4. rename file if sync is ON
 		 *
 		 */
 		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$book_1 = $this->books['insert'][0];
-		$book_1_expected =  $this->books['expected'][0];
+		$book = $this->books['insert'][0];
+		$book_expected =  $this->books['expected'][0];
+		$filename_expected = $filename_old = \Yii::$app->mycfg->library->directory . $book_expected['filename'];
+		file_put_contents($filename_expected, 'sample-data');
+		\Yii::$app->mycfg->library->sync = $sync;
 		
-		
-		$_POST = $book_1;
 		$_POST['oper'] = 'edit';
-		$_POST['id'] = $book_1['book_guid'];
+		$_POST['id'] = $book['book_guid'];
+		
+		// CHANGING
+		// [ 1 ]
+		$_POST['created_date'] = '2000';
+		$_POST['updated_date'] = '2000';
+		$_POST['filename'] = '2000';
+		// [ 2 ]
+		$book_expected['filename'] = ", ''title book #1'',  [].";
+		// [ 3 ]
+		$book_expected['updated_date'] = (new \DateTime())->format('Y-m-d H:i:s');
 		
 		/* @var $controller \app\controllers\SiteController */
 		$controller = \Yii::$app->createControllerByID('site');
 		$controller->actionManage();
+		/* @var $book_current \yii\db\BaseActiveRecord */
+		$book_current = Books::findOne(['book_guid' => $book['book_guid']]);
 		
+		//var_dump($book_expected,$book_current->getAttributes());
+		$this->assertArraySubset($book_expected, $book_current->getAttributes());
 		
+		if ($sync) {	
+			$filename_expected = \Yii::$app->mycfg->library->directory . $book_expected['filename'];
+			$this->assertFileNotExists($filename_old);
+		}
+		
+		$this->assertFileExists($filename_expected);
+		$this->assertEquals(file_get_contents($filename_expected), 'sample-data');		
 	}
 	
 	
+	function pSync()
+	{
+		return [
+			[true], [false]
+		];
+	}
 	
 }

@@ -18,8 +18,29 @@ use yii\web\UploadedFile;
  * @property string $book_cover binary cover or yii\web\UploadedFile before save!
  */
 class Books extends ActiveRecord
-{
-	// public function tableName() {}
+{	
+	
+	/**
+	 * (non-PHPdoc)
+	 * @see \yii\base\Model::rules()
+	 */
+	public function rules()
+	{
+		return [
+			// - cover (get)
+			[['book_cover'], 'string', 'on' => ['cover']],
+			// - edit (update)
+			[['year', 'favorite'], 'integer', 'on' => ['edit']],
+			[['updated_date', 'favorite', 'read', 'year', 'title', 'isbn13', 'author', 'publisher', 'ext'], 'safe', 'on' => 'edit'],
+			['book_cover', 'image', 'skipOnEmpty' => true, 'extensions' => 'gif,jpg,png', 'on' => ['edit'] ],
+			// - filter (get)
+			[['title', 'publishers.name'], 'string', 'on' => ['filter'] /*  'message' => 'must be integer!'*/],
+			// - import (from fs, get)
+			[['title', 'filename'], 'safe', 'on' => 'import'],
+			// add (insert)
+			[['created_date', 'updated_date', 'book_guid', 'favorite', 'read', 'year', 'title', 'isbn13', 'author', 'publisher', 'ext', 'filename'], 'safe', 'on' => 'add']
+		];
+	}
 	
 	
 	/**
@@ -27,6 +48,7 @@ class Books extends ActiveRecord
 	 *
 	 * @param string $img_blob image source as blob string
 	 * @param int $max_width max allowed width for picture in pixels
+	 * 
 	 * @return string image as string BLOB
 	 */
 	static public function getResampledImageByWidthAsBlob($img_blob, $max_width = 800)
@@ -55,15 +77,9 @@ class Books extends ActiveRecord
 	{
 		mt_srand((double)microtime()*10000);
 		$charid = strtoupper(md5(uniqid(rand(), true)));
-		$hyphen = chr(45);// "-"
-		$uuid = substr($charid, 0, 8).$hyphen
-		.substr($charid, 8, 4).$hyphen
-		.substr($charid,12, 4).$hyphen
-		.substr($charid,16, 4).$hyphen
-		.substr($charid,20,12);
-			
-		return $uuid;
+		return substr($charid, 0, 8).'-'.substr($charid, 8, 4).'-'.substr($charid,12, 4).'-'.substr($charid,16, 4).'-'.substr($charid,20,12);
 	}
+	
 	
 	public function buildFilename()
 	{
@@ -98,30 +114,7 @@ class Books extends ActiveRecord
 		];
 	}
 	
-	public function rules()
-	{
-		return [
-			//cover update
-			[['book_cover'], 'string', 'on' => ['cover']],
-			
-			// edit
-			[['year', 'favorite'], 'integer', 'on' => ['edit']],
-			
-			[['title', 'publishers.name'], 'string', 'on' => ['filter'] /*  'message' => 'must be integer!'*/],
-			
-			['book_cover', 'image', 'skipOnEmpty' => true, 'extensions' => 'gif,jpg,png', 'on' => ['edit'] ],
-			
-			//import from fs
-			[['title', 'filename'], 'safe', 'on' => 'import'],
-			
-			// add
-			[['created_date', 'updated_date', 'book_guid', 'favorite', 'read', 'year', 'title', 'isbn13', 'author', 'publisher',
-			 'ext', 'filename'], 'safe', 'on' => 'add'],
-			
-			[['updated_date', 'favorite', 'read', 'year', 'title', 'isbn13', 'author',
-			 'publisher', 'ext', 'filename'], 'safe', 'on' => 'edit']
-		];
-	}
+
 
 	
 	public function beforeDelete()
@@ -167,7 +160,7 @@ class Books extends ActiveRecord
 					if ($this->filename != $new_filename) { // update file in filesystem
 						//check file exists
 						if (!file_exists(\Yii::$app->mycfg->library->directory . $this->filename)) {
-							throw new \Exception('Sync for file failed. Source file does not exist');
+							throw new \Exception("Sync for file failed. Source file '$this->filename' does not exist");
 						}
 						if (!rename(
 							\Yii::$app->mycfg->Encode(\Yii::$app->mycfg->library->directory . $this->filename),
@@ -305,7 +298,8 @@ class Books extends ActiveRecord
 	
 	public function attributes()
 	{
-		return array_merge(parent::attributes(), ['publishers.name']);
+		return parent::attributes();
+		//eturn array_merge(parent::attributes(), ['publishers.name']);
 	}
 
 

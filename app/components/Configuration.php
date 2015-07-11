@@ -50,19 +50,6 @@ namespace app\components
 			return parent::__get($name);
 		}
 		
-		/**
-		 * (non-PHPdoc)
-		 * @see \yii\base\Object::__set()
-		 */
-		public function __set($name, $value)
-		{
-			if (in_array($name, $this->options)) {
-				$this->config->$name = $value;
-				return;
-			}
-			
-			parent::__set($name, $value);
-		}
 
 		/**
 		 * 
@@ -179,11 +166,11 @@ JSON;
 			$config_dir = dirname($this->config_file);
 
 			if (file_exists($filename) && !is_writable($filename)) {
-				throw new \yii\base\InvalidValueException("file '$filename' is not writable");
+				throw new \yii\base\InvalidValueException("file '$filename' is not writable", 1);
 			} elseif (is_dir($config_dir) && !is_writable($config_dir)) {
-				throw new \yii\base\InvalidValueException("condif directory '$config_dir' is not writable");
+				throw new \yii\base\InvalidValueException("config directory '$config_dir' is not writable", 2);
 			} elseif (!is_dir($config_dir)) {
-				throw new \yii\base\InvalidValueException("condif directory '$config_dir' does not exist");
+				throw new \yii\base\InvalidValueException("config directory '$config_dir' does not exist", 3);
 			}
 			 
 			file_put_contents($filename, Json::encode($this->config, JSON_PRETTY_PRINT));			

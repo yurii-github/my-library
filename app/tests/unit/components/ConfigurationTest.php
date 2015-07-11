@@ -15,23 +15,39 @@ class mockConfiguration extends Configuration
 	}
 }
 
+
 class ConfigurationTest extends \tests\AppTestCase
 {
-	/* @var $config Configuration */
+	/**
+	 * configuration mock object
+	 * @var Configuration
+	 */
 	private $config;
+	
+	/**
+	 * not real configuration, just json decode of default configuration file
+	 * @var Configuration
+	 */
+	private $def_cfg;
 
+	
+	/**
+	 * (non-PHPdoc)
+	 * @see PHPUnit_Extensions_Database_TestCase::setUp()
+	 */
 	protected function setUp()
 	{
 		$this->initAppFileSystem();
 		$this->config = new mockConfiguration(['config_file' => $this->getConfigFilename()]);
+		$this->def_cfg = json_decode(file_get_contents(self::$baseTestDir.'/data/default_config.json'));
 	}
 	
 	
 	public function test_gets()
 	{
 		$this->assertTrue(is_string($this->config->getVersion()));
-		$this->assertEquals(\Yii::getAlias('@app/data/books/'), $this->config->library->directory);
-		$this->assertEquals(\Yii::getAlias('@app/data/mydb.s3db'), $this->config->database->filename);
+		$this->assertEquals($this->def_cfg->library->directory, $this->config->library->directory);
+		$this->assertEquals($this->def_cfg->database->filename, $this->config->database->filename);
 	}
 	
 	
@@ -40,11 +56,9 @@ class ConfigurationTest extends \tests\AppTestCase
 		$this->config->save();
 		$this->assertTrue(file_exists($this->getConfigFilename()), 'config file was not saved');
 		
-		/* @var $default Configuration */
 		/* @var $saved Configuration */
-		$default = json_decode(file_get_contents($GLOBALS['basedir'].'/app/tests/data/default_config.json'));
 		$saved = json_decode(file_get_contents($this->getConfigFilename()));
-		$this->assertEquals($default, $saved, 'saved config file doesnt match default one');
+		$this->assertEquals($this->def_cfg, $saved, 'saved config file doesnt match default one');
 		
 		//check changes are saved
 		$this->config->system->language = 'yo-yo';
@@ -90,6 +104,7 @@ class ConfigurationTest extends \tests\AppTestCase
 		$this->config->version = 'asd';
 	}
 	
+	
 	/**
 	 * @expectedException \yii\base\InvalidValueException
 	 */
@@ -97,6 +112,7 @@ class ConfigurationTest extends \tests\AppTestCase
 	{
 		$this->config->load('asd/asd/asd');
 	}
+	
 	
 	/**
 	 * @expectedException \yii\base\InvalidValueException
@@ -107,13 +123,47 @@ class ConfigurationTest extends \tests\AppTestCase
 		$this->config->save();
 	}
 	
+	/**
+	 * @expectedException \yii\base\InvalidValueException
+	 * @expectedExceptionCode 2
+	 */
+	function test_save_DirectoryIsNotWritable()
+	{
+		unlink($this->getConfigFilename());
+		chmod(dirname($this->getConfigFilename()), 0444);
+		$this->config->save();
+	}
 	
 	
+	/**
+	 * @expectedException \yii\base\UnknownPropertyException
+	 */
+	function test_getNotExistedProperty()
+	{
+		$c = $this->config->not_exist;
+	}
 	
 	
+	/**
+	 * @expectedException \yii\base\UnknownPropertyException
+	 */
+	function test_setNotExistedProperty()
+	{
+		 $this->config->not_exist = 'value';
+	}
+	
+	/**
+	 * @expectedException \yii\base\UnknownPropertyException
+	 */
+	function test_setNotExistedProperty_ForNotExisted2ndLevel()
+	{
+		$this->config->not_exist->asd = 'value';
+	}
 	
 	
-	
-	
-
+	function test_setNotExistedProperty_ForExisted2ndLevel()
+	{
+		$this->config->system->asd = 'value';
+		$this->assertEquals('value', $this->config->system->asd);
+	}
 }

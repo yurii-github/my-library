@@ -30,8 +30,9 @@ class Books extends ActiveRecord
 			// - cover (get)
 			[['book_cover'], 'string', 'on' => ['cover']],
 			// - edit (update)
-			[['year', 'favorite'], 'integer', 'on' => ['edit']],
-			[['updated_date', 'favorite', 'read', 'year', 'title', 'isbn13', 'author', 'publisher', 'ext'], 'safe', 'on' => 'edit'],
+			[['year'], 'integer', 'on' => ['edit']],
+			[['favorite'], 'number', 'on' => ['edit']],
+			[['favorite', 'read', 'year', 'title', 'isbn13', 'author', 'publisher', 'ext'], 'safe', 'on' => 'edit'],
 			['book_cover', 'image', 'skipOnEmpty' => true, 'extensions' => 'gif,jpg,png', 'on' => ['edit'] ],
 			// - filter (get)
 			[['title', 'publishers.name'], 'string', 'on' => ['filter'] /*  'message' => 'must be integer!'*/],
@@ -109,7 +110,11 @@ class Books extends ActiveRecord
 				'class' => TimestampBehavior::className(),
 				'createdAtAttribute' => 'created_date',
 				'updatedAtAttribute' => 'updated_date',
-				'value' => function() { return \Yii::$app->formatter->asDatetime('now','php:Y-m-d H:i:s'); }
+				'value' => function() {
+					$r = \Yii::$app->formatter->asDatetime('now','php:Y-m-d H:i:s');
+					return $r;
+					//var_dump($r);die;
+				}
 			]
 		];
 	}

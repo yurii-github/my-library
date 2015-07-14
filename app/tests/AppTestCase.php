@@ -30,9 +30,14 @@ class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 			self::$pdo = new \PDO($db['dsn'], @$db['username'], @$db['password'], [ \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION ]);
 			
 			//init tables
-			foreach (explode(';', file_get_contents(self::$baseTestDir."/data/db.$env_db.txt")) as $query) {
+			foreach (explode(';', file_get_contents(self::$baseTestDir."/data/db.sqlite_mysql.txt")) as $query) {
+				
 				if (!empty($query)) {
+					if ($env_db == 'mysql' && preg_match('/CREATE TABLE/i', $query)) {
+						$query .= ' ENGINE=InnoDB DEFAULT CHARSET=utf8'; // for mysql
+					}
 					self::$pdo->query($query);
+					//var_dump($query);
 				}
 			}
 		}

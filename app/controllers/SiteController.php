@@ -186,7 +186,9 @@ class SiteController extends Controller
 				$book = Books::findOne(['book_guid' => \Yii::$app->request->post('id')]);
 				$book->scenario = 'edit';
 				$book->attributes = \Yii::$app->request->post();
-				$book->save();
+				if (!$book->save()) {
+					throw new \yii\web\BadRequestHttpException(print_r($book->getErrors(), true));
+				}
 				break;
 		}
 	}	

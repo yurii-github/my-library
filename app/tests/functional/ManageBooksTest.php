@@ -223,9 +223,9 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		
 		// CHANGING
 		// [ 1 ]
-		$_POST['created_date'] = '2000';
-		$_POST['updated_date'] = '2000';
-		$_POST['filename'] = '2000';
+		$_POST['created_date'] = '2000-01-01';
+		$_POST['updated_date'] = '2000-01-01';
+		$_POST['filename'] = '2000-01-01';
 		// [ 2 ]
 		$book_expected['filename'] = ", ''title book #1'',  [].";
 		// [ 3 ]
@@ -235,7 +235,7 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		
 		/* @var $book_current \yii\db\BaseActiveRecord */
 		$book_current = Books::findOne(['book_guid' => $book['book_guid']]);
-		//var_dump($book_expected,$book_current->getAttributes());
+		//var_dump($book_expected,$book_current->getAttributes()); die;
 		$this->assertArraySubset($book_expected, $book_current->getAttributes());
 		
 		if ($sync) {	

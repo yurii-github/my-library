@@ -195,7 +195,7 @@ return [
 			'schemaCache' => 'cache',
 			'schemaCacheDuration' => 3600, 
 			'dsn' => null, // will be overriden!
-			'charset' => 'UTF-8'
+			'charset' => 'UTF8' // utf-8 fails?
 		],
 
 	],

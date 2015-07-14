@@ -30,6 +30,10 @@ class InstallController extends Controller
 		$data[] = $echo(function() use(&$mc, $paths) { $mc->migrationPath = $paths['rbac'];  $mc->actionUp(); });
 		$data[] = $echo(function() use(&$mc, $paths) { $mc->migrationPath = $paths['mylib']; $mc->actionUp(); });
 		
+		// TODO: write version only on success migration
+		\Yii::$app->mycfg->system->version = \Yii::$app->mycfg->getVersion();
+		\Yii::$app->mycfg->save();
+		
 		$this->view->title = 'Migration Installer';
 		return	$this->render('//site/migration', ['content' => str_replace("\n", '<br/>', implode('<hr/>', $data))]);
 	}

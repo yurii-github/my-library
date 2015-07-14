@@ -2,7 +2,6 @@
 namespace app\controllers; //defaults
 
 use Yii;
-use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\base\Event;
 use yii\helpers\Json;
@@ -12,7 +11,6 @@ use yii\data\Sort;
 use yii\db\ActiveQuery;
 use yii\db\Query;
 use yii\helpers\Url;
-use yii\filters\AccessControl;
 use yii\web\HttpException;
 
 
@@ -28,7 +26,7 @@ class SiteController extends Controller
 		return [
 			EmailSupport::className(),
 			'verb' => [
-				'class' => VerbFilter::className(),
+				'class' => \yii\filters\VerbFilter::class,
 				'actions' => [
 					'about'	 => ['GET'],
 					'index'	 => ['GET'],
@@ -38,7 +36,7 @@ class SiteController extends Controller
 				]
 			],
 			'access' =>	[
-				'class' => AccessControl::className(),
+				'class' => \yii\filters\AccessControl::class,
 				'only' => ['login', 'logout', 'books'],
 				'rules' => [
 					[

@@ -18,9 +18,9 @@ final class MyLibraryBootstrap implements BootstrapInterface
 	{
 		session_name('session-id');
 		/* @var $cfg \frontend\components\Configuration */
-		$cfg = \Yii::$app->mycfg;
+		$cfg = $app->mycfg;
 		date_default_timezone_set($cfg->system->timezone);		
-		\Yii::$app->language = $cfg->system->language;
+		$app->language = $cfg->system->language;
 
 		// inject into app
 		//	TODO:  mariadb, postgres, cubrid, oracle, mssql
@@ -36,7 +36,9 @@ final class MyLibraryBootstrap implements BootstrapInterface
 					break;
 			}
 			
-			if ($app->db->getTableSchema('{{%books}}') == null) {  //redirect to migration
+			
+			
+			if ($cfg->getVersion() != $cfg->system->version) {  //redirect to migration, as user config doesnot contain matching version
 				Event::on('app\components\Controller', Controller::EVENT_BEFORE_ACTION, function($e) {
 					\Yii::$app->response->redirect(['install/migrate']);
 					return false;

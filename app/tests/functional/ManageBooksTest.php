@@ -7,11 +7,22 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 	// fixture
 	public $books; 
 	
+	/**
+	 * site controller
+	 * @var \app\controllers\SiteController
+	 */
+	private $controllerSite;
+	
+	
 	protected function setUp()
 	{
 		$this->books = $this->setupFixture('books');
+		
 		parent::setUp();
+		
+		$this->controllerSite = \Yii::$app->createControllerByID('site');
 	}
+	
 	
 	/*
 	function test_BooksFixture()
@@ -31,40 +42,38 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		 */
 		$_GET['book_guid'] = $book_guid = 1;
 		$cover = 'invalid-cover-fomatted-data';
+		
 		$mockRequest = $this->getMockBuilder(\yii\web\Request::class)->setMethods(['getRawBody'])->getMock();
 		$mockRequest->expects($this->any())->method('getRawBody')->willReturn($cover);
 		$this->mockYiiApplication([ 'components' => [ 'request' => $mockRequest ] ]);
 		
-		/* @var $controller \app\controllers\SiteController */
-		$controller = \Yii::$app->createControllerByID('site');
-		$controller->actionCoverSave();
+		// [ 1 ]
+		$this->controllerSite->runAction('cover-save');
 	}
 	
 	
+	/**
+	 * MUST
+	 * 2. resize image
+	 * 3. save image to database
+	 */
 	function test_action_saveCover_Resize()
 	{
-		/*
-		 * MUST
-		 * 2. resize image
-		 * 3. save image to database
-		 */
 		$cover = file_get_contents(self::$baseTestDir.'/data/cover.jpg');
 		$mockRequest = $this->getMockBuilder(\yii\web\Request::class)->setMethods(['getRawBody'])->getMock();
 		$mockRequest->expects($this->any())->method('getRawBody')->willReturn($cover);
+
+		$_GET['book_guid'] = $book_guid = 1;		
 		$this->mockYiiApplication([ 'components' => [ 'request' => $mockRequest ] ]);
 	
-		/* @var $controller \app\controllers\SiteController */
-		$_GET['book_guid'] = $book_guid = 1;
-		$controller = \Yii::$app->createControllerByID('site');
-		//save to db
-		$controller->actionCoverSave();
-		
-		//verify
+		$this->controllerSite->runAction('cover-save'); //save to db
 		$actual_cover = $this->getConnection()->createQueryTable('books', "SELECT * FROM books WHERE book_guid=$book_guid")->getRow(0)['book_cover'];
+		// [ 2 ]
 		$this->assertLessThan(strlen($cover), strlen($actual_cover), 'resized image is not smaller than original'); // smaller size
 		// fails on Travis. why?
 		//$this->assertEquals(md5($actual_cover), md5_file(self::$baseTestDir.'/data/cover-resized.jpg'), 'resized image has different size as expected sample');
 		// replacement for failing test above
+		// [ 3 ]
 		$this->assertNotFalse(imagecreatefromstring($actual_cover));
 	}
 	
@@ -73,11 +82,9 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 	{
 		\Yii::$app->setAliases(['@webroot' => '@app/public']);
 		file_put_contents($this->initAppFileSystem() . '/public/assets/app/book-cover-empty.jpg', 'empty-cover-data');
-	
-		/* @var $controller \app\controllers\SiteController */
-		$controller = \Yii::$app->createControllerByID('site');
 		$book_guid = 1;
-		$cover = $controller->actionCover($book_guid);
+		
+		$cover = $this->controllerSite->runAction('cover', ['book_guid' => $book_guid]);
 	
 		$this->assertEquals('empty-cover-data', $cover);
 	}
@@ -87,12 +94,10 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 	{
 		\Yii::$app->setAliases(['@webroot' => '@app/public']);
 		file_put_contents($this->initAppFileSystem() . '/public/assets/app/book-cover-empty.jpg', 'empty-cover-data');
-
-		/* @var $controller \app\controllers\SiteController */
-		$controller = \Yii::$app->createControllerByID('site');
 		$book_guid = 1;
-		$this->getPdo()->exec("UPDATE books SET book_cover='valid-cover-data' WHERE book_guid='$book_guid'");
-		$cover = $controller->actionCover($book_guid);
+		
+		$this->getPdo()->exec("UPDATE books SET book_cover='valid-cover-data' WHERE book_guid='$book_guid'");		
+		$cover = $this->controllerSite->runAction('cover', ['book_guid' => $book_guid]);
 	
 		$this->assertEquals('valid-cover-data', $cover);
 	}
@@ -101,11 +106,7 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 	
 	function test_action_getBooks()
 	{
-		/* @var $controller \app\controllers\SiteController */
-		$controller = \Yii::$app->createControllerByID('site');
-			
-		$json = $controller->actionBooks();
-		$object = json_decode($json);
+		$object = json_decode($this->controllerSite->runAction('books'));
 		
 		$this->assertInstanceOf('\stdClass', $object);
 		$this->assertObjectHasAttribute('page', $object);
@@ -137,50 +138,40 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 	}
 	
 	
-	
-	function test_action_Manage_Delete()
+	/**
+	 * MUST
+	 * 1. remove record from books table based on book_guid
+	 * 2. TODO: remove file if sync is ON
+	 */
+	public function test_action_Manage_Delete()
 	{
-		/*
-		 * ACTION MUST:
-		 *
-		 * 1. remove record from books table based on book_guid
-		 * 
-		 * TODO:
-		 * 2. remove file if sync is ON
-		 */
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$_POST['oper'] = 'del';
 		$_POST['id'] = 3; // book_guid
 		
-		/* @var $controller \app\controllers\SiteController */
-		$controller = \Yii::$app->createControllerByID('site');
-		$controller->actionManage();
+		$this->controllerSite->runAction('manage');
 		
 		unset($this->books['expected'][2]);
-		
 		$this->assertDataSetsEqual($this->createArrayDataSet(['books' => $this->books['expected']]), $this->getConnection()->createDataSet(['books']));
 	}
 	
 	
+	/**
+	 * ACTION MUST:
+	 * 
+	 * 1. generate book guid
+	 * 2. generate created and updated date
+	 * 3. generate filename based on title etc..
+	 */
 	public function test_action_Manage_Add()
 	{
-		/*
-		 * ACTION MUST:
-		 * 
-		 * 1. generate book guid
-		 * 2. generate created and updated date
-		 * 3. generate filename based on title etc..
-		 *  
-		 */
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$book_1 = $this->books['insert'][0];
 		$book_1_expected =  $this->books['expected'][0];
 		$_POST = $book_1;
 		$_POST['oper'] = 'add';
 		
-		/* @var $controller \app\controllers\SiteController */
-		$controller = \Yii::$app->createControllerByID('site');
-		$controller->actionManage();
+		$this->controllerSite->runAction('manage');
 				
 		$newRecord = $this->getConnection()->createQueryTable('books', 'SELECT * FROM books WHERE book_guid NOT IN(1,2,3)')->getRow(0); //array
 		$oldRecords = $this->getConnection()->createQueryTable('books', 'SELECT * FROM books WHERE book_guid IN(1,2,3)');
@@ -210,19 +201,16 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 	
 	/**
 	 * @dataProvider pSync
+	 * 
+	 * ACTION MUST:
+	 * 
+	 * 1. not allow changes of book_guid, created and updated date, filename
+	 * 2. generate filename based on title
+	 * 3. generate updated_date
+	 * 4. rename file if sync is ON
 	 */
 	public function test_action_Manage_Edit($sync)
 	{
-		/*
-		 * ACTION MUST:
-		 * 
-		 * 1. not allow changes of book_guid, created and updated date, filename
-		 * 2. generate filename based on title
-		 * 3. generate updated_date
-		 * 
-		 * 4. rename file if sync is ON
-		 *
-		 */
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$book = $this->books['insert'][0];
 		$book_expected =  $this->books['expected'][0];
@@ -243,12 +231,10 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		// [ 3 ]
 		$book_expected['updated_date'] = (new \DateTime())->format('Y-m-d H:i:s');
 		
-		/* @var $controller \app\controllers\SiteController */
-		$controller = \Yii::$app->createControllerByID('site');
-		$controller->actionManage();
+		$this->controllerSite->runAction('manage');
+		
 		/* @var $book_current \yii\db\BaseActiveRecord */
 		$book_current = Books::findOne(['book_guid' => $book['book_guid']]);
-		
 		//var_dump($book_expected,$book_current->getAttributes());
 		$this->assertArraySubset($book_expected, $book_current->getAttributes());
 		

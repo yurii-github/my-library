@@ -57,10 +57,12 @@ class MyLibraryBootstrapTest extends \tests\AppTestCase
 		$this->mockYiiApplication([
 			'components' => [
 				'db' => [
-					'pdo' =>  new \PDO('sqlite:memory:migration')
+					'pdo' =>  new \PDO('sqlite:memory:1')
 				]
 			]
 		]);
+		
+		\Yii::$app->mycfg->system->version = null; // to trigger migration
 		
 		$bootstrap = new MyLibraryBootstrap();
 		$bootstrap->bootstrap(\Yii::$app);

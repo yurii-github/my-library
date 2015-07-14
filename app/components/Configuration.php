@@ -189,7 +189,8 @@ namespace app\components\configuration
 	 * @property string $emailto address of meial to send notification if enabled
 	 * @property string $theme
 	 * @property string $timezone
-	 * @property string $language   
+	 * @property string $language
+	 * @property string $version this param is only set after successful migration install  
 	 */
 	class System {}
 	

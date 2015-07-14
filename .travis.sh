@@ -39,7 +39,7 @@ fi
 if [ "$1" == "script" ]
 then
 	cd app/tests
-	if [ $SEND_CLOVER != 1 ]
+	if [ "$SEND_CLOVER" != "1" ]
 	then
 		export CLOVER=
 	fi

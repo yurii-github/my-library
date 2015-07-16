@@ -120,66 +120,77 @@ class Books extends ActiveRecord
 	}
 	
 
-
-	
-	public function beforeDelete()
-	{
-		if (parent::beforeDelete()) {// ...custom code here...
-			if (\Yii::$app->mycfg->library->sync && !file_exists(\Yii::$app->mycfg->Encode(\Yii::$app->mycfg->library->directory.'/'.$this->filename))) {
-				\Yii::warning('file "'. $this->filename .'" was removed before record deletion with sync enabled');
-			}
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	
+	/**
+	 * (non-PHPdoc)
+	 * @see \yii\db\BaseActiveRecord::afterDelete()
+	 */
 	public function afterDelete()
 	{
+		$filename_utf8 = \Yii::$app->mycfg->library->directory . $this->filename;
+		$filename_encoded = \Yii::$app->mycfg->Encode($filename_utf8);
+
 		if (\Yii::$app->mycfg->library->sync) {
-			unlink(\Yii::$app->mycfg->Encode(\Yii::$app->mycfg->library->directory.'/'.$this->filename));
+			if (!file_exists($filename_encoded)) {
+				\Yii::warning("file '{$filename_utf8}' was removed before record deletion with sync enabled");
+			} else {
+				unlink($filename_encoded);
+			}
 		}
+		
 		parent::afterDelete();
 	}
 	
+	
+	private function myBeforeInsert()
+	{
+		$this->book_guid = self::com_create_guid();
+		
+		if ($this->getScenario() != 'import') {
+			$this->filename = $this->buildFilename();
+		}
+		
+		return true;
+	}
 				
-				
+	
 	public function beforeSave($insert)
 	{
-		if (parent::beforeSave($insert)) { // ...custom code here...
-			$new_filename = $this->buildFilename();
-			if ($this->book_cover) {//resize
-				$this->book_cover = self::getResampledImageByWidthAsBlob($this->book_cover, \Yii::$app->mycfg->book->covermaxwidth);
-			}
-			
-			if($insert) {//inserting, make guid
-				$this->book_guid = self::com_create_guid();
-				if ($this->getScenario() != 'import') {
-					$this->filename = $new_filename;
-				}
-			} else { //updating
-				//syncing
-				if (!empty($this->filename) && \Yii::$app->mycfg->library->sync) {
-					//TODO: better combine
-					if ($this->filename != $new_filename) { // update file in filesystem
-						//check file exists
-						if (!file_exists(\Yii::$app->mycfg->library->directory . $this->filename)) {
-							throw new \Exception("Sync for file failed. Source file '$this->filename' does not exist");
-						}
-						if (!rename(
-							\Yii::$app->mycfg->Encode(\Yii::$app->mycfg->library->directory . $this->filename),
-							\Yii::$app->mycfg->Encode(\Yii::$app->mycfg->library->directory . $new_filename))) {
-								throw new \Exception('Sync for file failed.<br /><br />' . \error_get_last()['message']);
-						}
-					}
-				}
-				$this->filename = $new_filename;
-			}
-			return true;
-		} else {
+		if (!parent::beforeSave($insert)) {
 			return false;
 		}
+		
+		// INSERT
+		//
+		if($insert) {
+			return $this->myBeforeInsert();
+		}
+
+		// UPDATE
+		//
+		$old_filename = $this->getOldAttribute('filename');
+		$new_filename = $this->buildFilename();
+		
+		if ($this->book_cover) {//resize
+			$this->book_cover = self::getResampledImageByWidthAsBlob($this->book_cover, \Yii::$app->mycfg->book->covermaxwidth);
+		}
+		$this->filename = $new_filename;
+		//syncing
+		if (\Yii::$app->mycfg->library->sync && !empty($this->filename)) {
+			$filename_encoded_old = \Yii::$app->mycfg->Encode(\Yii::$app->mycfg->library->directory . $old_filename);
+			$filename_encoded_new = \Yii::$app->mycfg->Encode(\Yii::$app->mycfg->library->directory . $new_filename);
+			
+			if ($filename_encoded_old != $filename_encoded_new) { // update file in filesystem
+				//check file exists
+				if (!file_exists($filename_encoded_old)) {
+					//var_dump($new_filename);die;
+					throw new \yii\base\InvalidValueException("Sync for file failed. Source file '{$filename_encoded_old}' does not exist", 1);
+					
+				}
+				rename($filename_encoded_old, $filename_encoded_new);
+			}
+		}
+		
+		return true;
 	}
 	
 	

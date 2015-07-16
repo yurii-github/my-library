@@ -7,10 +7,11 @@ use app\components\Configuration;
 class BooksTest extends \tests\AppTestCase
 {
 	protected $books;
-	
+
 	protected function setUp()
 	{
 		$this->mockYiiApplication();
+		
 		$this->books = $this->setupFixture('books');
 		parent::setUp();
 	}
@@ -53,6 +54,20 @@ class BooksTest extends \tests\AppTestCase
 		//TODO: db check
 	}
 	
+
+	/**
+	 * @expectedException yii\base\InvalidValueException
+	 * @expectedExceptionCode 1
+	 * @expectedExceptionMessage Sync for file failed. Source file 'vfs://base/data/books/filename-1' does not exist
+	 */
+	function test_Update_NoFile_SyncON()
+	{
+		/* @var $book Books */
+		\Yii::$app->mycfg->library->sync = true;
+		$book = Books::findOne(['book_guid' => 1]);
+		$book->save();
+	}
+		
 	
 	/**
 	 * @dataProvider pSync
@@ -85,6 +100,41 @@ class BooksTest extends \tests\AppTestCase
 			$this->createArrayDataSet(['books' => $this->books['expected']]),
 			$this->getConnection()->createDataSet(['books']));
 	}
+	
+	
+	public function test_Delete_Warning_FileWasDeletedWithSyncON()
+	{
+		$log_filename = $this->initAppFileSystem() . '/runtime/logs/logs.txt';
+		
+		$this->mockYiiApplication( [
+			'bootstrap' => [ 'log'	],
+			'components' => [
+				'log' => [
+					'traceLevel' => 0,
+					'targets' => [
+						'generic'=> [
+							'class' => \yii\log\FileTarget::class,
+							'logVars' => [],
+							'logFile' => $log_filename,
+							'enabled' => true,
+							'levels' => ['warning'],
+						]
+					]
+				]
+			]
+		]);
+		
+		$book_delete = $this->books['expected'][0];
+		\Yii::$app->mycfg->library->sync = true;
+		
+		$book = Books::findOne(['book_guid' => $book_delete['book_guid']]);
+		$book->delete();
+		\Yii::getLogger()->flush(true);
+		
+		$this->assertRegExp('/filename\-1\' was removed before record deletion with sync enabled$/', file_get_contents($log_filename));
+	}
+	
+	
 	
 	
 	function test_jgridBooks()

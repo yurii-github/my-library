@@ -170,7 +170,7 @@ return [
 			//'errorAction' => 'site/error'
 		],*/
 		'user'=> [
-			'identityClass' => 'app\models\Users',
+			'identityClass' => \app\models\Users::class,
 			'enableAutoLogin' => true,
 			'loginUrl' => ['site/index'],
 			'enableSession' => true

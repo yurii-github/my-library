@@ -18,6 +18,7 @@ use yii\web\HttpException;
 use \app\components\Controller;
 use \app\components\behaviors\EmailSupport;
 use \app\models\Books;
+use app\models\Users;
 
 class SiteController extends Controller
 {	
@@ -61,32 +62,45 @@ class SiteController extends Controller
 		$this->redirect(['site/index']);
 	}
 	
+	
 	public function actionLogin()
 	{
+		//TODO: GET show view, POST login
+		//TODO: yii negotiator
+		//\Yii::$app->response->format = Response::FORMAT_JSON;
+		
+		$resp = new \stdClass();
+		$resp->result = false;
+		
 		try {
-			\Yii::$app->response->format = Response::FORMAT_JSON;
+			$username = \Yii::$app->request->post('username');
+			$password = \Yii::$app->request->post('password');
+			$remember_me = (bool)\Yii::$app->request->post('remember-me') ? 3600 * 24 * 30 : 0;
+			/* @var $user \yii\web\User */
+			$user = \Yii::$app->user;
+			$identity = Users::findIdentity($username);
 			
-			$resp = new \stdClass();
-			$form = new Login();
-			$form->setAttributes([
-				'username' => \Yii::$app->request->post('username'),
-				'password' => \Yii::$app->request->post('password'),
-				'rememberMe' => (bool)\Yii::$app->request->post('remember-me')
-			]);
-			
-			if ($form->login()) {
-				$resp->result = true;
-				$resp->data = Url::to(['site/index']);
-			} else {
-				$resp->result = false;
-				$resp->data = $form->getErrors();
+			if (empty($identity) || !($identity instanceof \yii\web\IdentityInterface)) {
+				throw new \yii\base\InvalidValueException('wrong login or password', 1);
 			}
-		} catch(\Exception $e) {
-			$resp->result = false;
-			$resp->data = ['all' => [$e->getLine().': '.$e->getMessage().' '.$e->getFile()]];
+			
+			if (!$identity->validatePassword($password)) {
+				//var_dump($password);
+				throw new \yii\base\InvalidValueException('wrong login or password', 2);
+			}
+			
+			if (!$user->login($identity, $remember_me)) {
+				throw new \yii\base\InvalidValueException('server error. please try later', 3);
+			}
+			
+			//success
+			$resp->result = true;
+		} catch (\Exception $e) {
+			//TODO: mitiple errors support
+			$resp->data = $e->getMessage();
 		}
 		
-		return $resp;
+		return json_encode($resp);
 	}
 	
 

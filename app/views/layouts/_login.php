@@ -47,26 +47,18 @@ $(document).ready(function(e){
 					url: form.attr('action'),
 					processData: false,
 					contentType: false,
+					dataType: 'json',
 					data: fd,
 					success: function (resp) {
 						try {
 							if (resp == undefined) {
 								throw Error('internal error. object was not set!');
 							}
-							if(!resp.result) {//failed
-								var err = [];
-								$.each(resp.data, function(i,v) {
-									$.each(v, function(k,v) {
-										console.log(i,v);// i - attribute name
-										error_list.append($('<div>').addClass('error').text(v));
-									});
-								});
-								return;
+							if(resp.result == true) { //success
+								window.location.reload();
+							} else { //failed
+								error_list.append($('<div>').addClass('error').text(resp.data));
 							}
-							//success
-							window.location.href = resp.data;
-
-								
 						} catch(e) {
 							error_list.append($('<div>').addClass('error').text(e.message));
 						}//try-catch

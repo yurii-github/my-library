@@ -110,11 +110,7 @@ class Books extends ActiveRecord
 				'class' => TimestampBehavior::className(),
 				'createdAtAttribute' => 'created_date',
 				'updatedAtAttribute' => 'updated_date',
-				'value' => function() {
-					$r = \Yii::$app->formatter->asDatetime('now','php:Y-m-d H:i:s');
-					return $r;
-					//var_dump($r);die;
-				}
+				'value' => function() { return \Yii::$app->formatter->asDatetime('now','php:Y-m-d H:i:s');	}
 			]
 		];
 	}
@@ -141,24 +137,20 @@ class Books extends ActiveRecord
 	}
 	
 	
-	public function beforeSave($insert)
+	private function myBeforeInsert()
 	{
-		// yii2 event handling logic. do not remove!
-		if (!parent::beforeSave($insert)) { return false; }
+		$this->book_guid = self::com_create_guid();
 		
-		// INSERT
-		//
-		if($insert) {
-			$this->book_guid = self::com_create_guid();
-		
-			if ($this->getScenario() != 'import') {
-				$this->filename = $this->buildFilename();
-			}
-			return true;
+		if ($this->getScenario() != 'import') {
+			$this->filename = $this->buildFilename();
 		}
-
-		// UPDATE
-		//
+		
+		return true;
+	}
+	
+	
+	private function myBeforeUpdate()
+	{
 		$old_filename = $this->getOldAttribute('filename');
 		$new_filename = $this->buildFilename();
 		
@@ -170,7 +162,7 @@ class Books extends ActiveRecord
 		if (\Yii::$app->mycfg->library->sync && !empty($this->filename)) {
 			$filename_encoded_old = \Yii::$app->mycfg->Encode(\Yii::$app->mycfg->library->directory . $old_filename);
 			$filename_encoded_new = \Yii::$app->mycfg->Encode(\Yii::$app->mycfg->library->directory . $new_filename);
-			
+				
 			if ($filename_encoded_old != $filename_encoded_new) { // update file in filesystem
 				//check file exists
 				if (!file_exists($filename_encoded_old)) {
@@ -184,6 +176,18 @@ class Books extends ActiveRecord
 		return true;
 	}
 	
+	public function beforeSave($insert)
+	{
+		// yii2 event handling logic. do not remove!
+		if (!parent::beforeSave($insert)) { return false; }
+		
+		if($insert) { // INSERT
+			return $this->myBeforeInsert();
+		} else { // UPDATE
+			return $this->myBeforeUpdate();
+		}
+	}
+	
 	
 	protected static function jqgridPepareQuery(array $data)
 	{
@@ -194,7 +198,7 @@ class Books extends ActiveRecord
 		$conditions = ['bw'=>'like','eq'=>'='];
 		$query = Books::find();
 		
-		if ($filters instanceof \stdClass && ! empty($filters->rules)) {
+		if ($filters instanceof \stdClass && is_array($filters->rules)) {
 			foreach ($filters->rules as $rule) {
 				if (empty($conditions[$rule->op])) {
 					continue; // unknown condition, skip

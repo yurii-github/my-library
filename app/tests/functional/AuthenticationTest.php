@@ -51,16 +51,16 @@ class AuthenticationTest extends \tests\AppFunctionalTestCase
 		$this->assertEquals('wrong login or password', $r->data);
 	}
 	
-
 	
 	function test_Login()
 	{
-		$this->markTestIncomplete();
+		//$this->markTestIncomplete();
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$_POST['username'] = 'root';
 		$_POST['password'] = 'root';
 		
-		$r = $this->controllerSite->runAction('login');
+		$r = json_decode($this->controllerSite->runAction('login'));
+		
 		$this->assertTrue($r->result);
 	}
 	

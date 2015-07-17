@@ -118,12 +118,13 @@ class SiteController extends Controller
 		return $this->render('//about/index', ['projects' => $projects]);
 	}
 	
+	/* NOT IMPLEMENTED YET
 	public function actionError()
 	{
 	//	yii\helpers\VarDumper::export($var)
 		$e = \Yii::$app->errorHandler->exception;
 		return $this->render('error', ['exception' => $e]);
-	}
+	}*/
 	
 	
 	
@@ -165,11 +166,11 @@ class SiteController extends Controller
 	 */
 	public function actionCoverSave()
 	{
-		/* @var $b Books */
-		$b = Books::findOne(['book_guid' => \Yii::$app->request->get('book_guid')]);
-		$b->setScenario('cover');
-		$b->book_cover = \Yii::$app->request->getRawBody();
-		$b->save();
+		/* @var $book Books */
+		$book = Books::findOne(['book_guid' => \Yii::$app->request->get('book_guid')]);
+		$book->setScenario('cover');
+		$book->book_cover = \Yii::$app->request->getRawBody();
+		$book->save();
 	}
 	
 	
@@ -178,34 +179,51 @@ class SiteController extends Controller
 	 */
 	public function actionManage()
 	{
-		/* @var $book Books */
-		$action = \Yii::$app->request->post('oper');
-		
-		switch ($action) {
+		switch (\Yii::$app->request->post('oper')) {
 			case 'add':
-				$book = new Books(['scenario'=>'add']);
-				$book->attributes = \Yii::$app->request->post();
-				$book->favorite = $book->favorite == null ? 0 : $book->favorite;
-				$book->insert();
+				$this->add(\Yii::$app->request->post());
 				break;
 					
 			case 'del':
-				$book = Books::findOne(['book_guid' => \Yii::$app->request->post('id')]);
-				if ($book instanceof Books) {
-					$book->delete();
-				}
+				$this->delete(\Yii::$app->request->post('id'));
 				break;
 					
 			case 'edit':
-				$book = Books::findOne(['book_guid' => \Yii::$app->request->post('id')]);
-				$book->scenario = 'edit';
-				$book->attributes = \Yii::$app->request->post();
-				if (!$book->save()) {
-					throw new \yii\web\BadRequestHttpException(print_r($book->getErrors(), true));
-				}
+				$this->update(\Yii::$app->request->post('id'), \Yii::$app->request->post());
 				break;
 		}
-	}	
+	}
 	
+	private function add($attributes)
+	{
+		/* @var $book Books */
+		$book = new Books(['scenario'=>'add']);
+		$book->attributes = $attributes;
+		$book->favorite = $book->favorite == null ? 0 : $book->favorite;
+		
+		$book->insert();
+	}
+	
+	private function delete($id)
+	{
+		/* @var $book Books */
+		$book = Books::findOne(['book_guid' => $id]);
+		
+		if ($book instanceof Books) {
+			$book->delete();
+		}
+	}
+	
+	private function update($id, $attributes)
+	{
+		/* @var $book Books */
+		$book = Books::findOne(['book_guid' => $id]);
+		$book->scenario = 'edit';
+		$book->attributes = $attributes;
+		
+		if (!$book->save()) {
+			throw new \yii\web\BadRequestHttpException(print_r($book->getErrors(), true));
+		}
+	}
 
 }

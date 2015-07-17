@@ -205,11 +205,5 @@ class ConfigController extends Controller
 
 		return json_encode($resp);
 	}
-	
-	
 
-	public function actionPhpInfo()
-	{
-		return $this->renderPartial('phpinfo');
-	}
 }

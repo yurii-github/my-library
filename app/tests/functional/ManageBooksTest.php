@@ -122,19 +122,118 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 			$this->assertInstanceOf('\stdClass', $object->rows[$k]);
 			$this->assertEquals($book['book_guid'], $object->rows[$k]->id);
 		}
-		
-		//TODO: filters, page etc
-		
-/*
- * 				$data = [
-					'page' => \Yii::$app->request->get('page'),
-					'limit' => \Yii::$app->request->get('rows'),
-					'filters' => \Yii::$app->request->get('filters'),
-					'sort_column' => \Yii::$app->request->get('sidx'),
-					'sort_order'=> \Yii::$app->request->get('sord'),
-				];
- */
+	}
 	
+	
+	function test_action_getBooks_Paging()
+	{
+		$book_expected = $this->books['expected'][1];
+
+		$_GET['page'] = 2;
+		$_GET['rows'] = 1;
+		$_GET['sidx'] = 'id'; //book_guid
+		$_GET['sord'] = 'asc';
+
+		$object = json_decode($this->controllerSite->runAction('books'));
+		
+		$this->assertInstanceOf('\stdClass', $object);
+		$this->assertEquals(2, $object->page);
+		$this->assertEquals(3, $object->total); // 3 pages
+		$this->assertEquals(3, $object->records); // 3 rows total
+		$this->assertTrue(is_array($object->rows));
+		$this->assertCount(1, $object->rows); // 1 row returned
+		$book_actual = $object->rows[0]; //object
+		$this->assertEquals($book_actual->id, $book_expected['book_guid']);
+		$this->assertEquals($book_actual->cell[5], $book_expected['title']);
+		
+		//var_dump($object); die;
+	}
+	
+	
+	function test_action_getBooks_SimpleFilter()
+	{
+		$book_expected = $this->books['expected'][1];
+		$filters = [
+			'rules' => [[
+				'op' => 'bw', 	// ['bw'=>'like','eq'=>'='];
+				'field' => 'title',
+				'data' => '#2' // matches 'title #2'
+			]]
+		];
+		//?_search=true&nd=1437116037426&rows=10&page=1&sidx=created_date&sord=desc&filters={"groupOp":"OR","rules":[{"field":"title","op":"bw","data":"#2"}]}
+		$_GET['filters'] = json_encode($filters);
+		
+		$object = json_decode($this->controllerSite->runAction('books'));
+		$this->assertInstanceOf('\stdClass', $object);
+		$this->assertObjectHasAttribute('total', $object);
+		$this->assertEquals(1, $object->total);
+		$this->assertObjectHasAttribute('rows', $object);
+		$this->assertTrue(is_array($object->rows));
+		$book_actual = $object->rows[0]; //object
+		$this->assertCount(1, $object->rows);
+		//var_dump($book_actual); die;
+		$this->assertEquals($book_actual->id, $book_expected['book_guid']);
+		$this->assertEquals($book_actual->cell[5], $book_expected['title']);
+	}
+	
+	
+	/**
+	 *  @see test_action_getBooks()
+	 */
+	function test_action_getBooks_CombinedFilter()
+	{
+		$book_expected = $this->books['expected'][1];
+		$filters = [
+			'groupOp' => 'AND',
+			'rules' => [
+				[
+					'op' => 'bw', 	// ['bw'=>'like','eq'=>'='];
+					'field' => 'title',
+					'data' => 'title' // matches '%title%'
+				],
+				[
+					'op' => 'eq',
+					'field' => 'filename',
+					'data' => 'filename-2'
+				]
+			]
+		];
+		
+		$_GET['filters'] = json_encode($filters);
+	
+		$object = json_decode($this->controllerSite->runAction('books'));
+		$this->assertInstanceOf('\stdClass', $object);
+		$this->assertObjectHasAttribute('rows', $object);
+		$this->assertTrue(is_array($object->rows));
+		$book_actual = $object->rows[0]; //object
+		$this->assertCount(1, $object->rows);
+		//var_dump($book_actual); die;
+		$this->assertEquals($book_actual->id, $book_expected['book_guid']);
+		$this->assertEquals($book_actual->cell[5], $book_expected['title']);
+	}
+	
+	
+	/**
+	 *  @see test_action_getBooks()
+	 */
+	function test_action_getBooks_UnknownConditionInFilter()
+	{
+		$book_expected = $this->books['expected'][1];
+		$filters = [
+			'rules' => [[
+				'op' => 'unknown-condition',
+				'field' => 'title',
+				'data' => '#2'
+			]]
+		];
+		
+		$_GET['filters'] = json_encode($filters);
+	
+		$object = json_decode($this->controllerSite->runAction('books'));
+		$this->assertInstanceOf('\stdClass', $object);
+		$this->assertObjectHasAttribute('total', $object);
+		$this->assertEquals(count($this->books['expected']), $object->records); // returns all records, rule does not apply
+		$this->assertEquals(count($this->books['expected']), count($object->rows)); // returns all records, rule does not apply
 	}
 	
 	

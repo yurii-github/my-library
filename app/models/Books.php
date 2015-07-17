@@ -141,28 +141,20 @@ class Books extends ActiveRecord
 	}
 	
 	
-	private function myBeforeInsert()
-	{
-		$this->book_guid = self::com_create_guid();
-		
-		if ($this->getScenario() != 'import') {
-			$this->filename = $this->buildFilename();
-		}
-		
-		return true;
-	}
-				
-	
 	public function beforeSave($insert)
 	{
-		if (!parent::beforeSave($insert)) {
-			return false;
-		}
+		// yii2 event handling logic. do not remove!
+		if (!parent::beforeSave($insert)) { return false; }
 		
 		// INSERT
 		//
 		if($insert) {
-			return $this->myBeforeInsert();
+			$this->book_guid = self::com_create_guid();
+		
+			if ($this->getScenario() != 'import') {
+				$this->filename = $this->buildFilename();
+			}
+			return true;
 		}
 
 		// UPDATE
@@ -184,7 +176,6 @@ class Books extends ActiveRecord
 				if (!file_exists($filename_encoded_old)) {
 					//var_dump($new_filename);die;
 					throw new \yii\base\InvalidValueException("Sync for file failed. Source file '{$filename_encoded_old}' does not exist", 1);
-					
 				}
 				rename($filename_encoded_old, $filename_encoded_new);
 			}
@@ -200,12 +191,15 @@ class Books extends ActiveRecord
 		$data['sort_column'] = empty($data['sort_column']) ? 'created_date' : $data['sort_column'];
 		$data['sort_order'] = !empty($data['sort_order']) &&  $data['sort_order']  == 'desc' ? SORT_DESC : SORT_ASC; //+secure
 		$filters = empty($data['filters']) ? null : json_decode($data['filters']);
+		$conditions = ['bw'=>'like','eq'=>'='];
 		$query = Books::find();
 		
 		if ($filters instanceof \stdClass && ! empty($filters->rules)) {
-			$conditions = ['bw'=>'like','eq'=>'='];
 			foreach ($filters->rules as $rule) {
-				if ($filters->groupOp == 'AND') {
+				if (empty($conditions[$rule->op])) {
+					continue; // unknown condition, skip
+				}
+				if (!empty($filters->groupOp) && $filters->groupOp == 'AND') {
 					$query->andFilterWhere([$conditions[$rule->op], $rule->field, $rule->data]);
 				} else {
 					$query->orFilterWhere([$conditions[$rule->op], $rule->field, $rule->data]);
@@ -246,7 +240,7 @@ class Books extends ActiveRecord
 			'query' => $query,
 			'pagination' => [
 				'pageSize' => $data['limit'],
-				'page' => --$data['page'] //jgrid fix
+				'page' => $data['page']-1 //jgrid fix
 			],
 		]);
 		

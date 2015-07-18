@@ -34,10 +34,11 @@ class m150107_111042_01_init extends Migration
 		], $tableOptions);
 	}
 
+	/*
 	public function safeDown()
 	// public function down()
 	{
 		$this->dropTable($this->tbname);
 		// return false; //false if cannot rollback
-	}
+	}*/
 }

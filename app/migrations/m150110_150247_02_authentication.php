@@ -49,11 +49,12 @@ class m150110_150247_02_authentication extends \yii\db\Migration
     	$a->assign($a->getRole('users'), 'root');
     }
 
+    /*
     public function safeDown()
     {
     	$a = \Yii::$app->authManager;
     	$a->removeAll();
     	
     	$this->dropTable($this->tbname);
-    }
+    }*/
 }

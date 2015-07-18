@@ -1,4 +1,5 @@
 <?php
+// yii2.bat message messages-config.php
 
 return [
     // string, required, root directory of all source files

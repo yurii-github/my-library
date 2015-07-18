@@ -5,8 +5,36 @@ namespace tests\functional;
 class MigrationTest extends \tests\AppFunctionalTestCase
 {
 	
-	protected function mockYiiApplication($config = [])
+	public function test_MigrationInstall()
+	{		
+		$this->mockYiiApplication([
+			'components' => [
+				'db' => [
+					'pdo' =>  new \PDO("sqlite::memory:")
+				]
+			]
+		]);
+		
+		/* @var $controller \app\controllers\InstallController */
+		$c = $this->mockController('install');
+		$r = $c->runAction('migrate');
+		$this->assertEquals('//site/migration', $r[0], 'render view does not match');
+		$this->assertTrue($r[1]['result'], "migration has failed with content: \n\n". $r[1]['content']);
+	}
+	
+	
+	
+	
+	
+	//\Yii::$app->mycfg->system->version = 'wrong-version'; // trigger install
+	
+	
+	
+	/*
+	
+	protected function m2222ockYiiApplication($config = [])
 	{
+		
 		$mock_response = $this->getMockBuilder(\yii\web\Response::class)
 			//->disableOriginalConstructor()
 			->setConstructorArgs([['charset' => 'utf-8']]) //to not trigger app as it is not initted yet
@@ -22,17 +50,10 @@ class MigrationTest extends \tests\AppFunctionalTestCase
 		];
 		
 		parent::mockYiiApplication(\yii\helpers\ArrayHelper::merge($cfg, $config));
-	}
+	}*/
 	
 	
-	function testMigrationInstall()
-	{
-		\Yii::$app->mycfg->system->version = 123; // trigger install
-		
-		/* @var $controller \app\controllers\SiteController */
-		$controller = $this->mockController('site');
-		$controller->runAction('index');
-	}
+	
 	
 	
 }

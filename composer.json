@@ -25,7 +25,6 @@
 		"phpunit/phpunit": "4.7.*",
 		"phpunit/dbunit": "*",
 		"facebook/webdriver": "dev-master",
-		"mikey179/vfsStream": "1.5.0@stable",
-		"yiisoft/yii2-debug": "~2.0.0"
+		"mikey179/vfsStream": "1.5.0@stable"
 	}
 }

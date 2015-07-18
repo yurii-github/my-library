@@ -32,8 +32,9 @@ class AuthenticationTest extends \tests\AppFunctionalTestCase
 		$_POST['username'] = 'wrong-login';
 		$_POST['password'] = 'root';
 		
+		$this->assertNull(\Yii::$app->user->identity); // guest
 		$r = json_decode($this->controllerSite->runAction('login'));
-		
+		$this->assertNull(\Yii::$app->user->identity); // guest
 		$this->assertFalse($r->result);
 		$this->assertEquals('wrong login or password', $r->data);
 	}
@@ -45,23 +46,45 @@ class AuthenticationTest extends \tests\AppFunctionalTestCase
 		$_POST['username'] = 'root';
 		$_POST['password'] = 'wrong-password';
 		
+		$this->assertNull(\Yii::$app->user->identity); // guest
 		$r = json_decode($this->controllerSite->runAction('login'));
-		
+		$this->assertNull(\Yii::$app->user->identity); // guest
 		$this->assertFalse($r->result);
 		$this->assertEquals('wrong login or password', $r->data);
 	}
 	
 	
-	function test_Login()
+	function test_Login_Success()
 	{
 		//$this->markTestIncomplete();
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$_POST['username'] = 'root';
 		$_POST['password'] = 'root';
 		
+		$this->assertNull(\Yii::$app->user->identity); // guest
 		$r = json_decode($this->controllerSite->runAction('login'));
-		
+		$this->assertInstanceOf(\app\models\Users::class, \Yii::$app->user->identity); // logged in
 		$this->assertTrue($r->result);
+	}
+	
+
+	function test_Logout_Success()
+	{
+		//$this->markTestIncomplete();
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$_POST['username'] = 'root';
+		$_POST['password'] = 'root';
+	
+		$r = json_decode($this->controllerSite->runAction('login'));
+		$this->assertInstanceOf(\app\models\Users::class, \Yii::$app->user->identity); // logged in
+		
+		//try logout
+		unset($_POST);
+		$r = json_decode($this->controllerSite->runAction('logout'));
+		$this->assertNull(\Yii::$app->user->identity); // guest
+		///$r = json_decode($this->controllerSite->runAction('login'));
+		//
+		//$this->assertTrue($r->result);
 	}
 	
 	

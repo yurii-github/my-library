@@ -58,13 +58,20 @@ class SiteController extends Controller
 	
 	public function actionLogout()
 	{
-		\Yii::$app->user->logout();
-		$this->redirect(['site/index']);
+		/* @var $user \yii\web\User */
+		$user = \Yii::$app->user;
+		
+		$resp = new \stdClass();
+		$resp->result = $user->logout();
+		
+		return json_encode($resp);
 	}
 	
 	
 	public function actionLogin()
 	{
+		/* @var $user \yii\web\User */
+		
 		//TODO: GET show view, POST login
 		//TODO: yii negotiator
 		//\Yii::$app->response->format = Response::FORMAT_JSON;
@@ -76,7 +83,7 @@ class SiteController extends Controller
 			$username = \Yii::$app->request->post('username');
 			$password = \Yii::$app->request->post('password');
 			$remember_me = (bool)\Yii::$app->request->post('remember-me') ? 3600 * 24 * 30 : 0;
-			/* @var $user \yii\web\User */
+			
 			$user = \Yii::$app->user;
 			$identity = Users::findIdentity($username);
 			

@@ -45,6 +45,8 @@ app\assets\JqueryGrid::register($this);
 <?php
 if(\Yii::$app->user->isGuest) { // append login form
 	echo $this->renderFile(__DIR__.'/_login.php');
+} else {
+	echo $this->renderFile(__DIR__.'/_logout.php');
 }
 ?>
 </header>

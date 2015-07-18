@@ -57,7 +57,7 @@ class MyLibraryBootstrapTest extends \tests\AppTestCase
 		$this->mockYiiApplication([
 			'components' => [
 				'db' => [
-					'pdo' =>  new \PDO('sqlite::memory:')
+					'pdo' =>  new \PDO('sqlite::memory:1')
 				]
 			]
 		]);

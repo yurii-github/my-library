@@ -10,10 +10,11 @@ class m150107_111042_01_init extends Migration
 	public function safeUp()
 	// public function up()
 	{
-		//skip if table exist
+		//skip if table exist used only by me
+		/*
 		if (!empty($this->db->getTableSchema($this->tbname))) {
 			return;
-		}
+		}*/
 		
 		$tableOptions = null;
 		

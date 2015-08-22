@@ -54,23 +54,19 @@ class MyLibraryBootstrapTest extends \tests\AppTestCase
 	
 	public function test_MigrationEvent()
 	{
-		$this->mockYiiApplication([
-			'components' => [
-				'db' => [
-					'pdo' =>  new \PDO('sqlite::memory:')
-				]
-			]
-		]);
-		
-		\Yii::$app->mycfg->system->version = null; // to trigger migration
-		
-		$bootstrap = new MyLibraryBootstrap();
-		$bootstrap->bootstrap(\Yii::$app);
-		
-		$this->assertTrue(\yii\base\Event::hasHandlers(\app\components\Controller::class, \app\components\Controller::EVENT_BEFORE_ACTION),
-			'migration event for controller was not added');
+		try {
+			$this->cleanDb();			
+			$this->mockYiiApplication();
+			\Yii::$app->mycfg->system->version = null; // to trigger migration event
+			
+			$bootstrap = new MyLibraryBootstrap();
+			$bootstrap->bootstrap(\Yii::$app);
+			
+			$this->assertTrue(\yii\base\Event::hasHandlers(\app\components\Controller::class, \app\components\Controller::EVENT_BEFORE_ACTION),
+				'migration event for controller was not added');
+		} finally {
+			$this->resetConnection();
+		}
 	}
-	
-	
 	
 }

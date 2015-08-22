@@ -328,7 +328,7 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		// [ 2 ]
 		$book_expected['filename'] = ", ''title book #1'',  [].";
 		// [ 3 ]
-		$book_expected['updated_date'] = (new \DateTime())->format('Y-m-d H:i:s');
+		$book_expected['updated_date'] = (new \DateTime())->format('Y-m-d H:i:s'); //TODO: sometimes fails on travis!
 		
 		$this->controllerSite->runAction('manage');
 		

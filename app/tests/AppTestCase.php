@@ -6,9 +6,9 @@ use org\bovigo\vfs\vfsStream;
 
 class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 {
-	static $baseTestDir = __DIR__;
-	static $pdo;	// pdo connection
-	static $dbc;	// dbunit connection, contains pdo
+	protected static $baseTestDir = __DIR__;
+	private static $pdo;	// pdo connection
+	private static $dbc;	// dbunit connection, contains pdo
 	
 	protected $dataset = [ //for clearing with dbunit via truncate
 		'books' => [],
@@ -22,7 +22,7 @@ class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 	 * 
 	 * @return \PDO
 	 */
-	public function getPdo()
+	protected function getPdo()
 	{
 		if (empty(self::$pdo)) {
 			$env_db = getenv('DB_TYPE');
@@ -50,7 +50,7 @@ class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 	 * (non-PHPdoc)
 	 * @see PHPUnit_Extensions_Database_TestCase::getConnection()
 	 */
-	public function getConnection()
+	protected function getConnection()
 	{
 		if (empty(self::$dbc)) {
 			self::$dbc = $this->createDefaultDBConnection($this->getPdo());
@@ -215,7 +215,22 @@ class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 	
 	// < - - - - - - FS - - - - -
 	
+	/**
+	 *  remove tables, fully clean database
+	 */
+	function cleanDb()
+	{
+		foreach (array_keys($this->dataset) as $tbname) {
+			$sql = "DROP TABLE IF EXISTS $tbname";
+			self::getPdo()->query($sql);
+		}
+	}
 	
+	
+	protected function resetConnection()
+	{
+		self::$pdo = self::$dbc = null; // reset pdo connection
+	}
 	
 }
 

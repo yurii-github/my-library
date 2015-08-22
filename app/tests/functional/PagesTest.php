@@ -4,7 +4,7 @@ namespace tests\functional;
 class PagesTest extends \tests\AppFunctionalTestCase
 {
 
-	function test_Config_IndexPage()
+	public function test_Config_IndexPage()
 	{
 		/* @var $controller \app\controllers\ConfigController */
 		$controller = $this->mockController('config');
@@ -12,7 +12,7 @@ class PagesTest extends \tests\AppFunctionalTestCase
 		$this->assertEquals('index', $args[0]);
 	}
 
-	function test_Site_IndexPage()
+	public function test_Site_IndexPage()
 	{
 		/* @var $controller \app\controllers\SiteController */
 		$controller = $this->mockController('site');
@@ -21,7 +21,7 @@ class PagesTest extends \tests\AppFunctionalTestCase
 		$this->assertEquals('Books', $controller->view->title);
 	}
 
-	function test_Site_AboutPage()
+	public function test_Site_AboutPage()
 	{
 		/* @var $controller \app\controllers\SiteController */
 		$controller = $this->mockController('site');

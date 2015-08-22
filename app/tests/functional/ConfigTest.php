@@ -113,6 +113,19 @@ class ConfigTest extends \tests\AppFunctionalTestCase
 		
 		$this->assertFalse($resp->result);
 	}
+
+	
+	public function test_getPermissions()
+	{
+		try {
+			(new MigrationTest())->test_MigrationInstall(); // install migrations TODO: make as fixtures
+			$perms = \Yii::$app->authManager->getPermissions();
+			$this->assertArraySubset(['list-books', 'edit-books'], array_keys($perms));
+			//$resp = json_decode($this->controller->runAction('permissions')); //TODO: better output
+		} finally {
+			$this->resetConnection();
+		}
+	}
 	
 	
 }

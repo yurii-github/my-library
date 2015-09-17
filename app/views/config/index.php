@@ -53,7 +53,7 @@ form.configuration-form fieldset legend, form.configuration-form fieldset label 
 	<ul>
 		<li><a href="#tabs-1"><?php echo \Yii::t('frontend/config', 'settings'); ?></a><span style="display: inline-block;" class="status ui-icon ui-icon-wrench"></span></li>
 		<li><a href="#tabs-3"><?php echo \Yii::t('frontend/config', 'syncronization'); ?></a><span style="display: inline-block;" class="status ui-icon ui-icon-refresh"></span></li>
-		<li><a href="<?= Url::to(['config/users']);?>"><?php echo \Yii::t('frontend/config', 'users'); ?></a></li>
+		<li><a href="<?= Url::to(['config/permissions']);?>"><?php echo \Yii::t('frontend/config', 'permissions'); ?></a></li>
 	</ul>
 
 	<div id="tabs-1">

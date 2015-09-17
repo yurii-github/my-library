@@ -66,13 +66,13 @@ class ConfigController extends Controller
 		return $this->render('index');
 	}
 	
-	
-	// return list of users
-	public function actionUsers()
+	// return roles+permissions and users+roles
+	public function actionPermissions()
 	{
-		$auth = Yii::$app->authManager;	
 		$data = [];
+		$auth = Yii::$app->authManager;
 		$roles = $auth->getRoles();
+		
 		foreach ($roles as $r) {
 			$perms = $auth->getChildren($r->name);
 			foreach ($perms as $p) {
@@ -80,7 +80,7 @@ class ConfigController extends Controller
 			}
 		}
 
-		return $this->renderPartial('users', ['data'=>$data, 'perms'=>$a->getPermissions()]);
+		return $this->renderPartial('permissions', ['roles' => $data, 'perms' => $auth->getPermissions()]);
 	}
 	
 	public function actionCheckFiles()

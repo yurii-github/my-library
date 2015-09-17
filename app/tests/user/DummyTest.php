@@ -15,6 +15,7 @@ class DummyTest extends PHPUnit_Framework_TestCase
 
 		//$w->takeScreenshot('1.jpg');
 		
+		$this->assertTrue(true);
 
 		$w->quit();
 	}

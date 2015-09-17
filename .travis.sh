@@ -13,9 +13,15 @@ then
 	then
 		echo -e "${color}using cache. nothing to do";
 	else
+		echo -e "${color}getting latest Selenium Server Standalone";
+		wget http://goo.gl/yLJLZg -O vendor/selenium-server-standalone.jar
+		echo -e "${color}getting latest Chrome WebDriver for Selenium Server Standalone";
+		wget http://chromedriver.storage.googleapis.com/2.9/chromedriver_linux32.zip -O verndor/chromedriver_linux32.zip
+		unzip verndor/chromedriver_linux32.zip vendor/chromedriver
+		
 		echo -e "${color}getting latest PHPUnit";
 		wget https://phar.phpunit.de/phpunit.phar -O vendor/phpunit.phar --no-check-certificate
-	  
+		
 		echo -e "${color}setting github oauth token..";
 		composer config -g github-oauth.github.com $GITHUB_TOKEN
 
@@ -29,6 +35,8 @@ then
 		composer show --installed
 	fi
 	
+	# run selenium server
+	java -jar vendor/selenium-server-standalone.jar -Dwebdriver.chrome.driver=vendor/chromedriver/chromedriver
 	exit $?
 fi
 

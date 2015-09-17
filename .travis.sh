@@ -37,6 +37,7 @@ then
 	
 	# run selenium server
 	java -jar vendor/selenium-server-standalone.jar -Dwebdriver.chrome.driver=vendor/chromedriver/chromedriver
+	& slepp 5
 	exit $?
 fi
 

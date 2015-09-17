@@ -123,6 +123,7 @@ class ConfigTest extends \tests\AppFunctionalTestCase
 			$this->assertArraySubset(['list-books', 'edit-books'], array_keys($perms));
 			//$resp = json_decode($this->controller->runAction('permissions')); //TODO: better output
 		} finally {
+			$this->cleanDb();
 			$this->resetConnection();
 		}
 	}

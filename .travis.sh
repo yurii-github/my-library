@@ -16,8 +16,8 @@ then
 		echo -e "${color}getting latest Selenium Server Standalone";
 		wget http://goo.gl/yLJLZg -O vendor/selenium-server-standalone.jar
 		echo -e "${color}getting latest Chrome WebDriver for Selenium Server Standalone";
-		wget http://chromedriver.storage.googleapis.com/2.9/chromedriver_linux32.zip -O verndor/chromedriver_linux32.zip
-		unzip verndor/chromedriver_linux32.zip vendor/chromedriver
+		wget http://chromedriver.storage.googleapis.com/2.9/chromedriver_linux32.zip -O vendor/chromedriver_linux32.zip
+		unzip vendor/chromedriver_linux32.zip vendor/chromedriver
 		
 		echo -e "${color}getting latest PHPUnit";
 		wget https://phar.phpunit.de/phpunit.phar -O vendor/phpunit.phar --no-check-certificate

@@ -24,6 +24,10 @@ before_install:
 install:
   - bash .travis.sh install
 before_script:
+  # run php web server and selenium server
+  - php -S 127.0.0.1:8888 -t app/public &
+  - java -jar vendor/selenium.jar -Dwebdriver.chrome.driver=chromedrv-32 &
+  - sleep 5
   - mysql -e "CREATE DATABASE IF NOT EXISTS test_mylib" -utravis
 script:
   - bash .travis.sh script
@@ -35,14 +39,14 @@ before_deployment:
 deployment:
 after_deployment:
 #
-# other 
+# other
 #
 addons:
   code_climate:
     repo_token: c68155affdbf8dd8d28e2a5c55f67ca43474429dae16b097f19e117b1da4194b
 #
 # cache on success. lifetime?
-# 
+#
 cache:
   directories:
     - vendor

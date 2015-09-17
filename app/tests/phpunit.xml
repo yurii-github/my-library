@@ -24,6 +24,9 @@ verbose="true">
 		<testsuite name="functional">
 			<directory>functional</directory>
 		</testsuite>
+		<testsuite name="user">
+			<directory>user</directory>
+		</testsuite>
 	</testsuites>
 	
 	<!-- codecoverage filters -->
@@ -48,12 +51,12 @@ verbose="true">
 	</filter>
 	
 	<!--
-
-		 
+ 
+		
 	<logging>
 		<log  type="coverage-html" target="reports" />
 	</logging>
-	  -->
+	 --> 
 
 
 </phpunit>

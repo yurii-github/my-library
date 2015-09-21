@@ -27,7 +27,7 @@ then
 
 		echo -e "${color}removing dev deps as we have ones in CI or not required for testing";
 		composer remove yiisoft/yii2-debug --dev --no-update
-		composer remove  phpunit/phpunit phpunit/dbunit --dev --no-update
+		composer remove phpunit/phpunit phpunit/dbunit phpunit/phpunit-selenium --dev --no-update
 		echo -e "${color}downloading required dependencies...";
 		composer require codeclimate/php-test-reporter --no-update
 		composer install --prefer-dist --optimize-autoloader --no-progress

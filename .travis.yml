@@ -19,8 +19,9 @@ before_install:
 install:
   - bash .travis.sh install
 before_script:
-  # run selenium server
-  - java -jar vendor/selenium-server-standalone.jar -Dwebdriver.chrome.driver=vendor/chromedriver/chromedriver &
+  # run php web server and selenium server
+  - php -S 127.0.0.1:8888 -t app/public
+  - java -jar vendor/selenium-server-standalone.jar -Dwebdriver.chrome.driver=vendor/chromedriver/chromedriver
   - sleep 5
   - mysql -e "CREATE DATABASE IF NOT EXISTS test_mylib" -utravis
 script:

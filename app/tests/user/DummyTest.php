@@ -1,22 +1,18 @@
 <?php
 
-class DummyTest extends PHPUnit_Framework_TestCase
+class DummyTest extends PHPUnit_Extensions_Selenium2TestCase
 {
-	
-	public function test_header()
+	protected function setUp()
 	{
-		putenv('foo=bar');
-		$w = RemoteWebDriver::create('http://localhost:4444/wd/hub', [
-			WebDriverCapabilityType::BROWSER_NAME => WebDriverBrowserType::HTMLUNIT
-		]);
-		$url = 'http://localhost/mylibrary-yii2/backend/web/site/index';
-		$w->get($url);
-		echo $w->getPageSource();
-
-		//$w->takeScreenshot('1.jpg');
-		
-		$this->assertTrue(true);
-
-		$w->quit();
+		$this->setBrowser('chrome');
+		$this->setBrowserUrl('http://127.0.0.1:8888');
 	}
+	
+	public function testTitle()
+	{
+		$this->url('');
+		$this->assertEquals('MyLibrary ~ Books', $this->title());
+	}
+	
+	
 }

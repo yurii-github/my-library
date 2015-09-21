@@ -20,8 +20,8 @@ then
 		wget http://chromedriver.storage.googleapis.com/2.9/chromedriver_linux32.zip -O chromedriver_linux32.zip
 		unzip chromedriver_linux32.zip
 		if [ -f "chromedriver" ];
-		then echo "chromedriver extracted successfully";
-		else echo "chromedriver extraction failed";
+		then echo "${color}chromedriver extracted successfully";
+		else echo "${color}chromedriver extraction failed";
 		exit 200;
 		fi
 		

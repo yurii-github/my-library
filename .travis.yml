@@ -15,8 +15,6 @@ env:
 # build lifecycle
 #
 before_install:
-  # travis recommends to run it
-  - /home/travis/.phpenv/versions/5.6/bin/composer self-update
   - if git log -1 --oneline | grep -qie "\[sc\]"; then echo -e "\e[0;34;40m[sc] is presented. clover will not be set"; else export CLOVER="--coverage-clover ../../build/logs/clover.xml"; fi
 install:
   - bash .travis.sh install

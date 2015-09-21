@@ -15,13 +15,15 @@ env:
 # build lifecycle
 #
 before_install:
+  # travis recommends to run it
+  - /home/travis/.phpenv/versions/5.6/bin/composer self-update
   - if git log -1 --oneline | grep -qie "\[sc\]"; then echo -e "\e[0;34;40m[sc] is presented. clover will not be set"; else export CLOVER="--coverage-clover ../../build/logs/clover.xml"; fi
 install:
   - bash .travis.sh install
 before_script:
   # run php web server and selenium server
   - php -S 127.0.0.1:8888 -t app/public &
-  - java -jar vendor/selenium-server-standalone.jar -Dwebdriver.chrome.driver=vendor/chromedriver/chromedriver &
+  - java -jar vendor/selenium-server-standalone.jar -Dwebdriver.chrome.driver=vendor/chromedriver_linux32/chromedriver &
   - sleep 5
   - mysql -e "CREATE DATABASE IF NOT EXISTS test_mylib" -utravis
 script:

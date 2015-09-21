@@ -15,9 +15,15 @@ then
 	else
 		echo -e "${color}getting latest Selenium Server Standalone";
 		wget http://goo.gl/yLJLZg -O vendor/selenium-server-standalone.jar
+	
 		echo -e "${color}getting latest Chrome WebDriver for Selenium Server Standalone";
 		wget http://chromedriver.storage.googleapis.com/2.9/chromedriver_linux32.zip -O chromedriver_linux32.zip
-		unzip chromedriver_linux32.zip -d vendor
+		unzip chromedriver_linux32.zip
+		if [ -f "chromedriver" ];
+		then echo "chromedriver extracted successfully";
+		else echo "chromedriver extraction failed";
+		exit 200;
+		fi
 		
 		echo -e "${color}getting latest PHPUnit";
 		wget https://phar.phpunit.de/phpunit.phar -O vendor/phpunit.phar --no-check-certificate

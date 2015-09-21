@@ -14,7 +14,7 @@ then
 		echo -e "${color}using cache. nothing to do";
 	else
 		echo -e "${color}getting latest Selenium Server Standalone";
-		wget http://goo.gl/yLJLZg -O vendor/selenium-server-standalone.jar
+		wget http://goo.gl/yLJLZg -O selenium-server-standalone.jar
 	
 		echo -e "${color}getting latest Chrome WebDriver for Selenium Server Standalone";
 		wget http://chromedriver.storage.googleapis.com/2.9/chromedriver_linux32.zip -O chromedriver_linux32.zip

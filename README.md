@@ -64,7 +64,8 @@ The simplest way is to drop your book(s) to lib folder you've set in configurati
 
 <h3>Edit Books</h3>
 You can edit book at frontpage excel sheet.
-If you enabled sync, app will require write permissions on your books to rename them accordinly to your book name format (supported tags are limited to what you see in defaults). Don't forget, that during import app doesn't recognize extension, it adds whole import name into title, so you have to add extension manually to rename file properly.
+If you enabled sync, app will require write permissions on your books to rename them accordinly to your book name format (supported tags are limited to {year}, {title}, {publisher}, {author}, {isbn13}, {ext}). Don't forget, that during import app doesn't recognize extension, it adds whole import name into title, so you have to add extension manually to rename file properly.
+NOTE! If you change book name format it will not rename all books! App will apply new format only to newly renamed books by you
 
 <h3>Remove Book</h3>
 To remove book from lib just click trash icon near book.

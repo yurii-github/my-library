@@ -156,7 +156,8 @@ class SiteController extends Controller
 			'sort_order'=> \Yii::$app->request->get('sord'), 
 		];
 
-		\Yii::$app->session->set('jqgrid.page', $data['page']);
+		//TODO: currently on store in cookies
+		//\Yii::$app->session->set('jqgrid.page', $data['page']);
 		
 		return Json::encode(Books::jgridBooks($data));
 	}

@@ -15,7 +15,7 @@ Most js/css come from CDN networks, so you probably eager to check code at /app/
 
 <img src="http://s16.postimg.org/khmq5yr1x/image.png" />
 
-<img src="http://postimg.org/image/5cbytzrw1/" />
+<img src="http://s8.postimg.org/8j6idmcc5/image.png" />
 
 <h3>Requirements</h3>
 

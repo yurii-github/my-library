@@ -336,8 +336,8 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		$book_current = Books::findOne(['book_guid' => $book['book_guid']]);
 
 		//remove seconds, as it fails on slow machines, definely fails on Travis
-		$book_expected['updated_date'] = (new \DateTime($book_expected['updated_date']))->format('Y-m-d H:i:00');
-		$book_current['updated_date']  = (new \DateTime($book_current['updated_date']))->format('Y-m-d H:i:00');
+		$book_expected['updated_date'] = (new \DateTime($book_expected['updated_date']))->format('Y-m-d H:i');
+		$book_current['updated_date']  = (new \DateTime($book_current['updated_date']))->format('Y-m-d H:i');
 		
 		//var_dump($book_expected,$book_current->getAttributes()); die;
 		$this->assertArraySubset($book_expected, $book_current->getAttributes());

@@ -6,7 +6,7 @@
 + [skip ci]  - skips travis ci builds
 + [sc] - skips sending clover report to codeclimate
 
-<h2>WARNING! IT IS VERY RAW</h2>
+<h2>About MyLib</h2>
 
 It is book library manager written in PHP based on JqueryUI for personal usage. Main purpose is to manage own book library as excel table with ratings and other stuff like filename syncronizations of your books and more.
 Said that, it supports all JQuery UI themes.
@@ -33,31 +33,29 @@ entry point is located at
 <pre>PROJECT/app/public/index.php</pre>
 
 
-<h3>functionality</h3>
+<h2>Functionality</h2>
 
-<pre>
-(+) implemented | (-) not implemented
+- excel table is sortable, pagable
+- books CRUD
+- book cover saved to database
+- themed (JqueryUI)
+- i18n
+- mysql and sqlite support
+- syncronization with filesystem (renames, deletes)
+- migrations
+- security (partial)
+ 
+TODO
 
-+ excel table is sortable, pagable
-+ books CRUD
-+ book cover saved to database
-+ themed
-+ i18n
-+ mysql and sqlite support
-+ syncronization with filesystem
-+ migrations
-
-- cache manage
-- security and auth. partial
-- APC control. partial
 - admin page. base
-- authors, publishers, categories
+- true authors, publishers, categories
 - in sqlite run VACUUM for space saving
-- - CDN fallbacks
-- unit tests
+- CDN fallbacks
 - user tests
 </pre>
 
 
 IIS fix for bootstrap (boostrap currently not used)
-<pre><mimeMap fileExtension=".woff2" mimeType="application/font-woff2" /></pre>
+<code>
+<mimeMap fileExtension=".woff2" mimeType="application/font-woff2" />
+</code>

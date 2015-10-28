@@ -54,8 +54,4 @@ TODO
 - user tests
 </pre>
 
-
-IIS fix for bootstrap (boostrap currently not used)
-<code>
-<mimeMap fileExtension=".woff2" mimeType="application/font-woff2" />
-</code>
+last check true check: 28-10-2015

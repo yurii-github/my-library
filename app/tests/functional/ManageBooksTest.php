@@ -328,12 +328,17 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		// [ 2 ]
 		$book_expected['filename'] = ", ''title book #1'',  [].";
 		// [ 3 ]
-		$book_expected['updated_date'] = (new \DateTime())->format('Y-m-d H:i:s'); //TODO: sometimes fails on travis!
+		$book_expected['updated_date'] = (new \DateTime())->format('Y-m-d H:i:s');
 		
 		$this->controllerSite->runAction('manage');
 		
 		/* @var $book_current \yii\db\BaseActiveRecord */
 		$book_current = Books::findOne(['book_guid' => $book['book_guid']]);
+
+		//remove seconds, as it fails on slow machines, definely fails on Travis
+		$book_expected['updated_date'] = (new \DateTime($book_expected['updated_date']))->format('Y-m-d H:i:00');
+		$book_current['updated_date']  = (new \DateTime($book_current['updated_date']))->format('Y-m-d H:i:00');
+		
 		//var_dump($book_expected,$book_current->getAttributes()); die;
 		$this->assertArraySubset($book_expected, $book_current->getAttributes());
 		

@@ -17,7 +17,7 @@ Most js/css come from CDN networks, so you probably eager to check code at /app/
 
 <img src="http://s8.postimg.org/8j6idmcc5/image.png" />
 
-<h3>Requirements</h3>
+<h2>Requirements</h2>
 
 + php >=5.5
 + url rewrite
@@ -53,5 +53,29 @@ TODO
 - CDN fallbacks
 - user tests
 </pre>
+
+
+<h2>Usage</h2>
+
+As app is not truly finished, some workarounds must be considered.
+
+<h3>Add New Books</h3>
+The simplest way is to drop your book(s) to lib folder you've set in configuration and seconds tab "syncronization" press "import fs only". It will import all file system books that are not in database yet.
+
+<h3>Edit Books</h3>
+You can edit book at frontpage excel sheet.
+If you enabled sync, app will require write permissions on your books to rename them accordinly to your book name format (supported tags are limited to what you see in defaults). Don't forget, that during import app doesn't recognize extension, it adds whole import name into title, so you have to add extension manually to rename file properly.
+
+<h3>Remove Book</h3>
+To remove book from lib just click trash icon near book.
+If you enabled sync, it will remove this book also from file system.
+
+<h3>Configuration</h3>
+Email is not functioning. I still think about its value
+Security is not implemented for real. low importance
+Other things work as expected. A big note requires filesystem encoding. This is a must for file sync. In Windows this is mostly cp1251 codepage.
+
+
+----------------------
 
 last check true check: 28-10-2015

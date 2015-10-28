@@ -9,12 +9,13 @@
 <h2>WARNING! IT IS VERY RAW</h2>
 
 It is book library manager written in PHP based on JqueryUI for personal usage. Main purpose is to manage own book library as excel table with ratings and other stuff like filename syncronizations of your books and more.
+Said that, it supports all JQuery UI themes.
 
 Most js/css come from CDN networks, so you probably eager to check code at /app/assets/*
 
-<img src="http://s24.postimg.org/fhvfecmjp/lib.jpg" />
+<img src="http://s16.postimg.org/khmq5yr1x/image.png" />
 
-<img src="http://s29.postimg.org/hdzobbo5z/cfg.jpg" />
+<img src="http://postimg.org/image/5cbytzrw1/" />
 
 <h3>Requirements</h3>
 

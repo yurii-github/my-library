@@ -160,7 +160,7 @@ return [
 			]
 		],
 		'cache' => [
-			//'class' => 'common\components\ApcCache',
+			//'class' => \app\components\ApcCache::class,
 			'class' => '\yii\caching\DummyCache',
 			'keyPrefix' => 'mylib::',
 		],

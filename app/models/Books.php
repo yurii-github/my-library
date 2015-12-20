@@ -110,7 +110,10 @@ class Books extends ActiveRecord
 				'class' => TimestampBehavior::className(),
 				'createdAtAttribute' => 'created_date',
 				'updatedAtAttribute' => 'updated_date',
-				'value' => function() { return \Yii::$app->formatter->asDatetime('now','php:Y-m-d H:i:s');	}
+				'value' => function() {
+					//	return \Yii::$app->formatter->asDatetime('now','php:Y-m-d H:i:s'); BUGGED!!! doesnt change timezone on Travis. no clue why
+					return (new \DateTime())->format('Y-m-d H:i:s');
+				}
 			]
 		];
 	}

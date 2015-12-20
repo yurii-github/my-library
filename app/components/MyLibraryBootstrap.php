@@ -19,7 +19,7 @@ final class MyLibraryBootstrap implements BootstrapInterface
 		session_name('session-id');
 		/* @var $cfg \frontend\components\Configuration */
 		$cfg = $app->mycfg;
-		date_default_timezone_set($cfg->system->timezone);		
+		$app->setTimeZone($cfg->system->timezone);
 		$app->language = $cfg->system->language;
 
 		// inject into app

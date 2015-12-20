@@ -18,6 +18,11 @@ class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 	private $is_fs_init = false;
 
 	
+	function __destruct()
+	{
+		$this->destroyApplication();
+	}
+	
 	/**
 	 * 
 	 * @return \PDO

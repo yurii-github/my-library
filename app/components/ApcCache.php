@@ -3,6 +3,13 @@ namespace app\components;
 
 class ApcCache extends \yii\caching\ApcCache
 {
+	
+	public function init()
+	{
+		$this->useApcu = true;
+		parent::init();
+	}
+	
 	/**
 	 * (non-PHPdoc)
 	 * @see \yii\caching\Cache::buildKey()

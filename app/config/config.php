@@ -34,9 +34,9 @@ return [
 	],
 	'language' => 'en-US',
 	'modules' => [
-		'apc' => [ 'class' => 'modules\apc\Module' ],
+		//'apc' => [ 'class' => 'modules\apc\Module' ],
 		//'gii' => [ 'class' => 'yii\gii\Module' ],
-		'debug' => [ 'class' => 'yii\debug\Module']
+		//'debug' => [ 'class' => 'yii\debug\Module']
 	],
 	'components' => [
 		'security' => [
@@ -160,9 +160,9 @@ return [
 			]
 		],
 		'cache' => [
-			//'class' => 'common\components\ApcCache',
+			//'class' => \app\components\ApcCache::class,
 			'class' => '\yii\caching\DummyCache',
-			'keyPrefix' => 'mylib::'
+			'keyPrefix' => 'mylib::',
 		],
 		
 		/*'errorHandler' => [

@@ -43,7 +43,7 @@ then
 	then
 		export CLOVER=
 	fi
-	php -d extension_dir=modules -d extension=apcu.so -d apc.enable_cli=1 -d apc.enable=1 ../../vendor/phpunit.phar $CLOVER
+	php ../../vendor/phpunit.phar $CLOVER
 	export RES=$?
 	cd ../..
 	

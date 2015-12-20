@@ -330,7 +330,7 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		
 		$this->controllerSite->runAction('manage');
 		$book_expected['filename'] = ", ''title book #1'',  [].";
-		$book_expected['updated_date'] = (new \DateTime())->format('Y-m-d H:i:s');
+		$book_expected['updated_date'] = date('Y-m-d H:i:s');
 		
 		//CHECKING
 		
@@ -338,10 +338,9 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		$book_current = Books::findOne(['book_guid' => $book['book_guid']]);
 
 		//remove seconds, as it fails on slow machines, definely fails on Travis
-		//$book_expected['updated_date'] = (new \DateTime($book_expected['updated_date']))->format('Y-m-d H:i');
-		//$book_current['updated_date']  = (new \DateTime($book_current['updated_date']))->format('Y-m-d H:i');
+		$book_expected['updated_date'] = (new \DateTime($book_expected['updated_date']))->format('Y-m-d H:i');
+		$book_current['updated_date']  = (new \DateTime($book_current['updated_date']))->format('Y-m-d H:i');
 		
-		//var_dump($book_expected,$book_current->getAttributes()); die;
 		//$this->assertArraySubset($book_expected, $book_current->getAttributes()); //WHY DOES IT FAIL ON TRAVIS???????????
 		$book_current_arr = $book_current->getAttributes();
 		
@@ -350,8 +349,7 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		foreach ($keys as $k) {
 			$this->assertEquals($book_expected[$k], $book_current_arr[$k], "expected '$k' doesn't match");
 		}
-		//var_dump($keys);
-		
+	
 		if ($sync) { // file rename if sync ON
 			$filename_expected = \Yii::$app->mycfg->library->directory . $book_expected['filename']; // renamed new
 			$this->assertFileNotExists($filename_old); // old is not existed

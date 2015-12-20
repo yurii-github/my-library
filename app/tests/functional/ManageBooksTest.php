@@ -333,7 +333,7 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		
 		//WORKAROUND FOR TRAVIS #1
 		$dt = new \DateTime();
-		$dt->setTimezone(\Yii::$app->getTimeZone());
+		$dt->setTimezone(new \DateTimeZone(\Yii::$app->getTimeZone()));
 		$book_expected['updated_date'] = $dt->format('Y-m-d H:i:s');
 		
 		//CHECKING

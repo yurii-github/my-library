@@ -310,41 +310,43 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 	 */
 	public function test_action_Manage_Edit($sync)
 	{
-		$_SERVER['REQUEST_METHOD'] = 'POST';
+		// CONFIGURE
 		$book = $this->books['inserted'][0];
 		$book_expected =  $this->books['expected'][0];
-		$filename_expected = $filename_old = \Yii::$app->mycfg->library->directory . $book_expected['filename'];
-		file_put_contents($filename_expected, 'sample-data');
-		\Yii::$app->mycfg->library->sync = $sync;
 		
+		$filename_expected = $filename_old = \Yii::$app->mycfg->library->directory . $book['filename'];
+		file_put_contents($filename_expected, 'sample-data');
+		
+		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$_POST['oper'] = 'edit';
 		$_POST['id'] = $book['book_guid'];
-		
-		// CHANGING
-		// [ 1 ]
 		$_POST['created_date'] = '2000-01-01';
 		$_POST['updated_date'] = '2000-01-01';
 		$_POST['filename'] = '2000-01-01';
-		// [ 2 ]
-		$book_expected['filename'] = ", ''title book #1'',  [].";
-		// [ 3 ]
-		$book_expected['updated_date'] = (new \DateTime())->format('Y-m-d H:i:s');
+		
+		\Yii::$app->mycfg->library->sync = $sync;
+		// - - - - - -
+		
 		
 		$this->controllerSite->runAction('manage');
+		$book_expected['filename'] = ", ''title book #1'',  [].";
+		$book_expected['updated_date'] = (new \DateTime())->format('Y-m-d H:i:s');
+		
+		//CHECKING
 		
 		/* @var $book_current \yii\db\BaseActiveRecord */
 		$book_current = Books::findOne(['book_guid' => $book['book_guid']]);
 
 		//remove seconds, as it fails on slow machines, definely fails on Travis
-		$book_expected['updated_date'] = (new \DateTime($book_expected['updated_date']))->format('Y-m-d H:i');
-		$book_current['updated_date']  = (new \DateTime($book_current['updated_date']))->format('Y-m-d H:i');
+		//$book_expected['updated_date'] = (new \DateTime($book_expected['updated_date']))->format('Y-m-d H:i');
+		//$book_current['updated_date']  = (new \DateTime($book_current['updated_date']))->format('Y-m-d H:i');
 		
 		//var_dump($book_expected,$book_current->getAttributes()); die;
 		$this->assertArraySubset($book_expected, $book_current->getAttributes());
 		
-		if ($sync) {	
-			$filename_expected = \Yii::$app->mycfg->library->directory . $book_expected['filename'];
-			$this->assertFileNotExists($filename_old);
+		if ($sync) { // file rename if sync ON
+			$filename_expected = \Yii::$app->mycfg->library->directory . $book_expected['filename']; // renamed new
+			$this->assertFileNotExists($filename_old); // old is not existed
 		}
 		
 		$this->assertFileExists($filename_expected);

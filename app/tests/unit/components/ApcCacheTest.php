@@ -7,6 +7,10 @@ class ApcCacheTest extends \tests\AppTestCase
 {
 	public function test_buildKey()
 	{
+		if (!extension_loaded('apcu')) {
+			$this->markTestSkipped('APCu module is not loaded');
+		}
+		
 		$prefix = 'prefix';
 		$key = 'z123';
 		$apc = new ApcCache(['keyPrefix' => $prefix]);

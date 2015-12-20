@@ -117,6 +117,8 @@ class ConfigTest extends \tests\AppFunctionalTestCase
 	
 	public function test_getPermissions()
 	{
+		$this->markTestIncomplete('permissions install. low priority');
+		
 		try {
 			(new MigrationTest())->test_MigrationInstall(); // install migrations TODO: make as fixtures
 			$perms = \Yii::$app->authManager->getPermissions();

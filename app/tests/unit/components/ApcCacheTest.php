@@ -7,7 +7,7 @@ class ApcCacheTest extends \tests\AppTestCase
 {
 	public function test_buildKey()
 	{
-		if (!extension_loaded('apcu')) {
+		if (!extension_loaded('apc')) {
 			$this->markTestSkipped('APCu module is not loaded');
 		}
 		

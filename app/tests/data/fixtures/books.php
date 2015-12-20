@@ -21,7 +21,7 @@ $defaults = [
 
 
 // - - - - - - - - - - - - - - - - - - - - insert - - - - - - - -
-$books['insert'] = [
+$books['inserted'] = [
 	[
 		'book_guid' => '1',
 		'created_date' => '2014-01-01 00:00:00',
@@ -47,7 +47,7 @@ $books['insert'] = [
 	]
 ];
 // - - - - - - - - - - - - - - - - - - - - expected - - - - - - - -
-foreach ($books['insert'] as $book) {
+foreach ($books['inserted'] as $book) {
 	$books['expected'][] = array_merge($defaults, $book);
 }
 

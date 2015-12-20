@@ -118,7 +118,7 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		$this->assertObjectHasAttribute('rows', $object);
 		$this->assertTrue(is_array($object->rows));
 		// rows, dummy check
-		foreach ($this->books['insert'] as $k => $book) {
+		foreach ($this->books['inserted'] as $k => $book) {
 			$this->assertInstanceOf('\stdClass', $object->rows[$k]);
 			$this->assertEquals($book['book_guid'], $object->rows[$k]->id);
 		}
@@ -265,7 +265,7 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 	public function test_action_Manage_Add()
 	{
 		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$book_1 = $this->books['insert'][0];
+		$book_1 = $this->books['inserted'][0];
 		$book_1_expected =  $this->books['expected'][0];
 		$_POST = $book_1;
 		$_POST['oper'] = 'add';
@@ -311,7 +311,7 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 	public function test_action_Manage_Edit($sync)
 	{
 		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$book = $this->books['insert'][0];
+		$book = $this->books['inserted'][0];
 		$book_expected =  $this->books['expected'][0];
 		$filename_expected = $filename_old = \Yii::$app->mycfg->library->directory . $book_expected['filename'];
 		file_put_contents($filename_expected, 'sample-data');
@@ -351,11 +351,12 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		$this->assertEquals(file_get_contents($filename_expected), 'sample-data');		
 	}
 	
-	
+
 	function pSync()
 	{
 		return [
-			[true], [false]
+			[true], // sync enabled
+			[false] // sync disabled
 		];
 	}
 	

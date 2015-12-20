@@ -330,21 +330,24 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		
 		$this->controllerSite->runAction('manage');
 		$book_expected['filename'] = ", ''title book #1'',  [].";
-		$book_expected['updated_date'] = date('Y-m-d H:i:s');
+		
+		//WORKAROUND FOR TRAVIS #1
+		$dt = new \DateTime();
+		$dt->setTimezone(\Yii::$app->getTimeZone());
+		$book_expected['updated_date'] = $dt->format('Y-m-d H:i:s');
 		
 		//CHECKING
 		
 		/* @var $book_current \yii\db\BaseActiveRecord */
 		$book_current = Books::findOne(['book_guid' => $book['book_guid']]);
 
+		//WORKAROUND FRO TRAVIS #2
 		//remove seconds, as it fails on slow machines, definely fails on Travis
 		$book_expected['updated_date'] = (new \DateTime($book_expected['updated_date']))->format('Y-m-d H:i');
 		$book_current['updated_date']  = (new \DateTime($book_current['updated_date']))->format('Y-m-d H:i');
 		
-		//$this->assertArraySubset($book_expected, $book_current->getAttributes()); //WHY DOES IT FAIL ON TRAVIS???????????
+		// #3
 		$book_current_arr = $book_current->getAttributes();
-		
-		//WORKAROUND
 		$keys = array_keys($book_expected);
 		foreach ($keys as $k) {
 			$this->assertEquals($book_expected[$k], $book_current_arr[$k], "expected '$k' doesn't match");

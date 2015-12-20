@@ -20,6 +20,7 @@ install:
   - bash .travis.sh install
 before_script:
   - mysql -e "CREATE DATABASE IF NOT EXISTS test_mylib" -utravis
+  - mysql -e "SET GLOBAL time_zone='+00:00'" -utravis;
 script:
   - bash .travis.sh script
 after_success:

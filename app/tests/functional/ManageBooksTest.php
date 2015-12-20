@@ -342,7 +342,15 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		//$book_current['updated_date']  = (new \DateTime($book_current['updated_date']))->format('Y-m-d H:i');
 		
 		//var_dump($book_expected,$book_current->getAttributes()); die;
-		$this->assertArraySubset($book_expected, $book_current->getAttributes());
+		//$this->assertArraySubset($book_expected, $book_current->getAttributes()); //WHY DOES IT FAIL ON TRAVIS???????????
+		$book_current_arr = $book_current->getAttributes();
+		
+		//WORKAROUND
+		$keys = array_keys($book_expected);
+		foreach ($keys as $k) {
+			$this->assertEquals($book_expected[$k], $book_current_arr[$k], "expected '$k' doesn't match");
+		}
+		//var_dump($keys);
 		
 		if ($sync) { // file rename if sync ON
 			$filename_expected = \Yii::$app->mycfg->library->directory . $book_expected['filename']; // renamed new

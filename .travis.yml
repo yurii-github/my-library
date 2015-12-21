@@ -1,6 +1,11 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Continuous Integration and Deployment: https://travis-ci.org
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# EXTRA INFO
+# php ext dir: /home/travis/.phpenv/versions/$(phpenv version-name)/lib/php/extensions/no-debug-zts-20131226/
+# base shell dir: /home/travis/build/yurii-github/yii2-mylib/
+# pear config: pear config-show
+#
 language: php
 php:
   - 5.6
@@ -14,11 +19,9 @@ env:
 # build lifecycle
 #  
 before_install:
-  - ls /home/travis/.phpenv/versions/5.6.5/lib/php/extensions/no-debug-zts-20131226
-  - pear config-show
-  - pwd
-  - pear config-set php_dir $(pwd)
-  - echo -e "extension = apcu.so\napc.enabled=1\napc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - pear config-set php_ext $(pwd)/vendor
+  - pecl install apcu
+  - echo -e "extension = $(pwd)/vendor/apcu.so\napc.enabled=1\napc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - if git log -1 --oneline | grep -qie "\[sc\]"; then echo -e "\e[0;34;40m[sc] is presented. clover will not be set"; else export CLOVER="--coverage-clover ../../build/logs/clover.xml"; fi
 install:
   - bash .travis.sh install

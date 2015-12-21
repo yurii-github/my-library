@@ -18,7 +18,7 @@ env:
   - DB_TYPE=mysql
 #
 # build lifecycle
-#  
+#
 before_install:
   - if git log -1 --oneline | grep -qie "\[sc\]"; then echo -e "\e[0;34;40m[sc] is presented. clover will not be set"; else export CLOVER="--coverage-clover ../../build/logs/clover.xml"; fi
 install:

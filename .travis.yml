@@ -19,9 +19,9 @@ env:
 # build lifecycle
 #  
 before_install:
-  - pear config-get php_ext
+  - pear config-get ext_dir
   - pecl install apcu-4.0.10
-  - cp $(pear config-get php_ext)/apcu.so $(pwd)/vendor/apcu.so
+  - cp $(pear config-get ext_dir)/apcu.so $(pwd)/vendor/apcu.so
   - ls $(pwd)/vendor
   - echo -e "extension = $(pwd)/vendor/apcu.so\napc.enabled=1\napc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - if git log -1 --oneline | grep -qie "\[sc\]"; then echo -e "\e[0;34;40m[sc] is presented. clover will not be set"; else export CLOVER="--coverage-clover ../../build/logs/clover.xml"; fi

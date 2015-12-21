@@ -1,12 +1,13 @@
 
 <img style="background-color:black" src="https://jqueryui.com/jquery-wp-content/themes/jquery/images/logo-jquery-ui.png"/>
-<b>commits</b>
 
 [![Build Status](https://travis-ci.org/yurii-github/yii2-mylib.svg?branch=master)](https://travis-ci.org/yurii-github/yii2-mylib) [![Code Climate](https://codeclimate.com/github/yurii-github/yii2-mylib/badges/gpa.svg)](https://codeclimate.com/github/yurii-github/yii2-mylib) [![Test Coverage](https://codeclimate.com/github/yurii-github/yii2-mylib/badges/coverage.svg)](https://codeclimate.com/github/yurii-github/yii2-mylib/coverage) [![Yii2](https://img.shields.io/badge/Powered_by-Yii_Framework-green.svg?style=flat)](http://www.yiiframework.com/)
 
+<b>commits</b>
 
 + [skip ci]  - skips travis ci builds
 + [sc] - skips sending clover report to codeclimate
+
 
 <h2>About MyLib</h2>
 

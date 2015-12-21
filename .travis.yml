@@ -14,7 +14,9 @@ env:
 #
 # build lifecycle
 #
-before_install:
+before_install
+  - echo $(phpenv version-name)
+  - less ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - echo "extension = apcu.so\napc.enabled=1\napc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - echo "apc.enabled=" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - echo "apc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini

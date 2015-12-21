@@ -1,7 +1,7 @@
 
 [![Build Status](https://travis-ci.org/yurii-github/yii2-mylib.svg?branch=master)](https://travis-ci.org/yurii-github/yii2-mylib) [![Code Climate](https://codeclimate.com/github/yurii-github/yii2-mylib/badges/gpa.svg)](https://codeclimate.com/github/yurii-github/yii2-mylib) [![Test Coverage](https://codeclimate.com/github/yurii-github/yii2-mylib/badges/coverage.svg)](https://codeclimate.com/github/yurii-github/yii2-mylib/coverage) [![Yii2](https://img.shields.io/badge/Powered_by-Yii_Framework-green.svg?style=flat)](http://www.yiiframework.com/)
 
-<img src="https://brand.jquery.org/resources/jquery-mark-light.gif"/>
+<img height="20" src="https://brand.jquery.org/resources/jquery-mark-light.gif"/>
 <img src="https://brand.jquery.org/resources/jqueryui-mark-light.gif"/>
 
 <b>commits</b>

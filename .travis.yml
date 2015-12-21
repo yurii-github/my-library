@@ -12,7 +12,7 @@ env:
   - DB_TYPE=mysql
 #
 # build lifecycle
-# 
+#  
 before_install:
   - pear config-show
   - pwd

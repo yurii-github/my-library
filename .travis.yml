@@ -14,7 +14,9 @@ env:
 # build lifecycle
 # 
 before_install:
-  - cat ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - pear config-show
+  - pwd
+  - pear config-set php_dir $(pwd)
   - echo -e "extension = apcu.so\napc.enabled=1\napc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - if git log -1 --oneline | grep -qie "\[sc\]"; then echo -e "\e[0;34;40m[sc] is presented. clover will not be set"; else export CLOVER="--coverage-clover ../../build/logs/clover.xml"; fi
 install:
@@ -46,3 +48,8 @@ cache:
 # for Docker, use of new container-based stack
 #
 sudo: false
+#
+# for git client on Travis
+#
+git:
+  submodules: false

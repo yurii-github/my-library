@@ -19,7 +19,7 @@ then
 		if if [ ${TRAVIS_PHP_VERSION:0:3} != "5.6" ] && [ ${DB_TYPE} != "sqlite" ]
 		then
 			# allow cache update only when php 5.6 and sqlite. fail otherwise
-			exit 500;
+			exit 500
 		fi
 		
 		# installing apcu. apcu 5+ not compatible with php 5.6. it will be loaded this time by pear

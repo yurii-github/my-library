@@ -126,7 +126,7 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		
 		$this->assertEquals('valid-cover-data', $cover);
 		$this->assertEquals($cover, $cover_cache);
-		$this->assertEquals($cover, apcu_fetch("book-cover-$book_guid"));
+		$this->assertEquals($cover, \Yii::$app->cache->get("book-cover-$book_guid"));
 	}
 	
 	

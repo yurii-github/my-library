@@ -115,7 +115,7 @@ if [ "$1" == "script" ]
 then
 	cd app/tests
 	# if php5.6 use clover
-	if [ "${TRAVIS_PHP_VERSION:0:3}" == "5.6" ] && [ "${DB_TYPE}" == "sqlite" ]
+	if [ "${TRAVIS_PHP_VERSION:0:3}" == "5.6" ] && [ "${DB_TYPE}" === "sqlite" ]
 	then
 		php ../../vendor/phpunit.phar $CLOVER
 	else
@@ -134,7 +134,7 @@ fi
 if [ "$1" == "after_success" ]
 then
 	# if php5.6 use clover
-	if [ "${TRAVIS_PHP_VERSION:0:3}" == "5.6" ] && [ "${DB_TYPE}" == "sqlite" ] && [ -n "$CLOVER" ]
+	if [ "${TRAVIS_PHP_VERSION:0:3}" == "5.6" ] && [ "${DB_TYPE}" === "sqlite" ] && [ -n "$CLOVER" ]
 	then
 		vendor/bin/test-reporter
 	else

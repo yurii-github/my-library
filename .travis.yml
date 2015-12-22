@@ -9,7 +9,10 @@
 language: php
 php:
   - 5.6
-#  - nightly
+  - nightly
+matrix:
+  allow_failures:
+    - php: nightly
 #
 # Parallelizing builds
 #

@@ -47,11 +47,14 @@ fi
 if [ "$1" == "script" ]
 then
 	cd app/tests
-	if [ "$SEND_CLOVER" != "1" ]
+	# if php5.6 use clover
+	if [ ${TRAVIS_PHP_VERSION:0:3} == "5.6" ] && [ ${DB_TYPE} = "sqlite" ]
 	then
-		export CLOVER=
+		php ../../vendor/phpunit.phar $CLOVER
+	else
+		php ../../vendor/phpunit.phar
 	fi
-	php ../../vendor/phpunit.phar $CLOVER
+
 	export RES=$?
 	cd ../..
 	
@@ -65,11 +68,11 @@ if [ "$1" == "after_success" ]
 then
 	# clover usage
 	#
-	if [ -n "$CLOVER" ] && [ "$SEND_CLOVER" = "1" ]
+	if [ ${TRAVIS_PHP_VERSION:0:3} == "5.6" ] && [ ${DB_TYPE} = "sqlite" ] && [ -n "$CLOVER" ]
 	then
 		vendor/bin/test-reporter
 	else
-		echo -e "${color}skipping codeclimate reporter as clover was disabled by commit message or env SEND_CLOVER";
+		echo -e "${color}skipping codeclimate reporter"; 
 	fi
 	
 	exit $?

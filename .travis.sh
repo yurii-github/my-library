@@ -52,7 +52,7 @@ then
 	then
 		php ../../vendor/phpunit.phar $CLOVER
 	else
-		php ../../vendor/phpunit.phar $CLOVER
+		php ../../vendor/phpunit.phar
 	fi
 
 	export RES=$?

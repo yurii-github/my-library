@@ -11,7 +11,7 @@ then
 	#
 	if [ -d vendor/bin ]
 	then
-		echo -e "${color}Using cache. Nothing to do";
+		echo -e "${color}Using cache.";
 		#
 		echo -e "${color}Loading cached apcu.so for PHP";
 		echo -e "extension = $(pwd)/vendor/apcu.so\napc.enabled=1\napc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
@@ -22,12 +22,13 @@ then
 			exit 500
 		fi
 		
+		composer self-update
 		# installing apcu. apcu 5+ not compatible with php 5.6. it will be loaded this time by pear
-		echo -e "${color}installing APCu 4.0.10 via PEAR/PECL...";
+		echo -e "${color}installing APCu 4.0.10 via PEAR/PECL..."
 		echo 'yes' | pecl install apcu-4.0.10
 		cp $(pear config-get ext_dir)/apcu.so $(pwd)/vendor/apcu.so
 		
-		echo -e "${color}getting latest PHPUnit...";
+		echo -e "${color}getting latest PHPUnit..."
 		wget https://phar.phpunit.de/phpunit.phar -O vendor/phpunit.phar --no-check-certificate
 	  
 		echo -e "${color}setting github oauth token..";

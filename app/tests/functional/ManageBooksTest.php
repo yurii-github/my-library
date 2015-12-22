@@ -2,6 +2,8 @@
 namespace tests\functional;
 
 use app\models\Books;
+use app\components\ApcCache;
+
 class ManageBooksTest extends \tests\AppFunctionalTestCase
 {
 	// fixture
@@ -114,7 +116,7 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		$keyPrefix = 'mylib::';
 		
 		\Yii::$app->setAliases(['@webroot' => '@app/public']);
-		\Yii::$app->cache = new ApcCache(['keyPrefix' => $keyPrefix]);
+		\Yii::$app->cache = new \app\components\ApcCache(['keyPrefix' => $keyPrefix]);
 		
 		file_put_contents($this->initAppFileSystem() . '/public/assets/app/book-cover-empty.jpg', 'empty-cover-data');
 		$this->getPdo()->exec("UPDATE books SET book_cover='valid-cover-data' WHERE book_guid='$book_guid'");

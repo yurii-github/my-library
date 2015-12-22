@@ -111,7 +111,11 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		apcu_clear_cache();
 	
 		$book_guid = 1;
+		$keyPrefix = 'mylib::';
+		
 		\Yii::$app->setAliases(['@webroot' => '@app/public']);
+		\Yii::$app->cache = new ApcCache(['keyPrefix' => $keyPrefix]);
+		
 		file_put_contents($this->initAppFileSystem() . '/public/assets/app/book-cover-empty.jpg', 'empty-cover-data');
 		$this->getPdo()->exec("UPDATE books SET book_cover='valid-cover-data' WHERE book_guid='$book_guid'");
 		

@@ -72,7 +72,7 @@ then
 	then
 		vendor/bin/test-reporter
 	else
-		echo -e "${color}skipping codeclimate reporter";
+		echo -e "${color}skipping codeclimate reporter"; 
 	fi
 	
 	exit $?

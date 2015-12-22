@@ -297,7 +297,7 @@ class Books extends ActiveRecord
 		$cache_name = 'book-cover-' . (empty($id) ? 'empty' : $id);
 		
 		if (\Yii::$app->cache->exists($cache_name)) {
-			return \Yii::$app->cache->get('book-cover-'.$book_guid); //NOTE: DISABLE WHILE TESTING
+			return \Yii::$app->cache->get('book-cover-'.$id);
 		}
 		 
 		$book = self::find()->select(['book_cover'])->where('book_guid = :book_guid', ['book_guid' => $id])->asArray()->one();

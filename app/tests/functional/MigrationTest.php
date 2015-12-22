@@ -7,8 +7,6 @@ class MigrationTest extends \tests\AppFunctionalTestCase
 	
 	public function test_MigrationInstall()
 	{
-		//$this->markTestSkipped();
-		
 		try {
 			$this->cleanDb();
 			$this->mockYiiApplication();

@@ -92,16 +92,36 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 	
 	function test_action_getCover_exists()
 	{
+		$book_guid = 1;
 		\Yii::$app->setAliases(['@webroot' => '@app/public']);
 		file_put_contents($this->initAppFileSystem() . '/public/assets/app/book-cover-empty.jpg', 'empty-cover-data');
-		$book_guid = 1;
-		
 		$this->getPdo()->exec("UPDATE books SET book_cover='valid-cover-data' WHERE book_guid='$book_guid'");		
 		$cover = $this->controllerSite->runAction('cover', ['book_guid' => $book_guid]);
 	
 		$this->assertEquals('valid-cover-data', $cover);
 	}
 	
+	
+	function test_action_getCover_exists_APCu()
+	{
+		if (!extension_loaded('apcu')) {
+			$this->markTestSkipped('APCu module is not loaded');
+		}
+		
+		apcu_clear_cache();
+	
+		$book_guid = 1;
+		\Yii::$app->setAliases(['@webroot' => '@app/public']);
+		file_put_contents($this->initAppFileSystem() . '/public/assets/app/book-cover-empty.jpg', 'empty-cover-data');
+		$this->getPdo()->exec("UPDATE books SET book_cover='valid-cover-data' WHERE book_guid='$book_guid'");
+		
+		$cover = $this->controllerSite->runAction('cover', ['book_guid' => $book_guid]); // caching
+		$cover_cache = $this->controllerSite->runAction('cover', ['book_guid' => $book_guid]); // must return cache
+		
+		$this->assertEquals('valid-cover-data', $cover);
+		$this->assertEquals($cover, $cover_cache);
+		$this->assertEquals($cover, apcu_fetch("book-cover-$book_guid"));
+	}
 	
 	
 	function test_action_getBooks()

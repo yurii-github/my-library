@@ -6,7 +6,10 @@ use org\bovigo\vfs\vfsStreamDirectory;
 
 class mockConfigController extends ConfigController
 {
-	protected function getFiles_FileSystemOnly() {}
+	public function getFiles_FileSystemOnly()
+	{
+		return parent::getFiles_FileSystemOnly();
+	}
 }
 
 
@@ -20,11 +23,14 @@ class ConfigTest extends \tests\AppFunctionalTestCase
 	 */
 	private $controller;
 	
+	//TODO: name filenames properly not just filename3 etc.
+	private $filename_fs_only = 'filename-4';
 	
 	protected function setUp()
 	{
+		
 		file_put_contents($this->initAppFileSystem() .'/data/books/filename-3', 'some data'); // db and fs
-		file_put_contents($this->initAppFileSystem() .'/data/books/filename-4', 'some data'); //fs only
+		file_put_contents($this->initAppFileSystem() ."/data/books/{$this->filename_fs_only}", 'some data'); //fs only
 		$this->books = $this->setupFixture('books');
 		
 		parent::setUp();
@@ -41,7 +47,7 @@ class ConfigTest extends \tests\AppFunctionalTestCase
 		$this->assertEquals(2, count($resp->db), 'db only records does not match');
 		$this->assertArraySubset(['filename-1','filename-2'], $resp->db, 'filename of db only files does not match');
 		$this->assertEquals(1, count($resp->fs), 'file system only file count does not match');
-		$this->assertEquals('filename-4', $resp->fs[0], 'filename of file system only file does not match');
+		$this->assertEquals($this->filename_fs_only, $resp->fs[0], 'filename of file system only file does not match');
 	}
 
 
@@ -67,18 +73,35 @@ class ConfigTest extends \tests\AppFunctionalTestCase
 	}
 	
 
-	public function test_actionImportFiles()
+	/**
+	 * returns list of files available in filesystem only (no database records)
+	 */
+	public function test_action_ImportFiles_GET()
+	{
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+		
+		$resp = json_decode($this->controller->runAction('import-files'));
+		
+		$this->assertNotNull($resp);
+		$this->assertCount(1, $resp);
+		$this->assertArraySubset([$this->filename_fs_only], $resp);
+	}
+	
+	
+	/**
+	 * import file available in filesystem only (no database records)
+	 */
+	public function test_action_ImportFiles_POST()
 	{
 		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$_POST['post'] = ['filename-4'];
+		$_POST['post'] = [$this->filename_fs_only]; //just 1 file
 		
 		$resp = json_decode($this->controller->runAction('import-files'));
 		
 		$this->assertArraySubset($_POST['post'], $resp->data);
 		$this->assertTrue($resp->result);
 	}
-
-
+	
 	
 	public function test_actionSave()
 	{
@@ -117,8 +140,6 @@ class ConfigTest extends \tests\AppFunctionalTestCase
 	
 	public function test_getPermissions()
 	{
-		$this->markTestIncomplete('permissions install. low priority');
-		
 		try {
 			(new MigrationTest())->test_MigrationInstall(); // install migrations TODO: make as fixtures
 			$perms = \Yii::$app->authManager->getPermissions();

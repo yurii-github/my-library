@@ -16,6 +16,12 @@ then
 		echo -e "${color}Loading cached apcu.so for PHP";
 		echo -e "extension = $(pwd)/vendor/apcu.so\napc.enabled=1\napc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 	else
+		if if [ ${TRAVIS_PHP_VERSION:0:3} != "5.6" ] && [ ${DB_TYPE} != "sqlite" ]
+		then
+			# allow cache update only when php 5.6 and sqlite. fail otherwise
+			exit(500);
+		fi
+		
 		# installing apcu. apcu 5+ not compatible with php 5.6. it will be loaded this time by pear
 		echo -e "${color}installing APCu 4.0.10 via PEAR/PECL...";
 		echo 'yes' | pecl install apcu-4.0.10
@@ -48,7 +54,7 @@ if [ "$1" == "script" ]
 then
 	cd app/tests
 	# if php5.6 use clover
-	if [ ${TRAVIS_PHP_VERSION:0:3} == "5.6" ] && [ ${DB_TYPE} = "sqlite" ]
+	if [ ${TRAVIS_PHP_VERSION:0:3} == "5.6" ] && [ ${DB_TYPE} == "sqlite" ]
 	then
 		php ../../vendor/phpunit.phar $CLOVER
 	else
@@ -68,7 +74,7 @@ if [ "$1" == "after_success" ]
 then
 	# clover usage
 	#
-	if [ ${TRAVIS_PHP_VERSION:0:3} == "5.6" ] && [ ${DB_TYPE} = "sqlite" ] && [ -n "$CLOVER" ]
+	if [ ${TRAVIS_PHP_VERSION:0:3} == "5.6" ] && [ ${DB_TYPE} == "sqlite" ] && [ -n "$CLOVER" ]
 	then
 		vendor/bin/test-reporter
 	else

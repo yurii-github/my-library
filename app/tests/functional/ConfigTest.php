@@ -138,18 +138,4 @@ class ConfigTest extends \tests\AppFunctionalTestCase
 	}
 
 	
-	public function test_getPermissions()
-	{
-		$this->markTestIncomplete('fails on mysql somehow. need check');
-		try {
-			(new MigrationTest())->test_MigrationInstall(); // install migrations TODO: make as fixtures
-			$perms = \Yii::$app->authManager->getPermissions();
-			$this->assertArraySubset(['list-books', 'edit-books'], array_keys($perms));
-			//$resp = json_decode($this->controller->runAction('permissions')); //TODO: better output
-		} finally {
-			$this->resetConnection();
-		}
-	}
-	
-	
 }

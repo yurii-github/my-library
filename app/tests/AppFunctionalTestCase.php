@@ -63,9 +63,11 @@ class AppFunctionalTestCase extends AppTestCase
 	
 		$mockController = $this->getMockBuilder($class)
 			->setConstructorArgs(['id' => $id, 'module'=> \Yii::$app])
-			->setMethods(['render'])->getMock();
-		$mockController->expects($this->once())->method('render')->willReturnCallback(function(){return func_get_args();});
-	
+			->setMethods(['render', 'renderPartial'])->getMock();
+		
+		$mockController->expects($this->any())->method('renderPartial')->willReturnCallback(function(){return func_get_args();});
+		$mockController->expects($this->any())->method('render')->willReturnCallback(function(){return func_get_args();});
+		
 		return $mockController;
 	}
 	

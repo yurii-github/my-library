@@ -4,6 +4,33 @@ namespace tests\functional;
 class PagesTest extends \tests\AppFunctionalTestCase
 {
 
+	public function test_getPermissions()
+	{
+		try {
+			(new MigrationTest())->test_MigrationInstall();
+			$controller = $this->mockController('config');
+			$resp = $controller->runAction('permissions');
+			$view = $resp[0]; $data = $resp[1];
+			
+			$this->assertEquals('permissions', $view);
+			
+			$this->assertNotEmpty($data['roles']);
+			$this->assertNotEmpty($data['roles']['admins']);
+			$this->assertNotEmpty($data['roles']['admins']['edit-books']);
+			$this->assertNotEmpty($data['roles']['admins']['list-books']);	
+			$this->assertNotEmpty($data['roles']['users']);
+			$this->assertNotEmpty($data['roles']['users']['list-books']);
+			
+			$this->assertNotEmpty($data['perms']);
+			$this->assertNotEmpty($data['perms']['edit-books']);
+			$this->assertNotEmpty($data['perms']['list-books']);
+			
+		} finally {
+			$this->resetConnection();
+		}
+	}
+	
+	
 	public function test_Config_IndexPage()
 	{
 		/* @var $controller \app\controllers\ConfigController */

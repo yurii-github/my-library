@@ -72,7 +72,7 @@ then
 	then
 		vendor/bin/test-reporter
 	else
-		echo -e "${color}skipping codeclimate reporter as clover was disabled by commit message or env SEND_CLOVER";
+		echo -e "${color}skipping codeclimate reporter";
 	fi
 	
 	exit $?

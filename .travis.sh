@@ -17,16 +17,13 @@ then
 		echo -e "extension = $(pwd)/vendor/apcu.so\napc.enabled=1\napc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 	else
 		echo -e "${color}getting latest Selenium Server Standalone";
-		wget http://goo.gl/yLJLZg -O selenium-server-standalone.jar
+		wget http://goo.gl/PJUZfa -O vendor/selenium.jar
 	
 		echo -e "${color}getting latest Chrome WebDriver for Selenium Server Standalone";
-		wget http://chromedriver.storage.googleapis.com/2.9/chromedriver_linux32.zip -O chromedriver_linux32.zip
-		unzip chromedriver_linux32.zip
-		if [ -f "chromedriver" ];
-		then echo "${color}chromedriver extracted successfully";
-		else echo "${color}chromedriver extraction failed";
-		exit 200;
-		fi
+		#http://chromedriver.storage.googleapis.com/2.20/chromedriver_linux64.zip
+		wget http://chromedriver.storage.googleapis.com/2.20/chromedriver_linux32.zip -O chrome32.zip
+		unzip -j chrome32.zip chromedriver
+		mv chromedriver vendor/chromedrv-32
 		
 		echo -e "${color}getting latest PHPUnit";
 		# installing apcu. apcu 5+ not compatible with php 5.6. it will be loaded this time by pear

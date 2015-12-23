@@ -16,9 +16,9 @@ then
 		echo -e "${color}Loading cached apcu.so for PHP";
 		echo -e "extension = $(pwd)/vendor/apcu.so\napc.enabled=1\napc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 	else
-		if [ ${TRAVIS_PHP_VERSION:0:3} != "5.6" ] && [ ${DB_TYPE} != "sqlite" ]
+		if [ ${TRAVIS_PHP_VERSION:0:3} != "5.6" ] && [ ${DB_TYPE} -ne "sqlite" ]
 		then
-			# allow cache update only when php 5.6 and sqlite. fail otherwise
+			echo -e "${color}Cache install is not allowed. Must be PHP 5.6 and sqlite"
 			exit 500
 		fi
 

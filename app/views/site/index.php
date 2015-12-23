@@ -14,6 +14,20 @@
 
 	var book_list = $("#book-list"), lastSel, lastFavorite, lastRead;
 
+	function getCookie(n,v) {
+		var val = Cookies.get(n);
+		if (val == undefined) {
+			val = v;
+		}
+		console.log('cookie:',n,v);
+		return val;
+	}
+	
+	window.onbeforeunload = function() {
+		Cookies.set('rowNum', book_list.jqGrid('getGridParam', 'rowNum'));
+		Cookies.set('page', book_list.jqGrid('getGridParam', 'page'));
+	};
+
 	var ratyOptions = {
 		score: function () { return $(this).attr('data-score'); },
 		click: function (score, evt) {
@@ -112,8 +126,9 @@
 		],
 		cmTemplate: {align: 'center', sortable: true, editable: true, hidden: false},
 		caption: '',
-		rowNum: 10,
-		page: <?php echo \Yii::$app->session->get('jqgrid.page', 1); ?>,
+		rowNum: parseInt(getCookie('rowNum', 10)),
+		page: parseInt(getCookie('page', 1)),
+		//TODO: currently store in cookies only page: <?php //echo \Yii::$app->session->get('jqgrid.page', 1); ?>,
 		rownumbers: true,
 		autowidth: true,
 		height: '100%',

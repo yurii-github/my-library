@@ -144,7 +144,7 @@ form.configuration-form fieldset legend, form.configuration-form fieldset label 
 			<fieldset>
 				<legend><?php echo \Yii::t('frontend/config', 'book'); ?></legend>
 				<label class="cfg"><?php echo \Yii::t('frontend/config', 'name format'); ?></label>
-				<input name="book_nameformat" type="text" value="<?= $cfg->book->nameformat; ?>" />
+				<input name="book_nameformat" id="book_nameformat" type="text" value="<?= $cfg->book->nameformat; ?>" title="tags are limited to {year}, {title}, {publisher}, {author}, {isbn13}, {ext}" />
 				<br /><br />
 				<label class="cfg"><?php echo \Yii::t('frontend/config', 'cover type'); ?></label>
 				<select name="book_covertype" id="book_covertype" title="All images will be saved as JPEG to database">
@@ -182,7 +182,10 @@ $('input[name="system_email"], input[name="library_sync"], input[name="system_de
 //
 // text inputs
 //
-$("#system_emailto, #system_language, #system_theme, #system_timezone, #system_sessionpath, #library_directory, #database_format, input[id^='database_'], #book_covermaxwidth, #library_codepage")
+$("#system_emailto, #system_language, #system_theme, #system_timezone, #system_sessionpath, "+
+	"#library_directory, #database_format, input[id^='database_'], "+
+	"#book_nameformat, "+
+	"#book_covermaxwidth, #library_codepage")
 .on('focusout', function (e) {	
 	saveParameter(this);
 });

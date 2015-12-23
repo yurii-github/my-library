@@ -1,6 +1,11 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Continuous Integration and Deployment: https://travis-ci.org
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# EXTRA INFO
+# php ext dir: /home/travis/.phpenv/versions/$(phpenv version-name)/lib/php/extensions/no-debug-zts-20131226/
+# base shell dir: /home/travis/build/yurii-github/yii2-mylib/
+# pear config: pear config-show
+#
 language: php
 php:
   - 5.6
@@ -49,3 +54,8 @@ cache:
 # for Docker, use of new container-based stack
 #
 sudo: false
+#
+# for git client on Travis
+#
+git:
+  submodules: false

@@ -65,8 +65,10 @@ function install()
 #
 if [ "$1" == "install" ]
 then
-echo "$(pwd)/vendor/yk_chrome/opt/google/chrome/google-chrome"  > /usr/bin/google-chrome-stable
-chmod 777 /usr/bin/google-chrome-stable
+export PATH=$PATH:$(pwd)/vendor/yk_chrome/usr/bin
+
+#echo "$(pwd)/vendor/yk_chrome/opt/google/chrome/google-chrome"  > /usr/bin/google-chrome-stable
+#chmod 777 /usr/bin/google-chrome-stable
 google-chrome-stable
 exit 200;
 	# cache usage

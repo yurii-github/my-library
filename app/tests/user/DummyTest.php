@@ -7,7 +7,7 @@ use Facebook\WebDriver\Remote\DesiredCapabilities;
 
 class DummyTest extends \PHPUnit_Framework_TestCase
 {
-	public $selenium2_hub = 'http://localhost:4444/wd/hub';
+	public $selenium2_hub = 'http://127.0.0.1:4444/wd/hub';
 	public $website_base; 
 	
 	protected function setUp()

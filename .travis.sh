@@ -71,6 +71,9 @@ then
 		composer install --prefer-dist --optimize-autoloader --no-dev --no-progress
 		echo -e "${color}show installed dependencies:";
 		composer show --installed
+		
+		echo -e "${color}DEBUG: show vendor dir. IT will cached";
+		ls vendor -l
 	fi
 	
 	exit $?

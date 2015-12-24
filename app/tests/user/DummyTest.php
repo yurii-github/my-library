@@ -12,7 +12,10 @@ class DummyTest extends \PHPUnit_Framework_TestCase
 	
 	protected function setUp()
 	{
-		if (getenv('TRAVIS')) { // running on TRAVIS CI
+		$this->website_base = 'http://127.0.0.1:8888';
+		return;
+		
+		if (!empty(getenv('TRAVIS'))) { // running on TRAVIS CI
 			$this->website_base = 'http://127.0.0.1:8888';
 		} else {
 			$this->website_base = 'http://localhost/mylibrary-yii2/app/public/';
@@ -24,7 +27,7 @@ class DummyTest extends \PHPUnit_Framework_TestCase
 	{
 
 		$driver = RemoteWebDriver::create($this->selenium2_hub, DesiredCapabilities::chrome());
-		
+		//$driver->w
 		$driver->get($this->website_base);
 		$this->assertEquals('MyLibrary ~ Books', $driver->getTitle());
 		$driver->close();

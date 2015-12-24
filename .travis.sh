@@ -28,6 +28,7 @@ function install()
 			wget http://chromedriver.storage.googleapis.com/2.20/chromedriver_linux64.zip -O chrome.zip
 			unzip -j chrome.zip chromedriver
 			mv chromedriver vendor/chromedrv
+			chmod +x vendor/chromedrv
 			;;
 			
 		deps*)

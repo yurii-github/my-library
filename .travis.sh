@@ -24,6 +24,12 @@ function install()
 			;;
 			
 		chromedriver*)
+		
+	#	wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O chrome.deb
+		
+		
+		
+		
 			echo -e "${color}getting latest Chrome WebDriver for Selenium Server Standalone";
 			wget http://chromedriver.storage.googleapis.com/2.20/chromedriver_linux64.zip -O chrome.zip
 			unzip -j chrome.zip chromedriver
@@ -57,6 +63,9 @@ function install()
 #
 if [ "$1" == "install" ]
 then
+
+ar
+exit 200
 	# cache usage
 	#
 	if [ -d vendor/bin ]

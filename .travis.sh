@@ -60,11 +60,14 @@ then
 		composer config -g github-oauth.github.com $GITHUB_TOKEN
 
 		echo -e "${color}removing dev deps as we have ones in CI or not required for testing";
-		composer remove yiisoft/yii2-debug --dev --no-update
-		composer remove phpunit/phpunit phpunit/dbunit --dev --no-update
+		#composer remove yiisoft/yii2-debug --dev --no-update
+		#composer remove phpunit/phpunit phpunit/dbunit --dev --no-update
 		echo -e "${color}downloading required dependencies...";
 		composer require codeclimate/php-test-reporter --no-update
-		composer install --prefer-dist --optimize-autoloader --no-progress
+		composer require codeclimate/php-test-reporter --no-update
+		composer require mikey179/vfsStream:1.5.0@stable --no-update
+		composer require facebook/webdriver:~1.0 --no-update
+		composer install --prefer-dist --optimize-autoloader --no-dev --no-progress
 		echo -e "${color}show installed dependencies:";
 		composer show --installed
 	fi

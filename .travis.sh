@@ -24,13 +24,15 @@ function install()
 			;;
 			
 		chromedriver*)
-		
-	#	wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O chrome.deb
-		
-		
-		
-		
-			echo -e "${color}getting latest Chrome WebDriver for Selenium Server Standalone";
+			echo -e "${color}Installing Google Chrome...";
+			wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O chrome.deb
+			ar vx chrome.deb
+			mkdir yk_chrome
+			tar -xf data.tar.xz -C yk_chrome
+			mv chrome vendor
+			echo "$(pwd)/vendor/yk_chrome/opt/google/chrome/google-chrome"  > /usr/bin/google-chrome-stable
+			#
+			echo -e "${color}Getting latest Chrome WebDriver for Selenium Server Standalone";
 			wget http://chromedriver.storage.googleapis.com/2.20/chromedriver_linux64.zip -O chrome.zip
 			unzip -j chrome.zip chromedriver
 			mv chromedriver vendor/chromedrv
@@ -64,13 +66,13 @@ function install()
 if [ "$1" == "install" ]
 then
 
-ar
-exit 200
 	# cache usage
 	#
 	if [ -d vendor/bin ]
 	then
 		echo -e "${color}Using cache.";
+		# refresh link
+		echo "$(pwd)/vendor/yk_chrome/opt/google/chrome/google-chrome"  > /usr/bin/google-chrome-stable
 		#
 		echo -e "${color}Loading cached apcu.so for PHP";
 		echo -e "extension = $(pwd)/vendor/apcu.so\napc.enabled=1\napc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini

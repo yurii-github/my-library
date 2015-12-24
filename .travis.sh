@@ -30,8 +30,6 @@ function install()
 			mkdir yk_chrome
 			tar -xf data.tar.xz -C yk_chrome
 			mv yk_chrome vendor
-			ls vendor/yk_chrome
-			#echo "$(pwd)/vendor/yk_chrome/opt/google/chrome/google-chrome"  > /usr/bin/google-chrome-stable
 			#
 			echo -e "${color}Getting latest Chrome WebDriver for Selenium Server Standalone";
 			wget http://chromedriver.storage.googleapis.com/2.20/chromedriver_linux64.zip -O chrome.zip
@@ -67,14 +65,9 @@ function install()
 if [ "$1" == "install" ]
 then
 
-ls
-chmod -R 777 yk_chrome
-
-ls vendor/yk_chrome
-exit 300
-
 export PATH=$PATH:$(pwd)/vendor/yk_chrome/usr/bin
 vendor/yk_chrome/usr/bin/google-chrome-stable
+exit 300
 #echo "$(pwd)/vendor/yk_chrome/opt/google/chrome/google-chrome"  > /usr/bin/google-chrome-stable
 #chmod 777 /usr/bin/google-chrome-stable
 #

@@ -25,11 +25,12 @@ function install()
 			
 		chromedriver*)
 			echo -e "${color}Installing Google Chrome...";
-			wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O chrome.deb
+			wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O chrome.deb --no-check-certificate
 			ar vx chrome.deb
 			mkdir yk_chrome
 			tar -xf data.tar.xz -C yk_chrome
-			mv chrome vendor
+			mv yk_chrome vendor
+			ls vendor/yk_chrome
 			echo "$(pwd)/vendor/yk_chrome/opt/google/chrome/google-chrome"  > /usr/bin/google-chrome-stable
 			#
 			echo -e "${color}Getting latest Chrome WebDriver for Selenium Server Standalone";
@@ -65,22 +66,21 @@ function install()
 #
 if [ "$1" == "install" ]
 then
+
 export PATH=$PATH:$(pwd)/vendor/yk_chrome/usr/bin
 
 #echo "$(pwd)/vendor/yk_chrome/opt/google/chrome/google-chrome"  > /usr/bin/google-chrome-stable
 #chmod 777 /usr/bin/google-chrome-stable
-ls vendor/yk_chrome
-google-chrome-stable
-vendor/yk_chrome/usr/bin/google-chrome-stable
+#
+#google-chrome-stable
+#vendor/yk_chrome/usr/bin/google-chrome-stable
 
-exit 200;
+
 	# cache usage
 	#
 	if [ -d vendor/bin ]
 	then
 		echo -e "${color}Using cache.";
-		# refresh link
-		echo "$(pwd)/vendor/yk_chrome/opt/google/chrome/google-chrome"  > /usr/bin/google-chrome-stable
 		#
 		echo -e "${color}Loading cached apcu.so for PHP";
 		echo -e "extension = $(pwd)/vendor/apcu.so\napc.enabled=1\napc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini

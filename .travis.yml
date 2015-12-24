@@ -31,7 +31,7 @@ before_script:
   - /sbin/start-stop-daemon --start --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16
   - export DISPLAY=:99.0
   # run php web server and selenium server
-  - php -S 127.0.0.1:8888 -t app/public &
+  - php -S 127.0.0.1:80 -t app/public &
   - sleep 3
   - java -jar vendor/selenium.jar -Dwebdriver.chrome.driver=$(pwd)/vendor/chromedrv -log $(pwd)/selenium.log > /dev/null &
   - sleep 20
@@ -42,7 +42,7 @@ after_success:
   - bash .travis.sh after_success
 after_failure:
 after_script:
-  - cut selenium.log
+  - cat selenium.log
 before_deployment:
 deployment:
 after_deployment:

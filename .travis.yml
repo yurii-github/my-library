@@ -25,19 +25,16 @@ env:
 #
 before_install:
   - if git log -1 --oneline | grep -qie "\[sc\]"; then echo -e "\e[0;34;40m[sc] is presented. clover will not be set"; else export CLOVER="--coverage-clover ../../build/logs/clover.xml"; fi
- # export DISPLAY=:99
- # /etc/init.d/xvfb start
-  #- "export DISPLAY=:99.0"
-  #- "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x32"
- # - sleep 3
 install:
   - bash .travis.sh install
 before_script:
+  - export DISPLAY=:99
+  - /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16
   # run php web server and selenium server
   - php -S 127.0.0.1:8888 -t app/public &
   - sleep 3
-  - xvfb-run java -jar vendor/selenium.jar -Dwebdriver.chrome.driver=$(pwd)/vendor/chromedrv &
-  - sleep 3
+  - java -jar vendor/selenium.jar -Dwebdriver.chrome.driver=$(pwd)/vendor/chromedrv &
+  - sleep 20
   - mysql -e "CREATE DATABASE IF NOT EXISTS test_mylib" -utravis
 script:
   - bash .travis.sh script

@@ -69,6 +69,7 @@ export PATH=$PATH:$(pwd)/vendor/yk_chrome/usr/bin
 
 #echo "$(pwd)/vendor/yk_chrome/opt/google/chrome/google-chrome"  > /usr/bin/google-chrome-stable
 #chmod 777 /usr/bin/google-chrome-stable
+ls vendor/yk_chrome
 google-chrome-stable
 vendor/yk_chrome/usr/bin/google-chrome-stable
 

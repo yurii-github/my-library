@@ -15,6 +15,13 @@ function install()
 			echo 'yes' | pecl install apcu-4.0.10
 			cp $(pear config-get ext_dir)/apcu.so $(pwd)/vendor/apcu.so
 			;;
+		chromedriver*)
+			echo -e "${color}getting latest Chrome WebDriver for Selenium Server Standalone";
+			#http://chromedriver.storage.googleapis.com/2.20/chromedriver_linux64.zip
+			wget http://chromedriver.storage.googleapis.com/2.20/chromedriver_linux32.zip -O chrome32.zip
+			unzip -j chrome32.zip chromedriver
+			mv chromedriver vendor/chromedrv32
+			;;
 		*)
 		echo 'Unknown parameter prived for instal()'
 		;;
@@ -45,16 +52,8 @@ then
 		composer self-update
 		install apcu
 		install selenium
+		install chromedriver
 
-		
-		echo -e "${color}getting latest Chrome WebDriver for Selenium Server Standalone";
-		#http://chromedriver.storage.googleapis.com/2.20/chromedriver_linux64.zip
-		wget http://chromedriver.storage.googleapis.com/2.20/chromedriver_linux32.zip -O chrome32.zip
-		unzip -j chrome32.zip chromedriver
-		mv chromedriver vendor/chromedrv-32		
-		
-
-		
 		echo -e "${color}getting latest PHPUnit..."
 		wget https://phar.phpunit.de/phpunit.phar -O vendor/phpunit.phar --no-check-certificate
 	  
@@ -62,8 +61,8 @@ then
 		composer config -g github-oauth.github.com $GITHUB_TOKEN
 
 		echo -e "${color}removing dev deps as we have ones in CI or not required for testing";
-		#composer remove yiisoft/yii2-debug --dev --no-update
-		#composer remove phpunit/phpunit phpunit/dbunit --dev --no-update
+		composer remove yiisoft/yii2-debug --dev --no-update
+		composer remove phpunit/phpunit phpunit/dbunit --dev --no-update
 		echo -e "${color}downloading required dependencies...";
 		composer require codeclimate/php-test-reporter --no-update
 		composer require codeclimate/php-test-reporter --no-update

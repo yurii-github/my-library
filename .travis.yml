@@ -29,7 +29,7 @@ install:
 before_script:
   # run php web server and selenium server
   - php -S 127.0.0.1:8888 -t app/public &
-  - java -jar vendor/selenium.jar -Dwebdriver.chrome.driver=vendor/chromedrv-32 &
+  - java -jar vendor/selenium.jar -Dwebdriver.chrome.driver=$(pwd)/vendor/chromedrv32 &
   - sleep 5
   - mysql -e "CREATE DATABASE IF NOT EXISTS test_mylib" -utravis
 script:

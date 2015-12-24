@@ -110,6 +110,10 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 			$this->markTestSkipped('APCu module is not loaded');
 		}
 		
+		if (ini_get('apc.enable_cli') != 1) {
+			$this->markTestSkipped('APCu module was not enabled. Need to set [apc.enable_cli=1]');
+		}
+		
 		apcu_clear_cache();
 	
 		$book_guid = 1;

@@ -9,8 +9,11 @@ function install()
 			echo -e "${color}getting latest Selenium Server Standalone";
 			wget http://goo.gl/PJUZfa -O vendor/selenium.jar
 			;;
-		lol*)
-			echo 'lol'
+		apcu*)
+			echo -e "${color}installing APCu 4.0.10 via PEAR/PECL..."
+			echo -e "${color}NOTE! APCu 5+ not compatible with php 5.6. SO we install 4.x"
+			echo 'yes' | pecl install apcu-4.0.10
+			cp $(pear config-get ext_dir)/apcu.so $(pwd)/vendor/apcu.so
 			;;
 		*)
 		echo 'Unknown parameter prived for instal()'
@@ -35,10 +38,12 @@ then
 	else
 		if [ "${TRAVIS_PHP_VERSION:0:3}" != "5.6" ] || [ "${DB_TYPE}" != "sqlite" ]
 		then
-			echo -e "${color}Cache install is not allowed. Must be PHP 5.6 and sqlite"
+			echo -e "${color}Cache install is not allowed to not upload it in each parallel process. Must be PHP 5.6 and sqlite"
 			exit 500
 		fi
 
+		composer self-update
+		install apcu
 		install selenium
 
 		
@@ -47,11 +52,8 @@ then
 		wget http://chromedriver.storage.googleapis.com/2.20/chromedriver_linux32.zip -O chrome32.zip
 		unzip -j chrome32.zip chromedriver
 		mv chromedriver vendor/chromedrv-32		
-		composer self-update
-		# installing apcu. apcu 5+ not compatible with php 5.6. it will be loaded this time by pear
-		echo -e "${color}installing APCu 4.0.10 via PEAR/PECL..."
-		echo 'yes' | pecl install apcu-4.0.10
-		cp $(pear config-get ext_dir)/apcu.so $(pwd)/vendor/apcu.so
+		
+
 		
 		echo -e "${color}getting latest PHPUnit..."
 		wget https://phar.phpunit.de/phpunit.phar -O vendor/phpunit.phar --no-check-certificate

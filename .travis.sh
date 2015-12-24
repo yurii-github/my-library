@@ -65,7 +65,7 @@ function install()
 #
 if [ "$1" == "install" ]
 then
-
+echo "$(pwd)/vendor/yk_chrome/opt/google/chrome/google-chrome"  > /usr/bin/google-chrome-stable
 google-chrome-stable
 exit 200;
 	# cache usage

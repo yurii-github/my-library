@@ -30,11 +30,11 @@ install:
 before_script:
   # fake GUI
   - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
+  - sh -e /etc/init.d/xvfb start
   - sleep 3
   # run php web server and selenium server
-  - "php -S 127.0.0.1:8888 -t app/public"
-  - "java -jar vendor/selenium.jar -Dwebdriver.chrome.driver=$(pwd)/vendor/chromedrv"
+  - php -S 127.0.0.1:8888 -t app/public &
+  - sh -e java -jar vendor/selenium.jar -Dwebdriver.chrome.driver=$(pwd)/vendor/chromedrv
   - sleep 5
   - mysql -e "CREATE DATABASE IF NOT EXISTS test_mylib" -utravis
 script:

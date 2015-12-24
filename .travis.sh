@@ -2,6 +2,23 @@
 
 color="\e[0;34;40m";
 
+function install()
+{
+	case $1 in
+		selenium*)
+			echo -e "${color}getting latest Selenium Server Standalone";
+			wget http://goo.gl/PJUZfa -O vendor/selenium.jar
+			;;
+		lol*)
+			echo 'lol'
+			;;
+		*)
+		echo 'Unknown parameter prived for instal()'
+		;;
+	esac
+}
+
+
 #
 # INSTALL 
 #
@@ -16,15 +33,15 @@ then
 		echo -e "${color}Loading cached apcu.so for PHP";
 		echo -e "extension = $(pwd)/vendor/apcu.so\napc.enabled=1\napc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 	else
-		if [ "${TRAVIS_PHP_VERSION:0:3}" -ne "5.6" -a "${DB_TYPE}" -ne "sqlite" ]
+		if [ "${TRAVIS_PHP_VERSION:0:3}" != "5.6" ] || [ "${DB_TYPE}" != "sqlite" ]
 		then
 			echo -e "${color}Cache install is not allowed. Must be PHP 5.6 and sqlite"
 			exit 500
 		fi
 
-		echo -e "${color}getting latest Selenium Server Standalone";
-		wget http://goo.gl/PJUZfa -O vendor/selenium.jar
-	
+		install selenium
+
+		
 		echo -e "${color}getting latest Chrome WebDriver for Selenium Server Standalone";
 		#http://chromedriver.storage.googleapis.com/2.20/chromedriver_linux64.zip
 		wget http://chromedriver.storage.googleapis.com/2.20/chromedriver_linux32.zip -O chrome32.zip
@@ -63,7 +80,7 @@ if [ "$1" == "script" ]
 then
 	cd app/tests
 	# if php5.6 use clover
-	if [ ${TRAVIS_PHP_VERSION:0:3} -eq "5.6" -a ${DB_TYPE} -eq "sqlite" ]
+	if [ "${TRAVIS_PHP_VERSION:0:3}" == "5.6" ] && [ "${DB_TYPE}" == "sqlite" ]
 	then
 		php ../../vendor/phpunit.phar $CLOVER
 	else
@@ -82,7 +99,7 @@ fi
 if [ "$1" == "after_success" ]
 then
 	# if php5.6 use clover
-	if [ ${TRAVIS_PHP_VERSION:0:3} -eq "5.6" -a ${DB_TYPE} -eq "sqlite" -a -n "$CLOVER" ]
+	if [ "${TRAVIS_PHP_VERSION:0:3}" == "5.6" ] && [ "${DB_TYPE}" == "sqlite" ] && [ -n "$CLOVER" ]
 	then
 		vendor/bin/test-reporter
 	else

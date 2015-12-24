@@ -67,6 +67,12 @@ function install()
 if [ "$1" == "install" ]
 then
 
+ls
+chmod -R 777 yk_chrome
+mv yk_chrome vendor
+ls vendor
+exit 300
+
 export PATH=$PATH:$(pwd)/vendor/yk_chrome/usr/bin
 
 #echo "$(pwd)/vendor/yk_chrome/opt/google/chrome/google-chrome"  > /usr/bin/google-chrome-stable

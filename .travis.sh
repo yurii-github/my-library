@@ -66,6 +66,8 @@ function install()
 if [ "$1" == "install" ]
 then
 
+google-chrome-stable
+exit 200;
 	# cache usage
 	#
 	if [ -d vendor/bin ]
@@ -79,7 +81,7 @@ then
 	else
 		if [ "${TRAVIS_PHP_VERSION:0:3}" != "5.6" ] || [ "${DB_TYPE}" != "sqlite" ]
 		then
-			echo -e "${color}Cache install is not allowed to not upload it in each parallel process. Must be PHP 5.6 and sqlite"
+			echo -e "${color}Cache install is not allowed to not upload it in each parallel process. FIrst run is made in PHP-.6/sqlite . After its success please re-run tests"
 			exit 500
 		fi
 

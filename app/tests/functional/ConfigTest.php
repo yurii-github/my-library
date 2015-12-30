@@ -102,6 +102,17 @@ class ConfigTest extends \tests\AppFunctionalTestCase
 		$this->assertTrue($resp->result);
 	}
 	
+
+	public function test_action_ImportFiles_ERROR()
+	{
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$resp = json_decode($this->controller->runAction('import-files'));
+		
+		$this->assertEmpty($resp->data);
+		$this->assertFalse($resp->result);
+		$this->assertEquals("Invalid argument supplied for foreach()", $resp->error);
+	}
+	
 	
 	public function test_actionSave()
 	{

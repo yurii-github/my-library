@@ -16,9 +16,9 @@ then
 		echo -e "${color}Loading cached apcu.so for PHP";
 		echo -e "extension = $(pwd)/vendor/apcu.so\napc.enabled=1\napc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 	else
-		if [ ${TRAVIS_PHP_VERSION:0:3} != "5.6" ] && [ ${DB_TYPE} != "sqlite" ]
+		if [ "${TRAVIS_PHP_VERSION:0:3}" != "5.6" ] && [ "${DB_TYPE}" != "sqlite" ]
 		then
-			# allow cache update only when php 5.6 and sqlite. fail otherwise
+			echo -e "${color}Cache install is not allowed to not upload it in each parallel process. FIrst run is made in PHP-.6/sqlite . After its success please re-run tests"
 			exit 500
 		fi
 		
@@ -42,6 +42,9 @@ then
 		composer install --prefer-dist --optimize-autoloader --no-progress
 		echo -e "${color}show installed dependencies:";
 		composer show --installed
+		
+		echo -e "${color}DEBUG: show vendor dir. IT will cached";
+		ls vendor -l
 	fi
 	
 	exit $?
@@ -55,7 +58,7 @@ if [ "$1" == "script" ]
 then
 	cd app/tests
 	# if php5.6 use clover
-	if [ ${TRAVIS_PHP_VERSION:0:3} == "5.6" ] && [ ${DB_TYPE} == "sqlite" ]
+	if [ "${TRAVIS_PHP_VERSION:0:3}" == "5.6" ] && [ "${DB_TYPE}" == "sqlite" ]
 	then
 		php ../../vendor/phpunit.phar $CLOVER
 	else
@@ -75,7 +78,7 @@ if [ "$1" == "after_success" ]
 then
 	# clover usage
 	#
-	if [ ${TRAVIS_PHP_VERSION:0:3} == "5.6" ] && [ ${DB_TYPE} == "sqlite" ] && [ -n "$CLOVER" ]
+	if [ "${TRAVIS_PHP_VERSION:0:3}" == "5.6" ] && [ "${DB_TYPE}" == "sqlite" ] && [ -n "$CLOVER" ]
 	then
 		vendor/bin/test-reporter
 	else

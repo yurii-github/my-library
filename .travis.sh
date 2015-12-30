@@ -78,7 +78,7 @@ if [ "$1" == "after_success" ]
 then
 	# clover usage
 	#
-	if [ "${TRAVIS_PHP_VERSION:0:3}"" == "5.6" ] && [ "${DB_TYPE}"" == "sqlite" ] && [ -n "$CLOVER" ]
+	if [ "${TRAVIS_PHP_VERSION:0:3}" == "5.6" ] && [ "${DB_TYPE}" == "sqlite" ] && [ -n "$CLOVER" ]
 	then
 		vendor/bin/test-reporter
 	else

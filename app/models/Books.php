@@ -8,6 +8,7 @@ use yii\db\ActiveRecord;
 use yii\data\ActiveDataProvider;
 use yii\web\Response;
 use yii\web\UploadedFile;
+use yii\web\HttpException;
 
 
 /**
@@ -172,7 +173,10 @@ class Books extends ActiveRecord
 					//var_dump($new_filename);die;
 					throw new \yii\base\InvalidValueException("Sync for file failed. Source file '{$filename_encoded_old}' does not exist", 1);
 				}
-				rename($filename_encoded_old, $filename_encoded_new);
+				// PHP 7: throw error if file is open
+				if (!@rename($filename_encoded_old, $filename_encoded_new)) {
+					throw new HttpException(500, "Failed to rename file \n\n $old_filename \n\n Access denided. \n\n File is probably open right now.");				
+				}
 			}
 		}
 		

@@ -57,7 +57,12 @@ class PagesTest extends \tests\AppFunctionalTestCase
 		$this->assertEquals('//about/index', $args[0]);
 		$this->assertArraySubset([
 			'projects' => [
-				'Yii 2' => 'https://github.com/yiisoft/yii2'
+				'Yii 2' => 'https://github.com/yiisoft/yii2',
+	            'jQuery' => 'https://jquery.com',
+	            'jQuery UI' => 'https://jqueryui.com',
+	            'jQuery Grid' => 'http://www.trirand.com/blog',
+	            'jQuery Raty' => 'http://wbotelhos.com/raty',
+	            'jQuery FancyBox' => 'http://fancybox.net',	
 			]
 		], $args[1]);
 		$this->assertEquals('About', $controller->view->title);

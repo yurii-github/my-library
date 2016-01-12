@@ -6,35 +6,31 @@ use Facebook\WebDriver\Remote\DesiredCapabilities;
 
 class AppUserTestCase extends \PHPUnit_Framework_TestCase
 {
-	const HUB = 'http://127.0.0.1:4444/wd/hub';
+	private $WEBSITE;
+	private $BROWSER;
 	
-	protected $WEBSITE;
 	protected $driver;
 	
 	protected function setUp()
 	{
-		$this->driver = RemoteWebDriver::create(self::HUB, DesiredCapabilities::chrome());
-		
 		if (!empty(getenv('TRAVIS'))) { // running on TRAVIS CI
 			$this->WEBSITE = 'http://127.0.0.1:8888';
+			$this->BROWSER = DesiredCapabilities::firefox();
 		} else {
 			$this->WEBSITE = 'http://localhost/mylibrary-yii2/app/public/';
+			$this->BROWSER = DesiredCapabilities:: chrome();
 		}
+		
+		$this->driver = RemoteWebDriver::create('http://127.0.0.1:4444/wd/hub', $this->BROWSER);
 	}
 	
 	protected function tearDown()
 	{
 		$this->driver->close();
 	}
-	
-	
-	public function test_Title()
+
+	public function getSiteUrl()
 	{
-		$driver = RemoteWebDriver::create($this->selenium2_hub, DesiredCapabilities::chrome());
-		//$driver->w
-		$driver->get($this->website_base);
-		$this->assertEquals('MyLibrary ~ Books', $driver->getTitle());
-		$driver->close();
+		return $this->WEBSITE;
 	}
-	
 }

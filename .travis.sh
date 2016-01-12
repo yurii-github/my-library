@@ -65,16 +65,6 @@ function install()
 if [ "$1" == "install" ]
 then
 
-export PATH=$PATH:$(pwd)/vendor/yk_chrome/usr/bin
-vendor/yk_chrome/usr/bin/google-chrome-stable
-exit 300
-#echo "$(pwd)/vendor/yk_chrome/opt/google/chrome/google-chrome"  > /usr/bin/google-chrome-stable
-#chmod 777 /usr/bin/google-chrome-stable
-#
-#google-chrome-stable
-#vendor/yk_chrome/usr/bin/google-chrome-stable
-
-
 	# cache usage
 	#
 	if [ -d vendor/bin ]
@@ -97,7 +87,7 @@ exit 300
 		install phpunit
 		install apcu
 		install selenium
-		install chromedriver
+		#install chromedriver
 		install deps
 
 		echo -e "${color}DEBUG: show vendor dir. IT will cached";

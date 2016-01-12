@@ -15,7 +15,7 @@ class AppUserTestCase extends \PHPUnit_Framework_TestCase
 	{
 		if (!empty(getenv('TRAVIS'))) { // running on TRAVIS CI
 			$this->WEBSITE = 'http://127.0.0.1:8080';
-			$this->BROWSER = DesiredCapabilities::firefox();
+			$this->BROWSER = DesiredCapabilities::chrome();
 		} else {
 			$this->WEBSITE = 'http://localhost/mylibrary-yii2/app/public/';
 			$this->BROWSER = DesiredCapabilities:: chrome();

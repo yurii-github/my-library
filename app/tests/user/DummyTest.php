@@ -2,14 +2,18 @@
 
 namespace tests\user;
 
-use Facebook\WebDriver\Remote\RemoteWebDriver;
-use Facebook\WebDriver\Remote\DesiredCapabilities;
-
-class DummyTest extends \PHPUnit_Framework_TestCase
+class DummyTest extends \tests\AppUserTestCase
 {
-	public $selenium2_hub = 'http://127.0.0.1:4444/wd/hub';
-	public $website_base; 
+	public function test_Title()
+	{
+		$driver = RemoteWebDriver::create($this->selenium2_hub, DesiredCapabilities::chrome());
+		//$driver->w
+		$driver->get($this->website_base);
+		$this->assertEquals('MyLibrary ~ Books', $driver->getTitle());
+		$driver->close();
+	}
 	
+	/*
 	protected function setUp()
 	{
 		//$this->website_base = 'http://127.0.0.1:8888';
@@ -34,6 +38,6 @@ class DummyTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('MyLibrary ~ Books', $driver->getTitle());
 		$driver->close();
 	}
-	
+	*/
 	
 }

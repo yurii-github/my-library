@@ -26,7 +26,7 @@ function install()
 		chromium*)
 			# https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Linux_x64/368894/
 			echo -e "${color}Installing Chromium...";
-			wget https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Linux_x64%2F368894%2Fchrome-linux.zip?generation=1452617615555000&alt=media -O chrome.zip
+			wget "https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Linux_x64%2F368894%2Fchrome-linux.zip?generation=1452617615555000&alt=media" -O chrome.zip --no-check-certificate
 			unzip chrome.zip
 			mv chrome-linux vendor
 			

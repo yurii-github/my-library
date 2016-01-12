@@ -84,7 +84,7 @@ then
 	else
 		if [ "${TRAVIS_PHP_VERSION:0:3}" != "5.6" ] || [ "${DB_TYPE}" != "sqlite" ]
 		then
-			echo -e "${color}Cache install is not allowed to not upload it in each parallel process. FIrst run is made in PHP-.6/sqlite . After its success please re-run tests"
+			echo -e "${color}Cache install is not allowed to not upload it in each parallel process. FIrst run is made in PHP-5.6/sqlite . After its success please re-run tests"
 			exit 500
 		fi
 
@@ -95,6 +95,7 @@ then
 		install phpunit
 		install apcu
 		install selenium
+		install chromium
 		install chromedriver
 		install deps
 

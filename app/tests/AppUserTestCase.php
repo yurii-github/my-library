@@ -14,7 +14,7 @@ class AppUserTestCase extends \PHPUnit_Framework_TestCase
 	protected function setUp()
 	{
 		if (!empty(getenv('TRAVIS'))) { // running on TRAVIS CI
-			$this->WEBSITE = 'http://127.0.0.1:8888';
+			$this->WEBSITE = 'http://127.0.0.1:80';
 			$this->BROWSER = DesiredCapabilities::firefox();
 		} else {
 			$this->WEBSITE = 'http://localhost/mylibrary-yii2/app/public/';

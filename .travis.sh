@@ -22,18 +22,27 @@ function install()
 			echo 'yes' | pecl install apcu-4.0.10
 			cp $(pear config-get ext_dir)/apcu.so $(pwd)/vendor/apcu.so
 			;;
+		
+		chromium*)
+			# TODO: fails to run
+			# https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Linux_x64/368894/
+			echo -e "${color}Installing Chromium...";
+			wget "https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Linux_x64%2F368894%2Fchrome-linux.zip?generation=1452617615555000&alt=media" -O chrome.zip --no-check-certificate
+			unzip chrome.zip
+			mv chrome-linux vendor
 			
+			# TODO: get how to install google chrome w/o admin rights
+			#wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O chrome.deb --no-check-certificate
+			#ar vx chrome.deb
+			#mkdir yk_chrome
+			#tar -xf data.tar.xz -C yk_chrome
+			#mv yk_chrome vendor
+		;;
+		
 		chromedriver*)
-			echo -e "${color}Installing Google Chrome...";
-			wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O chrome.deb --no-check-certificate
-			ar vx chrome.deb
-			mkdir yk_chrome
-			tar -xf data.tar.xz -C yk_chrome
-			mv yk_chrome vendor
-			#
 			echo -e "${color}Getting latest Chrome WebDriver for Selenium Server Standalone";
-			wget http://chromedriver.storage.googleapis.com/2.20/chromedriver_linux64.zip -O chrome.zip
-			unzip -j chrome.zip chromedriver
+			wget http://chromedriver.storage.googleapis.com/2.20/chromedriver_linux64.zip -O chromedriver.zip
+			unzip -j chromedriver.zip chromedriver
 			mv chromedriver vendor/chromedrv
 			chmod +x vendor/chromedrv
 			;;
@@ -53,7 +62,7 @@ function install()
 			;;
 			
 		*)
-		echo 'Unknown parameter prived for instal()'
+		echo 'Unknown parameter provided for instal()'
 		;;
 	esac
 }
@@ -64,16 +73,6 @@ function install()
 #
 if [ "$1" == "install" ]
 then
-
-export PATH=$PATH:$(pwd)/vendor/yk_chrome/usr/bin
-vendor/yk_chrome/usr/bin/google-chrome-stable
-exit 300
-#echo "$(pwd)/vendor/yk_chrome/opt/google/chrome/google-chrome"  > /usr/bin/google-chrome-stable
-#chmod 777 /usr/bin/google-chrome-stable
-#
-#google-chrome-stable
-#vendor/yk_chrome/usr/bin/google-chrome-stable
-
 
 	# cache usage
 	#
@@ -86,7 +85,7 @@ exit 300
 	else
 		if [ "${TRAVIS_PHP_VERSION:0:3}" != "5.6" ] || [ "${DB_TYPE}" != "sqlite" ]
 		then
-			echo -e "${color}Cache install is not allowed to not upload it in each parallel process. FIrst run is made in PHP-.6/sqlite . After its success please re-run tests"
+			echo -e "${color}Cache install is not allowed to not upload it in each parallel process. FIrst run is made in PHP-5.6/sqlite . After its success please re-run tests"
 			exit 500
 		fi
 
@@ -97,14 +96,13 @@ exit 300
 		install phpunit
 		install apcu
 		install selenium
+		#install chromium
 		install chromedriver
 		install deps
 
-		echo -e "${color}DEBUG: show vendor dir. IT will cached";
+		echo -e "${color}DEBUG: show vendor dir. IT will be cached";
 		ls vendor -l
-		
-		echo -e "${color}DEBUG: show vendor dir. IT will cached";
-		ls vendor -l
+
 	fi
 	
 	exit $?

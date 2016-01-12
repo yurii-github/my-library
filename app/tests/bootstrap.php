@@ -12,6 +12,7 @@ $autoloader->addPsr4("app\\", $basedir . '/app');
 $autoloader->addPsr4("modules\\", $basedir . '/app/modules');
 $autoloader->addClassMap(['tests\AppTestCase' => __DIR__ . '/AppTestCase.php']);
 $autoloader->addClassMap(['tests\AppFunctionalTestCase' => __DIR__ . '/AppFunctionalTestCase.php']);
+$autoloader->addClassMap(['tests\AppUserTestCase' => __DIR__ . '/AppUserTestCase.php']);
 
 
 //

@@ -1,8 +1,6 @@
 <?php
 namespace tests;
 
-use \AD7six\Dsn\Dsn;
-
 class AppFunctionalTestCase extends AppTestCase
 {
 	protected function setUp()

@@ -102,6 +102,9 @@ exit 300
 
 		echo -e "${color}DEBUG: show vendor dir. IT will cached";
 		ls vendor -l
+		
+		echo -e "${color}DEBUG: show vendor dir. IT will cached";
+		ls vendor -l
 	fi
 	
 	exit $?

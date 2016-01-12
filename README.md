@@ -22,9 +22,9 @@ Most js/css come from CDN networks, so you probably eager to check code at /app/
 
 <h2>Requirements</h2>
 
-+ php >=5.5
++ php >=5.6
 + url rewrite
-+ mysqlite or mysql
++ sqlite or mysql
 
 
 <h3>Setup</h3>
@@ -82,4 +82,4 @@ Other things work as expected. A big note requires filesystem encoding. This is 
 
 ----------------------
 
-last check true check: 28-10-2015
+last check: 30-12-2015

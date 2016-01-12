@@ -103,14 +103,33 @@ class ConfigTest extends \tests\AppFunctionalTestCase
 	}
 	
 
-	public function test_action_ImportFiles_ERROR()
+	public function test_action_ImportFiles_EMPTY()
 	{
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$resp = json_decode($this->controller->runAction('import-files'));
-		
 		$this->assertEmpty($resp->data);
-		$this->assertFalse($resp->result);
-		$this->assertEquals("Invalid argument supplied for foreach()", $resp->error);
+		$this->assertTrue($resp->result);
+	}
+	
+	
+	public function test_action_ImportFiles_ERROR()
+	{
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$_POST['post'] = [$this->filename_fs_only]; //just 1 file
+
+		try {
+			\Yii::$app->db->createCommand("DROP TABLE {{%books}}")->execute();
+						
+			$resp = json_decode($this->controller->runAction('import-files'));
+			
+			$this->assertEmpty($resp->data);
+			$this->assertFalse($resp->result);
+			$this->assertEquals("The table does not exist: {{%books}}", $resp->error);
+			
+		} finally {
+			$this->resetConnection(); // we fail schema, need to recreate it after test
+		}
+
 	}
 	
 	

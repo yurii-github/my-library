@@ -109,7 +109,7 @@ class ConfigController extends Controller
 
 		if (\Yii::$app->request->getMethod() == 'POST') {
 			$error = '';
-			$post = \Yii::$app->request->post('post');
+			$post = \Yii::$app->request->post('post', []);
 
 			$arr_added = [];
 			try {

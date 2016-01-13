@@ -18,7 +18,77 @@ namespace app\components
 	 */
 	class Configuration extends Object
 	{
-		private $version = '1.1';
+		// NOTE: only supported PHP 5.6+
+		const SUPPORTED_VALUES = [
+			'system_language' => [
+				'en-US' => 'English - en-US',
+				'uk-UA' => 'Українська - uk-UA'
+			],
+			'system_theme' => [ // known list of JqueryUI themes
+				'base',
+				'black-tie',
+				'blitzer',
+				'cupertino',
+				'dark-hive',
+				'dot-luv',
+				'eggplant',
+				'excite-bike',
+				'flick',
+				'hot-sneaks',
+				'humanity',
+				'le-frog',
+				'mint-choc',
+				'overcast',
+				'pepper-grinder',
+				'redmond',
+				'smoothness',
+				'south-street',
+				'start',
+				'sunny',
+				'swanky-purse',
+				'trontastic',
+				'ui-darkness',
+				'ui-lightness',
+				'vader'
+			],
+			'system_timezone' => [
+				// based on system support of DateTimeZone::listIdentifiers() 
+			]
+			
+		];
+		
+		const DEFAULT_CONFIG_JSON = <<<JSON
+{
+    "system": {
+        "email": false,
+        "emailto": null,
+        "theme": "smoothness",
+        "timezone": "Europe\/Kiev",
+        "language": "en-US"
+    },
+    "library": {
+        "codepage": "cp1251",
+        "directory": "%app_directory%\/data\/books\/",
+        "sync": false
+    },
+    "database": {
+        "format": "sqlite",
+        "filename": "%app_directory%\/data\/mydb.s3db",
+        "host": "localhost",
+        "dbname": "mylib",
+        "login": "",
+        "password": ""
+    },
+    "book": {
+        "covermaxwidth": 800,
+        "covertype": "image\/jpeg",
+        "nameformat": "{year}, ''{title}'', {publisher} [{isbn13}].{ext}"
+    }
+}
+JSON;
+		
+		
+		private $version = '1.1'; // DB VERSION
 		private $config;
 		public $config_file;
 		
@@ -100,42 +170,14 @@ namespace app\components
 			\Yii::endProfile('reflection', 'config');
 		}
 		
-	
+		
+		/**
+		 * returns default configuration as php object
+		 * @return mixed
+		 */
 		protected function getDefaultCfg()
 		{
-			$directory = addslashes(\Yii::getAlias('@app/data/books/')); //TODO: must end with slash. need to force it on update
-			$filename = addslashes(\Yii::getAlias('@app/data/mydb.s3db'));
-			$json = 
-			<<<JSON
-{
-    "system": {
-        "email": false,
-        "emailto": null,
-        "theme": "smoothness",
-        "timezone": "Europe\/Kiev",
-        "language": "en-US"
-    },
-    "library": {
-        "codepage": "cp1251",
-        "directory": "$directory",
-        "sync": false
-    },
-    "database": {
-        "format": "sqlite",
-        "filename": "$filename",
-        "host": "localhost",
-        "dbname": "mylib",
-        "login": "",
-        "password": ""
-    },
-    "book": {
-        "covermaxwidth": 800,
-        "covertype": "image\/jpeg",
-        "nameformat": "{year}, ''{title}'', {publisher} [{isbn13}].{ext}"
-    }
-}
-JSON;
-			return json_decode($json);
+			return json_decode(str_replace('%app_directory%', addslashes(\Yii::getAlias('@app')), self::DEFAULT_CONFIG_JSON));
 		}
 
 		

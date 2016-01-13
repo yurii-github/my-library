@@ -1,38 +1,13 @@
 <?php 
 use yii\helpers\Url;
 
-/* @var $cfg \frontend\components\Configuration */
+$this->title = \Yii::t('frontend/config', 'Configuration');
+
+/* @var $cfg \app\components\Configuration */
 $cfg =  \Yii::$app->mycfg;
+$SUPPORTED_VALUES = $cfg::SUPPORTED_VALUES; //PDT 3.4 fails to understand const array support. TODO: bug report
 $checked = 'checked="checked"';
 $html_valid = '<span style="display: inline-block;" class="status ui-icon ui-icon-circle-check"></span>';
-
-$get_themes = [
-	'base',
-	'black-tie',
-	'blitzer',
-	'cupertino',
-	'dark-hive',
-	'dot-luv',
-	'eggplant',
-	'excite-bike',
-	'flick',
-	'hot-sneaks',
-	'humanity',
-	'le-frog',
-	'mint-choc',
-	'overcast',
-	'pepper-grinder',
-	'redmond',
-	'smoothness',
-	'south-street',
-	'start',
-	'sunny',
-	'swanky-purse',
-	'trontastic',
-	'ui-darkness',
-	'ui-lightness',
-	'vader'
-];
 ?>
 <style type="text/css">
 label.cfg {
@@ -73,14 +48,15 @@ form.configuration-form fieldset legend, form.configuration-form fieldset label 
 				<br /><br />
 				<label class="cfg" title="interface language"><?php echo \Yii::t('frontend/config', 'language')?></label>
 				<select name="system_language" id="system_language">
-					<?php foreach ([['en-US', 'English'], ['uk-UA', 'Ukrainian'] ] as $lang) { ?>
-					<option <?= $cfg->system->language == $lang[0] ? 'selected="selected"' : ''; ?> value="<?= $lang[0]; ?>"><?= $lang[1]; ?> - <?= $lang[0]; ?></option>
-					<?php } ?>
+					<?php foreach ($SUPPORTED_VALUES['system_language'] as $v => $txt) {
+						$sel = ($cfg->system->language == $v ? 'selected="selected"' : '');
+						echo "<option $sel value=\"$v\">$txt</option>";
+					} ?>
 				</select> (ICU support: <a href="http://site.icu-project.org/">v.<?php echo INTL_ICU_VERSION?></a>)
 				<br /><br />
 				<label class="cfg" title="library theme"><?php echo \Yii::t('frontend/config', 'theme'); ?></label>
 				<select name="system_theme" id="system_theme" >
-					<?php foreach ($get_themes as $t) { ?>
+					<?php foreach ($SUPPORTED_VALUES['system_theme'] as $t) { ?>
 					<option <?= $cfg->system->theme == $t ? 'selected="selected"' : ''; ?>><?= $t; ?></option>
 					<?php } ?>
 				</select>

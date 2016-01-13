@@ -43,7 +43,7 @@ after_success:
   - bash .travis.sh after_success
 after_failure:
 after_script:
-  - cat selenium.log
+  - head -20 selenium.log
 before_deployment:
 deployment:
 after_deployment:

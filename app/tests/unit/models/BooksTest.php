@@ -40,18 +40,20 @@ class BooksTest extends \tests\AppTestCase
 
 		$new_filename = \Yii::$app->mycfg->library->directory.$book->filename;
 		
-		// rename check
-		if ($sync) { //ON
-			$this->assertTrue(file_exists($new_filename), 'SYNC ON: no new file. rename failed');
-			$this->assertFalse(file_exists($book_filename), 'SYNC ON: old file not removed. rename failed');
-			$this->assertEquals('something', file_get_contents($new_filename));
-		} else { //OFF
-			$this->assertFalse(file_exists($new_filename), 'SYNC OFF: new file created. file renamed. must not occur');
-			$this->assertTrue(file_exists($book_filename), 'SYNC OFF: old file removed. file renamed. must not occur.');
-			$this->assertEquals('something', file_get_contents($book_filename));
+		// physical file rename check
+		switch ($sync) {
+			case true:
+				$this->assertTrue(file_exists($new_filename), 'SYNC ON: no new file. rename failed');
+				$this->assertFalse(file_exists($book_filename), 'SYNC ON: old file not removed. rename failed');
+				$this->assertEquals('something', file_get_contents($new_filename));
+				break;
+				
+			case false:
+				$this->assertTrue(file_exists($book_filename), "SYNC OFF: old file '$book_filename' removed or renamed. New file '$new_filename'");
+				$this->assertEquals($book_filename, $new_filename, "SYNC OFF: filename colum in db was updated with '$new_filename'");
+				$this->assertEquals('something', file_get_contents($book_filename));
+				break;
 		}
-
-		//TODO: db check
 	}
 	
 

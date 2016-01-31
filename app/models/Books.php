@@ -162,16 +162,15 @@ class Books extends ActiveRecord
 	 * @return boolean
 	 */
 	private function myBeforeUpdate()
-	{		
-		$old_filename = $this->getOldAttribute('filename');
-		$new_filename = $this->buildFilename();
-		
+	{
 		if ($this->book_cover) {//resize
 			$this->book_cover = self::getResampledImageByWidthAsBlob($this->book_cover, \Yii::$app->mycfg->book->covermaxwidth);
 		}
 		
 		// sync with filesystem is enabled. update filename and rename phisical file
 		if (\Yii::$app->mycfg->library->sync) {
+			$old_filename = $this->getOldAttribute('filename');
+			$new_filename = $this->buildFilename();
 			$this->filename = $new_filename; // will be stored in database
 			$filename_encoded_old = \Yii::$app->mycfg->Encode(\Yii::$app->mycfg->library->directory . $old_filename);
 			$filename_encoded_new = \Yii::$app->mycfg->Encode(\Yii::$app->mycfg->library->directory . $new_filename);

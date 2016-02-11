@@ -361,18 +361,18 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		$this->controllerSite->runAction('manage');
 		$book_expected['filename'] = ", ''title book #1'',  [].";
 		
-		//WORKAROUND FOR TRAVIS #1
+		// #1
+		// WORKAROUND FOR TRAVIS 
 		$dt = new \DateTime();
 		$dt->setTimezone(new \DateTimeZone(\Yii::$app->getTimeZone()));
 		$book_expected['updated_date'] = $dt->format('Y-m-d H:i:s');
 		
 		//CHECKING
-		
 		/* @var $book_current \yii\db\BaseActiveRecord */
 		$book_current = Books::findOne(['book_guid' => $book['book_guid']]);
 
-		//WORKAROUND FRO TRAVIS #2
-		//remove seconds, as it fails on slow machines, definely fails on Travis
+		// #2
+		// WORKAROUND FOR TRAVIS: remove seconds, as it fails on slow machines, definely fails on Travis
 		$book_expected['updated_date'] = (new \DateTime($book_expected['updated_date']))->format('Y-m-d H:i');
 		$book_current['updated_date']  = (new \DateTime($book_current['updated_date']))->format('Y-m-d H:i');
 		
@@ -380,14 +380,17 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		$book_current_arr = $book_current->getAttributes();
 		$keys = array_keys($book_expected);
 		foreach ($keys as $k) {
+			if ($k == 'filename') { // skip filename checks here. checked at #4 below
+				continue;
+			}
 			$this->assertEquals($book_expected[$k], $book_current_arr[$k], "expected '$k' doesn't match");
 		}
 	
+		// #4
 		if ($sync) { // file rename if sync ON
 			$filename_expected = \Yii::$app->mycfg->library->directory . $book_expected['filename']; // renamed new
 			$this->assertFileNotExists($filename_old); // old is not existed
 		}
-		
 		$this->assertFileExists($filename_expected);
 		$this->assertEquals(file_get_contents($filename_expected), 'sample-data');		
 	}

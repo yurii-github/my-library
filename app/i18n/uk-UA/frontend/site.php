@@ -17,6 +17,8 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
+	'Compact' => 'Пакування',
+	'doing...' => 'виконую...',
     'All' => 'Всі',
     'ISBN-13' => '',
     'No' => 'Ні',

@@ -47,12 +47,12 @@ entry point is located at
 - syncronization with filesystem (renames, deletes)
 - migrations
 - security (partial)
+- Compact: optimizes DB via run vacuum for SQLite or table optimization for MySQL
  
 TODO
 
 - admin page. base
 - true authors, publishers, categories
-- in sqlite run VACUUM for space saving
 - CDN fallbacks
 - user tests
 </pre>

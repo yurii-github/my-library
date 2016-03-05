@@ -66,6 +66,61 @@ class ConfigController extends Controller
 		return $this->render('index');
 	}
 	
+	//dummy clean
+	//TODO: do it better way, clean some code
+	public function actionVacuum()
+	{
+		// SQLITE3 VACUUM
+		if (\Yii::$app->mycfg->database->format == 'sqlite') {
+			$filename = \Yii::$app->mycfg->database->filename;
+			$newSize = $error = null;
+			$oldSize = (new \SplFileInfo($filename))->getSize();
+			
+			try {
+				/* @var $pdo \PDO */
+				\Yii::$app->db->open();
+				\Yii::$app->db->pdo->query("VACUUM");
+				\Yii::$app->db->close();
+				clearstatcache(true, $filename); // we need new size, not old one
+				$newSize = (new \SplFileInfo($filename))->getSize();
+				\Yii::$app->db->open();
+			} catch (\Exception $e) {
+				$error = $e->getMessage();
+				$error = "Error: $error \n";
+			}
+			
+			return "SQLITE VACUUM \n $error old size: $oldSize \n new size: $newSize";
+		}
+		
+		// MYSQL OPTIMIZE
+		if (\Yii::$app->mycfg->database->format == 'mysql') {
+			$oldSize = $newSize = $error = null;
+			$dbname = \Yii::$app->mycfg->database->dbname;
+			try {
+				$querySize = <<<SQL
+SELECT data_length + index_length FROM information_schema.tables 
+WHERE table_schema = '$dbname'
+GROUP BY table_schema
+SQL;
+				\Yii::$app->db->open();
+				$oldSize = \Yii::$app->db->pdo->query($querySize)->fetchColumn();
+				$tables = \Yii::$app->db->pdo->query("SHOW TABLES")->fetchAll(\PDO::FETCH_COLUMN);
+				$tables = implode(',', $tables);
+				\Yii::$app->db->pdo->query("OPTIMIZE TABLE $tables");
+				\Yii::$app->db->close();
+				\Yii::$app->db->open();
+				$newSize = \Yii::$app->db->pdo->query($querySize)->fetchColumn();
+			} catch (\Exception $e) {
+				$error = $e->getMessage();
+				$error = "Error: $error \n";
+			}
+				
+			return "MYSQL OPTIMIZE \n $error old size: $oldSize \n new size: $newSize";
+		}
+		
+		return 'Nothing to do. Current DB format is not supported';
+	}
+	
 	// return roles+permissions and users+roles
 	public function actionPermissions()
 	{

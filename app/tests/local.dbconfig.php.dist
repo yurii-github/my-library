@@ -1,0 +1,22 @@
+<?php
+if (empty(getenv('DB_TYPE'))) { // uncomment only one to test it
+	//putenv('DB_TYPE=mysql');
+	putenv('DB_TYPE=sqlite');
+}
+
+
+return  [
+	'sqlite' => [
+		'dsn' => 'sqlite::memory:',
+		// for mycfg -->
+		'filename' => ':memory:',
+	],
+	'mysql' => [
+		'dsn' => 'mysql:host=127.0.0.1;dbname=test_mylib',
+		// for mycfg -->
+		'host' => '127.0.0.1',
+		'dbname' => 'test_mylib',
+		'username' => 'root',
+		'password' => '{PASSWORD}'
+	]
+];

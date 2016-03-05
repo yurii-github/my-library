@@ -1,7 +1,7 @@
 <div style="font-size: 12px; margin: auto; width: 300px; text-align: left; font-size: 14px;">
 	<h1 style="text-align: center; font-size: 20px; margin-bottom: 20px">Про Проект</h1>
 	<p>
-		<b><a href="https://github.com/yurii-github/php-mylibrary">MyLibrary</a></b>
+		<b><a href="https://github.com/yurii-github/yii2-mylib">MyLibrary</a></b>
 		  - це програмне забезпечення, що дозволяє керувати
 		 вашою бібліотекою книжок.
 	</p>

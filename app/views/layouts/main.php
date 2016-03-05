@@ -34,6 +34,7 @@ app\assets\JqueryGrid::register($this);
 		'items' => [//link, title, style, id
 			['link' => ['//site/index'], 'title' => \Yii::t('frontend/site', 'Library')],
 			['link' => ['//config/index'], 'title' => \Yii::t('frontend/site', 'Configuration')],
+			['link' => ['//config/vacuum'], 'title' => \Yii::t('frontend/site', 'Compact'), 'id' => 'vacuum-link'],
 			['link' => ['//site/about'], 'title' => \Yii::t('frontend/site', 'About {version}', ['version' => 'v.'.\Yii::$app->mycfg->version])],
 			Yii::$app->user->isGuest ?
 				['link' => ['/site/login'], 'title' => \Yii::t('frontend/site', 'Login'), 'style' => 'color: white; background: green', 'id' => 'auth-link'] :
@@ -51,13 +52,38 @@ if(\Yii::$app->user->isGuest) { // append login form
 </header>
 <?php echo $content; ?>
 <footer></footer>
-<script type="text/javascript">
+<script>
 	$("#mylibrary-menu").buttonset();
 	$("#mylibrary-menu input").click(function() {
 		window.location.href = $(this).val();
 	});
-</script>
+
 	
+	//
+	//
+	$("#vacuum-link").on("click", function(e) {
+		e.preventDefault();
+		var $menuItem = $(this);
+		var link = $menuItem.prev().val();
+		var menuText = $menuItem.children('span').text();//backup menu text
+		
+		// dummy no multi click
+		if ($menuItem.prop('disabled')) {
+			return false;
+		}
+		$menuItem.prop('disabled', true);
+		$('span',this).text('<?php echo \Yii::t('frontend/site', 'doing...')?>');
+		console.log('compacting...');
+		var xhr = $.post(link, function(data) {
+			alert(data);
+		});
+		xhr.always(function(){
+			$menuItem.children('span').text(menuText);
+			$menuItem.removeClass('ui-state-active');
+			$menuItem.prop('disabled', false);
+		});
+	});
+</script>
 <?php $this->endBody(); ?>
 </body>
 </html>

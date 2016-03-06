@@ -16,7 +16,7 @@ $autoloader->addClassMap(['tests\AppUserTestCase' => __DIR__ . '/AppUserTestCase
 
 
 //
-// - - - - support for several databases to test
+// - - - - support for several RDBMS to test
 //
 if (file_exists('local.dbconfig.php')) { // local config support.
 	$GLOBALS['db'] = require 'local.dbconfig.php'; //must return array. see 'else' below. also set env as putenv('DB_TYPE=sqlite') if cannot set it outside

@@ -54,7 +54,8 @@ class ConfigController extends Controller
 				'actions' => [
 					'index' => ['GET'],
 					'users' => ['GET'],
-					'save' => ['POST']
+					'save' => ['POST'],
+					'vacuum' => ['POST']
 				]
 			]
 		];

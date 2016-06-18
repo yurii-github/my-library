@@ -9,7 +9,7 @@ if (1) {//todo: condition
 
 $basedir = dirname(dirname(__DIR__));
 require $basedir . '/vendor/autoload.php';
-require $basedir . '/vendor/yiisoft/yii2-dev/framework/Yii.php';
+require $basedir . '/vendor/yiisoft/yii2/Yii.php';
 
 if (YII_ENV == 'test') {
 	//echo 'env';

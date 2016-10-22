@@ -115,7 +115,7 @@ class SiteController extends Controller
 	{
 		$this->view->title = \Yii::t('frontend/site', 'About');
 		$projects = [
-			'Yii 2' => 'https://github.com/yiisoft/yii2',
+			'Yii '.Yii::getVersion() => 'https://github.com/yiisoft/yii2',
 			'jQuery' => 'https://jquery.com',
 			'jQuery UI' => 'https://jqueryui.com',
 			'jQuery Grid' => 'http://www.trirand.com/blog',

@@ -33,7 +33,7 @@ class Books extends ActiveRecord
 			// - edit (update)
 			[['year'], 'integer', 'on' => ['edit']],
 			[['favorite'], 'number', 'on' => ['edit']],
-			[['favorite', 'read', 'year', 'title', 'isbn13', 'author', 'publisher', 'ext'], 'safe', 'on' => 'edit'],
+			[['updated_date', 'favorite', 'read', 'year', 'title', 'isbn13', 'author', 'publisher', 'ext'], 'safe', 'on' => 'edit'],
 			['book_cover', 'image', 'skipOnEmpty' => true, 'extensions' => 'gif,jpg,png', 'on' => ['edit'] ],
 			// - filter (get)
 			[['title', 'publishers.name'], 'string', 'on' => ['filter'] /*  'message' => 'must be integer!'*/],

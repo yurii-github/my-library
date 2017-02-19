@@ -188,6 +188,10 @@ JSON;
 		 */
 		public function Encode($filename)
 		{
+		  if (PHP_MAJOR_VERSION >= 7) {
+		    return $filename;
+		  }
+		  
 			return mb_convert_encoding($filename, $this->library->codepage, 'utf-8');
 		}
 		
@@ -198,6 +202,10 @@ JSON;
 		 */
 		public function Decode($filename)
 		{
+		  if (PHP_MAJOR_VERSION >= 7) {
+		    return $filename;
+		  }
+		  
 			return mb_convert_encoding($filename, 'utf-8', $this->library->codepage);
 		}
 

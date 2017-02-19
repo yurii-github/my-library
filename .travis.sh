@@ -83,12 +83,6 @@ then
 		echo -e "${color}Loading cached apcu.so for PHP";
 		echo -e "extension = $(pwd)/vendor/apcu.so\napc.enabled=1\napc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 	else
-		if [ "${DB_TYPE}" != "sqlite" ] #TODO: did they change cache logic?
-		then
-			echo -e "${color}Cache install is not allowed to not upload it in each parallel process. FIrst run is made in PHP-5.6/sqlite . After its success please re-run tests"
-			exit 500
-		fi
-
 		echo -e "${color}Update Composer and set github oauth token..";
 		composer self-update
 		composer config -g github-oauth.github.com $GITHUB_TOKEN

@@ -1,10 +1,7 @@
 <?php
-
 use yii\helpers\Html;
-use yii\helpers\Url;
 use app\components\widgets\MenuWidget;
-use app\components\widgets\LoginWidget;
-use app\models\forms\Login;
+
 /* @var $this \yii\web\View */
 /* @var $content string */
 $this->title = "MyLibrary ~ {$this->title}";
@@ -45,11 +42,13 @@ app\assets\JqueryGrid::register($this);
 	?>
 	</form>
 <?php
+/* TODO: show when finished with AUTH
 if(\Yii::$app->user->isGuest) { // append login form
 	echo $this->renderFile(__DIR__.'/_login.php');
 } else {
 	echo $this->renderFile(__DIR__.'/_logout.php');
 }
+*/
 ?>
 </header>
 <?php echo $content; ?>

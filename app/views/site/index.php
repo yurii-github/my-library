@@ -19,7 +19,7 @@
 		if (val == undefined) {
 			val = v;
 		}
-		console.log('cookie:',n,v);
+		//console.log('cookie:',n,v);
 		return val;
 	}
 	
@@ -203,20 +203,17 @@
 
 <script type="text/javascript">
 //
-//Book Cover Management
+// Book Cover Management
 //
 var coverUpload = {
 	init: function(book_guid) {
-		$(".fancybox-inner").addClass("book-cover-holder").append('<div class="book-cover-drop">drop<br /><b>HERE</b><br />new cover</div>');
+		$(".fancybox-inner").addClass("book-cover-holder").append('<div class="book-cover-drop">drop<br /><b>HERE</b></div>');
 		
 		$('.book-cover-drop')
 		.on('dragover',  function(e){ e.preventDefault(); $(this).addClass('hovered');})
 		.on('dragleave', function(e){ e.preventDefault(); $(this).removeClass('hovered');})
 		.on('dragenter', function(e){ e.preventDefault(); })
-		.on('drop', function (e){
-			e = e.originalEvent;
-			e.preventDefault();
-			var file = e.dataTransfer.files[0];
+		.on('save-file', function (e, file) {
 			if($.inArray(file.type, ['image/png', 'image/jpeg', 'image/gif']) == -1) {
 				alert('Sorry, you can use only GIF, JPEG and PNG images');
 				return;
@@ -238,7 +235,34 @@ var coverUpload = {
 					}
 				};
 			};//xhr	
+		})
+		.on('drop', function (e){
+			e = e.originalEvent;
+			e.preventDefault();
+			var file = e.dataTransfer.files[0];
+			$(this).trigger('save-file', file);
 		});
 	}//init()
 };
+
+// cover was pasted from browser image clipboard
+$(document).on('paste', function(e) {
+	var cover = $('.book-cover-drop:visible')[0];
+	if (cover !== undefined) {
+		//TODO: copy from filesystem clipboard
+		e = e.originalEvent;
+		e.preventDefault();
+		$cover = $(cover);
+		var items = e.clipboardData.items;
+    for (var i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf("image") !== -1) {
+           // We need to represent the image as a file,
+           var file = items[i].getAsFile();
+           console.log('on paste');
+           $cover.trigger('save-file', file);
+           console.log(file);
+        }
+     }
+	}// if cover is visible
+});
 </script>

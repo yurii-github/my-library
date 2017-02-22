@@ -8,7 +8,7 @@ function install()
 	
 		phpunit*)
 			echo -e "${color}getting latest PHPUnit..."
-			wget https://phar.phpunit.de/phpunit.phar -O vendor/phpunit.phar --no-check-certificate
+			wget https://phar.phpunit.de/phpunit-5.7.phar -O vendor/phpunit.phar --no-check-certificate
 			;;
 			
 		selenium*)

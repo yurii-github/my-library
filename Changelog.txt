@@ -1,0 +1,5 @@
+
+
+
+22.02.2017
+added ability to save cover from browser clipboard

@@ -7,5 +7,5 @@
 /composer.lock
 /vendor/*
 /app/tests/reports/*
-
+/app/tests/local.dbconfig.php
 

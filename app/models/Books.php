@@ -167,6 +167,11 @@ class Books extends ActiveRecord
 			$this->book_cover = self::getResampledImageByWidthAsBlob($this->book_cover, \Yii::$app->mycfg->book->covermaxwidth);
 		}
 		
+		// just cover update, ignore anything else
+		if ($this->getScenario() == 'cover') {
+		  return true;
+		}
+		
 		// sync with filesystem is enabled. update filename and rename phisical file
 		if (\Yii::$app->mycfg->library->sync) {
 			$old_filename = $this->getOldAttribute('filename');
@@ -181,8 +186,8 @@ class Books extends ActiveRecord
 					throw new \yii\base\InvalidValueException("Sync for file failed. Source file '{$filename_encoded_old}' does not exist", 1);
 				}
 				// PHP 7: throw error if file is open
-				if (!@rename($filename_encoded_old, $filename_encoded_new)) {
-					throw new HttpException(500, "Failed to rename file \n\n $old_filename \n\n Access denided. \n\n File is probably open right now.");				
+				if (!rename($filename_encoded_old, $filename_encoded_new)) {
+					throw new HttpException(500, "Failed to rename file. \n\n OLD: $filename_encoded_old \n\n NEW: $filename_encoded_new ");				
 				}
 			}
 		}

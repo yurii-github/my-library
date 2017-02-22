@@ -5,3 +5,4 @@
 
 x fix sync triger on cover update
 + added ability to save cover from browser clipboard
++ returned back phpinfo

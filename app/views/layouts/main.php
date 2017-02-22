@@ -36,9 +36,11 @@ app\assets\JqueryGrid::register($this);
 			['link' => ['//config/index'], 'title' => \Yii::t('frontend/site', 'Configuration')],
 			['link' => ['//config/vacuum'], 'title' => \Yii::t('frontend/site', 'Compact'), 'id' => 'vacuum-link'],
 			['link' => ['//site/about'], 'title' => \Yii::t('frontend/site', 'About {version}', ['version' => 'v.'.\Yii::$app->mycfg->version])],
+		  /* TODO: show when finished with AUTH
 			Yii::$app->user->isGuest ?
 				['link' => ['/site/login'], 'title' => \Yii::t('frontend/site', 'Login'), 'style' => 'color: white; background: green', 'id' => 'auth-link'] :
 				['link' => ['/site/logout'], 'title' => 'logout ('.Yii::$app->user->identity->username.')', 'style' => 'color: white; background: #BDB437', 'id' => 'auth-link']
+			*/
 		]]);
 	?>
 	</form>

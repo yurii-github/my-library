@@ -14,7 +14,8 @@ return [
 	'bootstrap' => [
 		[ 'class' => 'app\components\MyLibraryBootstrap' ],
 		'log',
-  	'debug'
+  	'debug',
+	  'gii'
 	/*
 		[	'class' => 'yii\filters\ContentNegotiator',
 			//'only' => ['view'],
@@ -35,8 +36,8 @@ return [
 	'language' => 'en-US',
 	'modules' => [
 		//'apc' => [ 'class' => 'modules\apc\Module' ],
-		//'gii' => [ 'class' => 'yii\gii\Module' ],
-		'debug' => [ 'class' => 'yii\debug\Module']
+		'gii' => [ 'class' => 'yii\gii\Module' ],
+		'debug' => [ 'class' => 'yii\debug\Module' ]
 	],
 	'components' => [
 		'security' => [

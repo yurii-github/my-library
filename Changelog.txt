@@ -3,6 +3,8 @@
 23.02
 + fixed and readded yii2 console
 + added debug back into project
++ added gii
+
 
 22.02.2017
 

@@ -8,4 +8,8 @@
 /vendor/*
 /app/tests/reports/*
 /app/tests/local.dbconfig.php
-
+/app/runtime/debug
+/app/runtime/HTML
+/app/runtime/URI
+/app/public/assets
+/app/data/logs

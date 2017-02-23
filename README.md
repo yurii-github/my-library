@@ -80,3 +80,14 @@ When you do commit, you can pass next message to trigger special behavior
 
 **[skip ci]**  - skips Travis CI builds
 **[sc]** - make build on Travis CI but skips sending clover report to codeclimate (no code coverage)
+
+
+
+## Console usage
+
+yii2.bat help
+yii2.bat migrate/history
+
+
+
+

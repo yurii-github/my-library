@@ -1,5 +1,7 @@
 
 
+23.02
++ fixed and readded yii2 console
 
 22.02.2017
 

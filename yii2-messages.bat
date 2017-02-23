@@ -1,0 +1,1 @@
+yii2-console.bat message app\config\message-config.php

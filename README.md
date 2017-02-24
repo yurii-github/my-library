@@ -89,5 +89,7 @@ yii2.bat help
 yii2.bat migrate/history
 
 
+http://localhost/mylibrary-yii2/app/public/gii
+
 
 

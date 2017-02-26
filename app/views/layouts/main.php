@@ -5,14 +5,6 @@ use app\components\widgets\MenuWidget;
 /* @var $this \yii\web\View */
 /* @var $content string */
 $this->title = "MyLibrary ~ {$this->title}";
-
-
-app\assets\App::register($this);
-app\assets\Jquery::register($this);
-app\assets\JqueryUI::register($this);
-app\assets\JqueryRaty::register($this);
-app\assets\JqueryFancybox::register($this);
-app\assets\JqueryGrid::register($this);
 ?>
 <?php $this->beginPage(); ?>
 <!DOCTYPE html>

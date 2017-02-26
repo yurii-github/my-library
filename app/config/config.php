@@ -75,16 +75,17 @@ return [
 			'linkAssets' => false, //symblic linking
 			'basePath' => '@webroot/assets',
 			'bundles' => [
-				//'yii\grid\GridViewAsset' => [
-			//		'depends'=> []
-			//	],
-				'yii\web\JqueryAsset' => [
-					'sourcePath' => null, 'js'=> []
-				],
-				'yii\bootstrap\BootstrapAsset' => [
-					'sourcePath' => null, 'css' => []
-				]
-				
+			  // reset Yii2 
+			  'yii\web\YiiAsset' => [ 'sourcePath' => null, 'js' => [] ], // TODO
+			  'yii\web\JqueryAsset' => [ 'sourcePath' => null, 'js'=> [] ],
+			  'yii\bootstrap\BootstrapAsset' => [ 'sourcePath' => null,
+			    'css' => ['https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css'],
+			  ],
+			  'yii\bootstrap\BootstrapPluginAsset' => [
+			    'sourcePath' => null, 
+			    'js' => ['https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js']
+			  ],
+			  'yii\gii\TypeAheadAsset' => [ 'sourcePath' => null ] // TODO
 			]
 		],
 		'urlManager' => [

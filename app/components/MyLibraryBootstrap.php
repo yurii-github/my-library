@@ -16,6 +16,9 @@ final class MyLibraryBootstrap implements BootstrapInterface
 	 */
 	public function bootstrap($app)
 	{
+	  $app->view->registerAssetBundle(\app\assets\App::class);
+	  //$app->view->registerAssetBundle(\yii\web\JqueryAsset::class); // GII/YII BUG
+
 		session_name('session-id');
 		/* @var $cfg \frontend\components\Configuration */
 		$cfg = $app->mycfg;

@@ -21,8 +21,14 @@ Most js/css come from CDN networks, so you probably eager to check code at /app/
 
 ## Setup
 
+### Gist
+
 <pre>composer create-project  yurii-github/yii2-mylib  --stability=dev --no-dev</pre>
 remove --no-dev to get dev required stuff
+
+### Composer
+
+<pre>composer update</pre>
 
 entry point is located at
 <pre>PROJECT/app/public/index.php</pre>

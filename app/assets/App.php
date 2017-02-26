@@ -11,6 +11,7 @@ class App extends AssetBundle
 	  \yii\web\JqueryAsset::class,
 	  \yii\bootstrap\BootstrapAsset::class,
 	  \yii\bootstrap\BootstrapPluginAsset::class,
+	  \yii\gii\TypeAheadAsset::class,
 	  
 	  Jquery::class,
 	  JqueryUI::class,

@@ -7,9 +7,11 @@ class App extends AssetBundle
 	public $css = ['app/css/yui-reset-3.5.0.css', 'app/css/style.css'];
 	
 	public $depends = [
-	  // GII/YII BUG
-	 // 'yii\web\JqueryAsset',
-	//  'yii\bootstrap\BootstrapPluginAsset',
+	  //GII/YII BUG: is not loaded in Gii, so we force it to load
+	  \yii\web\JqueryAsset::class,
+	  \yii\bootstrap\BootstrapAsset::class,
+	  \yii\bootstrap\BootstrapPluginAsset::class,
+	  
 	  Jquery::class,
 	  JqueryUI::class,
 	  JqueryRaty::class,

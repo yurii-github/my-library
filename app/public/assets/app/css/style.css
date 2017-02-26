@@ -1,7 +1,7 @@
 @CHARSET "UTF-8";
 
-body {
-	font-size: 11px;
+.ui-jqgrid .ui-jqgrid-bdiv {
+	overflow: inherit;
 }
 
 div.copyright {

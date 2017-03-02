@@ -189,6 +189,22 @@ function toggleDbForm(format)
 
 $("#sync-check-files, #sync-import-fs-files, #sync-clear-db-files").button();
 
+$.fn.extend({
+	setMsg: function (message, title, result) {
+		if (message == '') {
+			return;
+		}
+		
+		var state = (result == 1 ? 'highlight' : 'error');
+		var icon = (result == 1 ? 'info' : 'alert');
+		
+		this.html(
+			'<div class="ui-state-'+state+' ui-corner-all" style="padding: 10px; margin-top: 20px; margin-bottom: 20px;">' +
+			'<p><span class="ui-icon ui-icon-'+icon+'" style="float: left; margin-right: .3em;"></span> ' +
+			'<b>'+title+'</b>&nbsp;&nbsp; '+message+'</p>' +
+			'</div>');
+	}
+});
 
 // status error - 0 | info - 1
 function setResultMsg(message, title, result)
@@ -216,7 +232,7 @@ function saveParameter(e)
 	var value = $(e).val();
 	
 	$.post(action_url, {field: field, value: value}, function (data) {
-		setResultMsg(data.msg, data.title, data.result);
+		$('#result-message').setMsg(data.msg, data.title, data.result);
 		if (data.result && (field == 'system_theme' || field == 'system_language')) {
 			location.reload();
 		}
@@ -273,13 +289,13 @@ $('#sync-clear-db-files').click(function(){
 $('#sync-import-fs-files').click(function(){
 	// get fs files only filenames
 	$.get('<?php echo Yii::$app->urlManager->createUrl(['config/import-files']);?>', function(data) {
-		console.table(data);
+		//console.table(data);
 		var records_total = data.length;
 		var records_done = 0;
 		var res = $('#sync-check-files-result');
 		res.empty();
 		if(records_total == 0) {
-			res.html('<p>nothing to do</p>');
+			res.setMsg('Nothing to do.', 'Import FS', true);
 			return;
 		}
 		res.append('<br/><br/><progress/><br/><br/><span id="counter"></span><span id="message"></span>');
@@ -331,7 +347,7 @@ $('#sync-check-files').click(function(){
 		res.empty();
 
 		if (data.fs == 0 && data.db == 0) {
-			res.html('<p>Great news! Your library is synced already. Keep it up.</p>');
+			res.setMsg('Great news! Your library is synced already. Keep it up.', 'Check files', true);
 			return;
 		}
 		

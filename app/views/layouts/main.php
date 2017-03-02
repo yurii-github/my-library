@@ -24,6 +24,8 @@ $this->title = "MyLibrary ~ {$this->title}";
 			['link' => ['//site/index'], 'title' => \Yii::t('frontend/site', 'Library')],
 			['link' => ['//config/index'], 'title' => \Yii::t('frontend/site', 'Configuration')],
 			['link' => ['//config/vacuum'], 'title' => \Yii::t('frontend/site', 'Compact'), 'id' => 'vacuum-link'],
+		  \Yii::$app->hasModule('gii') ? ['link' => ['//gii'], 'title' => 'Gii'] : null,
+		  ['link' => ['//categories'], 'title' => 'categories'],
 			['link' => ['//site/about'], 'title' => \Yii::t('frontend/site', 'About {version}', ['version' => 'v.'.\Yii::$app->mycfg->version])],
 		  /* TODO: show when finished with AUTH
 			Yii::$app->user->isGuest ?
@@ -78,7 +80,6 @@ if(\Yii::$app->user->isGuest) { // append login form
 	});
 </script>
 <?php $this->endBody(); ?>
-
 <footer></footer>
 </body>
 </html>

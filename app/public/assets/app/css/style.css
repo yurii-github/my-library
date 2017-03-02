@@ -13,6 +13,10 @@ footer {
 	height: 30px;
 }
 
+#sync-check-files-result {
+	margin: 20px;
+}
+
 div.copyright {
 	font-size: x-small;
 	font-style: italic;

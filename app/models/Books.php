@@ -9,6 +9,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Response;
 use yii\web\UploadedFile;
 use yii\web\HttpException;
+use app\helpers\Tools;
 
 
 /**
@@ -65,21 +66,6 @@ class Books extends ActiveRecord
 		ob_start();
 		imagejpeg($dst_image);
 		return ob_get_clean();
-	}
-	
-	
-	/**
-	 * generates global unique id
-	 *
-	 * format: hhhhhhhh-hhhh-hhhh-hhhh-hhhhhhhhhhhh
-	 *
-	 * @return string GUID
-	 */
-	static public function com_create_guid()
-	{
-		mt_srand((double)microtime()*10000);
-		$charid = strtoupper(md5(uniqid(rand(), true)));
-		return substr($charid, 0, 8).'-'.substr($charid, 8, 4).'-'.substr($charid,12, 4).'-'.substr($charid,16, 4).'-'.substr($charid,20,12);
 	}
 	
 	
@@ -143,7 +129,7 @@ class Books extends ActiveRecord
 	
 	private function myBeforeInsert()
 	{
-		$this->book_guid = self::com_create_guid();
+		$this->book_guid = Tools::com_create_guid();
 		
 		if ($this->getScenario() != 'import') {
 			$this->filename = $this->buildFilename();

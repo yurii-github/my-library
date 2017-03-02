@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use app\helpers\Tools;
 
 /**
  * This is the model class for table "categories".
@@ -41,5 +42,17 @@ class Categories extends \yii\db\ActiveRecord
             'category_guid' => Yii::t('app', 'Category Guid'),
             'category_title' => Yii::t('app', 'Category Title'),
         ];
+    }
+    
+    
+    public function beforeSave($insert) {
+      // yii2 event handling logic. do not remove!
+      //if (!parent::beforeSave($insert)) { return false; }
+      
+      if ($insert) {
+        $this->category_guid = Tools::com_create_guid();
+      }
+      
+      return true;
     }
 }

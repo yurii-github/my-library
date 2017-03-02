@@ -1,7 +1,16 @@
-@CHARSET "UTF-8";
+
 
 .ui-jqgrid .ui-jqgrid-bdiv {
-	overflow: inherit;
+	overflow: hidden;
+}
+
+.ui-jqgrid {
+	margin-left: 20px !important;
+	margin-right: 20px !important;
+}
+
+footer {
+	height: 30px;
 }
 
 div.copyright {

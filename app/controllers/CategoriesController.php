@@ -66,7 +66,7 @@ class CategoriesController extends Controller
         $model = new Categories();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->category_guid]);
+            return $this->redirect(['categories/index']);
         } else {
             return $this->render('create', [
                 'model' => $model,

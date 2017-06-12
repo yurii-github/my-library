@@ -12,15 +12,15 @@
 		"bower-asset/punycode" : "*",
 		"bower-asset/yii2-pjax" : "*",
 		"bower-asset/bootstrap" : "*",
-		"bower-asset/typeahead.js": "*",
-		"cebe/markdown": "*"
+		"bower-asset/typeahead.js": "*"
 	},
 	"require" : {
 		"php" : ">=5.6",
 		"yiisoft/yii2" : "~2.0",
 		"yiisoft/yii2-swiftmailer" : "~2.0",
 		"yiisoft/yii2-debug": "^2.0",
-		"yiisoft/yii2-gii": "^2.0"
+		"yiisoft/yii2-gii": "^2.0",
+		"cebe/markdown": "^1.1"
 	},
 	"require-dev" : {
 		"phpunit/phpunit" : "5.6",

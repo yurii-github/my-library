@@ -1,6 +1,7 @@
 /.buildpath
 /.project
 /.settings/*
+/.idea
 /app/config/libconfig.json
 /app/config/local.php
 /app/public/assets/admin-lte/*

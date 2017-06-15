@@ -148,6 +148,18 @@ class SiteController extends Controller
 	 */
 	public function actionBooks()
 	{
+        // Example: $x = '%ч'; $y = 'bЧ'; $escape = '\';
+        $like = function($x, $y, $escape) {
+            $x = str_replace('%','', $x);
+            $x = preg_quote($x);
+           // return false;
+            return preg_match('/'.$x.'/iu', $y);
+        };
+
+        $db = \Yii::$app->getDb();
+        $db->open();
+        $db->pdo->sqliteCreateFunction('like', $like);
+
 		$data = [
 			'page' => \Yii::$app->request->get('page'),
 			'limit' => \Yii::$app->request->get('rows'),

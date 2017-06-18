@@ -158,8 +158,8 @@ class Books extends ActiveRecord
 		  return true;
 		}
 		
-		// sync with filesystem is enabled. update filename and rename phisical file
-		if (\Yii::$app->mycfg->library->sync) {
+		// sync with filesystem is enabled. update filename and rename physical file
+		if (\Yii::$app->mycfg->library->sync && $this->filenameAttrsChanged()) {
 			$old_filename = $this->getOldAttribute('filename');
 			$new_filename = $this->buildFilename();
 			$this->filename = $new_filename; // will be stored in database
@@ -180,8 +180,28 @@ class Books extends ActiveRecord
 		
 		return true;
 	}
-	
-	
+
+
+    /**
+     * checks if filename dependant attributes were changed
+     * @return bool
+     */
+	private function filenameAttrsChanged()
+    {
+        $isChanged = false;
+        $keys = ['year', 'title', 'isbn13', 'author', 'publisher', 'ext'];
+
+        foreach ($keys as $key) {
+            if ($this->getOldAttribute($key) != $this->$key) {
+                $isChanged = true;
+                break;
+            }
+        }
+
+        return $isChanged;
+    }
+
+    
 	public function beforeSave($insert)
 	{
 		// yii2 event handling logic. do not remove!

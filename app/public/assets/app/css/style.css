@@ -1,5 +1,10 @@
 
 
+.ui-jqdialog {
+	width: 800px !important;
+	left: 25% !important;
+}
+
 .ui-jqgrid .ui-jqgrid-bdiv {
 	overflow: hidden;
 }

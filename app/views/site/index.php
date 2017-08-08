@@ -173,6 +173,7 @@
 			var row_obj = book_list.jqGrid('getInd', rowid, true); // row_obj is just piece of html - TR
 			lastFavorite = $(row_obj).find('div.book-favorite').attr('data-score');
 			lastRead = $(row_obj).find('div.book-read-yes').attr('class') !== undefined ? 'yes' : 'no';
+			//console.log(row_obj);
 
 			//.jqGrid('editRow', rowid, keys, oneditfunc, successfunc, url, extraparam, aftersavefunc,errorfunc, afterrestorefunc);
 			book_list.jqGrid('editRow', rowid, {

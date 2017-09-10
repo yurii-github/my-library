@@ -54,9 +54,7 @@ final class MyLibraryBootstrap implements BootstrapInterface
 					$app->db->dsn = "sqlite:{$cfg->database->filename}";
 					break;
 			}
-			
-			
-			
+
 			if ($cfg->getVersion() != $cfg->system->version) {  //redirect to migration, as user config doesnot contain matching version
 				Event::on('app\components\Controller', Controller::EVENT_BEFORE_ACTION, function($e) {
 					\Yii::$app->response->redirect(['install/migrate']);

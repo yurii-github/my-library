@@ -21,9 +21,6 @@
 namespace app\controllers;
 
 use yii\web\Controller;
-use yii\web\Application;
-use yii\base\Exception;
-use yii\db\Command;
 
 
 /**

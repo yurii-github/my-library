@@ -1,4 +1,23 @@
 <?php
+/*
+ * My Book Library
+ *
+ * Copyright (C) 2014-2017 Yurii K.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses
+ */
+
 namespace app\components;
 
 use yii\data\ActiveDataProvider;
@@ -41,7 +60,7 @@ class ActiveRecord extends \yii\db\ActiveRecord
     protected static function jqgridPrepareResponse($page, $total, $records, $rows)
     {
         $response = new \stdClass();
-        $response->page = $page + 1; //jgrid fix
+        $response->page = $page + 1; // NOTE: jqGrid fix
         $response->total = $total;
         $response->records = $records;
         $response->rows = $rows;
@@ -51,17 +70,16 @@ class ActiveRecord extends \yii\db\ActiveRecord
     /**
      * @param ActiveQuery $query
      * @param array $data
-     * @param $nameColumns columns names to select
-     * @param $sortColumns columns we allow sorting
+     * @param array $sortColumns columns we allow sorting
      * @return ActiveQuery
      */
     protected static function jqgridPepareQuery(ActiveQuery $query, array $data, $sortColumns)
     {
         //defaults
         $data['sort_column'] = empty($data['sort_column']) ? $sortColumns[0] : $data['sort_column'];
-        $data['sort_order'] = !empty($data['sort_order']) &&  $data['sort_order']  == 'desc' ? SORT_DESC : SORT_ASC; //+secure
+        $data['sort_order'] = !empty($data['sort_order']) && $data['sort_order'] == 'desc' ? SORT_DESC : SORT_ASC; //+secure
         $filters = empty($data['filters']) ? null : json_decode($data['filters']);
-        $conditions = ['bw'=>'like','eq'=>'='];
+        $conditions = ['bw' => 'like', 'eq' => '='];
 
         if ($filters instanceof \stdClass && is_array($filters->rules)) {
             foreach ($filters->rules as $rule) {
@@ -76,7 +94,7 @@ class ActiveRecord extends \yii\db\ActiveRecord
             }
         }
         if (in_array($data['sort_column'], $sortColumns)) {
-            $query->orderBy([$data['sort_column'] => $data['sort_order'] ]);
+            $query->orderBy([$data['sort_column'] => $data['sort_order']]);
         }
 
         return $query;

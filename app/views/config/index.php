@@ -38,17 +38,6 @@ form.configuration-form fieldset legend, form.configuration-form fieldset label 
 		<form action="<?php echo Yii::$app->urlManager->createUrl('config/save'); ?>" method="post" class="configuration-form">
 			<fieldset>
 				<legend>&nbsp;<?php echo \Yii::t('frontend/config', 'system'); ?>&nbsp;</legend>
-				<label class="cfg"><?php echo \Yii::t('frontend/config', 'enable email'); ?></label>
-				<div style="display: inline-block;" id="system_email">
-					<input type="radio" id="system_email1" name="system_email" value="1" <?= ($cfg->system->email == true ? $checked : ''); ?> />
-					<label for="system_email1"><?php echo \Yii::t('frontend/config', 'yes'); ?></label>
-					<input type="radio" id="system_email2" name="system_email" value="0" <?= ($cfg->system->email == false ? $checked : ''); ?> />
-					<label for="system_email2"><?php echo \Yii::t('frontend/config', 'no'); ?></label>
-				</div>
-				<br /><br />
-				<label class="cfg"><?php echo \Yii::t('frontend/config', 'email'); ?></label>
-				<input name="system_emailto" id="system_emailto" type="text" title="email address where send email" value="<?= $cfg->system->emailto; ?>" />
-				<br /><br />
 				<label class="cfg" title="interface language"><?php echo \Yii::t('frontend/config', 'language')?></label>
 				<select name="system_language" id="system_language">
 					<?php foreach ($SUPPORTED_VALUES['system_language'] as $v => $txt) {

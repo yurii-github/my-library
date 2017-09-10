@@ -40,7 +40,10 @@ class BookController extends Controller
             'limit' => \Yii::$app->request->get('rows'),
             'filters' => \Yii::$app->request->get('filters'),
             'sort_column' => \Yii::$app->request->get('sidx'),
-            'sort_order'=> \Yii::$app->request->get('sord')
+            'sort_order'=> \Yii::$app->request->get('sord'),
+
+            // custom stuff!
+            'filterCategories' => \Yii::$app->request->get('filterCategories')
         ];
 
         //TODO: currently on store in cookies

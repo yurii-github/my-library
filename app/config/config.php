@@ -14,8 +14,8 @@ return [
 	'bootstrap' => [
 		[ 'class' => 'app\components\MyLibraryBootstrap' ],
 		'log',
-  //	'debug',
-	  'gii'
+  	'debug',
+	//  'gii'
 	/*
 		[	'class' => 'yii\filters\ContentNegotiator',
 			//'only' => ['view'],

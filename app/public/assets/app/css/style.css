@@ -102,3 +102,15 @@ img {
 	color: red;
 	font-weight: bolder;
 }
+
+#t_book-list {
+	height:auto;
+}
+#category_list {
+	padding: 5px;
+	display: block;
+}
+
+#category_list label {
+	margin-left: 10px;
+}

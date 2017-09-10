@@ -17,7 +17,7 @@
 	//https://github.com/fancyapps/fancyBox/issues/40
 	$.jgrid.no_legacy_api = true;
 
-	var book_list = $("#book-list"), lastSel, lastFavorite, lastRead;
+	var book_list = $("#book-list"), lastSel, lastFavorite, lastRead, filterCategories;
 
 	function getCookie(n,v) {
 		var val = Cookies.get(n);
@@ -177,13 +177,56 @@
             });
             jQuery("#"+subgrid_table_id).jqGrid('navGrid',"#"+pager_id,{edit:true,add:true,del:true});
         },
-        subGridRowColapsed: function(subgrid_id, row_id) {
-            // this function is called before removing the data
-            //var subgrid_table_id;
-           // var subgrid_table_id = subgrid_id+"_t";
-          //  jQuery("#"+subgrid_table_id).remove();
-        },
+        // subGridRowColapsed: function(subgrid_id, row_id) .. // this function is called before removing the data
+        toolbar: [true, "bottom"],
         loadComplete: function() {
+		    // support category filters as checkboxes
+		    if (filterCategories == null) {
+                var $toolbar = $('#t_'+book_list.attr('id'));
+                $widget = $('<div id="category_list" style="user-select: none;">');
+                $widget.append($('<input id="category_ALL" type="checkbox" value="false" /> <label for="category_ALL">[ALL]</label>'));
+                <?php foreach ($categories as $category): ?>
+                $widget.append($('<input id="category_<?=$category->guid;?>" type="checkbox" value="<?=$category->guid;?>" /> <label for="category_<?=$category->guid;?>"><?=$category->title;?></label>'));
+                <?php endforeach; ?>
+                $toolbar.append($widget);
+
+                $("#category_list").buttonset();
+                $("#category_list input").click(function() {
+                    var id = $(this).attr('id');
+
+                    if (id == 'category_ALL') { // select all
+                        if ($(this).prop('checked')) {
+                            var category_ids = $('#category_list input:not(#category_ALL)').map(function() {
+                                return $(this).val();
+                            });
+                            $('#category_list input').prop('checked', false);
+                            $('#category_list input#category_ALL').prop('checked', true);
+
+                            filterCategories = Array.prototype.join.call(category_ids, ",");
+                        } else {
+                            filterCategories = 0;
+                        }
+                    } else {
+                        // reset ALL
+                        $('#category_list input#category_ALL').prop('checked', false);
+
+                        var category_ids = $('#category_list input:checked').map(function() {
+                            return $(this).val();
+                        });
+                        filterCategories = Array.prototype.join.call(category_ids, ",");
+                    }
+
+                    $("#category_list input").button('refresh');
+
+                    book_list.jqGrid('setGridParam', {
+                        url: '<?php echo Yii::$app->getUrlManager()->createUrl('api/book'); ?>?filterCategories='+filterCategories,
+                        page:1
+                    }).trigger("reloadGrid");
+                });
+
+                filterCategories = 0; // avoid another append
+            }
+
 			$(".book-filename").on('click', function(e){
 				window.prompt ("Copy to clipboard: Ctrl+C, Enter", $(this).attr('data-filename'));
 			});

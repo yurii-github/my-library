@@ -234,7 +234,14 @@ class Books extends ActiveRecord
         $nameColumns = ['created_date', 'book_guid', 'favorite', 'read', 'year', 'title', 'isbn13', 'author', 'publisher', 'ext', 'filename'];
         $sortColumns = ['favorite', 'read', 'year', 'title', 'created_date', 'isbn13', 'author', 'publisher'];
 
-        $query = self::find()->select($nameColumns);
+        $query = self::find()->alias('b')->select(['b.created_date', 'b.book_guid', 'b.favorite', 'b.read', 'b.year', 'b.title', 'b.isbn13', 'author', 'publisher', 'ext', 'filename']);
+
+        if(!empty($data['filterCategories'])) {
+            $query->innerJoinWith(['categories' => function(ActiveQuery $q) use ($data) {
+                $q->where(['in', 'guid', explode(',', $data['filterCategories'])]);
+            }]);
+        }
+
         return self::jgridRecords($data, $nameColumns, $sortColumns, $query, 'book_guid');
     }
 

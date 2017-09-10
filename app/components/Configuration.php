@@ -83,9 +83,7 @@ namespace app\components
 		const DEFAULT_CONFIG_JSON = <<<JSON
 {
     "system": {
-        "version": "1.3"
-        "email": false,
-        "emailto": null,
+        "version": "1.3",
         "theme": "smoothness",
         "timezone": "Europe\/Kiev",
         "language": "en-US"
@@ -252,8 +250,6 @@ JSON;
 namespace app\components\configuration
 {
 	/**
-	 * @property bool $email send email of notification on actions
-	 * @property string $emailto address of meial to send notification if enabled
 	 * @property string $theme
 	 * @property string $timezone
 	 * @property string $language

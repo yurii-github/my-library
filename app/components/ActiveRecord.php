@@ -8,8 +8,8 @@ class ActiveRecord extends \yii\db\ActiveRecord
 {
     /**
      * @param array $data
-     * @param $nameColumns columns to select
-     * @param $sortColumns columns we allow to sort
+     * @param array $nameColumns columns to select
+     * @param array $sortColumns columns we allow to sort
      * @param ActiveQuery $query
      * @return \stdClass
      */

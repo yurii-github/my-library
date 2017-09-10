@@ -76,10 +76,14 @@ namespace app\components
 			]
 			
 		];
-		
+
+        private $version = '1.3'; // DB VERSION
+
+		//TODO: change version here too!
 		const DEFAULT_CONFIG_JSON = <<<JSON
 {
     "system": {
+        "version": "1.3"
         "email": false,
         "emailto": null,
         "theme": "smoothness",
@@ -106,12 +110,9 @@ namespace app\components
     }
 }
 JSON;
-		
-		
-		private $version = '1.2'; // DB VERSION
+
+        public $config_file;
 		private $config;
-		public $config_file;
-		
 		private $options = ['system', 'database', 'library', 'book'];
 
 		public function __construct($config = [])

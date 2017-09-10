@@ -13,6 +13,14 @@ class MenuWidget extends Widget
 			throw new \yii\base\Exception('MenuWidget: items must be array');
 		}
 		
-		return $this->render('menu', ['items' => $this->items]);
+		$items = [];
+		
+		foreach ($this->items as $item) {
+		  if (is_array($item)) {
+		    $items[] = $item;
+		  }
+		}
+		
+		return $this->render('menu', ['items' => $items]);
 	}
 }

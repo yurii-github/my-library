@@ -14,8 +14,6 @@ class AssetManager extends \yii\web\AssetManager
 	 */
 	public function publishDirectory($src, $options)
 	{
-		throw new \yii\base\Exception('works but block support until it will be required. skip testing purpose');
-		
 		// default behavior with hashed dir
 		if (!isset($options['const-dir'])) {
 			return parent::publishDirectory($src, $options);
@@ -60,7 +58,6 @@ class AssetManager extends \yii\web\AssetManager
 	
 	protected function publishFile($src)
 	{
-		throw new \yii\base\Exception('Not implemented!');
 		//TODO: check custom behavior
 		return parent::publishFile($src);
 	}

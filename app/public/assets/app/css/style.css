@@ -1,7 +1,25 @@
-@CHARSET "UTF-8";
 
-body {
-	font-size: 11px;
+
+.ui-jqdialog {
+	width: 800px !important;
+	left: 25% !important;
+}
+
+.ui-jqgrid .ui-jqgrid-bdiv {
+	overflow: hidden;
+}
+
+.ui-jqgrid {
+	margin-left: 20px !important;
+	margin-right: 20px !important;
+}
+
+footer {
+	height: 30px;
+}
+
+#sync-check-files-result {
+	margin: 20px;
 }
 
 div.copyright {
@@ -83,4 +101,16 @@ img {
 .book-cover-holder .book-cover-drop.hovered {
 	color: red;
 	font-weight: bolder;
+}
+
+#t_book-list {
+	height:auto;
+}
+#category_list {
+	padding: 5px;
+	display: block;
+}
+
+#category_list label {
+	margin-left: 10px;
 }

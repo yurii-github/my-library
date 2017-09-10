@@ -1,30 +1,31 @@
 {
-	"name": "yurii-github/yii2-mylib",
-	"type": "yii2-application",
-	"description": "my book library",
-	"license": "GPL-3.0",
-	"minimum-stability": "stable",
-	
-	"::COMMENT REPLACE::": "it doesn't replace anything, it just removes dependencies on useless yii2 req stuff",
-	"replace": {
-		"cebe/markdown": "*",
-		"fxp/composer-asset-plugin": "*",
+	"name" : "yurii-github/yii2-mylib",
+	"type" : "yii2-application",
+	"description" : "my book library",
+	"license" : "GPL-3.0",
+	"minimum-stability" : "stable",
+	"::COMMENT REPLACE::" : "it doesn't replace anything, it just removes dependencies on useless yii2 shit",
+	"replace" : {
+		"fxp/composer-asset-plugin" : "*",
 		"bower-asset/jquery" : "*",
-		"bower-asset/jquery.inputmask": "*",
-		"bower-asset/punycode": "*",
-		"bower-asset/yii2-pjax": "*",
-		"bower-asset/bootstrap": "*"
+		"bower-asset/jquery.inputmask" : "*",
+		"bower-asset/punycode" : "*",
+		"bower-asset/yii2-pjax" : "*",
+		"bower-asset/bootstrap" : "*",
+		"bower-asset/typeahead.js": "*"
 	},
-
-	"require": {
-		"php": ">=5.6",
-		"yiisoft/yii2": "~2.0",
-		"yiisoft/yii2-swiftmailer": "~2.0"
+	"require" : {
+		"php" : ">=5.6",
+		"yiisoft/yii2" : "~2.0",
+		"yiisoft/yii2-swiftmailer" : "~2.0",
+		"yiisoft/yii2-debug": "^2.0",
+		"yiisoft/yii2-gii": "^2.0",
+		"cebe/markdown": "^1.1"
 	},
-	"require-dev": {
-		"phpunit/phpunit": "5.6",
-		"phpunit/dbunit": "*",
-		"mikey179/vfsStream": "1.5.0@stable",
-		"facebook/webdriver": "*"
+	"require-dev" : {
+		"phpunit/phpunit" : "5.6",
+		"phpunit/dbunit" : "*",
+		"mikey179/vfsStream" : "1.5.0@stable",
+		"facebook/webdriver" : "*"
 	}
 }

@@ -1,6 +1,7 @@
 /.buildpath
 /.project
 /.settings/*
+/.idea
 /app/config/libconfig.json
 /app/config/local.php
 /app/public/assets/admin-lte/*
@@ -8,4 +9,8 @@
 /vendor/*
 /app/tests/reports/*
 /app/tests/local.dbconfig.php
-
+/app/runtime/debug
+/app/runtime/HTML
+/app/runtime/URI
+/app/public/assets
+/app/data/logs

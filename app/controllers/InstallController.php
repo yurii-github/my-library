@@ -44,6 +44,8 @@ class MigrationController extends \yii\console\controllers\MigrateController
 
 class InstallController extends Controller
 {
+    public $defaultAction = 'migrate';
+
     public function actionMigrate()
     {
         $cfg = [
@@ -61,8 +63,9 @@ class InstallController extends Controller
 
         ob_start([$controllerMigrate, 'output_callback']);
         $controllerMigrate->actionHistory();
-        $controllerMigrate->migrationPath = $paths['rbac'];
-        $controllerMigrate->actionUp();
+        // NOTE: I cut out any auth stuff as it is useless, uncomment if you want to use authentication
+        //$controllerMigrate->migrationPath = $paths['rbac'];
+       // $controllerMigrate->actionUp();
         $controllerMigrate->migrationPath = $paths['mylib'];
         $controllerMigrate->actionUp();
         $r = ob_get_clean();

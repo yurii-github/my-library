@@ -32,17 +32,6 @@ class ConfigController extends Controller
     public function behaviors()
     {
         return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'only' => ['login', 'logout'],
-                'rules' => [
-                    [
-                        'allow' => true,
-                        'actions' => [],
-                        'roles' => ['admins']
-                    ],
-                ]
-            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [

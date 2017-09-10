@@ -35,7 +35,6 @@ final class MyLibraryBootstrap implements BootstrapInterface
 	{
 	    $app->view->registerAssetBundle(\app\assets\App::class);
 
-		session_name('session-id');
 		/* @var $cfg \app\components\Configuration */
 		$cfg = $app->mycfg;
 		$app->setTimeZone($cfg->system->timezone);

@@ -65,7 +65,7 @@
 			'<?php echo \Yii::t('frontend/site', 'Extension'); ?>',
 			'', ''],
 		colModel:[
-			{ name:'created_date', index:'created_date', width: 80, editable: false, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "m-d-Y" }, },
+			{ name:'created_date', index:'created_date', width: 80, editable: false, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d-m-Y" }, },
 			// we use book guid as book cover column!
 			{ name: 'book_guid',index: 'book_guid', width: 21, editable: false, frozen: true, align: 'center', search: false, sortable: false,
 				formatter: function(cellvalue, options, rowObject) {

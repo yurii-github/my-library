@@ -1,21 +1,33 @@
 <?php
+
 namespace app\controllers\api;
 
 use \app\components\Controller;
 use app\models\Books;
-use app\models\Categories;
 use yii\web\Response;
-
 
 class BookController extends Controller
 {
+    public function behaviors()
+    {
+        return [
+            'verb' => [
+                'class' => \yii\filters\VerbFilter::class,
+                'actions' => [
+                    'index' => ['GET'],
+                    'books' => ['GET'],
+                    'cover' => ['GET'],
+                    'manage' => ['POST']
+                ]
+            ]
+        ];
+    }
+
     public function actionIndex()
     {
         \Yii::$app->response->format = Response::FORMAT_JSON;
         return $this->getBooks();
     }
-
-
 
     /**
      * return list of books in jqgrid format
@@ -24,11 +36,11 @@ class BookController extends Controller
     public function getBooks()
     {
         // Example: $x = '%ч'; $y = 'bЧ'; $escape = '\';
-        $like = function($x, $y, $escape) {
-            $x = str_replace('%','', $x);
+        $like = function ($x, $y, $escape) {
+            $x = str_replace('%', '', $x);
             $x = preg_quote($x);
             // return false;
-            return preg_match('/'.$x.'/iu', $y);
+            return preg_match('/' . $x . '/iu', $y);
         };
 
         $db = \Yii::$app->getDb();
@@ -40,7 +52,7 @@ class BookController extends Controller
             'limit' => \Yii::$app->request->get('rows'),
             'filters' => \Yii::$app->request->get('filters'),
             'sort_column' => \Yii::$app->request->get('sidx'),
-            'sort_order'=> \Yii::$app->request->get('sord'),
+            'sort_order' => \Yii::$app->request->get('sord'),
 
             // custom stuff!
             'filterCategories' => \Yii::$app->request->get('filterCategories')
@@ -73,7 +85,7 @@ class BookController extends Controller
     private function add($attributes)
     {
         /* @var $book Books */
-        $book = new Books(['scenario'=>'add']);
+        $book = new Books(['scenario' => 'add']);
         $book->attributes = $attributes;
         $book->favorite = $book->favorite == null ? 0 : $book->favorite;
 

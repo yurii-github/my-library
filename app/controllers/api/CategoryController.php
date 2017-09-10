@@ -11,6 +11,19 @@ use yii\web\Response;
 
 class CategoryController extends Controller
 {
+    public function behaviors()
+    {
+        return [
+            'verb' => [
+                'class' => \yii\filters\VerbFilter::class,
+                'actions' => [
+                    'index'	 => ['GET'],
+                    'manage' => ['POST']
+                ]
+            ]
+        ];
+    }
+
     public function actionIndex()
     {
 

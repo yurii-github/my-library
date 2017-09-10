@@ -7,19 +7,13 @@ use yii\db\ActiveQuery;
 class ActiveRecord extends \yii\db\ActiveRecord
 {
     /**
-     *
-     * @param array $data [page, limit, sort_column, sort_order, filters=json]
-     * @return multitype:multitype:Ambigous <NULL> multitype:unknown string   |\stdClass
-     */
-    /**
      * @param array $data
      * @param $nameColumns columns to select
      * @param $sortColumns columns we allow to sort
      * @param ActiveQuery $query
-     * @param string $primaryKey primary key name
      * @return \stdClass
      */
-    protected static function jgridRecords(array $data, $nameColumns, $sortColumns, ActiveQuery $query, $primaryKey = 'guid')
+    protected static function jgridRecords(array $data, $nameColumns, $sortColumns, ActiveQuery $query)
     {
         $query = self::jqgridPepareQuery($query, $data, $sortColumns);
 

@@ -147,6 +147,42 @@
 		cellEdit: false,
 		cellSubmit: 'remote',
 		cellurl: '<?php echo  Yii::$app->getUrlManager()->createUrl('api/book/manage');?>',
+        subGrid: true,
+        subGridRowExpanded: function(subgrid_id, row_id) {
+            // If we wan to pass additinal parameters to the url we can use
+            // a method getRowData(row_id) - which returns associative array in type name-value
+            var subgrid_table_id = subgrid_id+"_t";
+            var pager_id = "p_"+subgrid_table_id;
+            $("#"+subgrid_id).html("<table id='"+subgrid_table_id+"' class='scroll'></table><div id='"+pager_id+"' class='scroll'></div>");
+            jQuery("#"+subgrid_table_id).jqGrid({
+                caption: 'Categories',
+                rownumbers: true,
+                url:'<?php echo Yii::$app->getUrlManager()->createUrl('api/category?nodeid='); ?>'+row_id,
+                editurl : '<?php echo  Yii::$app->getUrlManager()->createUrl('api/category/manage');?>',
+                datatype: "json",
+                colNames: ['title', 'marker'],
+                colModel: [
+                    {name:"title",index:"title", width: 200, editable: true},
+                    {name:"marker", index:"marker", formatter:"checkbox",edittype: "checkbox", editable: true, editoptions: { value:"1:0"} }
+                ],
+                cellEdit: true,
+                cellSubmit: 'remote',
+                cellurl: '<?php echo Yii::$app->getUrlManager()->createUrl('api/category/manage?nodeid='); ?>'+row_id,
+                sortorder: "asc",
+                rowNum:20,
+                pager: pager_id,
+                height: '100%',
+                sortorder: "asc",
+                sortname: 'title'
+            });
+            jQuery("#"+subgrid_table_id).jqGrid('navGrid',"#"+pager_id,{edit:true,add:true,del:true});
+        },
+        subGridRowColapsed: function(subgrid_id, row_id) {
+            // this function is called before removing the data
+            //var subgrid_table_id;
+           // var subgrid_table_id = subgrid_id+"_t";
+          //  jQuery("#"+subgrid_table_id).remove();
+        },
         loadComplete: function() {
 			$(".book-filename").on('click', function(e){
 				window.prompt ("Copy to clipboard: Ctrl+C, Enter", $(this).attr('data-filename'));

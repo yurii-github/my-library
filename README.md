@@ -42,17 +42,17 @@ entry point is located at
 - themed (JqueryUI)
 - i18n
 - mysql and sqlite support
-- syncronization with filesystem (renames, deletes)
+- synchronization with filesystem (renames, deletes)
 - migrations
 - compact: optimizes DB via run vacuum for SQLite or table optimization for MySQL
 - security (partial)
 - user tests (partial)
  
+
 TODO
 
-- admin page. base
+- remove email, login
 - true authors, publishers, categories
-- CDN fallbacks
 </pre>
 
 
@@ -97,5 +97,6 @@ yii2.bat migrate/history
 
 http://localhost/mylibrary-yii2/app/public/gii
 
-
+ http://www.trirand.com/blog/jqgrid/jqgrid.html#
+ 
 

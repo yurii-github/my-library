@@ -1,4 +1,9 @@
-<?php /* @var $this yii\web\View */ ?>
+<?php
+/**
+ * @var $this yii\web\View
+ * @var $categories \app\models\Categories
+ */
+?>
 <table id="book-list"></table>
 <div id="book-pager"></div>
 
@@ -45,8 +50,8 @@
 	};
 
 	book_list.jqGrid({
-		url:'<?php echo Yii::$app->getUrlManager()->createUrl('site/books'); ?>',
-		editurl : '<?php echo  Yii::$app->getUrlManager()->createUrl('site/manage');?>',
+		url:'<?php echo Yii::$app->getUrlManager()->createUrl('api/book'); ?>',
+		editurl : '<?php echo  Yii::$app->getUrlManager()->createUrl('api/book/manage');?>',
 		datatype: "json",
 		colNames:[
 			'<?php echo \Yii::t('frontend/site', 'Added'); ?>', '', 
@@ -60,13 +65,13 @@
 			'<?php echo \Yii::t('frontend/site', 'Extension'); ?>',
 			'', ''],
 		colModel:[
-			{ name:'created_date', index:'created_date', width: 80, editable: false },
+			{ name:'created_date', index:'created_date', width: 80, editable: false, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "m-d-Y" }, },
 			// we use book guid as book cover column!
 			{ name: 'book_guid',index: 'book_guid', width: 21, editable: false, frozen: true, align: 'center', search: false, sortable: false,
 				formatter: function(cellvalue, options, rowObject) {
 					return '<a class="book-cover-link" data-guid="'+options.rowId+
-						'" data-fancybox-group="book-covers" href="<?php echo Yii::$app->getUrlManager()->createUrl(['site/cover', 'book_guid' => '']); ?>' + options.rowId +
-						 '" title="'+rowObject[4]+' : '+rowObject[5]+'"'+'><img class="book-cover" src="<?php echo Yii::$app->getUrlManager()->createUrl(['site/cover', 'book_guid' => '']); ?>' +
+						'" data-fancybox-group="book-covers" href="<?php echo Yii::$app->getUrlManager()->createUrl(['api/book/cover', 'book_guid' => '']); ?>' + options.rowId +
+						 '" title="'+rowObject[4]+' : '+rowObject[5]+'"'+'><img class="book-cover" src="<?php echo Yii::$app->getUrlManager()->createUrl(['api/book/cover', 'book_guid' => '']); ?>' +
 						options.rowId + '" /></a>';
 				}
 			},
@@ -141,8 +146,8 @@
 		//support cell edit
 		cellEdit: false,
 		cellSubmit: 'remote',
-		cellurl: '?action=book-manage',
-		loadComplete: function() {
+		cellurl: '<?php echo  Yii::$app->getUrlManager()->createUrl('api/book/manage');?>',
+        loadComplete: function() {
 			$(".book-filename").on('click', function(e){
 				window.prompt ("Copy to clipboard: Ctrl+C, Enter", $(this).attr('data-filename'));
 			});
@@ -220,7 +225,7 @@ var coverUpload = {
 				return;
 			}
 			var xhr = new XMLHttpRequest();
-			xhr.open('POST','<?php echo Yii::$app->getUrlManager()->createUrl(['site/cover-save','book_guid' => '']);?>'+book_guid,true);
+			xhr.open('POST','<?php echo Yii::$app->getUrlManager()->createUrl(['api/book/cover-save','book_guid' => '']);?>'+book_guid,true);
 			xhr.send(file);
 			xhr.onreadystatechange = function(e){
 				if(this.readyState != 4 || this.status !=200) return;

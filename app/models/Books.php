@@ -1,11 +1,14 @@
 <?php
 namespace app\models;
 
+use app\components\ActiveRecord;
 use Yii;
 use yii\base\Model;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
+
 use yii\data\ActiveDataProvider;
+
+use yii\db\ActiveQuery;
 use yii\web\Response;
 use yii\web\UploadedFile;
 use yii\web\HttpException;
@@ -44,6 +47,12 @@ class Books extends ActiveRecord
 			[['created_date', 'updated_date', 'book_guid', 'favorite', 'read', 'year', 'title', 'isbn13', 'author', 'publisher', 'ext', 'filename'], 'safe', 'on' => 'add']
 		];
 	}
+
+	public function getCategories()
+    {
+        return $this->hasMany(Categories::className(), ['guid' => 'category_guid'])
+            ->viaTable('books_categories', ['book_guid' => 'book_guid']);
+    }
 	
 	
 	/**
@@ -213,91 +222,22 @@ class Books extends ActiveRecord
 			return $this->myBeforeUpdate();
 		}
 	}
-	
-	
-	protected static function jqgridPepareQuery(array $data)
-	{
-		//defaults
-		$data['sort_column'] = empty($data['sort_column']) ? 'created_date' : $data['sort_column'];
-		$data['sort_order'] = !empty($data['sort_order']) &&  $data['sort_order']  == 'desc' ? SORT_DESC : SORT_ASC; //+secure
-		$filters = empty($data['filters']) ? null : json_decode($data['filters']);
-		$conditions = ['bw'=>'like','eq'=>'='];
-		$query = Books::find();
-		
-		if ($filters instanceof \stdClass && is_array($filters->rules)) {
-			foreach ($filters->rules as $rule) {
-				if (empty($conditions[$rule->op])) {
-					continue; // unknown condition, skip
-				}
-				if (!empty($filters->groupOp) && $filters->groupOp == 'AND') {
-					$query->andFilterWhere([$conditions[$rule->op], $rule->field, $rule->data]);
-				} else {
-					$query->orFilterWhere([$conditions[$rule->op], $rule->field, $rule->data]);
-				}
-			}
-		}
-		if (in_array($data['sort_column'], ['favorite', 'read', 'year', 'title', 'created_date', 'isbn13', 'author', 'publisher'])) {
-			$query->orderBy([$data['sort_column'] => $data['sort_order'] ]);
-		}
-		$query->select(['created_date', 'book_guid', 'favorite', 'read', 'year', 'title', 'isbn13', 'author', 'publisher', 'ext', 'filename']);
-		
-		return $query;
-	}
-	
-	protected static function jqgridPrepareResponse($page, $total, $records, $rows)
-	{
-		$response = new \stdClass();
-		$response->page = $page + 1; //jgrid fix
-		$response->total = $total;
-		$response->records = $records;
-		$response->rows = $rows;
-		return $response;
-	}
-	
-	
-	/**
-	 * 
-	 * @param array $data [page, limit, sort_column, sort_order, filters=json] 
-	 * @return multitype:multitype:Ambigous <NULL> multitype:unknown string   |\stdClass
-	 */
-	public static function jgridBooks(array $data)
-	{
-		$query = self::jqgridPepareQuery($data);
-		$data['limit'] = empty($data['limit']) || $data['limit'] <= 0 || $data['limit'] > 30 ? 10 : $data['limit'];
-		$data['page'] = empty($data['page']) || $data['page'] <= 0 ? 1 : $data['page'];
-		
-		$provider = new ActiveDataProvider([
-			'query' => $query,
-			'pagination' => [
-				'pageSize' => $data['limit'],
-				'page' => $data['page']-1 //jgrid fix
-			],
-		]);
-		
-		$books = $provider->getModels();
 
-		$to_array = function ($obj_arr, $query) {
-			$ar = [];
-			foreach ($obj_arr as $o) {
-				/* @var $o Books */
-				$book = [];
-				$attr = $o->getAttributes($o->fields());
-				//jgrid required no assoc array same order
-				foreach ($query->select as $col) {
-					if ($col == 'created_date') {
-						$book[] = \Yii::$app->formatter->asDate($attr[$col], 'php:d-m-Y');
-					} else {
-						$book[] = $attr[$col];
-					}
-				}
-				$ar[] = ['id' => $attr['book_guid'], 'cell' => $book];
-			}
-			return $ar;
-		};
-		
-		
-		return self::jqgridPrepareResponse($provider->getPagination()->getPage(), $provider->getPagination()->getPageCount(), $provider->getTotalCount(), $to_array($books, $query));
-	}
+
+    /**
+     *
+     * @param array $data [page, limit, sort_column, sort_order, filters=json]
+     * @return multitype:multitype:Ambigous <NULL> multitype:unknown string   |\stdClass
+     */
+    public static function jgridBooks(array $data)
+    {
+        $nameColumns = ['created_date', 'book_guid', 'favorite', 'read', 'year', 'title', 'isbn13', 'author', 'publisher', 'ext', 'filename'];
+        $sortColumns = ['favorite', 'read', 'year', 'title', 'created_date', 'isbn13', 'author', 'publisher'];
+
+        $query = self::find()->select($nameColumns);
+        return self::jgridRecords($data, $nameColumns, $sortColumns, $query, 'book_guid');
+    }
+
 	
 	public function attributeLabels()
 	{

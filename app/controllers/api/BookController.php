@@ -1,10 +1,29 @@
 <?php
+/*
+ * My Book Library
+ *
+ * Copyright (C) 2014-2017 Yurii K.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses
+ */
 
 namespace app\controllers\api;
 
 use \app\components\Controller;
 use app\models\Books;
 use yii\web\Response;
+use \yii\filters\VerbFilter;
 
 class BookController extends Controller
 {
@@ -12,7 +31,7 @@ class BookController extends Controller
     {
         return [
             'verb' => [
-                'class' => \yii\filters\VerbFilter::class,
+                'class' => VerbFilter::class,
                 'actions' => [
                     'index' => ['GET'],
                     'books' => ['GET'],
@@ -23,17 +42,11 @@ class BookController extends Controller
         ];
     }
 
-    public function actionIndex()
-    {
-        \Yii::$app->response->format = Response::FORMAT_JSON;
-        return $this->getBooks();
-    }
-
     /**
      * return list of books in jqgrid format
      * @return string json
      */
-    public function getBooks()
+    public function actionIndex()
     {
         // Example: $x = '%ч'; $y = 'bЧ'; $escape = '\';
         $like = function ($x, $y, $escape) {
@@ -45,7 +58,7 @@ class BookController extends Controller
 
         $db = \Yii::$app->getDb();
         $db->open();
-        $db->pdo->sqliteCreateFunction('like', $like);
+        $db->pdo->sqliteCreateFunction('like', $like); // not documented feature!
 
         $data = [
             'page' => \Yii::$app->request->get('page'),
@@ -58,7 +71,7 @@ class BookController extends Controller
             'filterCategories' => \Yii::$app->request->get('filterCategories')
         ];
 
-        //TODO: currently on store in cookies
+        \Yii::$app->response->format = Response::FORMAT_JSON;
         return Books::jgridBooks($data);
     }
 
@@ -84,49 +97,36 @@ class BookController extends Controller
 
     private function add($attributes)
     {
-        /* @var $book Books */
         $book = new Books(['scenario' => 'add']);
         $book->attributes = $attributes;
         $book->favorite = $book->favorite == null ? 0 : $book->favorite;
-
         $book->insert();
     }
 
     private function delete($id)
     {
-        /* @var $book Books */
         $book = Books::findOne(['book_guid' => $id]);
-
-        if ($book instanceof Books) {
-            $book->delete();
-        }
+        $book->delete();
     }
 
     private function update($id, $attributes)
     {
-        /* @var $book Books */
         $book = Books::findOne(['book_guid' => $id]);
         $book->scenario = 'edit';
-        $book->attributes = $attributes;
-
-        if (!$book->save()) {
-            throw new \yii\web\BadRequestHttpException(print_r($book->getErrors(), true));
-        }
+        $book->load($attributes, '');
+        $book->save();
     }
-
 
     public function actionCover($book_guid)
     {
         return Books::getCover($book_guid);
     }
 
-
     /**
      * saves cover for book via book_guid. cover is sent as request body
      */
     public function actionCoverSave()
     {
-        /* @var $book Books */
         $book = Books::findOne(['book_guid' => \Yii::$app->request->get('book_guid')]);
         $book->setScenario('cover');
         $book->book_cover = \Yii::$app->request->getRawBody();

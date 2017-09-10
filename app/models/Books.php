@@ -1,4 +1,22 @@
 <?php
+/*
+ * My Book Library
+ *
+ * Copyright (C) 2014-2017 Yurii K.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses
+ */
 
 namespace app\models;
 
@@ -11,15 +29,24 @@ use app\helpers\Tools;
 
 
 /**
+ * Book entity AR
+ *
+ * @property string $book_guid
  * @property string $created_date
  * @property string $updated_date
- * @property string $book_guid
- * @property string $filename
  * @property string $book_cover binary cover or yii\web\UploadedFile before save!
+ * @property float $favorite
+ * @property string $read 'yes'|'no'
+ * @property int $year
+ * @property string $title
+ * @property string $isbn13
+ * @property string $author
+ * @property string $publisher
+ * @property string $ext
+ * @property string $filename
  */
 class Books extends ActiveRecord
 {
-
     /**
      * (non-PHPdoc)
      * @see \yii\base\Model::rules()
@@ -68,6 +95,7 @@ class Books extends ActiveRecord
         imagecopyresized($dst_image, $src_image, 0, 0, 0, 0, $dst_w, $dst_h, $src_w, $src_h);
         ob_start();
         imagejpeg($dst_image);
+
         return ob_get_clean();
     }
 
@@ -99,7 +127,6 @@ class Books extends ActiveRecord
                 'createdAtAttribute' => 'created_date',
                 'updatedAtAttribute' => 'updated_date',
                 'value' => function () {
-                    //	return \Yii::$app->formatter->asDatetime('now','php:Y-m-d H:i:s'); BUGGED!!! doesnt change timezone on Travis. no clue why
                     return (new \DateTime())->format('Y-m-d H:i:s');
                 }
             ]
@@ -107,8 +134,7 @@ class Books extends ActiveRecord
     }
 
     /**
-     * (non-PHPdoc)
-     * @see \yii\db\BaseActiveRecord::afterDelete()
+     * @inheritdoc
      */
     public function afterDelete()
     {
@@ -232,17 +258,6 @@ class Books extends ActiveRecord
         }
 
         return self::jgridRecords($data, $nameColumns, $sortColumns, $query);
-    }
-
-    public function attributeLabels()
-    {
-        return [
-            'title' => 'title',
-            'created_date' => 'created',
-            'updated_date' => 'updated',
-            'publishers.name' => 'publisher'
-
-        ];
     }
 
     public static function getCover($id)

@@ -1,8 +1,28 @@
 <?php
+/*
+ * My Book Library
+ *
+ * Copyright (C) 2014-2017 Yurii K.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses
+ */
+
 namespace app\components
 {
 	use yii\base\Object;
 	use yii\helpers\Json;
+	use \yii\base\InvalidValueException;
 	use app\components\configuration\System;
 	use app\components\configuration\Library;
 	use app\components\configuration\Database;
@@ -10,15 +30,15 @@ namespace app\components
 						
 	/**
 	 * @property string $version
-	 * @property \app\components\configuration\System $system
-	 * @property \app\components\configuration\Library $library
-	 * @property \app\components\configuration\Database $database
-	 * @property \app\components\configuration\Book $book
+	 * @property System $system
+	 * @property Library $library
+	 * @property Database $database
+	 * @property Book $book
 	 *        
 	 */
 	class Configuration extends Object
 	{
-		// NOTE: only supported PHP 5.6+
+		// NOTE: only supported in PHP 5.6+
 		const SUPPORTED_VALUES = [
 			'system_language' => [
 				'en-US' => 'English - en-US',
@@ -88,7 +108,7 @@ namespace app\components
 JSON;
 		
 		
-		private $version = '1.1'; // DB VERSION
+		private $version = '1.2'; // DB VERSION
 		private $config;
 		public $config_file;
 		
@@ -106,11 +126,7 @@ JSON;
 			}
 			
 		}
-		
-		/**
-		 * (non-PHPdoc)
-		 * @see \yii\base\Object::__get()
-		 */
+
 		public function __get($name)
 		{
 			if (in_array($name, $this->options)) {
@@ -119,7 +135,6 @@ JSON;
 				
 			return parent::__get($name);
 		}
-		
 
 		/**
 		 * 
@@ -140,7 +155,7 @@ JSON;
 		public function load($filename)
 		{
 			if (!is_readable($filename)) {
-				throw new \yii\base\InvalidValueException('cannot read config file at this location: '.$filename);
+				throw new InvalidValueException('cannot read config file at this location: '.$filename);
 			}
 			
 			$this->config = Json::decode(file_get_contents($filename), false);
@@ -197,7 +212,8 @@ JSON;
 		
 		/**
 		 * gets utf-8 string decoded from filesystem codepage type
-		 * @param unknown $filename
+         *
+		 * @param string $filename
 		 * @return string
 		 */
 		public function Decode($filename)
@@ -216,11 +232,11 @@ JSON;
 			$config_dir = dirname($this->config_file);
 
 			if (file_exists($filename) && !is_writable($filename)) {
-				throw new \yii\base\InvalidValueException("file '$filename' is not writable", 1);
+				throw new InvalidValueException("file '$filename' is not writable", 1);
 			} elseif (is_dir($config_dir) && !is_writable($config_dir)) {
-				throw new \yii\base\InvalidValueException("config directory '$config_dir' is not writable", 2);
+				throw new InvalidValueException("config directory '$config_dir' is not writable", 2);
 			} elseif (!is_dir($config_dir)) {
-				throw new \yii\base\InvalidValueException("config directory '$config_dir' does not exist", 3);
+				throw new InvalidValueException("config directory '$config_dir' does not exist", 3);
 			}
 			 
 			file_put_contents($filename, Json::encode($this->config, JSON_PRETTY_PRINT));			

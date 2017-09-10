@@ -1,13 +1,30 @@
 <?php
+/*
+ * My Book Library
+ *
+ * Copyright (C) 2014-2017 Yurii K.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses
+ */
+
 namespace app\controllers\api;
 
-use app\components\configuration\Book;
 use \app\components\Controller;
 use app\models\Books;
 use app\models\Categories;
-use yii\data\ActiveDataProvider;
 use yii\web\Response;
-
+use \yii\filters\VerbFilter;
 
 class CategoryController extends Controller
 {
@@ -15,9 +32,9 @@ class CategoryController extends Controller
     {
         return [
             'verb' => [
-                'class' => \yii\filters\VerbFilter::class,
+                'class' => VerbFilter::class,
                 'actions' => [
-                    'index'	 => ['GET'],
+                    'index' => ['GET'],
                     'manage' => ['POST']
                 ]
             ]
@@ -26,19 +43,12 @@ class CategoryController extends Controller
 
     public function actionIndex()
     {
-
-        $book = Books::find()->where(['book_guid' => 'CDDAB3E8-456E-ABE9-CFEE-8203D9519D94'])->one();
-        $category = Categories::find()->one();
-        //$book->link('categories', $category);
-        //$book->save();
-
-        //var_dump($book->categories);die;
         $data = [
             'page' => \Yii::$app->request->get('page'),
             'limit' => \Yii::$app->request->get('rows'),
             'filters' => \Yii::$app->request->get('filters'),
             'sort_column' => \Yii::$app->request->get('sidx'),
-            'sort_order'=> \Yii::$app->request->get('sord'),
+            'sort_order' => \Yii::$app->request->get('sord'),
 
             'nodeid' => \Yii::$app->request->get('nodeid'), // for marker
         ];
@@ -67,12 +77,11 @@ class CategoryController extends Controller
         }
     }
 
-
     private function add($attributes)
     {
-        $item = new Categories();
-        $item->attributes = $attributes;
-        $item->save();
+        $category = new Categories();
+        $category->load($attributes, '');
+        $category->save();
     }
 
     private function update($id, $attributes)
@@ -81,10 +90,7 @@ class CategoryController extends Controller
 
         $category = Categories::findOne(['guid' => $id]);
         $category->attributes = $attributes;
-
-        if (!$category->save()) {
-            throw new \yii\web\BadRequestHttpException(print_r($category->getErrors(), true));
-        }
+        $category->save();
 
         if (!empty($book_guid) && !empty($attributes['marker'])) {
             $book = Books::findOne(['book_guid' => $book_guid]);
@@ -98,12 +104,8 @@ class CategoryController extends Controller
 
     private function delete($id)
     {
-        /* @var $category Books */
         $category = Categories::findOne(['guid' => $id]);
-
-        if ($category instanceof Categories) {
-            $category->delete();
-        }
+        $category->delete();
     }
 
 }

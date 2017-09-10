@@ -15,7 +15,6 @@ return [
 		[ 'class' => 'app\components\MyLibraryBootstrap' ],
 		'log',
         //'debug',
-        ////'gii'
 	/*
 		[	'class' => 'yii\filters\ContentNegotiator',
 			//'only' => ['view'],
@@ -36,14 +35,9 @@ return [
 	'language' => 'en-US',
 	'modules' => [
 		//'apc' => [ 'class' => 'modules\apc\Module' ],
-		//'gii' => [ 'class' => 'yii\gii\Module' ],
 		//'debug' => [ 'class' => 'yii\debug\Module' ]
 	],
 	'components' => [
-		'security' => [
-			'class' => app\components\Security::class,
-			'cost' => 10
-		],
 		/*'errorHandler' => [
 		 //'class' => 'yii\web\ErrorAction'
 		 //'errorAction' => 'site/error'
@@ -98,22 +92,6 @@ return [
 				'install' => 'install/install',
 			]
 		],
-		'mailer' => [
-			'class' => 'yii\swiftmailer\Mailer',
-			'useFileTransport' => false,
-			'viewPath' => '@app/emails',
-			'fileTransportPath' => '@runtime/mail',
-			'htmlLayout' => 'layouts/html',
-			'textLayout' => 'layouts/text',
-			'transport' => [
-				'class' => 'Swift_SmtpTransport',
-				'host' => 'smtp.sample.com',
-				'username' => 'test',
-				'password' => 'test',
-				'port' => '465',
-				'encryption' => 'ssl' // ssl | tls
-			]
-		],
 		'mycfg' => [
 			'class' => 'app\components\Configuration',
 			'config_file' => '@app/config/libconfig.json'
@@ -121,7 +99,7 @@ return [
 		// https://github.com/yiisoft/yii2/blob/master/docs/guide/runtime-logging.md
 		//TODO: cannot set Logger or Dispatcher class. yii2 issue?
 		'log' => [ 
-			'traceLevel' => YII_DEBUG ? 3 : 0,
+			'traceLevel' => YII_DEBUG ? 1 : 0,
 			'targets' => [
 				'dev-trace'=> [
 					'class' => 'app\components\log\FileTarget',
@@ -163,17 +141,6 @@ return [
 			//'class' => \app\components\ApcCache::class,
 			'class' => '\yii\caching\DummyCache',
 			'keyPrefix' => 'mylib::',
-		],
-		
-		/*'errorHandler' => [
-			//'class' => 'yii\web\ErrorAction'
-			//'errorAction' => 'site/error'
-		],*/
-		'user'=> [
-			'identityClass' => \app\models\Users::class,
-			'enableAutoLogin' => true,
-			'loginUrl' => ['site/index'],
-			'enableSession' => true
 		],
 		'authManager' => [
 			'class' => '\yii\rbac\DbManager',

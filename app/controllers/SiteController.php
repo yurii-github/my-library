@@ -39,14 +39,12 @@ class SiteController extends Controller
         ];
     }
 
-
     public function actionIndex()
     {
         $categories = Categories::find()->all();
         $this->view->title = \Yii::t('frontend/site', 'Books');
         return $this->render('index', ['categories' => $categories]);
     }
-
 
     public function actionAbout()
     {

@@ -40,6 +40,7 @@ entry point is located at
 - books CRUD
 - books categories
 - book cover saved to database
+- book cover can be imported from PDF (you need to have [ghostScript](https://www.ghostscript.com/))
 - themed (JqueryUI)
 - i18n
 - mysql and sqlite support
@@ -50,15 +51,14 @@ entry point is located at
 
 TODO
 
-- true authors, publishers
-</pre>
-
+* authors
+* publishers
 
 ## Usage
 
 As app is not truly finished, some workarounds must be considered.
 
-### >Add New Books
+### Add New Books
 The simplest way is to drop your book(s) to lib folder you've set in configuration and seconds tab "syncronization" press "import fs only". It will import all file system books that are not in database yet.
 
 ### Edit Books
@@ -75,16 +75,7 @@ If you enabled sync, it will remove this book also from file system.
 A big note requires filesystem encoding. This is a **MUST** for file sync. In Windows this is mostly cp1251 codepage.
 
 
-## Commits
-
-When you do commit, you can pass next message to trigger special behavior
-
-**[skip ci]**  - skips Travis CI builds
-**[sc]** - make build on Travis CI but skips sending clover report to codeclimate (no code coverage)
-
-
-
 ## Console usage
 
-```yii2.bat help```  
-```yii2.bat migrate/history```
+```yii2-console.bat help```  
+```yii2-console.bat migrate/history```

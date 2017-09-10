@@ -1,4 +1,9 @@
-<?php /* @var $this yii\web\View */ ?>
+<?php
+/**
+ * @var $this yii\web\View
+ * @var $categories \app\models\Categories
+ */
+?>
 <table id="book-list"></table>
 <div id="book-pager"></div>
 
@@ -12,7 +17,7 @@
 	//https://github.com/fancyapps/fancyBox/issues/40
 	$.jgrid.no_legacy_api = true;
 
-	var book_list = $("#book-list"), lastSel, lastFavorite, lastRead;
+	var book_list = $("#book-list"), lastSel, lastFavorite, lastRead, filterCategories;
 
 	function getCookie(n,v) {
 		var val = Cookies.get(n);
@@ -45,8 +50,8 @@
 	};
 
 	book_list.jqGrid({
-		url:'<?php echo Yii::$app->getUrlManager()->createUrl('site/books'); ?>',
-		editurl : '<?php echo  Yii::$app->getUrlManager()->createUrl('site/manage');?>',
+		url:'<?php echo Yii::$app->getUrlManager()->createUrl('api/book'); ?>',
+		editurl : '<?php echo  Yii::$app->getUrlManager()->createUrl('api/book/manage');?>',
 		datatype: "json",
 		colNames:[
 			'<?php echo \Yii::t('frontend/site', 'Added'); ?>', '', 
@@ -60,13 +65,13 @@
 			'<?php echo \Yii::t('frontend/site', 'Extension'); ?>',
 			'', ''],
 		colModel:[
-			{ name:'created_date', index:'created_date', width: 80, editable: false },
+			{ name:'created_date', index:'created_date', width: 80, editable: false, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d-m-Y" }, },
 			// we use book guid as book cover column!
 			{ name: 'book_guid',index: 'book_guid', width: 21, editable: false, frozen: true, align: 'center', search: false, sortable: false,
 				formatter: function(cellvalue, options, rowObject) {
 					return '<a class="book-cover-link" data-guid="'+options.rowId+
-						'" data-fancybox-group="book-covers" href="<?php echo Yii::$app->getUrlManager()->createUrl(['site/cover', 'book_guid' => '']); ?>' + options.rowId +
-						 '" title="'+rowObject[4]+' : '+rowObject[5]+'"'+'><img class="book-cover" src="<?php echo Yii::$app->getUrlManager()->createUrl(['site/cover', 'book_guid' => '']); ?>' +
+						'" data-fancybox-group="book-covers" href="<?php echo Yii::$app->getUrlManager()->createUrl(['api/book/cover', 'book_guid' => '']); ?>' + options.rowId +
+						 '" title="'+rowObject[4]+' : '+rowObject[5]+'"'+'><img class="book-cover" src="<?php echo Yii::$app->getUrlManager()->createUrl(['api/book/cover', 'book_guid' => '']); ?>' +
 						options.rowId + '" /></a>';
 				}
 			},
@@ -141,8 +146,87 @@
 		//support cell edit
 		cellEdit: false,
 		cellSubmit: 'remote',
-		cellurl: '?action=book-manage',
-		loadComplete: function() {
+		cellurl: '<?php echo  Yii::$app->getUrlManager()->createUrl('api/book/manage');?>',
+        subGrid: true,
+        subGridRowExpanded: function(subgrid_id, row_id) {
+            // If we wan to pass additinal parameters to the url we can use
+            // a method getRowData(row_id) - which returns associative array in type name-value
+            var subgrid_table_id = subgrid_id+"_t";
+            var pager_id = "p_"+subgrid_table_id;
+            $("#"+subgrid_id).html("<table id='"+subgrid_table_id+"' class='scroll'></table><div id='"+pager_id+"' class='scroll'></div>");
+            jQuery("#"+subgrid_table_id).jqGrid({
+                caption: 'Categories',
+                rownumbers: true,
+                url:'<?php echo Yii::$app->getUrlManager()->createUrl('api/category?nodeid='); ?>'+row_id,
+                editurl : '<?php echo  Yii::$app->getUrlManager()->createUrl('api/category/manage');?>',
+                datatype: "json",
+                colNames: ['title', 'marker'],
+                colModel: [
+                    {name:"title",index:"title", width: 200, editable: true},
+                    {name:"marker", index:"marker", formatter:"checkbox",edittype: "checkbox", editable: true, editoptions: { value:"1:0"} }
+                ],
+                cellEdit: true,
+                cellSubmit: 'remote',
+                cellurl: '<?php echo Yii::$app->getUrlManager()->createUrl('api/category/manage?nodeid='); ?>'+row_id,
+                sortorder: "asc",
+                rowNum:20,
+                pager: pager_id,
+                height: '100%',
+                sortorder: "asc",
+                sortname: 'title'
+            });
+            jQuery("#"+subgrid_table_id).jqGrid('navGrid',"#"+pager_id,{edit:true,add:true,del:true});
+        },
+        // subGridRowColapsed: function(subgrid_id, row_id) .. // this function is called before removing the data
+        toolbar: [true, "bottom"],
+        loadComplete: function() {
+		    // support category filters as checkboxes
+		    if (filterCategories == null) {
+                var $toolbar = $('#t_'+book_list.attr('id'));
+                $widget = $('<div id="category_list" style="user-select: none;">');
+                $widget.append($('<input id="category_ALL" type="checkbox" value="false" /> <label for="category_ALL">[ALL]</label>'));
+                <?php foreach ($categories as $category): ?>
+                $widget.append($('<input id="category_<?=$category->guid;?>" type="checkbox" value="<?=$category->guid;?>" /> <label for="category_<?=$category->guid;?>"><?=$category->title;?></label>'));
+                <?php endforeach; ?>
+                $toolbar.append($widget);
+
+                $("#category_list").buttonset();
+                $("#category_list input").click(function() {
+                    var id = $(this).attr('id');
+
+                    if (id == 'category_ALL') { // select all
+                        if ($(this).prop('checked')) {
+                            var category_ids = $('#category_list input:not(#category_ALL)').map(function() {
+                                return $(this).val();
+                            });
+                            $('#category_list input').prop('checked', false);
+                            $('#category_list input#category_ALL').prop('checked', true);
+
+                            filterCategories = Array.prototype.join.call(category_ids, ",");
+                        } else {
+                            filterCategories = 0;
+                        }
+                    } else {
+                        // reset ALL
+                        $('#category_list input#category_ALL').prop('checked', false);
+
+                        var category_ids = $('#category_list input:checked').map(function() {
+                            return $(this).val();
+                        });
+                        filterCategories = Array.prototype.join.call(category_ids, ",");
+                    }
+
+                    $("#category_list input").button('refresh');
+
+                    book_list.jqGrid('setGridParam', {
+                        url: '<?php echo Yii::$app->getUrlManager()->createUrl('api/book'); ?>?filterCategories='+filterCategories,
+                        page:1
+                    }).trigger("reloadGrid");
+                });
+
+                filterCategories = 0; // avoid another append
+            }
+
 			$(".book-filename").on('click', function(e){
 				window.prompt ("Copy to clipboard: Ctrl+C, Enter", $(this).attr('data-filename'));
 			});
@@ -173,6 +257,7 @@
 			var row_obj = book_list.jqGrid('getInd', rowid, true); // row_obj is just piece of html - TR
 			lastFavorite = $(row_obj).find('div.book-favorite').attr('data-score');
 			lastRead = $(row_obj).find('div.book-read-yes').attr('class') !== undefined ? 'yes' : 'no';
+			//console.log(row_obj);
 
 			//.jqGrid('editRow', rowid, keys, oneditfunc, successfunc, url, extraparam, aftersavefunc,errorfunc, afterrestorefunc);
 			book_list.jqGrid('editRow', rowid, {
@@ -219,7 +304,7 @@ var coverUpload = {
 				return;
 			}
 			var xhr = new XMLHttpRequest();
-			xhr.open('POST','<?php echo Yii::$app->getUrlManager()->createUrl(['site/cover-save','book_guid' => '']);?>'+book_guid,true);
+			xhr.open('POST','<?php echo Yii::$app->getUrlManager()->createUrl(['api/book/cover-save','book_guid' => '']);?>'+book_guid,true);
 			xhr.send(file);
 			xhr.onreadystatechange = function(e){
 				if(this.readyState != 4 || this.status !=200) return;

@@ -14,7 +14,8 @@ return [
 	'bootstrap' => [
 		[ 'class' => 'app\components\MyLibraryBootstrap' ],
 		'log',
-	//	'debug'
+        //'debug',
+        ////'gii'
 	/*
 		[	'class' => 'yii\filters\ContentNegotiator',
 			//'only' => ['view'],
@@ -36,7 +37,7 @@ return [
 	'modules' => [
 		//'apc' => [ 'class' => 'modules\apc\Module' ],
 		//'gii' => [ 'class' => 'yii\gii\Module' ],
-		//'debug' => [ 'class' => 'yii\debug\Module']
+		//'debug' => [ 'class' => 'yii\debug\Module' ]
 	],
 	'components' => [
 		'security' => [
@@ -71,19 +72,18 @@ return [
 				'class' => 'yii\web\AssetConverter'
 			],
 			'class' => 'app\components\AssetManager',
-			'linkAssets' => false, //symblic linking
+			'linkAssets' => false, // symblic linking is OFF
 			'basePath' => '@webroot/assets',
-			'bundles' => [
-				//'yii\grid\GridViewAsset' => [
-			//		'depends'=> []
-			//	],
-				'yii\web\JqueryAsset' => [
-					'sourcePath' => null, 'js'=> []
-				],
-				'yii\bootstrap\BootstrapAsset' => [
-					'sourcePath' => null, 'css' => []
-				]
-				
+			'bundles' => [			  
+			  // resets Yii2 nonsense
+			  'yii\widgets\MaskedInputAsset' => ['js' => ['https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js'], 'sourcePath' => null],
+			  'yii\widgets\PjaxAsset' => ['js' => ['https://cdnjs.cloudflare.com/ajax/libs/jquery.pjax/1.9.6/jquery.pjax.min.js'], 'sourcePath' => null],
+			  'yii\validators\PunycodeAsset' => ['js' => ['https://cdnjs.cloudflare.com/ajax/libs/punycode/1.4.1/punycode.min.js'], 'sourcePath' => null],
+			  'yii\web\JqueryAsset' => ['js'=> ['https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js'], 'sourcePath' => null],
+			  //'yii\web\JqueryAsset' => ['js'=> ['https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js'], 'sourcePath' => null], <-- JqueryUI not supports
+			  'yii\bootstrap\BootstrapAsset' => ['css' => ['https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css'], 'sourcePath' => null],
+			  'yii\bootstrap\BootstrapPluginAsset' => ['js' => ['https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js'], 'sourcePath' => null],
+			  'yii\gii\TypeAheadAsset' => ['js' => ['https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.1.1/typeahead.bundle.min.js'], 'sourcePath' => null],
 			]
 		],
 		'urlManager' => [

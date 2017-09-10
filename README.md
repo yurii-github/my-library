@@ -10,19 +10,25 @@ Main purpose is to manage own book library as excel table with ratings and other
 Said that, it supports all JQuery UI themes.  
 Most js/css come from CDN networks, so you probably eager to check code at /app/assets/*
 
-<img src="http://s16.postimg.org/khmq5yr1x/image.png" />  
-<img src="http://s8.postimg.org/8j6idmcc5/image.png" />  
+<img src="https://s26.postimg.org/3rs1svuyv/index.png" />  
+
 
 ## Requirements
 
-- php >=5.6
+- php >=7
 - sqlite or mysql
 - url rewrite (optional if you set **'enablePrettyUrl' => false** in /app/config/config.php)
 
 ## Setup
 
+### Gist
+
 <pre>composer create-project  yurii-github/yii2-mylib  --stability=dev --no-dev</pre>
 remove --no-dev to get dev required stuff
+
+### Composer
+
+<pre>composer update</pre>
 
 entry point is located at
 <pre>PROJECT/app/public/index.php</pre>
@@ -32,21 +38,19 @@ entry point is located at
 
 - excel table is sortable, pagable
 - books CRUD
+- books categories
 - book cover saved to database
 - themed (JqueryUI)
 - i18n
 - mysql and sqlite support
-- syncronization with filesystem (renames, deletes)
+- synchronization with filesystem (renames, deletes)
 - migrations
 - compact: optimizes DB via run vacuum for SQLite or table optimization for MySQL
-- security (partial)
-- user tests (partial)
  
+
 TODO
 
-- admin page. base
-- true authors, publishers, categories
-- CDN fallbacks
+- true authors, publishers
 </pre>
 
 
@@ -67,9 +71,6 @@ To remove book from lib just click trash icon near book.
 If you enabled sync, it will remove this book also from file system.
 
 ### Configuration
-**Email** is not functioning.I still think about its value.  
-**Security** is not really implemented. In fact, it does not secure anything so far. Very low importance for me, mostly just Yii2 playground.  
-Other things work as expected.
 
 A big note requires filesystem encoding. This is a **MUST** for file sync. In Windows this is mostly cp1251 codepage.
 
@@ -80,3 +81,10 @@ When you do commit, you can pass next message to trigger special behavior
 
 **[skip ci]**  - skips Travis CI builds
 **[sc]** - make build on Travis CI but skips sending clover report to codeclimate (no code coverage)
+
+
+
+## Console usage
+
+```yii2.bat help```  
+```yii2.bat migrate/history```

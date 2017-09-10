@@ -4,7 +4,7 @@ namespace app\assets;
 class JqueryUI extends AssetBundle
 {
 	public $sourcePath = null;
-	public $depends = ['app\assets\Jquery'];
+	public $depends = [\yii\web\JqueryAsset::class];
 	
 	public function init()
 	{

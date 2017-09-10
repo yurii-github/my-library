@@ -38,17 +38,6 @@ form.configuration-form fieldset legend, form.configuration-form fieldset label 
 		<form action="<?php echo Yii::$app->urlManager->createUrl('config/save'); ?>" method="post" class="configuration-form">
 			<fieldset>
 				<legend>&nbsp;<?php echo \Yii::t('frontend/config', 'system'); ?>&nbsp;</legend>
-				<label class="cfg"><?php echo \Yii::t('frontend/config', 'enable email'); ?></label>
-				<div style="display: inline-block;" id="system_email">
-					<input type="radio" id="system_email1" name="system_email" value="1" <?= ($cfg->system->email == true ? $checked : ''); ?> />
-					<label for="system_email1"><?php echo \Yii::t('frontend/config', 'yes'); ?></label>
-					<input type="radio" id="system_email2" name="system_email" value="0" <?= ($cfg->system->email == false ? $checked : ''); ?> />
-					<label for="system_email2"><?php echo \Yii::t('frontend/config', 'no'); ?></label>
-				</div>
-				<br /><br />
-				<label class="cfg"><?php echo \Yii::t('frontend/config', 'email'); ?></label>
-				<input name="system_emailto" id="system_emailto" type="text" title="email address where send email" value="<?= $cfg->system->emailto; ?>" />
-				<br /><br />
 				<label class="cfg" title="interface language"><?php echo \Yii::t('frontend/config', 'language')?></label>
 				<select name="system_language" id="system_language">
 					<?php foreach ($SUPPORTED_VALUES['system_language'] as $v => $txt) {
@@ -189,6 +178,22 @@ function toggleDbForm(format)
 
 $("#sync-check-files, #sync-import-fs-files, #sync-clear-db-files").button();
 
+$.fn.extend({
+	setMsg: function (message, title, result) {
+		if (message == '') {
+			return;
+		}
+		
+		var state = (result == 1 ? 'highlight' : 'error');
+		var icon = (result == 1 ? 'info' : 'alert');
+		
+		this.html(
+			'<div class="ui-state-'+state+' ui-corner-all" style="padding: 10px; margin-top: 20px; margin-bottom: 20px;">' +
+			'<p><span class="ui-icon ui-icon-'+icon+'" style="float: left; margin-right: .3em;"></span> ' +
+			'<b>'+title+'</b>&nbsp;&nbsp; '+message+'</p>' +
+			'</div>');
+	}
+});
 
 // status error - 0 | info - 1
 function setResultMsg(message, title, result)
@@ -216,7 +221,7 @@ function saveParameter(e)
 	var value = $(e).val();
 	
 	$.post(action_url, {field: field, value: value}, function (data) {
-		setResultMsg(data.msg, data.title, data.result);
+		$('#result-message').setMsg(data.msg, data.title, data.result);
 		if (data.result && (field == 'system_theme' || field == 'system_language')) {
 			location.reload();
 		}
@@ -273,13 +278,13 @@ $('#sync-clear-db-files').click(function(){
 $('#sync-import-fs-files').click(function(){
 	// get fs files only filenames
 	$.get('<?php echo Yii::$app->urlManager->createUrl(['config/import-files']);?>', function(data) {
-		console.table(data);
+		//console.table(data);
 		var records_total = data.length;
 		var records_done = 0;
 		var res = $('#sync-check-files-result');
 		res.empty();
 		if(records_total == 0) {
-			res.html('<p>nothing to do</p>');
+			res.setMsg('Nothing to do.', 'Import FS', true);
 			return;
 		}
 		res.append('<br/><br/><progress/><br/><br/><span id="counter"></span><span id="message"></span>');
@@ -331,7 +336,7 @@ $('#sync-check-files').click(function(){
 		res.empty();
 
 		if (data.fs == 0 && data.db == 0) {
-			res.html('<p>Great news! Your library is synced already. Keep it up.</p>');
+			res.setMsg('Great news! Your library is synced already. Keep it up.', 'Check files', true);
 			return;
 		}
 		

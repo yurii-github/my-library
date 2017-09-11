@@ -104,7 +104,8 @@ namespace app\components
     "book": {
         "covermaxwidth": 800,
         "covertype": "image\/jpeg",
-        "nameformat": "{year}, ''{title}'', {publisher} [{isbn13}].{ext}"
+        "nameformat": "{year}, ''{title}'', {publisher} [{isbn13}].{ext}",
+        "ghostscript": ""
     }
 }
 JSON;
@@ -278,6 +279,7 @@ namespace app\components\configuration
 	 * @property string $nameformat
 	 * @property string $covertype
 	 * @property int $covermaxwidth
+     * @property  string ghostscript
 	 */
 	class Book {}
 }

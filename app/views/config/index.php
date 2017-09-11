@@ -26,34 +26,34 @@ form.configuration-form fieldset legend, form.configuration-form fieldset label 
 
 <div id="tabs" style="width: 800px; margin: auto; text-align: left;">
 	<ul>
-		<li><a href="#tabs-1"><?php echo \Yii::t('frontend/config', 'settings'); ?></a><span style="display: inline-block;" class="status ui-icon ui-icon-wrench"></span></li>
-		<li><a href="#tabs-3"><?php echo \Yii::t('frontend/config', 'syncronization'); ?></a><span style="display: inline-block;" class="status ui-icon ui-icon-refresh"></span></li>
-		<li><a href="<?php echo Yii::$app->urlManager->createUrl('config/php-info');?>"><?php echo \Yii::t('frontend/config', 'PHP info: '. PHP_VERSION); ?></a></li>
+		<li><a href="#tabs-1"><?= \Yii::t('frontend/config', 'settings'); ?></a><span style="display: inline-block;" class="status ui-icon ui-icon-wrench"></span></li>
+		<li><a href="#tabs-3"><?= \Yii::t('frontend/config', 'syncronization'); ?></a><span style="display: inline-block;" class="status ui-icon ui-icon-refresh"></span></li>
+		<li><a href="<?= Yii::$app->urlManager->createUrl('config/php-info');?>"><?= \Yii::t('frontend/config', 'PHP info: '. PHP_VERSION); ?></a></li>
 		<!-- 
-		<li><a href="<?= Url::to(['config/permissions']);?>"><?php echo \Yii::t('frontend/config', 'permissions'); ?></a></li>
+		<li><a href="<?= Url::to(['config/permissions']);?>"><?= \Yii::t('frontend/config', 'permissions'); ?></a></li>
 		 -->
 	</ul>
 
 	<div id="tabs-1">
-		<form action="<?php echo Yii::$app->urlManager->createUrl('config/save'); ?>" method="post" class="configuration-form">
+		<form action="<?= Yii::$app->urlManager->createUrl('config/save'); ?>" method="post" class="configuration-form">
 			<fieldset>
-				<legend>&nbsp;<?php echo \Yii::t('frontend/config', 'system'); ?>&nbsp;</legend>
-				<label class="cfg" title="interface language"><?php echo \Yii::t('frontend/config', 'language')?></label>
+				<legend>&nbsp;<?= \Yii::t('frontend/config', 'system'); ?>&nbsp;</legend>
+				<label class="cfg" title="interface language"><?= \Yii::t('frontend/config', 'language')?></label>
 				<select name="system_language" id="system_language">
 					<?php foreach ($SUPPORTED_VALUES['system_language'] as $v => $txt) {
 						$sel = ($cfg->system->language == $v ? 'selected="selected"' : '');
 						echo "<option $sel value=\"$v\">$txt</option>";
 					} ?>
-				</select> (ICU support: <a href="http://site.icu-project.org/">v.<?php echo INTL_ICU_VERSION?></a>)
+				</select> (ICU support: <a href="http://site.icu-project.org/">v.<?= INTL_ICU_VERSION?></a>)
 				<br /><br />
-				<label class="cfg" title="library theme"><?php echo \Yii::t('frontend/config', 'theme'); ?></label>
+				<label class="cfg" title="library theme"><?= \Yii::t('frontend/config', 'theme'); ?></label>
 				<select name="system_theme" id="system_theme" >
 					<?php foreach ($SUPPORTED_VALUES['system_theme'] as $t) { ?>
 					<option <?= $cfg->system->theme == $t ? 'selected="selected"' : ''; ?>><?= $t; ?></option>
 					<?php } ?>
 				</select>
 				<br /><br />
-				<label class="cfg"><?php echo \Yii::t('frontend/config', 'time zone'); ?></label>
+				<label class="cfg"><?= \Yii::t('frontend/config', 'time zone'); ?></label>
 				<select name="system_timezone" id="system_timezone" title="PHP timezone used to show and store data">
 				<?php foreach (DateTimeZone::listIdentifiers() as $dt) : ?>
 				<option <?= ($cfg->system->timezone == $dt ? 'selected="selected"' : '');?>><?=$dt ?></option>
@@ -61,48 +61,48 @@ form.configuration-form fieldset legend, form.configuration-form fieldset label 
 				</select>
 			</fieldset>
 			<fieldset>
-				<legend>&nbsp;<?php echo \Yii::t('frontend/config', 'library'); ?>&nbsp;</legend>
-				<label class="cfg"><?php echo \Yii::t('frontend/config', 'directory'); ?></label>
+				<legend>&nbsp;<?= \Yii::t('frontend/config', 'library'); ?>&nbsp;</legend>
+				<label class="cfg"><?= \Yii::t('frontend/config', 'directory'); ?></label>
 				<input name="library_directory" id="library_directory" type="text" title="Location of your books. Must end with '\' or '/' " value="<?= $cfg->library->directory; ?>" />
 				<br /><br />
-				<label class="cfg"><?php echo \Yii::t('frontend/config', 'syncronization'); ?></label>
+				<label class="cfg"><?= \Yii::t('frontend/config', 'syncronization'); ?></label>
 				<div style="display: inline-block;" id="library_sync">
 					<input type="radio" id="library_sync1" name="library_sync" value="1" <?= ($cfg->library->sync == true ? $checked : ''); ?> />
-					<label for="library_sync1"><?php echo \Yii::t('frontend/config', 'yes'); ?></label>
+					<label for="library_sync1"><?= \Yii::t('frontend/config', 'yes'); ?></label>
 					<input type="radio" id="library_sync2" name="library_sync" value="0" <?= ($cfg->library->sync == false ? $checked : ''); ?> />
-					<label for="library_sync2"><?php echo \Yii::t('frontend/config', 'no'); ?></label>
+					<label for="library_sync2"><?= \Yii::t('frontend/config', 'no'); ?></label>
 				</div>
 				<br /><br />
 				<label class="cfg">Filename Codepage</label>
 				<select name="library_codepage" id="library_codepage" title="FileSystem codepage used for filename storage.">
 					<?php foreach (array('cp1251'=> 'Windows(Cyrillic)','cp1252'=>'Windows(Latin)','utf-8' => 'Unicode') as $k => $v) { ?>
-					<option value="<?php echo $k; ?>" <?= ($cfg->library->codepage == $k ? 'selected="selected"' : ''); ?>><?php echo "$k - $v"; ?></option>
+					<option value="<?= $k; ?>" <?= ($cfg->library->codepage == $k ? 'selected="selected"' : ''); ?>><?= "$k - $v"; ?></option>
 					<?php } ?>
 				</select>
 			</fieldset>
 			<fieldset>
-				<legend>&nbsp;<?php echo \Yii::t('frontend/config', 'database'); ?>&nbsp;</legend>
-				<label class="cfg"><?php echo \Yii::t('frontend/config', 'DB format'); ?></label>
+				<legend>&nbsp;<?= \Yii::t('frontend/config', 'database'); ?>&nbsp;</legend>
+				<label class="cfg"><?= \Yii::t('frontend/config', 'DB format'); ?></label>
 				<select id="database_format" name="database_format">
 				<?php foreach (['sqlite','mysql'] as $f): ?>
-					<option <?php echo ($cfg->database->format == $f) ? 'selected="selected"' : ''?>><?php echo $f; ?></option>
+					<option <?= ($cfg->database->format == $f) ? 'selected="selected"' : ''?>><?= $f; ?></option>
 				<?php endforeach; ?>
 				</select>
 				<br/></br/>
 				
 				<fieldset id="database_format_sqlite">
-					<label class="cfg"><?php echo \Yii::t('frontend/config', 'file'); ?></label>
+					<label class="cfg"><?= \Yii::t('frontend/config', 'file'); ?></label>
 					<input name="database_filename" id="database_filename" type="text" value="<?= $cfg->database->filename; ?>" />
 				</fieldset>
 				
 				<fieldset id="database_format_mysql">
-					<label class="cfg"><?php echo \Yii::t('frontend/config', 'dbname'); ?></label>
+					<label class="cfg"><?= \Yii::t('frontend/config', 'dbname'); ?></label>
 					<input name="database_dbname" id="database_dbname" type="text" value="<?= $cfg->database->dbname; ?>" />
-					<label class="cfg"><?php echo \Yii::t('frontend/config', 'host'); ?></label>
+					<label class="cfg"><?= \Yii::t('frontend/config', 'host'); ?></label>
 					<input name="database_host" id="database_host" type="text" value="<?= $cfg->database->host; ?>" />
-					<label class="cfg"><?php echo \Yii::t('frontend/config', 'login'); ?></label>
+					<label class="cfg"><?= \Yii::t('frontend/config', 'login'); ?></label>
 					<input name="database_login" id="database_login" type="text" value="<?= $cfg->database->login; ?>" />
-					<label class="cfg"><?php echo \Yii::t('frontend/config', 'password'); ?></label>
+					<label class="cfg"><?= \Yii::t('frontend/config', 'password'); ?></label>
 					<input name="database_password" id="database_password" type="text" value="<?= $cfg->database->password; ?>" />
 				</fieldset>
 				
@@ -110,26 +110,34 @@ form.configuration-form fieldset legend, form.configuration-form fieldset label 
 
 			</fieldset>
 			<fieldset>
-				<legend><?php echo \Yii::t('frontend/config', 'book'); ?></legend>
-				<label class="cfg"><?php echo \Yii::t('frontend/config', 'name format'); ?></label>
+				<legend><?= \Yii::t('frontend/config', 'book'); ?></legend>
+				<label class="cfg"><?= \Yii::t('frontend/config', 'name format'); ?></label>
 				<input name="book_nameformat" id="book_nameformat" type="text" value="<?= $cfg->book->nameformat; ?>" title="tags are limited to {year}, {title}, {publisher}, {author}, {isbn13}, {ext}" />
 				<br /><br />
-				<label class="cfg"><?php echo \Yii::t('frontend/config', 'cover type'); ?></label>
+				<label class="cfg"><?= \Yii::t('frontend/config', 'cover type'); ?></label>
 				<select name="book_covertype" id="book_covertype" title="All images will be saved as JPEG to database">
 					<option><?= $cfg->book->covertype; ?></option>
 				</select>
 				<br /><br />
-				<label class="cfg"><?php echo \Yii::t('frontend/config', 'cover max width, px'); ?></label>
+				<label class="cfg"><?= \Yii::t('frontend/config', 'cover max width, px'); ?></label>
 				<input id="book_covermaxwidth" name="book_covermaxwidth" type="text" value="<?= $cfg->book->covermaxwidth; ?>" />
+                <br /><br />
+                <label class="cfg"><?= \Yii::t('frontend/config', 'GhostScript EXE'); ?></label>
+                <input id="book_ghostscript" name="book_ghostscript" type="text" value="<?= $cfg->book->ghostscript; ?>" title="Provide to get option to extract book cover from PDF file" />
 			</fieldset>
 		</form>		
 		<div id="result-message"></div>		
 	</div>
 
 	<div id="tabs-3">
+        <span id="sync-import-new-cover-from-pdf" title="Import new cover for books from its pdf file">Import new cover from pdf (safe)</span>
+        <br><br>
 		<span id="sync-check-files" title="Find mismatched records in database and library directory">check files (safe)</span>
+        <br><br>
 		<span id="sync-import-fs-files" title="Import unmatched filenames to database. Filenames are stored into title and filename columns. Use Check Files to see what will be imported">import fs only (possible duplicates)</span>
+        <br><br>
 		<span id="sync-clear-db-files" title="Removes records from databases that don't have matched real book files.">clear unmatched db files (unsafe!)</span>
+        <br><br>
 		<div id="sync-check-files-result"></div>
 	</div>
 
@@ -151,10 +159,19 @@ $('input[name="system_email"], input[name="library_sync"], input[name="system_de
 // text inputs
 //
 $("#system_emailto, #system_language, #system_theme, #system_timezone, #system_sessionpath, "+
-	"#library_directory, #database_format, input[id^='database_'], "+
-	"#book_nameformat, "+
-	"#book_covermaxwidth, #library_codepage")
-.on('focusout', function (e) {	
+	"#library_directory, input[id^='database_'], input[id^='book_'], #library_codepage")
+.on('focusout', function (e) {
+
+    if ($(this).attr('id') == 'book_ghostscript') {
+        if($(this).val() == '') {
+            // disable button instantly
+            $('#sync-import-new-cover-from-pdf').button( "option", "disabled", true);
+        } else {
+            // enable button instantly
+            $('#sync-import-new-cover-from-pdf').button( "option", "disabled", false);
+        }
+    }
+
 	saveParameter(this);
 });
 
@@ -176,7 +193,11 @@ function toggleDbForm(format)
 
 
 
-$("#sync-check-files, #sync-import-fs-files, #sync-clear-db-files").button();
+$("#sync-check-files, #sync-import-fs-files, #sync-clear-db-files, #sync-import-new-cover-from-pdf").button();
+
+if ($('#book_ghostscript').val() == '') {
+    $('#sync-import-new-cover-from-pdf').button( "option", "disabled", true);
+}
 
 $.fn.extend({
 	setMsg: function (message, title, result) {
@@ -277,7 +298,7 @@ $('#sync-clear-db-files').click(function(){
 //---------------------
 $('#sync-import-fs-files').click(function(){
 	// get fs files only filenames
-	$.get('<?php echo Yii::$app->urlManager->createUrl(['config/import-files']);?>', function(data) {
+	$.get('<?= Yii::$app->urlManager->createUrl(['config/import-files']);?>', function(data) {
 		//console.table(data);
 		var records_total = data.length;
 		var records_done = 0;
@@ -304,7 +325,7 @@ $('#sync-import-fs-files').click(function(){
 				span_message.text(' Action was successful');
 				return;
 			}			
-			$.post('<?php echo Yii::$app->urlManager->createUrl(['config/import-files']);?>',
+			$.post('<?= Yii::$app->urlManager->createUrl(['config/import-files']);?>',
 				{ post: post}, function(response) {
 					//console.log(response);
 				if (response.result) { //continue adding
@@ -328,11 +349,66 @@ $('#sync-import-fs-files').click(function(){
 	}, 'json');
 });
 
+$('#sync-import-new-cover-from-pdf').click(function(){
+    var res = $('#sync-check-files-result');
+
+    $.get('<?= Yii::$app->urlManager->createUrl('config/import-new-cover-from-pdf');?>', function(data) {
+
+            var records_total = data.length;
+            var records_done = 0;
+            res.empty();
+            if(records_total == 0) {
+                res.setMsg('Nothing to do.', 'Import Book Cover', true);
+                return;
+            }
+
+            res.append('<br/><br/><progress/><br/><br/><span id="counter"></span><span id="message"></span>');
+            var bar = $('progress', res);
+            var span_counter = $('span#counter', res);
+            var span_message = $('span#message', res);
+            bar.css('width', res.css('width'));
+            var width = parseInt(bar.css('width'));
+            bar.attr('max', records_total);
+            bar.attr('value', records_done);
+            var stepping = 1; // items on 1 request
+            span_counter.text(records_done + '/' + records_total);
+
+            var batcher = function(stepping) {
+                var post = data.slice(records_done, records_done+stepping);
+                if(post.length <= 0) {
+                    span_message.text(' Action was successful');
+                    return;
+                }
+                $.post('<?= Yii::$app->urlManager->createUrl(['config/import-new-cover-from-pdf']);?>',
+                    { post: post}, function(response) {
+                        //console.log(response);
+                        if (response.result) { //continue adding
+                            records_done += post.length;
+                            bar.attr('value', records_done);
+                            span_counter.text(records_done + '/' + records_total);
+                            span_message.text('');
+                            for(var i=0;i<response.data.length;i++){
+                                span_message.append('<p>'+response.data[i]+'</p>');
+                            }
+                            batcher(stepping);
+                        } else {
+                            //error or success
+                            span_message.text('<p>'+response.error+'</p>');
+                            return;
+                        }
+                    }, 'json');
+            };
+
+            batcher(stepping);
+    }, 'json');
+
+
+});
 
 $('#sync-check-files').click(function(){
 	var res = $('#sync-check-files-result');
 	
-	$.get('<?php echo Yii::$app->urlManager->createUrl('config/check-files');?>', function(data) {
+	$.get('<?= Yii::$app->urlManager->createUrl('config/check-files');?>', function(data) {
 		res.empty();
 
 		if (data.fs == 0 && data.db == 0) {

@@ -24,8 +24,10 @@ use Yii;
 use app\models\Books;
 use app\models\Helper;
 use app\components\Controller;
-use yii\filters\AccessControl;
+use yii\db\Exception;
+use yii\db\Expression;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 class ConfigController extends Controller
 {
@@ -36,13 +38,71 @@ class ConfigController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'index' => ['GET'],
-                    'users' => ['GET'],
                     'save' => ['POST'],
-                    'vacuum' => ['POST']
+                    'vacuum' => ['POST'],
+                    'sync-import-new-cover-from-pdf' => ['GET', 'POST']
                 ]
             ]
         ];
     }
+
+    public function actionImportNewCoverFromPdf()
+    {
+        \Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $books = Books::find()->select(['book_guid', 'filename'])
+            ->where(new Expression('book_cover IS NULL'))
+            ->andWhere(new Expression("filename LIKE '%.pdf'"))
+            ->asArray()
+            ->all();
+
+        if (\Yii::$app->request->getMethod() == 'GET') {
+            return $books;
+        }
+
+        $post = \Yii::$app->request->post('post', []);
+
+        $arr_added = [];
+        $tmpFilename = tempnam(sys_get_temp_dir(), 'MYL');
+        @unlink($tmpFilename); // small cheat for ghostscript error handling
+
+        try {
+            foreach ($post as $f) {
+                $filename = \Yii::$app->mycfg->library->directory . $f['filename'];
+
+                if (!file_exists($filename)) {
+                    throw new Exception('file not found '.$filename);
+                }
+
+                $book = Books::findOne(['book_guid' => $f['book_guid']]);
+
+                $ghostScriptEXE = \Yii::$app->mycfg->book->ghostscript;
+                $srcPdfFile = $filename;
+                $outJpegFile = $tmpFilename;
+                $cmd = "\"$ghostScriptEXE\" -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -dSAFER -dNOPAUSE -dBATCH -dFirstPage=1 -sPageList=1 -dLastPage=1 -sDEVICE=jpeg -dJPEGQ=100 -sOutputFile=\"$outJpegFile\" -r96 \"$srcPdfFile\"";
+
+                $res = exec($cmd, $r);
+
+                if (!file_exists($outJpegFile)) {
+                    throw new Exception("Failed to convert from $srcPdfFile to $outJpegFile. Last Message: $res \n ".
+                        print_r($r, true));
+                }
+
+                $book->book_cover = file_get_contents($outJpegFile);
+                if (!$book->save()) {
+                    throw new Exception("Failed to save book");
+                }
+                unlink($outJpegFile);
+            }
+        } catch (\Throwable $t) {
+            return ['data' => $arr_added, 'result' => false, 'error' => $t->getMessage()];
+        } finally {
+            @unlink($tmpFilename);
+        }
+
+        return ['data' => $arr_added, 'result' => true, 'error' => ''];
+    }
+
 
     /**
      * returns array of books filenames located in FS library folder
@@ -252,7 +312,7 @@ SQL;
             $resp->msg = "<b>$attr</b> was successfully updated";
             $resp->result = true;
         } catch (\Exception $e) {
-            $resp->msg = $e->getMessage();
+            $resp->msg = __FILE__ . ': '. __LINE__ . ' '. $e->getMessage();
             $resp->result = false;
         } finally {
             $resp->title = $group;

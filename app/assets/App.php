@@ -12,7 +12,7 @@ class App extends AssetBundle
 	  //GII/YII BUG: asset override is not loaded in Gii, so we force it to load
 	  \yii\bootstrap\BootstrapAsset::class,
 	  \yii\bootstrap\BootstrapPluginAsset::class,
-	  \yii\gii\TypeAheadAsset::class,
+	  //\yii\gii\TypeAheadAsset::class,
 	  
 	  JqueryUI::class,
 	  JqueryRaty::class,

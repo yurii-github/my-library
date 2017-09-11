@@ -32,7 +32,7 @@ TODO
 
 ## Requirements
 
-- php >=7
+- PHP 7 (use PHP 5.6 on your own risk, codepage config tweaks are needed)
 - sqlite or mysql
 - url rewrite (optional if you set **'enablePrettyUrl' => false** in /app/config/config.php)
 

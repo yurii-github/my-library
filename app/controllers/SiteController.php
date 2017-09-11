@@ -55,7 +55,8 @@ class SiteController extends Controller
             'jQuery UI' => 'https://jqueryui.com',
             'jQuery Grid' => 'http://www.trirand.com/blog',
             'jQuery Raty' => 'http://wbotelhos.com/raty',
-            'jQuery FancyBox' => 'http://fancybox.net'
+            'jQuery FancyBox' => 'http://fancybox.net',
+            'Ghostscript' => 'https://www.ghostscript.com/'
         ];
         return $this->render('//about/index', ['projects' => $projects]);
     }

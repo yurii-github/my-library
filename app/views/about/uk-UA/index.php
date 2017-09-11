@@ -10,7 +10,7 @@
 	if (!empty($projects)) {
 		echo '<ul>';
 		foreach ($projects as $t => $l) {
-			echo "<li><a href=\"{$l}\">{$t}</a></li>";
+			echo "<li><a target='_blank' href=\"{$l}\">{$t}</a></li>";
 		}
 		echo '</ul>';
 	}

@@ -40,6 +40,7 @@ entry point is located at
 - books CRUD
 - books categories
 - book cover saved to database
+- book cover can be imported from PDF (you need to have [ghostScript](https://www.ghostscript.com/))
 - themed (JqueryUI)
 - i18n
 - mysql and sqlite support

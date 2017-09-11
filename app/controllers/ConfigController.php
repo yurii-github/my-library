@@ -46,6 +46,12 @@ class ConfigController extends Controller
         ];
     }
 
+    /**
+     * Imports book cover from book if it is PDF
+     * Basically, get image from its 1st page
+     *
+     * @return array
+     */
     public function actionImportNewCoverFromPdf()
     {
         \Yii::$app->response->format = Response::FORMAT_JSON;
@@ -71,7 +77,7 @@ class ConfigController extends Controller
                 $filename = \Yii::$app->mycfg->library->directory . $f['filename'];
 
                 if (!file_exists($filename)) {
-                    throw new Exception('file not found '.$filename);
+                    throw new Exception('file not found ' . $filename);
                 }
 
                 $book = Books::findOne(['book_guid' => $f['book_guid']]);
@@ -84,7 +90,7 @@ class ConfigController extends Controller
                 $res = exec($cmd, $r);
 
                 if (!file_exists($outJpegFile)) {
-                    throw new Exception("Failed to convert from $srcPdfFile to $outJpegFile. Last Message: $res \n ".
+                    throw new Exception("Failed to convert from $srcPdfFile to $outJpegFile. Last Message: $res \n " .
                         print_r($r, true));
                 }
 
@@ -102,7 +108,6 @@ class ConfigController extends Controller
 
         return ['data' => $arr_added, 'result' => true, 'error' => ''];
     }
-
 
     /**
      * returns array of books filenames located in FS library folder
@@ -312,7 +317,7 @@ SQL;
             $resp->msg = "<b>$attr</b> was successfully updated";
             $resp->result = true;
         } catch (\Exception $e) {
-            $resp->msg = __FILE__ . ': '. __LINE__ . ' '. $e->getMessage();
+            $resp->msg = __FILE__ . ': ' . __LINE__ . ' ' . $e->getMessage();
             $resp->result = false;
         } finally {
             $resp->title = $group;

@@ -56,6 +56,8 @@ class SiteController extends Controller
             'jQuery Grid' => 'http://www.trirand.com/blog',
             'jQuery Raty' => 'http://wbotelhos.com/raty',
             'jQuery FancyBox' => 'http://fancybox.net',
+            'JS-Cookie' => 'https://github.com/js-cookie/js-cookie',
+            'Font-Awesome' => 'https://github.com/FortAwesome/Font-Awesome',
             'Ghostscript' => 'https://www.ghostscript.com/'
         ];
         return $this->render('//about/index', ['projects' => $projects]);

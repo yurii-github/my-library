@@ -9,30 +9,7 @@
 
 This is book library manager, written in PHP and based on JqueryUI.  
 The main purpose of it is to manage own book library as excel table with ratings and other stuff like filename syncronizations of your books and more.  
-Said that, it supports all JQuery UI themes.  
-
-Most js/css comes from CDN networks, so you probably eager to check code at /app/assets/*
-
-## Requirements
-
-- php >=7
-- sqlite or mysql
-- url rewrite (optional if you set **'enablePrettyUrl' => false** in /app/config/config.php)
-
-## Setup
-
-### Gist
-
-<pre>composer create-project  yurii-github/yii2-mylib  --stability=dev --no-dev</pre>
-remove --no-dev to get dev required stuff
-
-### Composer
-
-<pre>composer update</pre>
-
-entry point is located at
-<pre>PROJECT/app/public/index.php</pre>
-
+It supports all JQuery UI themes.  
 
 ## Functionality
 
@@ -48,34 +25,48 @@ entry point is located at
 - migrations
 - compact: optimizes DB via run vacuum for SQLite or table optimization for MySQL
  
-
 TODO
 
 * authors
 * publishers
 
+## Requirements
+
+- php >=7
+- sqlite or mysql
+- url rewrite (optional if you set **'enablePrettyUrl' => false** in /app/config/config.php)
+
 ## Usage
 
-As app is not truly finished, some workarounds must be considered.
+Most js/css comes from CDN networks, so you probably eager to check code at /app/assets/*
 
-### Add New Books
-The simplest way is to drop your book(s) to lib folder you've set in configuration and seconds tab "syncronization" press "import fs only". It will import all file system books that are not in database yet.
+### Sync
 
-### Edit Books
-You can edit book at frontpage excel sheet.
-If you enabled sync, app will require write permissions on your books to rename them accordinly to your book name format (supported tags are limited to {year}, {title}, {publisher}, {author}, {isbn13}, {ext}). Don't forget, that during import app doesn't recognize extension, it adds whole import name into title, so you have to add extension manually to rename file properly.
-NOTE! If you change book name format it will not rename all books! App will apply new format only to newly renamed books by you
+If you have enabled synchronization application will sync changes to your filesystem
+* any cell change that has influence on filename of the book will cause its rename
+* if you delete book it will be removed from filesystem too 
+* you cannot remove records without corresponding real file (you may disable sync if required)
+* you have to manage file extension manually to rename file properly.
+* if you change book filename format it will not rename all books! It will apply new format only to newly renamed books
 
-### Remove Book
-To remove book from lib just click trash icon near book.
-If you enabled sync, it will remove this book also from file system.
+### Importing new books
+The simplest way is to drop your books to library folder you've set in configuration and then on "synchronization" press "import fs only". 
+It will import all file system books that are not in database yet.
 
 ### Configuration
-
-A big note requires filesystem encoding. This is a **MUST** for file sync. In Windows this is mostly cp1251 codepage.
-
-
-## Console usage
-
-```yii2-console.bat help```  
-```yii2-console.bat migrate/history```
+Configuration is pretty straightforward. You need to have filesystem encoding configured if you use sync.
+ In PHP7 it look ok for Windows to use UTF8, but before use something like cp1251 codepage.
+ 
+ ## Setup
+ 
+ ### Gist
+ 
+ <pre>composer create-project  yurii-github/yii2-mylib  --stability=dev --no-dev</pre>
+ remove --no-dev to get dev required stuff
+ 
+ ### Composer
+ 
+ <pre>composer update</pre>
+ 
+ entry point is located at
+ <pre>PROJECT/app/public/index.php</pre>

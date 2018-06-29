@@ -114,3 +114,8 @@ img {
 #category_list label {
 	margin-left: 10px;
 }
+
+.ui-checkboxradio-radio-label .ui-icon-background,
+.ui-icon-background, .ui-state-active .ui-icon-background {
+	display: none !important;
+}

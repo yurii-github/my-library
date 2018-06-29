@@ -15,7 +15,7 @@
 	//API: http://www.w3.org/TR/FileAPI/
 	//identifying which image is currently open in fancybox
 	//https://github.com/fancyapps/fancyBox/issues/40
-	$.jgrid.no_legacy_api = true;
+	//$.jgrid.no_legacy_api = true;
 
 	var book_list = $("#book-list"), lastSel, lastFavorite, lastRead, filterCategories;
 

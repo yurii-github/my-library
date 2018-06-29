@@ -22,7 +22,21 @@ namespace app\assets;
 
 class JqueryRaty extends AssetBundle
 {
-    public $sourcePath = null;
-    public $js = ['jquery-raty/jquery.raty.min.js'];
-    public $depends = [\yii\web\JqueryAsset::class];
+    public $js = [
+        [
+            'https://cdnjs.cloudflare.com/ajax/libs/raty/2.8.0/jquery.raty.min.js',
+            'integrity' => 'sha256-S3dyvT3x/xsSYiVFiz7Qrwbq1FYHL3MivpzraOAy9x8=',
+            'crossorigin' => 'anonymous'
+        ],
+    ];
+
+    public $css = [
+        [
+            'https://cdnjs.cloudflare.com/ajax/libs/raty/2.8.0/jquery.raty.min.css',
+            'integrity' => 'sha256-LrmQrZI7viiZxHhADTAK//E2pEXLLiBer63y/S0Aniw=',
+            'crossorigin' => 'anonymous'
+        ]
+    ];
+
+    public $depends = [JqueryAsset::class];
 }

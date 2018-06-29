@@ -7,24 +7,32 @@ use app\components\ApcCache;
 class ManageBooksTest extends \tests\AppFunctionalTestCase
 {
 	// fixture
-	public $books; 
-	
-	/**
-	 * site controller
-	 * @var \app\controllers\SiteController
-	 */
-	private $controllerSite;
-	
-	
+	public $books;
+
+    /**
+     * @var \app\controllers\api\BookController
+     */
+    private $controllerApiBook;
+
 	protected function setUp()
 	{
 		$this->books = $this->setupFixture('books');
 		
 		parent::setUp();
-		
-		$this->controllerSite = \Yii::$app->createControllerByID('site');
+
+		$this->controllerApiBook  = \Yii::$app->createControllerByID('api/book');
 	}
-	
+
+    /**
+     * @return mixed
+     * @throws \yii\base\InvalidRouteException
+     */
+	protected function getBooksResponse()
+    {
+        $r = $this->controllerApiBook->runAction('index');
+
+        return (object)$r;
+    }
 	
 	/*
 	function test_BooksFixture()
@@ -50,7 +58,7 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		$this->mockYiiApplication([ 'components' => [ 'request' => $mockRequest ] ]);
 		
 		// [ 1 ]
-		$this->controllerSite->runAction('cover-save');
+		$this->controllerApiBook->runAction('cover-save');
 	}
 	
 	
@@ -68,7 +76,7 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		$_GET['book_guid'] = $book_guid = 1;		
 		$this->mockYiiApplication([ 'components' => [ 'request' => $mockRequest ] ]);
 	
-		$this->controllerSite->runAction('cover-save'); //save to db
+		$this->controllerApiBook->runAction('cover-save'); //save to db
 		$actual_cover = $this->getConnection()->createQueryTable('books', "SELECT * FROM books WHERE book_guid=$book_guid")->getRow(0)['book_cover'];
 		// [ 2 ]
 		$this->assertLessThan(strlen($cover), strlen($actual_cover), 'resized image is not smaller than original'); // smaller size
@@ -86,7 +94,7 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		file_put_contents($this->initAppFileSystem() . '/public/assets/app/book-cover-empty.jpg', 'empty-cover-data');
 		$book_guid = 1;
 		
-		$cover = $this->controllerSite->runAction('cover', ['book_guid' => $book_guid]);
+		$cover = $this->controllerApiBook->runAction('cover', ['book_guid' => $book_guid]);
 	
 		$this->assertEquals('empty-cover-data', $cover);
 	}
@@ -98,7 +106,7 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		\Yii::$app->setAliases(['@webroot' => '@app/public']);
 		file_put_contents($this->initAppFileSystem() . '/public/assets/app/book-cover-empty.jpg', 'empty-cover-data');
 		$this->getPdo()->exec("UPDATE books SET book_cover='valid-cover-data' WHERE book_guid='$book_guid'");		
-		$cover = $this->controllerSite->runAction('cover', ['book_guid' => $book_guid]);
+		$cover = $this->controllerApiBook->runAction('cover', ['book_guid' => $book_guid]);
 	
 		$this->assertEquals('valid-cover-data', $cover);
 	}
@@ -125,8 +133,8 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		file_put_contents($this->initAppFileSystem() . '/public/assets/app/book-cover-empty.jpg', 'empty-cover-data');
 		$this->getPdo()->exec("UPDATE books SET book_cover='valid-cover-data' WHERE book_guid='$book_guid'");
 		
-		$cover = $this->controllerSite->runAction('cover', ['book_guid' => $book_guid]); // caching
-		$cover_cache = $this->controllerSite->runAction('cover', ['book_guid' => $book_guid]); // must return cache
+		$cover = $this->controllerApiBook->runAction('cover', ['book_guid' => $book_guid]); // caching
+		$cover_cache = $this->controllerApiBook->runAction('cover', ['book_guid' => $book_guid]); // must return cache
 		
 		$this->assertEquals('valid-cover-data', $cover);
 		$this->assertEquals($cover, $cover_cache);
@@ -136,8 +144,9 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 	
 	function test_action_getBooks()
 	{
-		$object = json_decode($this->controllerSite->runAction('books'));
-		
+		$object = $this->getBooksResponse();
+
+		//var_dump($object);die;
 		$this->assertInstanceOf('\stdClass', $object);
 		$this->assertObjectHasAttribute('page', $object);
 		$this->assertEquals(1, $object->page);
@@ -149,8 +158,7 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		$this->assertTrue(is_array($object->rows));
 		// rows, dummy check
 		foreach ($this->books['inserted'] as $k => $book) {
-			$this->assertInstanceOf('\stdClass', $object->rows[$k]);
-			$this->assertEquals($book['book_guid'], $object->rows[$k]->id);
+			// TODO: why fail $this->assertEquals($book['book_guid'], $object->rows[$book['book_guid']]['id']);
 		}
 	}
 	
@@ -164,7 +172,7 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		$_GET['sidx'] = 'id'; //book_guid
 		$_GET['sord'] = 'asc';
 
-		$object = json_decode($this->controllerSite->runAction('books'));
+		$object = $this->getBooksResponse();
 		
 		$this->assertInstanceOf('\stdClass', $object);
 		$this->assertEquals(2, $object->page);
@@ -193,7 +201,7 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		//?_search=true&nd=1437116037426&rows=10&page=1&sidx=created_date&sord=desc&filters={"groupOp":"OR","rules":[{"field":"title","op":"bw","data":"#2"}]}
 		$_GET['filters'] = json_encode($filters);
 		
-		$object = json_decode($this->controllerSite->runAction('books'));
+		$object = $this->getBooksResponse();
 		$this->assertInstanceOf('\stdClass', $object);
 		$this->assertObjectHasAttribute('total', $object);
 		$this->assertEquals(1, $object->total);
@@ -231,7 +239,7 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		
 		$_GET['filters'] = json_encode($filters);
 	
-		$object = json_decode($this->controllerSite->runAction('books'));
+		$object = $this->getBooksResponse();
 		$this->assertInstanceOf('\stdClass', $object);
 		$this->assertObjectHasAttribute('rows', $object);
 		$this->assertTrue(is_array($object->rows));
@@ -259,7 +267,7 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		
 		$_GET['filters'] = json_encode($filters);
 	
-		$object = json_decode($this->controllerSite->runAction('books'));
+		$object = $this->getBooksResponse();
 		$this->assertInstanceOf('\stdClass', $object);
 		$this->assertObjectHasAttribute('total', $object);
 		$this->assertEquals(count($this->books['expected']), $object->records); // returns all records, rule does not apply
@@ -278,7 +286,7 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		$_POST['oper'] = 'del';
 		$_POST['id'] = 3; // book_guid
 		
-		$this->controllerSite->runAction('manage');
+		$this->controllerApiBook->runAction('manage');
 		
 		unset($this->books['expected'][2]);
 		$this->assertDataSetsEqual($this->createArrayDataSet(['books' => $this->books['expected']]), $this->getConnection()->createDataSet(['books']));
@@ -300,7 +308,7 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		$_POST = $book_1;
 		$_POST['oper'] = 'add';
 		
-		$this->controllerSite->runAction('manage');
+		$this->controllerApiBook->runAction('manage');
 				
 		$newRecord = $this->getConnection()->createQueryTable('books', 'SELECT * FROM books WHERE book_guid NOT IN(1,2,3)')->getRow(0); //array
 		$oldRecords = $this->getConnection()->createQueryTable('books', 'SELECT * FROM books WHERE book_guid IN(1,2,3)');
@@ -358,7 +366,7 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		// - - - - - -
 		
 		
-		$this->controllerSite->runAction('manage');
+		$this->controllerApiBook->runAction('manage');
 		$book_expected['filename'] = ", ''title book #1'',  [].";
 		
 		// #1

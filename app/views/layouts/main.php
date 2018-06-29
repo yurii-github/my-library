@@ -25,23 +25,9 @@ $this->title = "MyLibrary ~ {$this->title}";
 			['link' => ['//config/index'], 'title' => \Yii::t('frontend/site', 'Configuration')],
 			['link' => ['//config/vacuum'], 'title' => \Yii::t('frontend/site', 'Compact'), 'id' => 'vacuum-link'],
 			['link' => ['//site/about'], 'title' => \Yii::t('frontend/site', 'About {version}', ['version' => 'v.'.\Yii::$app->mycfg->version])],
-		  /* TODO: show when finished with AUTH
-			Yii::$app->user->isGuest ?
-				['link' => ['/site/login'], 'title' => \Yii::t('frontend/site', 'Login'), 'style' => 'color: white; background: green', 'id' => 'auth-link'] :
-				['link' => ['/site/logout'], 'title' => 'logout ('.Yii::$app->user->identity->username.')', 'style' => 'color: white; background: #BDB437', 'id' => 'auth-link']
-			*/
 		]]);
 	?>
 	</form>
-<?php
-/* TODO: show when finished with AUTH
-if(\Yii::$app->user->isGuest) { // append login form
-	echo $this->renderFile(__DIR__.'/_login.php');
-} else {
-	echo $this->renderFile(__DIR__.'/_logout.php');
-}
-*/
-?>
 </header>
 <?php echo $content; ?>
 <footer></footer>
@@ -51,7 +37,7 @@ if(\Yii::$app->user->isGuest) { // append login form
 		window.location.href = $(this).val();
 	});
 
-	
+
 	//
 	//
 	$("#vacuum-link").on("click", function(e) {
@@ -59,7 +45,7 @@ if(\Yii::$app->user->isGuest) { // append login form
 		var $menuItem = $(this);
 		var link = $menuItem.prev().val();
 		var menuText = $menuItem.children('span').text();//backup menu text
-		
+
 		// dummy no multi click
 		if ($menuItem.prop('disabled')) {
 			return false;
@@ -78,7 +64,6 @@ if(\Yii::$app->user->isGuest) { // append login form
 	});
 </script>
 <?php $this->endBody(); ?>
-<footer></footer>
 </body>
 </html>
 <?php $this->endPage();

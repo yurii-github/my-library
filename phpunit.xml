@@ -5,7 +5,7 @@ convertErrorsToExceptions="true"
 convertNoticesToExceptions="true"
 convertWarningsToExceptions="true"
 colors="true" 
-bootstrap="bootstrap.php"
+bootstrap="app/tests/bootstrap.php"
 beStrictAboutTestsThatDoNotTestAnything="true"
 beStrictAboutTestSize="true"
 beStrictAboutOutputDuringTests="true"
@@ -15,33 +15,33 @@ beStrictAboutChangesToGlobalState="false"
 
 	<testsuites>
 		<testsuite name="unit">
-			<directory>unit</directory>
+			<directory>app/tests/unit</directory>
 		</testsuite>
 		<testsuite name="functional">
-			<directory>functional</directory>
+			<directory>app/tests/functional</directory>
 		</testsuite>
 		<testsuite name="user">
-			<directory>user</directory>
+			<directory>app/tests/user</directory>
 		</testsuite>
 	</testsuites>
 	
 	<!-- codecoverage filters -->
 	<filter>
 		<blacklist>
-			<directory>../../vendor</directory>
+			<directory>./vendor</directory>
 		</blacklist>
 		<whitelist>
-			<directory>../</directory>
+			<directory>./</directory>
 			<exclude>
-				<directory>../config</directory>
-				<directory>../components/widgets/views</directory>
-				<directory>../data</directory>
-				<directory>../emails</directory>
-				<directory>../i18n</directory>
-				<directory>../runtime</directory>
-				<directory>../views</directory>
-				<directory>../tests</directory>
-				<directory>../public</directory>
+				<directory>app/config</directory>
+				<directory>app/components/widgets/views</directory>
+				<directory>app/data</directory>
+				<directory>app/emails</directory>
+				<directory>app/i18n</directory>
+				<directory>app/runtime</directory>
+				<directory>app/views</directory>
+				<directory>app/tests</directory>
+				<directory>app/public</directory>
 			</exclude>
 		</whitelist>
 	</filter>

@@ -20,10 +20,10 @@
 
 namespace app\assets;
 
-class JqueryFancybox extends AssetBundle
+class StyleAsset extends AssetBundle
 {
-    public $depends = [JqueryAsset::class];
+    public $css = [
+        'app/css/style.css',
+    ];
 
-    public $css = ['https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css'];
-    public $js = ['https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.pack.js'];
 }

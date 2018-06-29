@@ -38,6 +38,7 @@ function install()
 			#tar -xf data.tar.xz -C yk_chrome
 			#mv yk_chrome vendor
 		;;
+
 		chromedriver*)
 			echo -e "${color}Getting latest Chrome WebDriver for Selenium Server Standalone";
 			wget http://chromedriver.storage.googleapis.com/2.20/chromedriver_linux64.zip -O chromedriver.zip
@@ -88,9 +89,9 @@ then
 
 		install phpunit
 		install apcu
-		install selenium
+		#install selenium
 		#install chromium
-		install chromedriver
+		#install chromedriver
 		install deps
 
 		echo -e "${color}DEBUG: show vendor dir. IT will cached";
@@ -107,18 +108,15 @@ fi
 #
 if [ "$1" == "script" ]
 then
-	cd app/tests
 	# if php5.6 use clover
 	if [ "${TRAVIS_PHP_VERSION:0:3}" == "5.6" ] && [ "${DB_TYPE}" === "sqlite" ]
 	then
-		php ../../vendor/phpunit.phar $CLOVER
+		php vendor/phpunit.phar $CLOVER
 	else
-		php ../../vendor/phpunit.phar
+		php vendor/phpunit.phar
 	fi
 
 	export RES=$?
-	cd ../..
-
 	exit $RES
 fi
 

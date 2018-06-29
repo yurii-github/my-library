@@ -33,7 +33,7 @@ final class MyLibraryBootstrap implements BootstrapInterface
 	 */
 	public function bootstrap($app)
 	{
-	    $app->view->registerAssetBundle(\app\assets\App::class);
+	    $app->view->registerAssetBundle(\app\assets\AppAsset::class);
 
 		/* @var $cfg \app\components\Configuration */
 		$cfg = $app->mycfg;

@@ -12,8 +12,8 @@ return [
 	//'catchAll' => ['site/offline'],
 	'params' => [],
 	'bootstrap' => [
-		[ 'class' => 'app\components\MyLibraryBootstrap' ],
-		'log',
+		[ 'class' => app\components\MyLibraryBootstrap::class],
+		//'log',
         //'debug',
 	/*
 		[	'class' => 'yii\filters\ContentNegotiator',
@@ -30,7 +30,8 @@ return [
 		'@console' => '@app/../console',
 		'@modules' => '@app/modules',
 		'@runtime' => '@app/runtime',
-		'@bower' => '@vendor/bower-asset' //TODO: remove
+        '@bower' => '@vendor/bower-asset',
+        '@npm'   => '@vendor/npm-asset',
 	],
 	'language' => 'en-US',
 	'modules' => [
@@ -52,34 +53,24 @@ return [
 			],
 		],
 		'request' => [
-			'cookieValidationKey' => 'asd' ,
-			'enableCsrfValidation' => false],
-			'view' => [
-				'theme' => [ //TODO: add themes
-					'pathMap' => [ '@app/views' => '@app/themes/basic' ],
-					'baseUrl' => '@web/themes/basic'
-				]
-			],
+            'cookieValidationKey' => 'asd',
+            'enableCsrfValidation' => false],
+        'view' => [
+            'theme' => [ //TODO: add themes
+                'pathMap' => ['@app/views' => '@app/themes/basic'],
+                'baseUrl' => '@web/themes/basic'
+            ]
+        ],
+        /*
 		'assetManager' => [
 			//'appendTimestamp' => true,
 			'converter' => [
 				'class' => 'yii\web\AssetConverter'
 			],
-			'class' => 'app\components\AssetManager',
-			'linkAssets' => false, // symblic linking is OFF
-			'basePath' => '@webroot/assets',
-			'bundles' => [			  
-			  // resets Yii2 nonsense
-			  'yii\widgets\MaskedInputAsset' => ['js' => ['https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js'], 'sourcePath' => null],
-			  'yii\widgets\PjaxAsset' => ['js' => ['https://cdnjs.cloudflare.com/ajax/libs/jquery.pjax/1.9.6/jquery.pjax.min.js'], 'sourcePath' => null],
-			  'yii\validators\PunycodeAsset' => ['js' => ['https://cdnjs.cloudflare.com/ajax/libs/punycode/1.4.1/punycode.min.js'], 'sourcePath' => null],
-			  'yii\web\JqueryAsset' => ['js'=> ['https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js'], 'sourcePath' => null],
-			  //'yii\web\JqueryAsset' => ['js'=> ['https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js'], 'sourcePath' => null], <-- JqueryUI not supports
-			  'yii\bootstrap\BootstrapAsset' => ['css' => ['https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css'], 'sourcePath' => null],
-			  'yii\bootstrap\BootstrapPluginAsset' => ['js' => ['https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js'], 'sourcePath' => null],
-			  'yii\gii\TypeAheadAsset' => ['js' => ['https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.1.1/typeahead.bundle.min.js'], 'sourcePath' => null],
-			]
-		],
+			//'class' => 'app\components\AssetManager',
+			//'linkAssets' => false, // symblic linking is OFF
+			//'basePath' => '@webroot/assets',
+		],*/
 		'urlManager' => [
 			'class' => \yii\web\UrlManager::class,
 			'enablePrettyUrl' => true,
@@ -147,15 +138,6 @@ return [
 			'cache' => 'cache'
 			//'defaultRoles' => []
 		],
-		'request' => [
-			'cookieValidationKey' => 'asd' , 
-			'enableCsrfValidation' => false],
-		'view' => [
-			'theme' => [ //TODO: add themes
-				'pathMap' => [ '@app/views' => '@app/themes/basic' ],
-				'baseUrl' => '@web/themes/basic'
-			]
-		],
 		'db' => [
 			'class' => \yii\db\Connection::class,
 			'enableSchemaCache' => true,
@@ -164,6 +146,5 @@ return [
 			'dsn' => null, // will be overriden!
 			'charset' => 'UTF8' // utf-8 fails?
 		],
-
 	],
 ];

@@ -102,7 +102,8 @@ class AppTestCase extends \PHPUnit_Extensions_Database_TestCase
 			'basePath' => vfsStream::url('base'),
 			'vendorPath' => dirname(dirname(self::$baseTestDir)) . '/vendor',
 			'aliases' => [
-				'@runtime' => '@app/runtime'
+				'@runtime' => '@app/runtime',
+                '@webroot' => '@app/public',
 			],
 			'components' => [				
 				//'basePath' => \Yii::getAlias('@app/public/assets')

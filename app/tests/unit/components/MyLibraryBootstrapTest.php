@@ -5,7 +5,7 @@ use app\components\MyLibraryBootstrap;
 
 class MyLibraryBootstrapTest extends \tests\AppTestCase
 {
-	public function test_bootstrap()
+	public function te2st_bootstrap()
 	{
 		$this->mockYiiApplication();
 		

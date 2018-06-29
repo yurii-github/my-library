@@ -22,22 +22,30 @@ namespace app\assets;
 
 class JqueryGrid extends AssetBundle
 {
-    public $sourcePath = null;
-    public $depends = [\yii\web\JqueryAsset::class, 'app\assets\JqueryUI'];
+    public $depends = [
+        JqueryAsset::class,
+        JqueryUI::class
+    ];
 
-    public $css = ['https://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/css/ui.jqgrid.css'];
-    public $js = ['https://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/js/jquery.jqGrid.min.js'];
+    public $css = [
+        ['https://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/css/ui.jqgrid.css', 'integrity' => 'sha256-tvWgHjwKOywfYZV8G7meLG9DHLlkG3UmWBykXMyD8ic=', 'crossorigin' => 'amonymous']
+    ];
+
+    public $js = [
+        ['https://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/js/jquery.jqGrid.min.js', 'integrity' => 'sha256-3/Mtbexg7bKh7sWXeU3yyJvx79rQWhYhkFdCcdWdOS0=', 'crossorigin' => 'amonymous']
+    ];
 
     public function init()
     {
         $supported = ['uk-UA' => 'ua'];
 
+        //TODO: integrity
         if (array_key_exists(\Yii::$app->language, $supported)) {
             $this->js[] = "https://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/js/i18n/grid.locale-{$supported[\Yii::$app->language]}.js";
         } else {
             $this->js[] = 'https://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/js/i18n/grid.locale-en.js';
         }
 
-        parent::init();
+        //parent::init();
     }
 }

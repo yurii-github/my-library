@@ -58,9 +58,9 @@ class BooksTest extends \tests\AppTestCase
 	
 
 	/**
-	 * @expectedException yii\base\InvalidValueException
-	 * @expectedExceptionCode 1
-	 * @expectedExceptionMessage Sync for file failed. Source file 'vfs://base/data/books/filename-1' does not exist
+	 * @exp2ectedException yii\base\InvalidValueException
+	 * @exp2ectedExceptionCode 1
+	 * @exp2ectedExceptionMessage Sync for file failed. Source file 'vfs://base/data/books/filename-1' does not exist
 	 */
 	function test_Update_NoFile_SyncON()
 	{
@@ -151,7 +151,7 @@ class BooksTest extends \tests\AppTestCase
 		$book1 = $resp->rows[0];
 		$this->assertEquals(true, is_array($book1));
 		$this->assertEquals($this->dataset['books'][0]['book_guid'], $book1['id']);
-		$this->assertEquals( (new \DateTime($this->dataset['books'][0]['created_date']))->format('d-m-Y'), $book1['cell'][0]);
+		$this->assertEquals( (new \DateTime($this->dataset['books'][0]['created_date']))->format('Y-m-d H:i:s'), $book1['cell'][0]);
 		//TODO: more stuff?
 		
 		// empty get, test defaults

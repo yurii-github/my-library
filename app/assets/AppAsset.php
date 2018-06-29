@@ -20,24 +20,17 @@
 
 namespace app\assets;
 
-class App extends AssetBundle
+class AppAsset extends AssetBundle
 {
-    public $publishOptions = ['const-dir' => 'app'];
-    public $css = ['app/css/yui-reset-3.5.0.css', 'app/css/style.css'];
+    public $js = ['js.cookie.js'];
 
     public $depends = [
-        \yii\web\JqueryAsset::class,
-
-        //GII/YII BUG: asset override is not loaded in Gii, so we force it to load
-        \yii\bootstrap\BootstrapAsset::class,
-        \yii\bootstrap\BootstrapPluginAsset::class,
-        //\yii\gii\TypeAheadAsset::class,
-
+        FontAwesomeIcons::class,
+        JqueryAsset::class,
         JqueryUI::class,
-        JqueryRaty::class,
         JqueryFancybox::class,
-        JqueryGrid::class
+        JqueryRaty::class,
+        JqueryGrid::class,
+        StyleAsset::class
     ];
-
-    public $js = ['js.cookie.js'];
 }

@@ -22,15 +22,31 @@ namespace app\assets;
 
 class JqueryUI extends AssetBundle
 {
-    public $sourcePath = null;
-    public $depends = [\yii\web\JqueryAsset::class];
+    public $depends = [JqueryAsset::class];
 
     public function init()
     {
         $theme = \Yii::$app->mycfg->system->theme;
-        $this->js = ["https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"];
-        $this->css = ["https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/$theme/jquery-ui.css"];
 
-        parent::init();
+        $this->js = [
+            [
+                "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js",
+                'integrity' => 'sha256-KM512VNnjElC30ehFwehXjx1YCHPiQkOPmqnrWtpccM=',
+                'crossorigin' => 'anonymous'
+            ]
+        ];
+
+        $this->css = [
+            [
+                'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css',
+                'integrity' => 'sha256-rByPlHULObEjJ6XQxW/flG2r+22R5dKiAoef+aXWfik=',
+                'crossorigin' => 'anonymous'
+            ],
+            [
+                "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1//themes/$theme/theme.min.css",
+             //   'integrity' => 'sha256-rByPlHULObEjJ6XQxW/flG2r+22R5dKiAoef+aXWfik=',
+            //    'crossorigin' => 'anonymous'
+            ]
+        ];
     }
 }

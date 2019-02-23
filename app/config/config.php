@@ -8,23 +8,9 @@ return [
 	'defaultRoute' => 'site',
 	'layout' => 'main',
 	'controllerNamespace' => 'app\controllers',
-	//'controllerMap' => [alias=>class],
-	//'catchAll' => ['site/offline'],
 	'params' => [],
 	'bootstrap' => [
 		[ 'class' => app\components\MyLibraryBootstrap::class],
-		//'log',
-        //'debug',
-	/*
-		[	'class' => 'yii\filters\ContentNegotiator',
-			//'only' => ['view'],
-			'formats' => [
-				'text/html' => \yii\web\Response::FORMAT_HTML,
-				'application/json' => \yii\web\Response::FORMAT_JSON,
-				'application/xml' => \yii\web\Response::FORMAT_XML,
-			],
-			'languages' => [ 'en' => 'en-USSSS', 'ua' => 'ua' ],
-		],*/
 	],
 	'aliases' => [
 		'@console' => '@app/../console',
@@ -35,18 +21,12 @@ return [
 	],
 	'language' => 'en-US',
 	'modules' => [
-		//'apc' => [ 'class' => 'modules\apc\Module' ],
-		//'debug' => [ 'class' => 'yii\debug\Module' ]
 	],
 	'components' => [
-		/*'errorHandler' => [
-		 //'class' => 'yii\web\ErrorAction'
-		 //'errorAction' => 'site/error'
-		],*/
 		'i18n' => [
 			'translations' => [
 				'frontend/*' => [
-					'class' => 'yii\i18n\PhpMessageSource',
+					'class' => \yii\i18n\PhpMessageSource::class,
 					'basePath' => '@app/i18n',
 					'sourceLanguage' => 'en-US'
 				]
@@ -61,16 +41,6 @@ return [
                 'baseUrl' => '@web/themes/basic'
             ]
         ],
-        /*
-		'assetManager' => [
-			//'appendTimestamp' => true,
-			'converter' => [
-				'class' => 'yii\web\AssetConverter'
-			],
-			//'class' => 'app\components\AssetManager',
-			//'linkAssets' => false, // symblic linking is OFF
-			//'basePath' => '@webroot/assets',
-		],*/
 		'urlManager' => [
 			'class' => \yii\web\UrlManager::class,
 			'enablePrettyUrl' => true,
@@ -88,8 +58,6 @@ return [
 			'config_file' => '@app/config/libconfig.json',
             'version' => '1.3',
 		],
-		// https://github.com/yiisoft/yii2/blob/master/docs/guide/runtime-logging.md
-		//TODO: cannot set Logger or Dispatcher class. yii2 issue?
 		'log' => [
 			'traceLevel' => YII_DEBUG ? 1 : 0,
 			'targets' => [
@@ -118,7 +86,7 @@ return [
 					'enableRotation' => true,
 				],
 				'errors' => [
-					'class' => '\yii\log\FileTarget',
+					'class' => \yii\log\FileTarget::class,
 					'enabled' => true,
 					'levels' => ['warning', 'error'],
 					//'categories' => ['application'],
@@ -131,11 +99,11 @@ return [
 		],
 		'cache' => [
 			//'class' => \app\components\ApcCache::class,
-			'class' => '\yii\caching\DummyCache',
+			'class' => \yii\caching\DummyCache::class,
 			'keyPrefix' => 'mylib::',
 		],
 		'authManager' => [
-			'class' => '\yii\rbac\DbManager',
+			'class' => \yii\rbac\DbManager::class,
 			'cache' => 'cache'
 			//'defaultRoles' => []
 		],
@@ -144,7 +112,7 @@ return [
 			'enableSchemaCache' => true,
 			'schemaCache' => 'cache',
 			'schemaCacheDuration' => 3600,
-			'dsn' => null, // will be overriden!
+			'dsn' => null, // will be overridden!
 			'charset' => 'UTF8' // utf-8 fails?
 		],
 	],

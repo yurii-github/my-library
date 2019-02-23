@@ -15,7 +15,7 @@ $console_config = [
   'controllerNamespace' => 'yii\console\controllers',
   'controllerMap' => [
     'migrate' => [
-      'class' => '\yii\console\controllers\MigrateController',
+      'class' => \yii\console\controllers\MigrateController::class,
       'migrationTable' => 'yii2_migrations',
       'interactive' => 0,
     ]

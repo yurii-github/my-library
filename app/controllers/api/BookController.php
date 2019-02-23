@@ -43,8 +43,10 @@ class BookController extends Controller
     }
 
     /**
-     * return list of books in jqgrid format
-     * @return string json
+     * Return list of books in jqgrid format
+     *
+     * @return \stdClass
+     * @throws \yii\db\Exception
      */
     public function actionIndex()
     {
@@ -76,7 +78,10 @@ class BookController extends Controller
     }
 
     /**
-     * add/delete/update functionality for books via jqGrid interface
+     * CRUD functionality for books via jqGrid interface
+     *
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionManage()
     {
@@ -95,7 +100,11 @@ class BookController extends Controller
         }
     }
 
-    private function add($attributes)
+    /**
+     * @param array $attributes
+     * @throws \Throwable
+     */
+    private function add(array $attributes)
     {
         $book = new Books(['scenario' => 'add']);
         $book->attributes = $attributes;
@@ -103,6 +112,11 @@ class BookController extends Controller
         $book->insert();
     }
 
+    /**
+     * @param string|int $id
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
     private function delete($id)
     {
         $book = Books::findOne(['book_guid' => $id]);

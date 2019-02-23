@@ -1,12 +1,10 @@
-/.buildpath
-/.project
-/.settings/*
 /.idea
 /app/config/libconfig.json
 /app/config/local.php
 /app/public/assets/admin-lte/*
 /composer.lock
-/vendor/*
+
+/vendor
 /app/tests/reports/*
 /app/tests/local.dbconfig.php
 /app/runtime/debug

@@ -22,7 +22,6 @@ namespace app\controllers;
 
 use Yii;
 use app\models\Books;
-use app\models\Helper;
 use app\components\Controller;
 use yii\db\Exception;
 use yii\db\Expression;
@@ -35,7 +34,7 @@ class ConfigController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'index' => ['GET'],
                     'save' => ['POST'],

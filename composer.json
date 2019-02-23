@@ -29,6 +29,9 @@
 	],
 	"require" : {
 		"php" : ">=5.6",
+		"ext-json": "*",
+		"ext-pdo": "*",
+		"ext-gd": "*",
 		"yiisoft/yii2" : "~2.0.15"
 	},
 	"require-dev" : {

@@ -35,17 +35,17 @@ class JqueryGrid extends AssetBundle
         ['https://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/js/jquery.jqGrid.min.js', 'integrity' => 'sha256-3/Mtbexg7bKh7sWXeU3yyJvx79rQWhYhkFdCcdWdOS0=', 'crossorigin' => 'amonymous']
     ];
 
+    /**
+     * {@inheritdoc}
+     */
     public function init()
     {
         $supported = ['uk-UA' => 'ua'];
 
-        //TODO: integrity
         if (array_key_exists(\Yii::$app->language, $supported)) {
             $this->js[] = "https://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/js/i18n/grid.locale-{$supported[\Yii::$app->language]}.js";
         } else {
             $this->js[] = 'https://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/js/i18n/grid.locale-en.js';
         }
-
-        //parent::init();
     }
 }

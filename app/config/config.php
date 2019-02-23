@@ -84,17 +84,18 @@ return [
 			]
 		],
 		'mycfg' => [
-			'class' => 'app\components\Configuration',
-			'config_file' => '@app/config/libconfig.json'
+			'class' =>  \app\components\Configuration::class,
+			'config_file' => '@app/config/libconfig.json',
+            'version' => '1.3',
 		],
 		// https://github.com/yiisoft/yii2/blob/master/docs/guide/runtime-logging.md
 		//TODO: cannot set Logger or Dispatcher class. yii2 issue?
-		'log' => [ 
+		'log' => [
 			'traceLevel' => YII_DEBUG ? 1 : 0,
 			'targets' => [
 				'dev-trace'=> [
-					'class' => 'app\components\log\FileTarget',
-					'with_microtime' => true,
+					'class' => \yii\log\FileTarget::class,
+					'microtime' => true,
 					'enabled' => YII_DEBUG ? true : false,
 					'levels' => ['trace', 'profile'],
 					'categories' => ['events'],
@@ -105,8 +106,8 @@ return [
 					'enableRotation' => true,
 				],
 				'info'=> [
-					'class' => 'app\components\log\FileTarget',
-					'with_microtime' => true,
+					'class' => \yii\log\FileTarget::class,
+					'microtime' => true,
 					'enabled' => false,
 					'levels' => ['profile', 'info'],
 					'categories' => ['events'],
@@ -142,7 +143,7 @@ return [
 			'class' => \yii\db\Connection::class,
 			'enableSchemaCache' => true,
 			'schemaCache' => 'cache',
-			'schemaCacheDuration' => 3600, 
+			'schemaCacheDuration' => 3600,
 			'dsn' => null, // will be overriden!
 			'charset' => 'UTF8' // utf-8 fails?
 		],

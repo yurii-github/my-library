@@ -11,16 +11,16 @@ class DummyTest extends \tests\AppUserTestCase
 	public function test_DefaultConfigPage()
 	{
 		$drv = $this->getDriver()->get($this->getSiteUrl().'/config');
-		
-		$cfg = json_decode(Configuration::DEFAULT_CONFIG_JSON, true);
+
+		$cfgComponent = new Configuration(['version' => '1.3']);
+		$cfg = $cfgComponent->getDefaultConfiguration();
 		$SUPPORTED_VALUES = Configuration::SUPPORTED_VALUES; //PDT 3.4 fails to understand const array support. TODO: bug report
-				
 		$this->assertEquals('MyLibrary ~ Configuration', $drv->getTitle());
 
 		// === SELECTS ===
 		//
 		//-- system_language
-		$el = new Select($drv->findElement(By::xpath("//select[@name='system_language']")));		
+		$el = new Select($drv->findElement(By::xpath("//select[@name='system_language']")));
 		$this->assertEquals($cfg['system']['language'], $el->getFirstSelectedOption()->getAttribute('value')); //def value
 		$this->assertEquals($SUPPORTED_VALUES['system_language'][$cfg['system']['language']], $el->getFirstSelectedOption()->getText()); //def txt
 		// all options TODO: as function
@@ -49,9 +49,6 @@ class DummyTest extends \tests\AppUserTestCase
 		$el = new Select($drv->findElement(By::xpath("//select[@name='system_timezone']")));
 		$this->assertEquals($cfg['system']['timezone'], $el->getFirstSelectedOption()->getAttribute('value')); //def value
 		$this->assertEquals($cfg['system']['timezone'], $el->getFirstSelectedOption()->getText()); //def txt, equals to value
-		
 	}
-	
-	
 }
 

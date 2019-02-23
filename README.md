@@ -62,7 +62,11 @@ Configuration is pretty straightforward. You need to have filesystem encoding co
  
  ### Composer
  
- <pre>composer update</pre>
+ <pre>
+ git clonse git@github.com:yurii-github/yii2-mylib.git
+ cd yii2-mylib
+ composer update
+ </pre>
  
  entry point is located at
  <pre>PROJECT/app/public/index.php</pre>

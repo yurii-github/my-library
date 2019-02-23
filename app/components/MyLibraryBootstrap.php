@@ -2,7 +2,7 @@
 /*
  * My Book Library
  *
- * Copyright (C) 2014-2017 Yurii K.
+ * Copyright (C) 2014-2019 Yurii K.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ final class MyLibraryBootstrap implements BootstrapInterface
 	 * (non-PHPdoc)
 	 *
 	 * @see \yii\base\BootstrapInterface::bootstrap()
-	 * @param $app \yii\web\Application        	
+	 * @param $app \yii\web\Application
 	 */
 	public function bootstrap($app)
 	{
@@ -65,5 +65,5 @@ final class MyLibraryBootstrap implements BootstrapInterface
 			$app->session->setFlash('db_init', $e->getMessage());
 		}
 	}
-	
+
 }

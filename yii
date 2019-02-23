@@ -1,0 +1,3 @@
+#!/bin/bash
+path=$(pwd)
+./vendor/bin/yii "$@" --appconfig=${path}/app/config/console-config.php

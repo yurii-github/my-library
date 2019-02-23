@@ -2,7 +2,7 @@
 /*
  * My Book Library
  *
- * Copyright (C) 2014-2017 Yurii K.
+ * Copyright (C) 2014-2019 Yurii K.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,14 +27,14 @@ namespace app\components
 	use app\components\configuration\Library;
 	use app\components\configuration\Database;
 	use app\components\configuration\Book;
-						
+
 	/**
 	 * @property string $version
 	 * @property System $system
 	 * @property Library $library
 	 * @property Database $database
 	 * @property Book $book
-	 *        
+	 *
 	 */
 	class Configuration extends Object
 	{
@@ -72,9 +72,9 @@ namespace app\components
 				'vader'
 			],
 			'system_timezone' => [
-				// based on system support of DateTimeZone::listIdentifiers() 
+				// based on system support of DateTimeZone::listIdentifiers()
 			]
-			
+
 		];
 
         private $version = '1.3'; // DB VERSION
@@ -118,13 +118,13 @@ JSON;
 		{
 			$config['config_file'] = \Yii::getAlias($config['config_file']);
 			parent::__construct($config);
-			
+
 			if (!file_exists($this->config_file)) {
 				$this->saveDefaultCfg();
 			} else {
 				$this->load($this->config_file);
 			}
-			
+
 		}
 
 		public function __get($name)
@@ -132,34 +132,34 @@ JSON;
 			if (in_array($name, $this->options)) {
 				return $this->config->$name;
 			}
-				
+
 			return parent::__get($name);
 		}
 
 		/**
-		 * 
+		 *
 		 * @return string
 		 */
 		public function getVersion()
 		{
 			return $this->version;
 		}
-		
+
 		protected function saveDefaultCfg()
 		{
 			$this->config = $this->getDefaultCfg();
 			$this->save();
 		}
 
-		
+
 		public function load($filename)
 		{
 			if (!is_readable($filename)) {
 				throw new InvalidValueException('cannot read config file at this location: '.$filename);
 			}
-			
+
 			$this->config = Json::decode(file_get_contents($filename), false);
-			
+
 			\Yii::beginProfile('reflection', 'config');
 			//
 			// silently injects newly introduced option into current config from default config
@@ -184,8 +184,8 @@ JSON;
 			}
 			\Yii::endProfile('reflection', 'config');
 		}
-		
-		
+
+
 		/**
 		 * returns default configuration as php object
 		 * @return mixed
@@ -195,7 +195,7 @@ JSON;
 			return json_decode(str_replace('%app_directory%', addslashes(\Yii::getAlias('@app')), self::DEFAULT_CONFIG_JSON));
 		}
 
-		
+
 		/**
 		 * gets encoded utf-8 string in filesystem codepage type
 		 * @param string $filename
@@ -206,10 +206,10 @@ JSON;
 		  if (PHP_MAJOR_VERSION >= 7) {
 		    return $filename;
 		  }
-		  
+
 			return mb_convert_encoding($filename, $this->library->codepage, 'utf-8');
 		}
-		
+
 		/**
 		 * gets utf-8 string decoded from filesystem codepage type
          *
@@ -221,11 +221,11 @@ JSON;
 		  if (PHP_MAJOR_VERSION >= 7) {
 		    return $filename;
 		  }
-		  
+
 			return mb_convert_encoding($filename, 'utf-8', $this->library->codepage);
 		}
 
-		
+
 		public function save()
 		{
 			$filename = $this->config_file;
@@ -238,8 +238,8 @@ JSON;
 			} elseif (!is_dir($config_dir)) {
 				throw new InvalidValueException("config directory '$config_dir' does not exist", 3);
 			}
-			 
-			file_put_contents($filename, Json::encode($this->config, JSON_PRETTY_PRINT));			
+
+			file_put_contents($filename, Json::encode($this->config, JSON_PRETTY_PRINT));
 		}
 
 	}
@@ -254,17 +254,17 @@ namespace app\components\configuration
 	 * @property string $theme
 	 * @property string $timezone
 	 * @property string $language
-	 * @property string $version this param is only set after successful migration install  
+	 * @property string $version this param is only set after successful migration install
 	 */
 	class System {}
-	
+
 	/**
 	 * @property string $codepage
 	 * @property string $directory
 	 * @property string $sync
 	 */
 	class Library {}
-	
+
 	/**
 	 * @property string $filename
 	 * @property string $dbname
@@ -275,7 +275,7 @@ namespace app\components\configuration
 	 */
 	class Database {}
 
-	/**    
+	/**
 	 * @property string $nameformat
 	 * @property string $covertype
 	 * @property int $covermaxwidth

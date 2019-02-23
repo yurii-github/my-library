@@ -77,13 +77,113 @@ namespace app\components
 
 		];
 
-        private $version = '1.3'; // DB VERSION
+		/** @var string Database Version. Increase version if database changes after release */
+        public $version;
+        /** @var string filename of config file with current app configuration */
+        public $config_file;
 
-		//TODO: change version here too!
-		const DEFAULT_CONFIG_JSON = <<<JSON
+		private $config;
+		private $options = ['system', 'database', 'library', 'book'];
+
+
+		/**
+		 * {@inheritdoc}
+		 */
+		public function __construct($config = [])
+		{
+		    if (empty($config['version'])) {
+		        throw new \InvalidArgumentException("'version' attribute MUST BE set!");
+            }
+
+			$config['config_file'] = \Yii::getAlias($config['config_file']);
+			parent::__construct($config);
+
+			if (!file_exists($this->config_file)) {
+				$this->saveDefaultCfg();
+			} else {
+				$this->load($this->config_file);
+			}
+		}
+
+
+        /**
+         * @return string
+         */
+		public function getDefaultConfiguration22()
+        {
+
+        }
+
+
+		public function __get($name)
+		{
+			if (in_array($name, $this->options)) {
+				return $this->config->$name;
+			}
+
+			return parent::__get($name);
+		}
+
+		/**
+		 *
+		 * @return string
+		 */
+		public function getVersion()
+		{
+			return $this->version;
+		}
+
+		protected function saveDefaultCfg()
+		{
+			$this->config = $this->getDefaultConfiguration();
+			$this->save();
+		}
+
+
+		public function load($filename)
+		{
+			if (!is_readable($filename)) {
+				throw new InvalidValueException('cannot read config file at this location: '.$filename);
+			}
+
+			$this->config = Json::decode(file_get_contents($filename), false);
+
+			\Yii::beginProfile('reflection', 'config');
+			//
+			// silently injects newly introduced option into current config from default config
+			//
+			$def_config = $this->getDefaultConfiguration();
+			$rf1 = new \ReflectionObject($def_config);
+			/* @var $p_base \ReflectionProperty */
+			foreach ($rf1->getProperties() as $p_base) {// lvl-1: system, book ...
+				$lvl1 = $p_base->name;
+				if (empty($this->config->$lvl1)) {
+					$this->config->$lvl1 = $def_config->$lvl1;
+					continue;
+				}
+				$rf2 = new \ReflectionObject($def_config->{$p_base->name});
+				foreach ($rf2->getProperties() as $p_option) {//lvl-2: system->theme ..
+					$lvl2 = $p_option->name;
+					if (empty($this->config->$lvl1->$lvl2)) {
+						$this->config->$lvl1->$lvl2 = $def_config->$lvl1->$lvl2;
+						continue;//reserved. required for lvl-3 if introduced
+					}
+				}
+			}
+			\Yii::endProfile('reflection', 'config');
+		}
+
+
+		/**
+		 * returns default configuration as php object
+		 * @return mixed
+		 */
+		public function getDefaultConfiguration()
+		{
+            $config = <<<JSON
 {
     "system": {
-        "version": "1.3",
+        "version": "{version}",
         "theme": "smoothness",
         "timezone": "Europe\/Kiev",
         "language": "en-US"
@@ -110,89 +210,10 @@ namespace app\components
 }
 JSON;
 
-        public $config_file;
-		private $config;
-		private $options = ['system', 'database', 'library', 'book'];
+            $config = str_replace('{version}', $this->version, $config);
+            $config = str_replace('%app_directory%', addslashes(\Yii::getAlias('@app')), $config);
 
-		public function __construct($config = [])
-		{
-			$config['config_file'] = \Yii::getAlias($config['config_file']);
-			parent::__construct($config);
-
-			if (!file_exists($this->config_file)) {
-				$this->saveDefaultCfg();
-			} else {
-				$this->load($this->config_file);
-			}
-
-		}
-
-		public function __get($name)
-		{
-			if (in_array($name, $this->options)) {
-				return $this->config->$name;
-			}
-
-			return parent::__get($name);
-		}
-
-		/**
-		 *
-		 * @return string
-		 */
-		public function getVersion()
-		{
-			return $this->version;
-		}
-
-		protected function saveDefaultCfg()
-		{
-			$this->config = $this->getDefaultCfg();
-			$this->save();
-		}
-
-
-		public function load($filename)
-		{
-			if (!is_readable($filename)) {
-				throw new InvalidValueException('cannot read config file at this location: '.$filename);
-			}
-
-			$this->config = Json::decode(file_get_contents($filename), false);
-
-			\Yii::beginProfile('reflection', 'config');
-			//
-			// silently injects newly introduced option into current config from default config
-			//
-			$def_config = $this->getDefaultCfg();
-			$rf1 = new \ReflectionObject($def_config);
-			/* @var $p_base \ReflectionProperty */
-			foreach ($rf1->getProperties() as $p_base) {// lvl-1: system, book ...
-				$lvl1 = $p_base->name;
-				if (empty($this->config->$lvl1)) {
-					$this->config->$lvl1 = $def_config->$lvl1;
-					continue;
-				}
-				$rf2 = new \ReflectionObject($def_config->{$p_base->name});
-				foreach ($rf2->getProperties() as $p_option) {//lvl-2: system->theme ..
-					$lvl2 = $p_option->name;
-					if (empty($this->config->$lvl1->$lvl2)) {
-						$this->config->$lvl1->$lvl2 = $def_config->$lvl1->$lvl2;
-						continue;//reserved. required for lvl-3 if introduced
-					}
-				}
-			}
-			\Yii::endProfile('reflection', 'config');
-		}
-
-
-		/**
-		 * returns default configuration as php object
-		 * @return mixed
-		 */
-		protected function getDefaultCfg()
-		{
-			return json_decode(str_replace('%app_directory%', addslashes(\Yii::getAlias('@app')), self::DEFAULT_CONFIG_JSON));
+			return json_decode($config);
 		}
 
 
@@ -283,5 +304,6 @@ namespace app\components\configuration
 	 */
 	class Book {}
 }
+
 
 

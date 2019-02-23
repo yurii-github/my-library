@@ -22,9 +22,6 @@ namespace app\assets;
 
 class AssetBundle extends \yii\web\AssetBundle
 {
-    //public $basePath = nu;
-   // public $sourcePath = false;
-
     public $baseUrl = '@web/assets';
     public $cssOptions = ['type' => 'text/css'];
     public $jsOptions = ['position' => \yii\web\View::POS_HEAD];

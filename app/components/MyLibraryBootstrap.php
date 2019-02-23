@@ -22,6 +22,7 @@ namespace app\components;
 
 use yii\base\BootstrapInterface;
 use yii\base\Event;
+use yii\base\NotSupportedException;
 
 final class MyLibraryBootstrap implements BootstrapInterface
 {
@@ -41,7 +42,6 @@ final class MyLibraryBootstrap implements BootstrapInterface
 		$app->language = $cfg->system->language;
 
 		// inject into app
-		//	TODO:  mariadb, postgres, cubrid, oracle, mssql
 		try {
 			switch ($cfg->database->format) {
 				case 'mysql':
@@ -52,6 +52,10 @@ final class MyLibraryBootstrap implements BootstrapInterface
 				case 'sqlite':
 					$app->db->dsn = "sqlite:{$cfg->database->filename}";
 					break;
+
+                default:
+                    throw new NotSupportedException("Database format '{$cfg->database->format}' is not supported!");
+                    break;
 			}
 
 			if ($cfg->getVersion() != $cfg->system->version) {  //redirect to migration, as user config doesnot contain matching version

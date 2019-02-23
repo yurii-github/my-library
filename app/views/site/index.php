@@ -27,7 +27,7 @@
 		//console.log('cookie:',n,v);
 		return val;
 	}
-	
+
 	window.onbeforeunload = function() {
 		Cookies.set('rowNum', book_list.jqGrid('getGridParam', 'rowNum'));
 		Cookies.set('page', book_list.jqGrid('getGridParam', 'page'));
@@ -54,7 +54,7 @@
 		editurl : '<?php echo  Yii::$app->getUrlManager()->createUrl('api/book/manage');?>',
 		datatype: "json",
 		colNames:[
-			'<?php echo \Yii::t('frontend/site', 'Added'); ?>', '', 
+			'<?php echo \Yii::t('frontend/site', 'Added'); ?>', '',
 			'<?php echo \Yii::t('frontend/site', 'Favorite'); ?>',
 			'<?php echo \Yii::t('frontend/site', 'Read'); ?>',
 			'<?php echo \Yii::t('frontend/site', 'Year'); ?>',
@@ -124,6 +124,11 @@
 			{ name:'ext', index:'ext', width: 80, align: 'center'},
 			{ name:'filename', index:'filename', width: 20, align: 'center', search: false, resize: false, sortable: false, editable: false,
 				formatter: function(cellvalue, options, rowObject) {
+			  console.log('<?php echo strtoupper(PHP_OS)?>')
+			        <?php echo (strtoupper(PHP_OS) == 'LINUX' ?
+                        // replace ' ' to '\ ' AND replace "'" to "\'"
+                        'cellvalue = cellvalue.replace(/\s/g, \'\\\\ \'); cellvalue = cellvalue.replace(/\'/g, "\\\\\'");'
+                        : ''); ?>
 					return '<span title="click to copy filename to clipboard" class="book-filename ui-icon ui-icon-document" data-filename="<?php echo str_replace('\\', '\\\\', Yii::$app->mycfg->library->directory); ?>'+cellvalue+'"></span>';
 				}
 			},
@@ -293,7 +298,7 @@
 var coverUpload = {
 	init: function(book_guid) {
 		$(".fancybox-inner").addClass("book-cover-holder").append('<div class="book-cover-drop">drop<br /><b>HERE</b></div>');
-		
+
 		$('.book-cover-drop')
 		.on('dragover',  function(e){ e.preventDefault(); $(this).addClass('hovered');})
 		.on('dragleave', function(e){ e.preventDefault(); $(this).removeClass('hovered');})
@@ -319,7 +324,7 @@ var coverUpload = {
 						$('.book-cover-progress').val(e.loaded/e.total*100);
 					}
 				};
-			};//xhr	
+			};//xhr
 		})
 		.on('drop', function (e){
 			e = e.originalEvent;

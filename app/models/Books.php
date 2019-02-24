@@ -44,12 +44,15 @@ use app\helpers\Tools;
  * @property string $publisher
  * @property string $ext
  * @property string $filename
+ * @property-read Categories[] $categories
  */
 class Books extends ActiveRecord
 {
+    /** @var string 'book.cover.{book_guid}' book cover */
+    const CACHE_BOOK_COVER = 'book.cover.';
+
     /**
-     * (non-PHPdoc)
-     * @see \yii\base\Model::rules()
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -70,9 +73,36 @@ class Books extends ActiveRecord
         ];
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * NOTE: ignore book 'book_cover' on regular select for performance
+     */
+    public static function find()
+    {
+        return parent::find()->select([
+            'book_guid',
+            'created_date',
+            'updated_date',
+            'favorite',
+            'read',
+            'year',
+            'title',
+            'isbn13',
+            'author',
+            'publisher',
+            'ext',
+            'filename'
+        ]);
+    }
+
+    /**
+     * @return ActiveQuery
+     * @throws \yii\base\InvalidConfigException
+     */
     public function getCategories()
     {
-        return $this->hasMany(Categories::className(), ['guid' => 'category_guid'])
+        return $this->hasMany(Categories::class, ['guid' => 'category_guid'])
             ->viaTable('books_categories', ['book_guid' => 'book_guid']);
     }
 
@@ -138,6 +168,8 @@ class Books extends ActiveRecord
      */
     public function afterDelete()
     {
+        $this->flushCache();
+
         $filename_utf8 = \Yii::$app->mycfg->library->directory . $this->filename;
         $filename_encoded = \Yii::$app->mycfg->Encode($filename_utf8);
 
@@ -224,8 +256,20 @@ class Books extends ActiveRecord
         return $isChanged;
     }
 
+    protected function flushCache()
+    {
+        \Yii::$app->cache->delete(static::CACHE_BOOK_COVER. $this->book_guid);
+    }
+
+    /**
+     * @param bool $insert
+     * @return bool
+     * @throws HttpException
+     */
     public function beforeSave($insert)
     {
+        $this->flushCache();
+
         // yii2 event handling logic. do not remove!
         if (!parent::beforeSave($insert)) {
             return false;
@@ -260,28 +304,14 @@ class Books extends ActiveRecord
         return self::jgridRecords($data, $nameColumns, $sortColumns, $query);
     }
 
-    public static function getCover($id)
+
+    /**
+     * @return string binary book cover
+     */
+    public static function getCover($guid)
     {
-        header("Cache-Control: no-cache");
-        header("Pragma: no-cache");
-        header('Content-Type: image/jpeg');
-        \Yii::$app->response->format = Response::FORMAT_RAW;
-        $cache_name = 'book-cover-' . (empty($id) ? 'empty' : $id);
-
-        if (\Yii::$app->cache->exists($cache_name)) {
-            return \Yii::$app->cache->get('book-cover-' . $id);
-        }
-
-        $book = self::find()->select(['book_cover'])->where('book_guid = :book_guid', ['book_guid' => $id])->asArray()->one();
-
-        if (empty($book['book_cover'])) {
-            $book['book_cover'] = file_get_contents(\Yii::getAlias('@webroot') . '/assets/app/book-cover-empty.jpg');
-            \Yii::$app->cache->set('book-cover-empty', $book['book_cover']); //don't cache empty
-        } else {
-            \Yii::$app->cache->set($cache_name, $book['book_cover'], 3600);
-        }
-
-        return $book['book_cover'];
+        $cover = self::find()->select(['book_cover'])->where(['book_guid' => $guid])->limit(1)->scalar();
+        return $cover ? $cover : file_get_contents(\Yii::getAlias('@webroot') . '/assets/app/book-cover-empty.jpg');
     }
 
 }

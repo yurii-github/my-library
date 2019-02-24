@@ -124,7 +124,6 @@
 			{ name:'ext', index:'ext', width: 80, align: 'center'},
 			{ name:'filename', index:'filename', width: 20, align: 'center', search: false, resize: false, sortable: false, editable: false,
 				formatter: function(cellvalue, options, rowObject) {
-			  console.log('<?php echo strtoupper(PHP_OS)?>')
 			        <?php echo (strtoupper(PHP_OS) == 'LINUX' ?
                         // replace ' ' to '\ ' AND replace "'" to "\'"
                         'cellvalue = cellvalue.replace(/\s/g, \'\\\\ \'); cellvalue = cellvalue.replace(/\'/g, "\\\\\'");'

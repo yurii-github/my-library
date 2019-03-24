@@ -1,16 +1,14 @@
 
-<img src="http://gregfranko.com/images/jqueryui.png"/> 
-
 [![Build Status](https://travis-ci.org/yurii-github/yii2-mylib.svg?branch=master)](https://travis-ci.org/yurii-github/yii2-mylib) [![Code Climate](https://codeclimate.com/github/yurii-github/yii2-mylib/badges/gpa.svg)](https://codeclimate.com/github/yurii-github/yii2-mylib) [![Test Coverage](https://codeclimate.com/github/yurii-github/yii2-mylib/badges/coverage.svg)](https://codeclimate.com/github/yurii-github/yii2-mylib/coverage) [![Yii2](https://img.shields.io/badge/Powered_by-Yii_Framework-green.svg?style=flat)](http://www.yiiframework.com/)
-
-
-![library page](app/public/library.png)
 
 # About
 
 This is book library manager, written in PHP and based on JqueryUI.  
 The main purpose of it is to manage own book library as excel table with ratings and other stuff like filename syncronizations of your books and more.  
 It supports all JQuery UI themes.  
+
+![library page](app/public/library.png)
+
 
 ## Functionality
 
@@ -19,9 +17,9 @@ It supports all JQuery UI themes.
 - books categories
 - book cover saved to database
 - book cover can be imported from PDF (you need to have [ghostScript](https://www.ghostscript.com/))
-- themed (JqueryUI)
+- fully themed (JqueryUI)
 - i18n
-- mysql and sqlite support
+- MySQL and SQLite support
 - synchronization with filesystem (renames, deletes)
 - migrations
 - compact: optimizes DB via run vacuum for SQLite or table optimization for MySQL
@@ -29,8 +27,8 @@ It supports all JQuery UI themes.
 ## Requirements
 
 - PHP 7.2+
-- Sqlite or MySQL database
-- Internet connection (js/css comes from CDN networks, so if you want to work offline you should check code at /app/assets/*)
+- SQLite or MySQL database
+- Internet connection (JS/CSS comes from CDN networks, so if you want to work offline you should check code at /app/assets/*)
 
 ## Setup
  

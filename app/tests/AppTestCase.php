@@ -106,6 +106,7 @@ namespace tests {
                 'aliases' => [
                     '@runtime' => '@app/runtime',
                     '@webroot' => '@app/public',
+                    '@data'  => '@app/data',
                 ],
                 'components' => [
                     //'basePath' => \Yii::getAlias('@app/public/assets')
@@ -132,8 +133,9 @@ namespace tests {
                     ],
                     'mycfg' => [
                         'class' => \app\components\Configuration::class,
-                        'config_file' => $this->getConfigFilename()
-                    ]
+                        'config_file' => $this->getConfigFilename(),
+                        'version' => '1.3',
+                    ],
                 ]
             ], $config));
 
@@ -174,7 +176,7 @@ namespace tests {
         // - - - - - - FS - - - - >
         protected function getConfigFilename()
         {
-            return \Yii::getAlias('@app/config/libconfig.json');
+            return \Yii::getAlias('@data/config.json');
         }
 
         protected function initAppFileSystem()
@@ -205,7 +207,10 @@ namespace tests {
             ]);
 
             \Yii::$aliases['@app'] = vfsStream::url('base');
+            \Yii::$aliases['@data'] = vfsStream::url('base/data');
             //\Yii::$aliases['@webroot'] = vfsStream::url('base/public');
+
+            file_put_contents(\Yii::getAlias('@data/config.json'), file_get_contents(self::$baseTestDir.'/data/default_config.json'));
 
             $this->is_fs_init = true;
 

@@ -38,7 +38,7 @@ class ConfigurationTest extends \tests\AppTestCase
 	protected function setUp(): void
 	{
 		$this->initAppFileSystem();
-		$this->config = new mockConfiguration(['config_file' => $this->getConfigFilename()]);
+		$this->config = new mockConfiguration(['version' => '1.3', 'config_file' => $this->getConfigFilename()]);
 		$this->def_cfg = json_decode(file_get_contents(self::$baseTestDir.'/data/default_config.json'));
 	}
 
@@ -82,7 +82,6 @@ class ConfigurationTest extends \tests\AppTestCase
 		$mock_cfg->load($this->config->config_file); // load old config, our modified default config must apply level1 and level2 params
 
 		$this->assertEquals('cp1251', $mock_cfg->library->codepage);
-		$this->assertEquals($mock_cfg->system->level2, 'value 2');
 	}
 
 
@@ -97,15 +96,6 @@ class ConfigurationTest extends \tests\AppTestCase
 
 
 	/**
-	 * @expectedException yii\base\InvalidCallException
-	 */
-	function test_setVersion_NotAllowed()
-	{
-		$this->config->version = 'asd';
-	}
-
-
-	/**
 	 * @expectedException \yii\base\InvalidValueException
 	 */
 	function test_load_WrongConfigFile()
@@ -115,7 +105,7 @@ class ConfigurationTest extends \tests\AppTestCase
 
 
 	/**
-	 * @expectedException \yii\base\InvalidValueException
+	 * @expectedException \yii\base\Exception
 	 */
 	function test_save_WrongConfigFile()
 	{

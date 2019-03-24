@@ -253,9 +253,7 @@ JSON;
 			} elseif (is_dir($config_dir) && !is_writable($config_dir)) {
 				throw new InvalidValueException("config directory '$config_dir' is not writable", 2);
 			} elseif (!is_dir($config_dir)) {
-			    if (!FileHelper::createDirectory($config_dir, 0775, false)) {
-                    throw new InvalidValueException("config directory '$config_dir' does not exist. MyLibrary failed to create it.", 3);
-                }
+                FileHelper::createDirectory($config_dir, 0775, false);
 			}
 
 			if (!file_exists($filename)) {

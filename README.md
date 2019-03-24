@@ -23,6 +23,7 @@ It supports all JQuery UI themes.
 - synchronization with filesystem (renames, deletes)
 - migrations
 - compact: optimizes DB via run vacuum for SQLite or table optimization for MySQL
+- 1-hour caching for images from DB (if you setup cache in config)
 
 ## Requirements
 

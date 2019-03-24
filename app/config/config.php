@@ -1,4 +1,23 @@
 <?php
+/*
+ * My Book Library
+ *
+ * Copyright (C) 2014-2019 Yurii K.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses
+ */
+
 return [
 	'charset' => 'utf-8',
 	'id'		=> 'mylib',
@@ -18,8 +37,6 @@ return [
         '@data'  => dirname(__DIR__, 2) .'/data',
 	],
 	'language' => 'en-US',
-	'modules' => [
-	],
 	'components' => [
 		'i18n' => [
 			'translations' => [
@@ -31,13 +48,8 @@ return [
 			],
 		],
 		'request' => [
-            'cookieValidationKey' => 'asd',
-            'enableCsrfValidation' => false],
-        'view' => [
-            'theme' => [ //TODO: add themes
-                'pathMap' => ['@app/views' => '@app/themes/basic'],
-                'baseUrl' => '@web/themes/basic'
-            ]
+		    'enableCookieValidation' => false,
+            'enableCsrfValidation' => false,
         ],
 		'urlManager' => [
 			'class' => \yii\web\UrlManager::class,
@@ -101,11 +113,6 @@ return [
 			//'class' => \app\components\ApcCache::class,
 			//'class' => \yii\caching\DummyCache::class,
 			'keyPrefix' => 'mylib::',
-		],
-		'authManager' => [
-			'class' => \yii\rbac\DbManager::class,
-			'cache' => 'cache'
-			//'defaultRoles' => []
 		],
 		'db' => [
 			'class' => \yii\db\Connection::class,

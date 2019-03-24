@@ -85,7 +85,7 @@ class BooksTest extends \tests\AppTestCase
 		//var_dump($this->books['expected']); die;
 		//prepare
 		$book = Books::findOne(['book_guid' => $book_delete['book_guid']]);
-		$book_delete_filename = \Yii::getAlias('@data/books/').$book_delete['filename'];
+		$book_delete_filename = \Yii::getAlias("@data/books/{$book_delete['filename']}");
 		file_put_contents($book_delete_filename, 'something');
 		\Yii::$app->mycfg->library->sync = $sync;
 		//act

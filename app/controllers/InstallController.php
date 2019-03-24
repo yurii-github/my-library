@@ -49,13 +49,13 @@ class InstallController extends Controller
 
     protected function setupDataDir()
     {
-        FileHelper::createDirectory('@data/books');
-        FileHelper::createDirectory('@data/logs');
+        FileHelper::createDirectory(\Yii::getAlias('@data/books'), 0755, false);
+        FileHelper::createDirectory(\Yii::getAlias('@data/logs'), 0755, false);
     }
 
     public function actionMigrate()
     {
-       // $this->setupDataDir();
+        $this->setupDataDir();
 
         $cfg = [
             'db' => \Yii::$app->db,

@@ -1,6 +1,7 @@
 #
 # app
 #
+data
 vendor
 composer.lock
 

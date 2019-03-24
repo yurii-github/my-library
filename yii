@@ -1,3 +1,10 @@
-#!/bin/bash
-path=$(pwd)
-./vendor/bin/yii "$@" --appconfig=${path}/app/config/console-config.php
+#!/usr/bin/env php
+<?php
+define('YII_DEBUG', true);
+define('YII_ENV', 'dev');
+require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/vendor/yiisoft/yii2/Yii.php';
+$config = require __DIR__ . '/app/config/console-config.php';
+$application = new yii\console\Application($config);
+$exitCode = $application->run();
+exit($exitCode);

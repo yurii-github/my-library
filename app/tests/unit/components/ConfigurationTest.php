@@ -35,7 +35,7 @@ class ConfigurationTest extends \tests\AppTestCase
 	 * (non-PHPdoc)
 	 * @see PHPUnit_Extensions_Database_TestCase::setUp()
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		$this->initAppFileSystem();
 		$this->config = new mockConfiguration(['config_file' => $this->getConfigFilename()]);

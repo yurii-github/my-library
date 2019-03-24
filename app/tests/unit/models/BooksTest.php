@@ -8,7 +8,7 @@ class BooksTest extends \tests\AppTestCase
 {
 	protected $books;
 
-	protected function setUp()
+	protected function setUp(): void
 	{
 		$this->mockYiiApplication();
 

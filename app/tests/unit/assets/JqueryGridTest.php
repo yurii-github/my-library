@@ -6,7 +6,7 @@ use app\assets\JqueryGrid;
 
 class JqueryGridTest extends \tests\AppTestCase
 {
-	protected function setUp()
+	protected function setUp(): void
 	{
 		$this->mockYiiApplication([
 			'components' => [
@@ -18,7 +18,7 @@ class JqueryGridTest extends \tests\AppTestCase
 			]
 		]);
 	}
-	
+
 	public function pSupportedLangs()
 	{
 		return [
@@ -27,24 +27,24 @@ class JqueryGridTest extends \tests\AppTestCase
 			['uk-UA', '/grid.locale-ua.js$/'],
 		];
 	}
-	
-	
+
+
 	public function testInit()
 	{
 		$view = new View();
 		JqueryGrid::register($view);
-		
+
 		$this->assertEquals(3, count($view->assetBundles));
 		//$this->assertArrayHasKey(\app\assets\Jquery::class, $view->assetBundles);
 		$this->assertArrayHasKey(\app\assets\JqueryUI::class, $view->assetBundles);
 		$this->assertArrayHasKey(\app\assets\JqueryGrid::class, $view->assetBundles);
-		
+
 		$asset = $view->assetBundles[\app\assets\JqueryGrid::class];
 		$this->assertEquals(1, count($asset->css));
 		$this->assertEquals(2, count($asset->js));
 	}
 
-	
+
 	/**
 	 * @dataProvider pSupportedLangs
 	 */
@@ -54,9 +54,9 @@ class JqueryGridTest extends \tests\AppTestCase
 		$view = new View();
 		JqueryGrid::register($view);
 		$asset = $view->assetBundles[\app\assets\JqueryGrid::class];
-		
+
 		$this->assertRegExp($regexp, $asset->js[1]);
 	}
 
-	
+
 }

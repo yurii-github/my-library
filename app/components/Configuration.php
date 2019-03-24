@@ -87,6 +87,7 @@ namespace app\components
 		private $config;
 		private $options = ['system', 'database', 'library', 'book'];
 
+		private $isInstall = false;
 
 		/**
 		 * {@inheritdoc}
@@ -107,16 +108,6 @@ namespace app\components
 			}
 		}
 
-
-        /**
-         * @return string
-         */
-		public function getDefaultConfiguration22()
-        {
-
-        }
-
-
 		public function __get($name)
 		{
 			if (in_array($name, $this->options)) {
@@ -126,11 +117,14 @@ namespace app\components
 			return parent::__get($name);
 		}
 
-		/**
-		 *
-		 * @return string
-		 */
-		public function getVersion()
+
+		public function isInstall(): bool
+        {
+            return $this->isInstall;
+        }
+
+
+		public function getVersion(): string
 		{
 			return $this->version;
 		}
@@ -263,6 +257,10 @@ JSON;
                     throw new InvalidValueException("config directory '$config_dir' does not exist. MyLibrary failed to create it.", 3);
                 }
 			}
+
+			if (!file_exists($filename)) {
+                $this->isInstall = true;
+            }
 
 			file_put_contents($filename, Json::encode($this->config, JSON_PRETTY_PRINT));
 		}

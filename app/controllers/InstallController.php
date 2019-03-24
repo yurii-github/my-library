@@ -55,7 +55,7 @@ class InstallController extends Controller
 
     public function actionMigrate()
     {
-        $this->setupDataDir();
+       // $this->setupDataDir();
 
         $cfg = [
             'db' => \Yii::$app->db,

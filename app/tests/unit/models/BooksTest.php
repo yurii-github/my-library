@@ -11,35 +11,35 @@ class BooksTest extends \tests\AppTestCase
 	protected function setUp()
 	{
 		$this->mockYiiApplication();
-		
+
 		$this->books = $this->setupFixture('books');
 		parent::setUp();
 	}
-	
-	
+
+
 	public function pSync()
 	{
 		// sync options:  ON and OFF
 		return [ [true], [false] ];
 	}
 
-	
+
 	/**
 	 * @dataProvider pSync
 	 * @param bool $sync
 	 */
 	public function test_Update($sync)
-	{		
+	{
 		$book = Books::findOne(['book_guid' => 1]);
 		$book_filename = \Yii::$app->mycfg->library->directory.$book->filename;
 		file_put_contents($book_filename, 'something');
-		
+
 		$book->title = 'xxx';
 		\Yii::$app->mycfg->library->sync = $sync;
 		$book->save();
 
 		$new_filename = \Yii::$app->mycfg->library->directory.$book->filename;
-		
+
 		// physical file rename check
 		switch ($sync) {
 			case true:
@@ -47,7 +47,7 @@ class BooksTest extends \tests\AppTestCase
 				$this->assertFalse(file_exists($book_filename), 'SYNC ON: old file not removed. rename failed');
 				$this->assertEquals('something', file_get_contents($new_filename));
 				break;
-				
+
 			case false:
 				$this->assertTrue(file_exists($book_filename), "SYNC OFF: old file '$book_filename' removed or renamed. New file '$new_filename'");
 				$this->assertEquals($book_filename, $new_filename, "SYNC OFF: filename colum in db was updated with '$new_filename'");
@@ -55,7 +55,7 @@ class BooksTest extends \tests\AppTestCase
 				break;
 		}
 	}
-	
+
 
 	/**
 	 * @exp2ectedException yii\base\InvalidValueException
@@ -69,8 +69,8 @@ class BooksTest extends \tests\AppTestCase
 		$book = Books::findOne(['book_guid' => 1]);
 		$book->save();
 	}
-		
-	
+
+
 	/**
 	 * @dataProvider pSync
 	 * @param bool $sync
@@ -81,33 +81,33 @@ class BooksTest extends \tests\AppTestCase
 		$book_delete = $this->books['expected'][0];
 		unset($this->books['expected'][0]); //remove deleted from expected
 		$this->books['expected'] = array_values($this->books['expected']);
-		
+
 		//var_dump($this->books['expected']); die;
 		//prepare
 		$book = Books::findOne(['book_guid' => $book_delete['book_guid']]);
-		$book_delete_filename = \Yii::getAlias('@app/data/books/').$book_delete['filename'];
+		$book_delete_filename = \Yii::getAlias('@data/books/').$book_delete['filename'];
 		file_put_contents($book_delete_filename, 'something');
 		\Yii::$app->mycfg->library->sync = $sync;
 		//act
 		$book->delete();
-		
+
 		//verify
 		if ($sync) {
 			$this->assertFalse(file_exists($book_delete_filename), "Sync ON. book '{$book_delete_filename}' was not deleted");
 		} else {
 			$this->assertTrue(file_exists($book_delete_filename), "Sync OFF. book '{$book_delete_filename}' was deleted");
 		}
-		
+
 		$this->assertDataSetsEqual(
 			$this->createArrayDataSet(['books' => $this->books['expected']]),
 			$this->getConnection()->createDataSet(['books']));
 	}
-	
-	
+
+
 	public function test_Delete_Warning_FileWasDeletedWithSyncON()
 	{
 		$log_filename = $this->initAppFileSystem() . '/runtime/logs/logs.txt';
-		
+
 		$this->mockYiiApplication( [
 			'bootstrap' => [ 'log'	],
 			'components' => [
@@ -125,22 +125,22 @@ class BooksTest extends \tests\AppTestCase
 				]
 			]
 		]);
-		
+
 		$book_delete = $this->books['expected'][0];
 		\Yii::$app->mycfg->library->sync = true;
-		
+
 		$book = Books::findOne(['book_guid' => $book_delete['book_guid']]);
 		$book->delete();
 		\Yii::getLogger()->flush(true);
-		
+
 		$this->assertRegExp('/filename\-1\' was removed before record deletion with sync enabled$/', file_get_contents($log_filename));
 	}
-	
-	
-	
-	
+
+
+
+
 	function test_jgridBooks()
-	{	
+	{
 		//OK
 		$get = ['page' => 1,'limit' => 10, 'sort_column' => 'created_date','sort_order'=> 'desc', 'filters' => '' ];
 		$resp = Books::jgridBooks($get);
@@ -153,7 +153,7 @@ class BooksTest extends \tests\AppTestCase
 		$this->assertEquals($this->dataset['books'][0]['book_guid'], $book1['id']);
 		$this->assertEquals( (new \DateTime($this->dataset['books'][0]['created_date']))->format('Y-m-d H:i:s'), $book1['cell'][0]);
 		//TODO: more stuff?
-		
+
 		// empty get, test defaults
 		unset($get['page']);
 		$resp = Books::jgridBooks([]);
@@ -161,8 +161,8 @@ class BooksTest extends \tests\AppTestCase
 		$this->assertEquals($resp->page, 1);
 		$this->assertEquals($resp->records, count($this->dataset['books']));
 	}
-	
-	
+
+
 }
 
 

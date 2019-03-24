@@ -4,7 +4,7 @@
 //
 $console_config = [];
 $config = require __DIR__.'/config.php';
-$mylib_config_file = __DIR__.'/libconfig.json';
+$mylib_config_file = dirname(__DIR__).'/data/config.json';
 
 $console_config = [
   'id' => $config['id'].'-console',

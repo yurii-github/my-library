@@ -53,9 +53,35 @@ composer update
 ```
 Application will be available at [http://localhost:8080](http://localhost:8080)
 
+## Structure
+Here's the list of most interesting places: 
+<pre>
+├── app
+│   ├── assets      -  -  -  -  -  -  -  - CDN assets
+│   ├── config
+│   │   ├── config.local.php -  -  -  -  - your custom app configuration (that cannot be set via settings)
+│   ├── controllers
+│   ├── data        -  -  -  -  -  -  -  - your data is stored here
+│   │   ├── config.json      -  -  -  -  - settings set via web interface
+│   │   └── mydb.s3db        -  -  -  -  - book SQLite database
+│   ├── public      -  -  -  -  -  -  -  - entry point of the application  
+└── yii             -  -  -  -  -  -  -  - console app
+
+
+├── data
+│   ├── config.json
+│   └── mydb.s3db
+
+
+</pre>
+
 ### Configuration
 Configuration is pretty straightforward. You need to have filesystem encoding configured if you use sync.
  In PHP7 it look ok for Windows to use UTF8, but before use something like cp1251 codepage.
+<pre>
+
+
+</pre>
 
 ## Sync
 If you have enabled synchronization application will sync changes to your filesystem

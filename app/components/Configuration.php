@@ -22,7 +22,8 @@ namespace app\components
 {
 
     use yii\base\BaseObject;
-	use yii\helpers\Json;
+    use yii\helpers\FileHelper;
+    use yii\helpers\Json;
 	use \yii\base\InvalidValueException;
 	use app\components\configuration\System;
 	use app\components\configuration\Library;
@@ -191,12 +192,12 @@ namespace app\components
     },
     "library": {
         "codepage": "cp1251",
-        "directory": "%app_directory%\/data\/books\/",
+        "directory": "%data_directory%\/books\/",
         "sync": false
     },
     "database": {
         "format": "sqlite",
-        "filename": "%app_directory%\/data\/mydb.s3db",
+        "filename": "%data_directory%\/mydb.s3db",
         "host": "localhost",
         "dbname": "mylib",
         "login": "",
@@ -212,7 +213,7 @@ namespace app\components
 JSON;
 
             $config = str_replace('{version}', $this->version, $config);
-            $config = str_replace('%app_directory%', addslashes(\Yii::getAlias('@app')), $config);
+            $config = str_replace('%data_directory%', addslashes(\Yii::getAlias('@data')), $config);
 
 			return json_decode($config);
 		}
@@ -258,7 +259,9 @@ JSON;
 			} elseif (is_dir($config_dir) && !is_writable($config_dir)) {
 				throw new InvalidValueException("config directory '$config_dir' is not writable", 2);
 			} elseif (!is_dir($config_dir)) {
-				throw new InvalidValueException("config directory '$config_dir' does not exist", 3);
+			    if (!FileHelper::createDirectory($config_dir, 0775, false)) {
+                    throw new InvalidValueException("config directory '$config_dir' does not exist. MyLibrary failed to create it.", 3);
+                }
 			}
 
 			file_put_contents($filename, Json::encode($this->config, JSON_PRETTY_PRINT));

@@ -13,11 +13,9 @@ return [
 		[ 'class' => app\components\MyLibraryBootstrap::class],
 	],
 	'aliases' => [
-		'@console' => '@app/../console',
-		'@modules' => '@app/modules',
-		'@runtime' => '@app/runtime',
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
+        '@data'  => dirname(__DIR__, 2) .'/data',
 	],
 	'language' => 'en-US',
 	'modules' => [
@@ -55,7 +53,7 @@ return [
 		],
 		'mycfg' => [
 			'class' =>  \app\components\Configuration::class,
-			'config_file' => '@app/config/libconfig.json',
+			'config_file' => '@data/config.json',
             'version' => '1.3',
 		],
 		'log' => [
@@ -68,7 +66,7 @@ return [
 					'levels' => ['trace', 'profile'],
 					'categories' => ['events'],
 					'logVars' => [],
-					'logFile' => '@app/data/logs/dev-trace.txt',
+					'logFile' => '@data/logs/dev-trace.txt',
 					'maxFileSize' => 1024, // 1mb
 					'maxLogFiles' => 1,
 					'enableRotation' => true,
@@ -80,7 +78,7 @@ return [
 					'levels' => ['profile', 'info'],
 					'categories' => ['events'],
 					'logVars' => [],
-					'logFile' => '@app/data/logs/info.txt',
+					'logFile' => '@data/logs/info.txt',
 					'maxFileSize' => 1024, //1mb
 					'maxLogFiles' => 1,
 					'enableRotation' => true,
@@ -91,7 +89,7 @@ return [
 					'levels' => ['warning', 'error'],
 					//'categories' => ['application'],
 					'logVars' => [],
-					'logFile' => '@app/data/logs/errors.txt',
+					'logFile' => '@data/logs/errors.txt',
 					'maxFileSize' => 1024, //1mb
 					'maxLogFiles' => 1,
 				],

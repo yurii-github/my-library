@@ -20,7 +20,8 @@
 
 namespace app\components
 {
-	use yii\base\Object;
+
+    use yii\base\BaseObject;
 	use yii\helpers\Json;
 	use \yii\base\InvalidValueException;
 	use app\components\configuration\System;
@@ -36,7 +37,7 @@ namespace app\components
 	 * @property Book $book
 	 *
 	 */
-	class Configuration extends Object
+	class Configuration extends BaseObject
 	{
 		// NOTE: only supported in PHP 5.6+
 		const SUPPORTED_VALUES = [

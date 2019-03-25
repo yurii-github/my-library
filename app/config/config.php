@@ -108,10 +108,7 @@ return [
 			]
 		],
 		'cache' => [
-		    'class' => \yii\caching\MemCache::class,
-            'useMemcached' => true,
-			//'class' => \app\components\ApcCache::class,
-			//'class' => \yii\caching\DummyCache::class,
+            'class' => \yii\caching\DummyCache::class,
 			'keyPrefix' => 'mylib::',
 		],
 		'db' => [

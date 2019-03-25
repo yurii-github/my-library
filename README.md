@@ -1,7 +1,9 @@
 
+# My Library
+
 [![Build Status](https://travis-ci.org/yurii-github/yii2-mylib.svg?branch=master)](https://travis-ci.org/yurii-github/yii2-mylib) [![Code Climate](https://codeclimate.com/github/yurii-github/yii2-mylib/badges/gpa.svg)](https://codeclimate.com/github/yurii-github/yii2-mylib) [![Test Coverage](https://codeclimate.com/github/yurii-github/yii2-mylib/badges/coverage.svg)](https://codeclimate.com/github/yurii-github/yii2-mylib/coverage) [![Yii2](https://img.shields.io/badge/Powered_by-Yii_Framework-green.svg?style=flat)](http://www.yiiframework.com/)
 
-# About
+## About
 
 This is book library manager, written in PHP and based on JqueryUI.  
 The main purpose of it is to manage own book library as excel table with ratings and other stuff like filename syncronizations of your books and more.  
@@ -15,9 +17,10 @@ It supports all JQuery UI themes.
 - excel table is sortable, pagable
 - books CRUD
 - books categories
-- book cover saved to database
+- book cover is saved to database
+- book cover can be dropped in web interface
 - book cover can be imported from PDF (you need to have [ghostScript](https://www.ghostscript.com/))
-- fully themed (JqueryUI)
+- web interface is fully themed (all JqueryUI themes)
 - i18n
 - MySQL and SQLite support
 - synchronization with filesystem (renames, deletes)

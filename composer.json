@@ -37,6 +37,6 @@
 	},
 	"require-dev" : {
 		"phpunit/phpunit" : "*",
-		"mikey179/vfsStream" : "*"
+		"mikey179/vfsstream" : "*"
 	}
 }

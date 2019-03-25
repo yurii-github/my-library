@@ -58,20 +58,6 @@ class BooksTest extends \tests\AppTestCase
 
 
 	/**
-	 * @exp2ectedException yii\base\InvalidValueException
-	 * @exp2ectedExceptionCode 1
-	 * @exp2ectedExceptionMessage Sync for file failed. Source file 'vfs://base/data/books/filename-1' does not exist
-	 */
-	function test_Update_NoFile_SyncON()
-	{
-		/* @var $book Books */
-		\Yii::$app->mycfg->library->sync = true;
-		$book = Books::findOne(['book_guid' => 1]);
-		$book->save();
-	}
-
-
-	/**
 	 * @dataProvider pSync
 	 * @param bool $sync
 	 * @param bool $book_exists
@@ -98,9 +84,22 @@ class BooksTest extends \tests\AppTestCase
 			$this->assertTrue(file_exists($book_delete_filename), "Sync OFF. book '{$book_delete_filename}' was deleted");
 		}
 
-		$this->assertDataSetsEqual(
-			$this->createArrayDataSet(['books' => $this->books['expected']]),
-			$this->getConnection()->createDataSet(['books']));
+		$actualBooks = $this->getPdo()->query('SELECT * FROM books')->fetchAll();
+		$this->assertCount(count($this->books['expected']), $actualBooks);
+
+		foreach ($this->books['expected'] as $book) {
+            $found = false;
+		    foreach ($actualBooks as $actualBook) {
+		        if ($book['book_guid'] == $actualBook['book_guid']) {
+                    $found = true;
+                    break;
+                }
+            }
+
+            if (!$found) {
+                $this->assertFalse(1, 'Record was not found');
+            }
+        }
 	}
 
 

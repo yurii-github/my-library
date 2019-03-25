@@ -2,96 +2,44 @@
 
 namespace tests {
 
-    use app\components\Configuration;
     use org\bovigo\vfs\vfsStream;
     use PHPUnit\Framework\TestCase;
 
     class AppTestCase extends TestCase
     {
+        use DbTrait;
+
         protected static $baseTestDir = __DIR__;
-        private static $pdo;    // pdo connection
-        private static $dbc;    // dbunit connection, contains pdo
-
-        protected $dataset = [ //for clearing with dbunit via truncate
-            'books' => [],
-            'users' => []
-        ];
-
         private $is_fs_init = false;
 
-
-        function __destruct()
+        public function __destruct()
         {
             $this->destroyApplication();
-        }
 
-        /**
-         *
-         * @return \PDO
-         */
-        protected function getPdo()
-        {
-            if (empty(self::$pdo)) {
-                $env_db = getenv('DB_TYPE');
-                $db = $GLOBALS['db'][$env_db];
-                self::$pdo = new \PDO($db['dsn'], @$db['username'], @$db['password'], [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]);
-
-                //init tables
-                foreach (explode(';', file_get_contents(self::$baseTestDir . "/data/db.sqlite_mysql.txt")) as $query) {
-
-                    if (!empty($query)) {
-                        if ($env_db == 'mysql' && preg_match('/CREATE TABLE/i', $query)) {
-                            $query .= ' ENGINE=InnoDB DEFAULT CHARSET=utf8'; // for mysql
-                        }
-                        self::$pdo->query($query);
-                        //var_dump($query);
-                    }
-                }
+            if ($this->getPdo()->inTransaction()) {
+                $this->getPdo()->rollBack();
             }
-
-            return self::$pdo;
         }
 
-
-        /**
-         * (non-PHPdoc)
-         * @see PHPUnit_Extensions_Database_TestCase::getConnection()
-         */
-        protected function getConnection()
+        protected function setUp(): void
         {
-            if (empty(self::$dbc)) {
-                self::$dbc = $this->createDefaultDBConnection($this->getPdo());
-            }
-            return self::$dbc;
+            $this->getPdo()->beginTransaction();
+            $this->loadFixtures();
+
+            parent::setUp();
         }
 
-
-        /**
-         * (non-PHPdoc)
-         * @see PHPUnit_Extensions_Database_TestCase::getDataSet()
-         */
-        public function getDataSet()
-        {
-            return $this->createArrayDataSet($this->dataset);
-        }
-
-
-        /**
-         * (non-PHPdoc)
-         * @see PHPUnit_Extensions_Database_TestCase::tearDown()
-         */
         protected function tearDown(): void
         {
             $this->destroyApplication();
-            parent::tearDown();
 
+            if ($this->getPdo()->inTransaction()) {
+                $this->getPdo()->rollBack();
+            }
+
+            parent::tearDown();
         }
 
-
-        /**
-         * @param array $config
-         * @throws \yii\base\InvalidConfigException
-         */
         protected function mockYiiApplication(array $config = [])
         {
             $this->initAppFileSystem();
@@ -141,35 +89,9 @@ namespace tests {
 
         }
 
-
-        /**
-         *
-         */
         protected function destroyApplication()
         {
             \Yii::$app = null;
-        }
-
-        private function getFi2xture($name): string
-        {
-            return require self::$baseTestDir . "/data/fixtures/$name.php";
-        }
-
-        /**
-         *
-         * @param string $name table/fixture name
-         * @return unknown
-         */
-        protected function setupFi2xture($name)
-        {
-            $fixture = $this->getFixture($name);
-
-            $this->dataset = [
-                $name => $fixture['inserted']
-            ];
-
-
-            return $fixture;
         }
 
 
@@ -218,24 +140,6 @@ namespace tests {
         }
 
         // < - - - - - - FS - - - - -
-
-        /**
-         *  remove tables, fully clean database
-         */
-        function cleanDb()
-        {
-            foreach (array_keys($this->dataset) as $tbname) {
-                $sql = "DROP TABLE IF EXISTS $tbname";
-                self::getPdo()->query($sql);
-            }
-        }
-
-
-        protected function resetConnection()
-        {
-            self::$pdo = self::$dbc = null; // reset pdo connection
-        }
-
     }
 
 }

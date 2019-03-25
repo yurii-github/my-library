@@ -1,5 +1,4 @@
 DROP TABLE IF EXISTS books;
-DROP TABLE IF EXISTS users;
 
 CREATE TABLE `books` (
   `book_guid` char(36) NOT NULL,
@@ -16,13 +15,4 @@ CREATE TABLE `books` (
   `ext` varchar(5) DEFAULT NULL,
   `filename` text,
   PRIMARY KEY (`book_guid`)
-);
-
-
-CREATE TABLE users (
-  username VARCHAR(255),
-  password VARCHAR(255),
-  access_token VARCHAR(2000),
-  auth_key VARCHAR(255),
-  PRIMARY KEY (username)
 );

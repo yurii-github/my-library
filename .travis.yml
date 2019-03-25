@@ -9,8 +9,7 @@
 #
 language: php
 php:
-  - 5.6
-  - nightly
+  - 7.2
 matrix:
   allow_failures:
     - php: nightly
@@ -30,12 +29,12 @@ install:
   - export PATH=$PATH:$(pwd)/vendor/chrome-linux
 before_script:
   # fake GUI
-  - /sbin/start-stop-daemon --start --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16
-  - export DISPLAY=:99.0
+  #- /sbin/start-stop-daemon --start --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16
+  #- export DISPLAY=:99.0
   # run php web server and selenium server
-  - php -S 127.0.0.1:8080 -t $(pwd)/app/public 2> /dev/null &
-  - java -jar vendor/selenium.jar -Dwebdriver.chrome.driver=$(pwd)/vendor/chromedrv -log $(pwd)/selenium.log 2> /dev/null &
-  - sleep 6
+  #- php -S 127.0.0.1:8080 -t $(pwd)/app/public 2> /dev/null &
+  #- java -jar vendor/selenium.jar -Dwebdriver.chrome.driver=$(pwd)/vendor/chromedrv -log $(pwd)/selenium.log 2> /dev/null &
+  #- sleep 6
   - mysql -e "CREATE DATABASE IF NOT EXISTS test_mylib" -utravis
 script:
   - bash .travis.sh script
@@ -43,19 +42,19 @@ after_success:
   - bash .travis.sh after_success
 after_failure:
 after_script:
-  - head -20 selenium.log
+  #- head -20 selenium.log
 before_deployment:
 deployment:
 after_deployment:
 #
-# other 
+# other
 #
 addons:
   code_climate:
     repo_token: c68155affdbf8dd8d28e2a5c55f67ca43474429dae16b097f19e117b1da4194b
 #
 # cache on success. lifetime?
-# 
+#
 cache:
   directories:
     - vendor

@@ -37,7 +37,6 @@
 	},
 	"require-dev" : {
 		"phpunit/phpunit" : "*",
-		"mikey179/vfsStream" : "*",
-		"facebook/webdriver" : "*"
+		"mikey179/vfsStream" : "*"
 	}
 }

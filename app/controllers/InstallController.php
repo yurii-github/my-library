@@ -20,6 +20,7 @@
 
 namespace app\controllers;
 
+use yii\helpers\FileHelper;
 use yii\web\Controller;
 
 
@@ -46,8 +47,16 @@ class InstallController extends Controller
 {
     public $defaultAction = 'migrate';
 
+    protected function setupDataDir()
+    {
+        FileHelper::createDirectory(\Yii::getAlias('@data/books'), 0755, false);
+        FileHelper::createDirectory(\Yii::getAlias('@data/logs'), 0755, false);
+    }
+
     public function actionMigrate()
     {
+        $this->setupDataDir();
+
         $cfg = [
             'db' => \Yii::$app->db,
             'migrationTable' => 'yii2_migrations',
@@ -65,7 +74,7 @@ class InstallController extends Controller
         $controllerMigrate->actionHistory();
         // NOTE: I cut out any auth stuff as it is useless, uncomment if you want to use authentication
         //$controllerMigrate->migrationPath = $paths['rbac'];
-       // $controllerMigrate->actionUp();
+        // $controllerMigrate->actionUp();
         $controllerMigrate->migrationPath = $paths['mylib'];
         $controllerMigrate->actionUp();
         $r = ob_get_clean();

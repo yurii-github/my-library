@@ -1,7 +1,9 @@
 
+# My Library
+
 [![Build Status](https://travis-ci.org/yurii-github/yii2-mylib.svg?branch=master)](https://travis-ci.org/yurii-github/yii2-mylib) [![Code Climate](https://codeclimate.com/github/yurii-github/yii2-mylib/badges/gpa.svg)](https://codeclimate.com/github/yurii-github/yii2-mylib) [![Test Coverage](https://codeclimate.com/github/yurii-github/yii2-mylib/badges/coverage.svg)](https://codeclimate.com/github/yurii-github/yii2-mylib/coverage) [![Yii2](https://img.shields.io/badge/Powered_by-Yii_Framework-green.svg?style=flat)](http://www.yiiframework.com/)
 
-# About
+## About
 
 This is book library manager, written in PHP and based on JqueryUI.  
 The main purpose of it is to manage own book library as excel table with ratings and other stuff like filename syncronizations of your books and more.  
@@ -15,14 +17,17 @@ It supports all JQuery UI themes.
 - excel table is sortable, pagable
 - books CRUD
 - books categories
-- book cover saved to database
+- book cover is saved to database
+- book cover can be dropped in web interface
 - book cover can be imported from PDF (you need to have [ghostScript](https://www.ghostscript.com/))
-- fully themed (JqueryUI)
+- web interface is fully themed (all JqueryUI themes)
 - i18n
 - MySQL and SQLite support
 - synchronization with filesystem (renames, deletes)
 - migrations
 - compact: optimizes DB via run vacuum for SQLite or table optimization for MySQL
+- 1-hour caching for images from DB (if you setup cache in config)
+- configuration is done via web interface
 
 ## Requirements
 
@@ -38,7 +43,7 @@ I do recommend to use github approach because you can get more fresh code
     ```
     git clone git@github.com:yurii-github/yii2-mylib.git
     ```
-* Packagist/Composer
+* Packagist/Composer - [https://packagist.org](https://packagist.org/packages/yurii-github/yii2-mylib)
     ```
     composer create-project  yurii-github/yii2-mylib  --preffer-dist --stability=stable --no-dev
     ```
@@ -48,13 +53,23 @@ Now you can run
 ```
 cd yii2-mylib
 composer update
-./yii serve -t @pp/public
+./yii serve -t @app/public
 ```
 Application will be available at [http://localhost:8080](http://localhost:8080)
 
-### Configuration
-Configuration is pretty straightforward. You need to have filesystem encoding configured if you use sync.
- In PHP7 it look ok for Windows to use UTF8, but before use something like cp1251 codepage.
+## Structure
+Here's the list of most interesting places: 
+<pre>
+├── app
+│   ├── assets      -  -  -  -  -  -  -  - CDN assets
+│   ├── config
+│   │   └── config.local.php -  -  -  -  - your custom app configuration (that cannot be set via settings)
+│   ├── public      -  -  -  -  -  -  -  - entry point of the application  
+├── data            -  -  -  -  -  -  -  - your data is stored here
+│   ├── config.json          -  -  -  -  - settings set via web interface
+│   └── mydb.s3db            -  -  -  -  - book SQLite database
+└── yii             -  -  -  -  -  -  -  - console app
+</pre>
 
 ## Sync
 If you have enabled synchronization application will sync changes to your filesystem
@@ -67,3 +82,11 @@ If you have enabled synchronization application will sync changes to your filesy
 ## Importing new books
 The simplest way is to drop your books to library folder you've set in configuration and then on "synchronization" press "import fs only". 
 It will import all file system books that are not in database yet.
+
+
+# Development
+
+To export translations, run
+```
+./yii message app/config/message-config.php
+```

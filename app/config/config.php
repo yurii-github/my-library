@@ -1,4 +1,23 @@
 <?php
+/*
+ * My Book Library
+ *
+ * Copyright (C) 2014-2019 Yurii K.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses
+ */
+
 return [
 	'charset' => 'utf-8',
 	'id'		=> 'mylib',
@@ -13,15 +32,11 @@ return [
 		[ 'class' => app\components\MyLibraryBootstrap::class],
 	],
 	'aliases' => [
-		'@console' => '@app/../console',
-		'@modules' => '@app/modules',
-		'@runtime' => '@app/runtime',
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
+        '@data'  => dirname(__DIR__, 2) .'/data',
 	],
 	'language' => 'en-US',
-	'modules' => [
-	],
 	'components' => [
 		'i18n' => [
 			'translations' => [
@@ -33,13 +48,8 @@ return [
 			],
 		],
 		'request' => [
-            'cookieValidationKey' => 'asd',
-            'enableCsrfValidation' => false],
-        'view' => [
-            'theme' => [ //TODO: add themes
-                'pathMap' => ['@app/views' => '@app/themes/basic'],
-                'baseUrl' => '@web/themes/basic'
-            ]
+		    'enableCookieValidation' => false,
+            'enableCsrfValidation' => false,
         ],
 		'urlManager' => [
 			'class' => \yii\web\UrlManager::class,
@@ -55,7 +65,7 @@ return [
 		],
 		'mycfg' => [
 			'class' =>  \app\components\Configuration::class,
-			'config_file' => '@app/config/libconfig.json',
+			'config_file' => '@data/config.json',
             'version' => '1.3',
 		],
 		'log' => [
@@ -68,7 +78,7 @@ return [
 					'levels' => ['trace', 'profile'],
 					'categories' => ['events'],
 					'logVars' => [],
-					'logFile' => '@app/data/logs/dev-trace.txt',
+					'logFile' => '@data/logs/dev-trace.txt',
 					'maxFileSize' => 1024, // 1mb
 					'maxLogFiles' => 1,
 					'enableRotation' => true,
@@ -80,7 +90,7 @@ return [
 					'levels' => ['profile', 'info'],
 					'categories' => ['events'],
 					'logVars' => [],
-					'logFile' => '@app/data/logs/info.txt',
+					'logFile' => '@data/logs/info.txt',
 					'maxFileSize' => 1024, //1mb
 					'maxLogFiles' => 1,
 					'enableRotation' => true,
@@ -91,7 +101,7 @@ return [
 					'levels' => ['warning', 'error'],
 					//'categories' => ['application'],
 					'logVars' => [],
-					'logFile' => '@app/data/logs/errors.txt',
+					'logFile' => '@data/logs/errors.txt',
 					'maxFileSize' => 1024, //1mb
 					'maxLogFiles' => 1,
 				],
@@ -103,11 +113,6 @@ return [
 			//'class' => \app\components\ApcCache::class,
 			//'class' => \yii\caching\DummyCache::class,
 			'keyPrefix' => 'mylib::',
-		],
-		'authManager' => [
-			'class' => \yii\rbac\DbManager::class,
-			'cache' => 'cache'
-			//'defaultRoles' => []
 		],
 		'db' => [
 			'class' => \yii\db\Connection::class,

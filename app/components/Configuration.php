@@ -22,7 +22,8 @@ namespace app\components
 {
 
     use yii\base\BaseObject;
-	use yii\helpers\Json;
+    use yii\helpers\FileHelper;
+    use yii\helpers\Json;
 	use \yii\base\InvalidValueException;
 	use app\components\configuration\System;
 	use app\components\configuration\Library;
@@ -86,6 +87,7 @@ namespace app\components
 		private $config;
 		private $options = ['system', 'database', 'library', 'book'];
 
+		private $isInstall = false;
 
 		/**
 		 * {@inheritdoc}
@@ -106,16 +108,6 @@ namespace app\components
 			}
 		}
 
-
-        /**
-         * @return string
-         */
-		public function getDefaultConfiguration22()
-        {
-
-        }
-
-
 		public function __get($name)
 		{
 			if (in_array($name, $this->options)) {
@@ -125,11 +117,14 @@ namespace app\components
 			return parent::__get($name);
 		}
 
-		/**
-		 *
-		 * @return string
-		 */
-		public function getVersion()
+
+		public function isInstall(): bool
+        {
+            return $this->isInstall;
+        }
+
+
+		public function getVersion(): string
 		{
 			return $this->version;
 		}
@@ -191,12 +186,12 @@ namespace app\components
     },
     "library": {
         "codepage": "cp1251",
-        "directory": "%app_directory%\/data\/books\/",
+        "directory": "%data_directory%\/books\/",
         "sync": false
     },
     "database": {
         "format": "sqlite",
-        "filename": "%app_directory%\/data\/mydb.s3db",
+        "filename": "%data_directory%\/mydb.s3db",
         "host": "localhost",
         "dbname": "mylib",
         "login": "",
@@ -212,7 +207,7 @@ namespace app\components
 JSON;
 
             $config = str_replace('{version}', $this->version, $config);
-            $config = str_replace('%app_directory%', addslashes(\Yii::getAlias('@app')), $config);
+            $config = str_replace('%data_directory%', addslashes(\Yii::getAlias('@data')), $config);
 
 			return json_decode($config);
 		}
@@ -258,8 +253,12 @@ JSON;
 			} elseif (is_dir($config_dir) && !is_writable($config_dir)) {
 				throw new InvalidValueException("config directory '$config_dir' is not writable", 2);
 			} elseif (!is_dir($config_dir)) {
-				throw new InvalidValueException("config directory '$config_dir' does not exist", 3);
+                FileHelper::createDirectory($config_dir, 0775, false);
 			}
+
+			if (!file_exists($filename)) {
+                $this->isInstall = true;
+            }
 
 			file_put_contents($filename, Json::encode($this->config, JSON_PRETTY_PRINT));
 		}

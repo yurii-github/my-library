@@ -20,8 +20,8 @@ trait DbTrait
             self::$pdo = new \PDO($db['dsn'], @$db['username'], @$db['password'], [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]);
 
             foreach (explode(';', file_get_contents(self::$baseTestDir . "/data/db.{$env_db}.txt")) as $query) {
-                if (!empty($query)) {
-                    self::$pdo->query($query);
+                if (!empty(trim($query))) {
+                    self::$pdo->query(trim($query));
                 }
             }
         }

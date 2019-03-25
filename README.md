@@ -43,7 +43,7 @@ I do recommend to use github approach because you can get more fresh code
     ```
     git clone git@github.com:yurii-github/yii2-mylib.git
     ```
-* Packagist/Composer
+* Packagist/Composer - [https://packagist.org](https://packagist.org/packages/yurii-github/yii2-mylib)
     ```
     composer create-project  yurii-github/yii2-mylib  --preffer-dist --stability=stable --no-dev
     ```
@@ -53,7 +53,7 @@ Now you can run
 ```
 cd yii2-mylib
 composer update
-./yii serve -t @pp/public
+./yii serve -t @app/public
 ```
 Application will be available at [http://localhost:8080](http://localhost:8080)
 

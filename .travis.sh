@@ -17,9 +17,8 @@ function install()
 			;;
 
 		apcu*)
-			echo -e "${color}installing APCu 4.0.10 via PEAR/PECL..."
-			echo -e "${color}NOTE! APCu 5+ not compatible with php 5.6. SO we install 4.x"
-			echo 'yes' | pecl install apcu-4.0.10
+			echo -e "${color}installing APCu via PEAR/PECL..."
+			echo 'yes' | pecl install apcu-5.1.17
 			cp $(pear config-get ext_dir)/apcu.so $(pwd)/vendor/apcu.so
 			;;
 
@@ -53,14 +52,13 @@ function install()
 			composer remove phpunit/phpunit --dev --no-update
 			echo -e "${color}downloading required dependencies...";
 			composer require codeclimate/php-test-reporter --no-update
-			composer require codeclimate/php-test-reporter --no-update
 			composer install --prefer-dist --optimize-autoloader --no-progress
 			echo -e "${color}show installed dependencies:";
 			composer show --installed
 			;;
 
 		*)
-		echo 'Unknown parameter provided for instal()'
+		echo 'Unknown parameter provided for install()'
 		;;
 	esac
 }

@@ -35,26 +35,24 @@ It supports all JQuery UI themes.
 - SQLite or MySQL database
 - Internet connection (JS/CSS comes from CDN networks, so if you want to work offline you should check code at /app/assets/*)
 
-## Setup
+## Setup & Run
  
 I do recommend to use github approach because you can get more fresh code
 
 * Github
     ```
     git clone git@github.com:yurii-github/yii2-mylib.git
+    cd yii2-mylib
+    composer update
+    ./yii serve -t @app/public
     ```
 * Packagist/Composer - [https://packagist.org](https://packagist.org/packages/yurii-github/yii2-mylib)
     ```
-    composer create-project  yurii-github/yii2-mylib  --preffer-dist --stability=stable --no-dev
+    composer create-project  yurii-github/yii2-mylib  --prefer-dist --stability=stable --no-dev
+    cd yii2-mylib
+    ./yii serve -t @app/public
     ```
 
-Now you can run
-
-```
-cd yii2-mylib
-composer update
-./yii serve -t @app/public
-```
 Application will be available at [http://localhost:8080](http://localhost:8080)
 
 ## Structure

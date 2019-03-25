@@ -59,7 +59,6 @@ final class MyLibraryBootstrap implements BootstrapInterface
 			if ($cfg->isInstall() || $cfg->getVersion() != $cfg->system->version) {
 				Event::on(Controller::class, Controller::EVENT_BEFORE_ACTION, function(Event $event) {
 					\Yii::$app->response->redirect(['install/migrate']);
-                    \Yii::$app->response->send();
                     $event->isValid = false;
 				});
 			}

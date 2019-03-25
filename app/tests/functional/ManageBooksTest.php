@@ -77,7 +77,7 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		$this->mockYiiApplication([ 'components' => [ 'request' => $mockRequest ] ]);
 
 		$this->controllerApiBook->runAction('cover-save'); //save to db
-		$actual_cover = $this->getConnection()->createQueryTable('books', "SELECT * FROM books WHERE book_guid=$book_guid")->getRow(0)['book_cover'];
+		$actual_cover = $this->getPdo()->prepare("SELECT * FROM books WHERE book_guid=$book_guid")->fetch()['book_cover'];
 		// [ 2 ]
 		$this->assertLessThan(strlen($cover), strlen($actual_cover), 'resized image is not smaller than original'); // smaller size
 		// fails on Travis. why?
@@ -289,7 +289,7 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 		$this->controllerApiBook->runAction('manage');
 
 		unset($this->books['expected'][2]);
-		$this->assertDataSetsEqual($this->createArrayDataSet(['books' => $this->books['expected']]), $this->getConnection()->createDataSet(['books']));
+		$this->assertDataSetsEqual($this->createArrayDataSet(['books' => $this->books['expected']]), $this->createDataSet(['books']));
 	}
 
 
@@ -310,8 +310,8 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 
 		$this->controllerApiBook->runAction('manage');
 
-		$newRecord = $this->getConnection()->createQueryTable('books', 'SELECT * FROM books WHERE book_guid NOT IN(1,2,3)')->getRow(0); //array
-		$oldRecords = $this->getConnection()->createQueryTable('books', 'SELECT * FROM books WHERE book_guid IN(1,2,3)');
+		$newRecord = $this->getPdo()->prepare('SELECT * FROM books WHERE book_guid NOT IN(1,2,3)')->fetch();
+		$oldRecords = $this->getPdo()->prepare('SELECT * FROM books WHERE book_guid IN(1,2,3)')->fetchAll();
 
 		// check existing data did not change
 		$this->assertTrue($oldRecords->matches($this->createArrayDataSet(['books' => $this->books['expected']])->getTable('books')), 'old records does not match as they were changed');

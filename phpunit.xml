@@ -16,12 +16,15 @@ beStrictAboutChangesToGlobalState="false"
 		<testsuite name="unit">
 			<directory>app/tests/unit</directory>
 		</testsuite>
+
 		<testsuite name="functional">
 			<directory>app/tests/functional</directory>
 		</testsuite>
-		<testsuite name="user">
-			<directory>app/tests/user</directory>
-		</testsuite>
+		<!--
+                <testsuite name="user">
+                    <directory>app/tests/user</directory>
+                </testsuite>
+                        -->
 	</testsuites>
 
 	<!-- codecoverage filters -->

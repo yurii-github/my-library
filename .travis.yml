@@ -51,7 +51,7 @@ after_deployment:
 #
 addons:
   code_climate:
-    repo_token: c68155affdbf8dd8d28e2a5c55f67ca43474429dae16b097f19e117b1da4194b
+    repo_token: 28adcb727addc35197cb35d4bced9b010ed2f14f611ade92b9ac1210484f92e0
 #
 # cache on success. lifetime?
 #

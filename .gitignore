@@ -11,3 +11,4 @@ app/tests/reports/*
 app/tests/local.dbconfig.php
 /app/config/config.local.php
 .phpunit.result.cache
+

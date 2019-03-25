@@ -1,14 +1,14 @@
 #
 # app
 #
-data
-vendor
-composer.lock
+/data
+/vendor
+/composer.lock
 
 # dev
-.idea
-app/tests/reports/*
-app/tests/local.dbconfig.php
+/.idea
+/app/tests/reports/*
+/app/tests/local.dbconfig.php
 /app/config/config.local.php
-.phpunit.result.cache
+/.phpunit.result.cache
 

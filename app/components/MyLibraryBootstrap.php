@@ -27,10 +27,7 @@ use yii\base\NotSupportedException;
 final class MyLibraryBootstrap implements BootstrapInterface
 {
 	/**
-	 * (non-PHPdoc)
-	 *
-	 * @see \yii\base\BootstrapInterface::bootstrap()
-	 * @param $app \yii\web\Application
+	 * {@inheritdoc}
 	 */
 	public function bootstrap($app)
 	{
@@ -58,10 +55,11 @@ final class MyLibraryBootstrap implements BootstrapInterface
                     break;
 			}
 
-			if ($cfg->getVersion() != $cfg->system->version) {  //redirect to migration, as user config doesnot contain matching version
-				Event::on('app\components\Controller', Controller::EVENT_BEFORE_ACTION, function($e) {
+            //redirect to migration, as user config does not contain matching version or it was an installation request
+			if ($cfg->isInstall() || $cfg->getVersion() != $cfg->system->version) {
+				Event::on(Controller::class, Controller::EVENT_BEFORE_ACTION, function(Event $event) {
 					\Yii::$app->response->redirect(['install/migrate']);
-					return false;
+                    $event->isValid = false;
 				});
 			}
 

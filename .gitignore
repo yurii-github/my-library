@@ -1,14 +1,14 @@
-/.idea
-/app/config/libconfig.json
-/app/config/local.php
-/app/public/assets/admin-lte/*
+#
+# app
+#
+/data
+/vendor
 /composer.lock
 
-/vendor
+# dev
+/.idea
 /app/tests/reports/*
 /app/tests/local.dbconfig.php
-/app/runtime/debug
-/app/runtime/HTML
-/app/runtime/URI
-/app/public/assets
-/app/data/logs
+/app/config/config.local.php
+/.phpunit.result.cache
+

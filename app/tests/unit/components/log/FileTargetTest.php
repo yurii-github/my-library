@@ -7,7 +7,7 @@ use yii\log\FileTarget;
 
 class FileTargetTest extends \tests\AppTestCase
 {
-	protected function setUp()
+	protected function setUp(): void
 	{
 		parent::setUp();
 		$this->initAppFileSystem();
@@ -21,10 +21,10 @@ class FileTargetTest extends \tests\AppTestCase
 		$ft_my = new FileTarget(['logFile' => '@app/runtime/logs/log_my.txt']);
 
 		$this->assertEquals('2001-02-03 04:05:06 [info][app] some message', $ft->formatMessage($message)); //yii2 default
-		$ft_my->with_microtime = false;
+		$ft_my->microtime = false;
 		$this->assertEquals('2001-02-03 04:05:06 [info][app] some message', $ft_my->formatMessage($message)); //mylib as yii2 default
-		$ft_my->with_microtime = true;
-		$this->assertEquals('2001-02-03 04:05:06:123450 [info][app] some message', $ft_my->formatMessage($message)); //mylib custom with 6 nums pad
+		$ft_my->microtime = true;
+		$this->assertEquals('2001-02-03 04:05:06.123450 [info][app] some message', $ft_my->formatMessage($message)); //mylib custom with 6 nums pad
 	}
 
 
@@ -32,9 +32,9 @@ class FileTargetTest extends \tests\AppTestCase
 	{
 		$message =	[ ['key' => 'value'], Logger::LEVEL_INFO, 'app', (new \DateTime('2001-02-03 04:05:06'))->getTimestamp()+0.12345];
 		$ft_my = new FileTarget(['logFile' => '@app/runtime/logs/log_my.txt']);
-		$ft_my->with_microtime = true;
+		$ft_my->microtime = true;
 
-		$this->assertEquals("2001-02-03 04:05:06:123450 [info][app] [
+		$this->assertEquals("2001-02-03 04:05:06.123450 [info][app] [
     'key' => 'value',
 ]", $ft_my->formatMessage($message));
 
@@ -46,9 +46,9 @@ class FileTargetTest extends \tests\AppTestCase
 			['file' => '1', 'line' => '2']
 		]];
 		$ft_my = new FileTarget(['logFile' => '@app/runtime/logs/log_my.txt']);
-		$ft_my->with_microtime = true;
+		$ft_my->microtime = true;
 
-		$this->assertEquals("2001-02-03 04:05:06:123450 [info][app] some message
+		$this->assertEquals("2001-02-03 04:05:06.123450 [info][app] some message
     in 1:2", $ft_my->formatMessage($message));
 
 	}

@@ -4,7 +4,11 @@
 //
 $console_config = [];
 $config = require __DIR__.'/config.php';
-$mylib_config_file = __DIR__.'/libconfig.json';
+if (file_exists(__DIR__ . '/config.local.php')) {
+    $config = \yii\helpers\ArrayHelper::merge($config, require __DIR__ . '/config.local.php');
+}
+
+$settingsFile = $config['aliases']['@data'].'/config.json';
 
 $console_config = [
   'id' => $config['id'].'-console',
@@ -22,9 +26,16 @@ $console_config = [
   ]
 ];
 
-if (file_exists($mylib_config_file)) {
-  $mylib_config = json_decode(file_get_contents($mylib_config_file));
-  $console_config['components']['db']['dsn'] = 'sqlite:'.$mylib_config->database->filename;
+if (file_exists($settingsFile)) {
+  $settings = json_decode(file_get_contents($settingsFile));
+  $db = &$console_config['components']['db'];
+  if ($settings->database->format === 'sqlite') {
+      $db['dsn'] = "sqlite:host={$settings->database->host};dbname={$settings->database->dbname}";
+  } else {
+      $db['dsn'] = "{$settings->database->format}:host={$settings->database->host};dbname={$settings->database->dbname}";
+      $db['username'] = $settings->database->login;
+      $db['password'] = $settings->database->password;
+  }
 }
 
 return $console_config;

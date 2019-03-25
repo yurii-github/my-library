@@ -24,6 +24,7 @@ It supports all JQuery UI themes.
 - migrations
 - compact: optimizes DB via run vacuum for SQLite or table optimization for MySQL
 - 1-hour caching for images from DB (if you setup cache in config)
+- configuration is done via web interface
 
 ## Requirements
 
@@ -59,28 +60,12 @@ Here's the list of most interesting places:
 ├── app
 │   ├── assets      -  -  -  -  -  -  -  - CDN assets
 │   ├── config
-│   │   ├── config.local.php -  -  -  -  - your custom app configuration (that cannot be set via settings)
-│   ├── controllers
-│   ├── data        -  -  -  -  -  -  -  - your data is stored here
-│   │   ├── config.json      -  -  -  -  - settings set via web interface
-│   │   └── mydb.s3db        -  -  -  -  - book SQLite database
+│   │   └── config.local.php -  -  -  -  - your custom app configuration (that cannot be set via settings)
 │   ├── public      -  -  -  -  -  -  -  - entry point of the application  
+├── data            -  -  -  -  -  -  -  - your data is stored here
+│   ├── config.json          -  -  -  -  - settings set via web interface
+│   └── mydb.s3db            -  -  -  -  - book SQLite database
 └── yii             -  -  -  -  -  -  -  - console app
-
-
-├── data
-│   ├── config.json
-│   └── mydb.s3db
-
-
-</pre>
-
-### Configuration
-Configuration is pretty straightforward. You need to have filesystem encoding configured if you use sync.
- In PHP7 it look ok for Windows to use UTF8, but before use something like cp1251 codepage.
-<pre>
-
-
 </pre>
 
 ## Sync

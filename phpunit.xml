@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/5.2/phpunit.xsd"
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/8.0/phpunit.xsd"
 stopOnFailure="true"
-convertErrorsToExceptions="true" 
+convertErrorsToExceptions="true"
 convertNoticesToExceptions="true"
 convertWarningsToExceptions="true"
-colors="true" 
+colors="true"
 bootstrap="app/tests/bootstrap.php"
 beStrictAboutTestsThatDoNotTestAnything="true"
-beStrictAboutTestSize="true"
 beStrictAboutOutputDuringTests="true"
 beStrictAboutTodoAnnotatedTests="true"
 beStrictAboutChangesToGlobalState="false"
@@ -17,22 +16,19 @@ beStrictAboutChangesToGlobalState="false"
 		<testsuite name="unit">
 			<directory>app/tests/unit</directory>
 		</testsuite>
-		<testsuite name="functional">
-			<directory>app/tests/functional</directory>
-		</testsuite>
-		<testsuite name="user">
-			<directory>app/tests/user</directory>
-		</testsuite>
+        <!--
+                <testsuite name="functional">
+                    <directory>app/tests/functional</directory>
+                </testsuite>
+      -->
 	</testsuites>
-	
+
 	<!-- codecoverage filters -->
 	<filter>
-		<blacklist>
-			<directory>./vendor</directory>
-		</blacklist>
 		<whitelist>
-			<directory>./</directory>
+			<directory>app</directory>
 			<exclude>
+				<directory>vendor</directory>
 				<directory>app/config</directory>
 				<directory>app/components/widgets/views</directory>
 				<directory>app/data</directory>
@@ -45,14 +41,14 @@ beStrictAboutChangesToGlobalState="false"
 			</exclude>
 		</whitelist>
 	</filter>
-	
+
 	<!--
- 
-		
+
+
 	<logging>
 		<log  type="coverage-html" target="reports" />
 	</logging>
-	 --> 
+	 -->
 
 
 </phpunit>

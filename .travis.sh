@@ -8,7 +8,7 @@ function install()
 
 		phpunit*)
 			echo -e "${color}getting latest PHPUnit..."
-			wget https://phar.phpunit.de/phpunit-5.7.phar -O vendor/phpunit.phar --no-check-certificate
+			wget https://phar.phpunit.de/phpunit-8.phar -O vendor/phpunit.phar --no-check-certificate
 			;;
 
 		selenium*)
@@ -50,13 +50,11 @@ function install()
 		deps*)
 			echo -e "${color}removing dev deps as we have ones in CI or not required for testing";
 			composer remove yiisoft/yii2-debug --dev --no-update
-			composer remove phpunit/phpunit phpunit/dbunit --dev --no-update
+			composer remove phpunit/phpunit --dev --no-update
 			echo -e "${color}downloading required dependencies...";
 			composer require codeclimate/php-test-reporter --no-update
 			composer require codeclimate/php-test-reporter --no-update
-			composer require mikey179/vfsStream:1.5.0@stable --no-update
-			composer require facebook/webdriver:~1.0 --no-update
-			composer install --prefer-dist --optimize-autoloader --no-dev --no-progress
+			composer install --prefer-dist --optimize-autoloader --no-progress
 			echo -e "${color}show installed dependencies:";
 			composer show --installed
 			;;
@@ -94,7 +92,7 @@ then
 		#install chromedriver
 		install deps
 
-		echo -e "${color}DEBUG: show vendor dir. IT will cached";
+		echo -e "${color}DEBUG: show vendor dir. IT will be cached";
 		ls vendor -l
 
 	fi
@@ -108,8 +106,8 @@ fi
 #
 if [ "$1" == "script" ]
 then
-	# if php5.6 use clover
-	if [ "${TRAVIS_PHP_VERSION:0:3}" == "5.6" ] && [ "${DB_TYPE}" === "sqlite" ]
+	# if php7.2 use clover
+	if [ "${TRAVIS_PHP_VERSION:0:3}" == "7.2" ] && [ "${DB_TYPE}" == "sqlite" ]
 	then
 		php vendor/phpunit.phar $CLOVER
 	else
@@ -125,8 +123,8 @@ fi
 #
 if [ "$1" == "after_success" ]
 then
-	# if php5.6 use clover
-	if [ "${TRAVIS_PHP_VERSION:0:3}" == "5.6" ] && [ "${DB_TYPE}" === "sqlite" ] && [ -n "$CLOVER" ]
+	# if php7.2 use clover
+	if [ "${TRAVIS_PHP_VERSION:0:3}" == "7.2" ] && [ "${DB_TYPE}" == "sqlite" ] && [ -n "$CLOVER" ]
 	then
 		vendor/bin/test-reporter
 	else

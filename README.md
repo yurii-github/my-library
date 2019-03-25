@@ -5,7 +5,7 @@
 
 This is book library manager, written in PHP and based on JqueryUI.  
 The main purpose of it is to manage own book library as excel table with ratings and other stuff like filename syncronizations of your books and more.  
-It supports all JQuery UI themes.  
+It supports all JQuery UI themes.
 
 ![library page](app/public/library.png)
 
@@ -31,7 +31,7 @@ It supports all JQuery UI themes.
 - Internet connection (JS/CSS comes from CDN networks, so if you want to work offline you should check code at /app/assets/*)
 
 ## Setup
- 
+
 I do recommend to use github approach because you can get more fresh code
 
 * Github
@@ -54,16 +54,16 @@ Application will be available at [http://localhost:8080](http://localhost:8080)
 
 ### Configuration
 Configuration is pretty straightforward. You need to have filesystem encoding configured if you use sync.
- In PHP7 it look ok for Windows to use UTF8, but before use something like cp1251 codepage.
+In PHP7 it look ok for Windows to use UTF8, but before use something like cp1251 codepage.
 
 ## Sync
 If you have enabled synchronization application will sync changes to your filesystem
 * any cell change that has influence on filename of the book will cause its rename
-* if you delete book it will be removed from filesystem too 
+* if you delete book it will be removed from filesystem too
 * you cannot remove records without corresponding real file (you may disable sync if required)
 * you have to manage file extension manually to rename file properly.
 * if you change book filename format it will not rename all books! It will apply new format only to newly renamed books
 
 ## Importing new books
-The simplest way is to drop your books to library folder you've set in configuration and then on "synchronization" press "import fs only". 
+The simplest way is to drop your books to library folder you've set in configuration and then on "synchronization" press "import fs only".
 It will import all file system books that are not in database yet.

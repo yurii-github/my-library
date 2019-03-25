@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS books;
-DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS books_categories;
 
 CREATE TABLE `books` (
   `book_guid` char(36) NOT NULL,
@@ -18,11 +19,14 @@ CREATE TABLE `books` (
   PRIMARY KEY (`book_guid`)
 );
 
+CREATE TABLE `categories` (
+  `guid` char(36) NOT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`guid`)
+);
 
-CREATE TABLE users (
-  username VARCHAR(255),
-  password VARCHAR(255),
-  access_token VARCHAR(2000),
-  auth_key VARCHAR(255),
-  PRIMARY KEY (username)
+CREATE TABLE `books_categories` (
+  `book_guid` char(36) NOT NULL,
+  `category_guid` char(36) NOT NULL,
+  PRIMARY KEY (`book_guid`,`category_guid`)
 );

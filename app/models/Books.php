@@ -258,7 +258,9 @@ class Books extends ActiveRecord
 
     protected function flushCache()
     {
-        \Yii::$app->cache->delete(static::CACHE_BOOK_COVER. $this->book_guid);
+        if (\Yii::$app->cache) {
+            \Yii::$app->cache->delete(static::CACHE_BOOK_COVER. $this->book_guid);
+        }
     }
 
     /**

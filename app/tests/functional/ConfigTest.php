@@ -26,7 +26,7 @@ class ConfigTest extends \tests\AppFunctionalTestCase
 	//TODO: name filenames properly not just filename3 etc.
 	private $filename_fs_only = 'filename-4';
 
-	protected function setUp()
+	protected function setUp(): void
 	{
 
 		file_put_contents($this->initAppFileSystem() .'/data/books/filename-3', 'some data'); // db and fs
@@ -66,7 +66,9 @@ class ConfigTest extends \tests\AppFunctionalTestCase
 		$resp = json_decode($this->controller->runAction('clear-db-files')); // db cleared files that are not if fs, filename-3 left only
 
 		$this->assertArraySubset([1,2], $resp);//removed ids
-		$this->assertEquals(1, $this->getConnection()->getRowCount('books'));
+		$this->assertEquals(1, $this->getPdo()->query('SELECT * FROM books')->rowCount());
+
+		//TODO: fix test
 		$this->assertDataSetsEqual($this->createArrayDataSet(
 			['books' => [$this->books['expected'][2]]]),
 			$this->getConnection()->createDataSet(['books']), 'filename-3 was not left in db');
@@ -129,6 +131,7 @@ class ConfigTest extends \tests\AppFunctionalTestCase
 		} finally {
 			$this->resetConnection(); // we fail schema, need to recreate it after test
 		}
+
 	}
 
 

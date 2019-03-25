@@ -3,15 +3,15 @@ namespace tests;
 
 class AppFunctionalTestCase extends AppTestCase
 {
-	protected function setUp()
+	protected function setUp(): void
 	{
 		parent::setUp();
-		
+
 		$_SERVER['SERVER_NAME'] = 'phpunit-locahost'; //for yii2 request init. WTF?
 		$this->mockYiiApplication();
 	}
-	
-	
+
+
 	protected function mockYiiApplication($config = [])
 	{
 		$this->initAppFileSystem();
@@ -30,7 +30,7 @@ class AppFunctionalTestCase extends AppTestCase
 		$mycfg->database->login = @$db['username'];
 		$mycfg->database->password = @$db['password'];
 		file_put_contents($this->getConfigFilename(), json_encode($mycfg));
-		
+
 		//
 		//work cfg
 		$cfg = require dirname(self::$baseTestDir) . '/config/config.php';
@@ -42,12 +42,12 @@ class AppFunctionalTestCase extends AppTestCase
 			$cfg['components']['db']
 		);
 
-		
+
 		parent::mockYiiApplication(\yii\helpers\ArrayHelper::merge($cfg, $config));
 		//var_dump(\Yii::$app->mycfg); die;
 	}
-	
-	
+
+
 	/**
 	 * mocks render functionality of controller. no more output, just returns arguments [view, data] that render() receives
 	 *
@@ -58,17 +58,17 @@ class AppFunctionalTestCase extends AppTestCase
 	protected function mockController($id)
 	{
 		$class = \Yii::$app->controllerNamespace . '\\' . ucwords($id) . 'Controller';
-	
+
 		$mockController = $this->getMockBuilder($class)
 			->setConstructorArgs(['id' => $id, 'module'=> \Yii::$app])
 			->setMethods(['render', 'renderPartial'])->getMock();
-		
+
 		$mockController->expects($this->any())->method('renderPartial')->willReturnCallback(function(){return func_get_args();});
 		$mockController->expects($this->any())->method('render')->willReturnCallback(function(){return func_get_args();});
-		
+
 		return $mockController;
 	}
-	
-	
-	
+
+
+
 }

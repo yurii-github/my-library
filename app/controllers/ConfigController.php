@@ -191,23 +191,6 @@ SQL;
         return str_replace([':type', ':error', ':oldSize', ':newSize'], [$type, $error, $oldSize, $newSize], $returnMsg);
     }
 
-    // return roles+permissions and users+roles
-    public function actionPermissions()
-    {
-        $data = [];
-        $auth = Yii::$app->authManager;
-        $roles = $auth->getRoles();
-
-        foreach ($roles as $r) {
-            $perms = $auth->getChildren($r->name);
-            foreach ($perms as $p) {
-                $data[$r->name][$p->name] = $p;
-            }
-        }
-
-        return $this->renderPartial('permissions', ['roles' => $data, 'perms' => $auth->getPermissions()]);
-    }
-
     public function actionCheckFiles()
     {
         // TODO: read with iterator, not all. may use too much memory

@@ -43,7 +43,7 @@ class ActiveRecord extends \yii\db\ActiveRecord
             'query' => $query,
             'pagination' => [
                 'pageSize' => $data['limit'],
-                'page' => $data['page'] - 1 //jgrid fix
+                'page' => $data['page'] - 1 // NOTE: jqGrid fix
             ],
         ]);
 

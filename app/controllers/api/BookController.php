@@ -51,17 +51,18 @@ class BookController extends Controller
      */
     public function actionIndex()
     {
-        // Example: $x = '%ч'; $y = 'bЧ'; $escape = '\';
-        $like = function ($x, $y, $escape) {
-            $x = str_replace('%', '', $x);
-            $x = preg_quote($x);
-            // return false;
-            return preg_match('/' . $x . '/iu', $y);
-        };
-
-        $db = \Yii::$app->getDb();
-        $db->open();
-        $db->pdo->sqliteCreateFunction('like', $like); // not documented feature!
+        if (\Yii::$app->getDb()->getDriverName() === 'sqlite') {
+            $db = \Yii::$app->getDb();
+            $db->open();
+            // not documented feature of SQLite !
+            $db->pdo->sqliteCreateFunction('like', function ($x, $y, $escape) {
+                // Example: $x = '%ч'; $y = 'bЧ'; $escape = '\';
+                $x = str_replace('%', '', $x);
+                $x = preg_quote($x);
+                // return false;
+                return preg_match('/' . $x . '/iu', $y);
+            });
+        }
 
         $data = [
             'page' => \Yii::$app->request->get('page'),
@@ -143,7 +144,7 @@ class BookController extends Controller
         \Yii::$app->response->headers->set('Content-Type', 'image/jpeg');
         \Yii::$app->response->format = Response::FORMAT_RAW;
 
-        return \Yii::$app->cache->getOrSet(Books::CACHE_BOOK_COVER.$book_guid, function (CacheInterface $cache) use($book_guid) {
+        return \Yii::$app->cache->getOrSet(Books::CACHE_BOOK_COVER . $book_guid, function (CacheInterface $cache) use ($book_guid) {
             return Books::getCover($book_guid);
         }, 0);
     }

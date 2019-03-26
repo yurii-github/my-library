@@ -22,36 +22,11 @@ namespace app\controllers;
 
 use yii\helpers\FileHelper;
 use yii\web\Controller;
-
-
-/**
- * this class is pure workaround for shit in Yii2
- */
-class MigrationController extends \yii\console\controllers\MigrateController
-{
-    public $stdout;
-
-    public function stdout($string)
-    {
-        $this->stdout .= $string;
-    }
-
-    function output_callback($buffer, $size = 0)
-    {
-        $this->stdout($buffer);
-    }
-}
-
+use \yii\console\controllers\MigrateController as YiiConsoleMigrateController;
 
 class InstallController extends Controller
 {
     public $defaultAction = 'migrate';
-
-    protected function setupDataDir()
-    {
-        FileHelper::createDirectory(\Yii::getAlias('@data/books'), 0755, false);
-        FileHelper::createDirectory(\Yii::getAlias('@data/logs'), 0755, false);
-    }
 
     public function actionMigrate()
     {
@@ -66,9 +41,13 @@ class InstallController extends Controller
             'mylib' => dirname(__DIR__) . '/migrations/',
             'rbac' => \Yii::getAlias('@yii/rbac/migrations')];
 
-        /* @var $controllerMigrate MigrationController */
-        $controllerMigrateClass = MigrationController::class;
-        $controllerMigrate = new $controllerMigrateClass(null, null, $cfg);
+        // this class is pure workaround for shit in Yii2
+        $controllerMigrate = new class(null, null, $cfg) extends YiiConsoleMigrateController
+        {
+            public $stdout;
+            public function stdout($string) { $this->stdout .= $string; }
+            function output_callback($buffer, $size = 0) { $this->stdout($buffer); }
+        };
 
         ob_start([$controllerMigrate, 'output_callback']);
         $controllerMigrate->actionHistory();
@@ -95,5 +74,12 @@ class InstallController extends Controller
         return $this->render('//site/migration', ['result' => $result, 'content' => $content]);
     }
 
-
+    /**
+     * @throws \yii\base\Exception
+     */
+    protected function setupDataDir(): void
+    {
+        FileHelper::createDirectory(\Yii::getAlias('@data/books'), 0755, false);
+        FileHelper::createDirectory(\Yii::getAlias('@data/logs'), 0755, false);
+    }
 }

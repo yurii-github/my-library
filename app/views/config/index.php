@@ -1,4 +1,4 @@
-<?php 
+<?php
 use yii\helpers\Url;
 
 $this->title = \Yii::t('frontend/config', 'Configuration');
@@ -29,9 +29,6 @@ form.configuration-form fieldset legend, form.configuration-form fieldset label 
 		<li><a href="#tabs-1"><?= \Yii::t('frontend/config', 'settings'); ?></a><span style="display: inline-block;" class="status ui-icon ui-icon-wrench"></span></li>
 		<li><a href="#tabs-3"><?= \Yii::t('frontend/config', 'syncronization'); ?></a><span style="display: inline-block;" class="status ui-icon ui-icon-refresh"></span></li>
 		<li><a href="<?= Yii::$app->urlManager->createUrl('config/php-info');?>"><?= \Yii::t('frontend/config', 'PHP info: '. PHP_VERSION); ?></a></li>
-		<!-- 
-		<li><a href="<?= Url::to(['config/permissions']);?>"><?= \Yii::t('frontend/config', 'permissions'); ?></a></li>
-		 -->
 	</ul>
 
 	<div id="tabs-1">
@@ -89,12 +86,12 @@ form.configuration-form fieldset legend, form.configuration-form fieldset label 
 				<?php endforeach; ?>
 				</select>
 				<br/></br/>
-				
+
 				<fieldset id="database_format_sqlite">
 					<label class="cfg"><?= \Yii::t('frontend/config', 'file'); ?></label>
 					<input name="database_filename" id="database_filename" type="text" value="<?= $cfg->database->filename; ?>" />
 				</fieldset>
-				
+
 				<fieldset id="database_format_mysql">
 					<label class="cfg"><?= \Yii::t('frontend/config', 'dbname'); ?></label>
 					<input name="database_dbname" id="database_dbname" type="text" value="<?= $cfg->database->dbname; ?>" />
@@ -105,7 +102,7 @@ form.configuration-form fieldset legend, form.configuration-form fieldset label 
 					<label class="cfg"><?= \Yii::t('frontend/config', 'password'); ?></label>
 					<input name="database_password" id="database_password" type="text" value="<?= $cfg->database->password; ?>" />
 				</fieldset>
-				
+
 				<br /><br />
 
 			</fieldset>
@@ -125,8 +122,8 @@ form.configuration-form fieldset legend, form.configuration-form fieldset label 
                 <label class="cfg"><?= \Yii::t('frontend/config', 'GhostScript EXE'); ?></label>
                 <input id="book_ghostscript" name="book_ghostscript" type="text" value="<?= $cfg->book->ghostscript; ?>" title="Provide to get option to extract book cover from PDF file" />
 			</fieldset>
-		</form>		
-		<div id="result-message"></div>		
+		</form>
+		<div id="result-message"></div>
 	</div>
 
 	<div id="tabs-3">
@@ -204,10 +201,10 @@ $.fn.extend({
 		if (message == '') {
 			return;
 		}
-		
+
 		var state = (result == 1 ? 'highlight' : 'error');
 		var icon = (result == 1 ? 'info' : 'alert');
-		
+
 		this.html(
 			'<div class="ui-state-'+state+' ui-corner-all" style="padding: 10px; margin-top: 20px; margin-bottom: 20px;">' +
 			'<p><span class="ui-icon ui-icon-'+icon+'" style="float: left; margin-right: .3em;"></span> ' +
@@ -222,11 +219,11 @@ function setResultMsg(message, title, result)
 	if (message == '') {
 		return;
 	}
-	
+
 	var state = (result == 1 ? 'highlight' : 'error');
 	var icon = (result == 1 ? 'info' : 'alert');
 	var msg = $('#result-message');
-	
+
 	msg.html(
 		'<div class="ui-state-'+state+' ui-corner-all" style="padding: 10px; margin-top: 20px; margin-bottom: 20px;">' +
 		'<p><span class="ui-icon ui-icon-'+icon+'" style="float: left; margin-right: .3em;"></span> ' +
@@ -240,7 +237,7 @@ function saveParameter(e)
 	var action_url = $(e).closest("form").attr('action');
 	var field = $(e).attr('name');
 	var value = $(e).val();
-	
+
 	$.post(action_url, {field: field, value: value}, function (data) {
 		$('#result-message').setMsg(data.msg, data.title, data.result);
 		if (data.result && (field == 'system_theme' || field == 'system_language')) {
@@ -260,7 +257,7 @@ $('#sync-clear-db-files').click(function(){
 		res.empty();
 		var records_to_remove = parseInt(data);
 		var records_removed = 0;
-		
+
 		if(records_to_remove == 0) {
 			res.html('<p>nothing to clear from database</p>');
 			return;
@@ -318,13 +315,13 @@ $('#sync-import-fs-files').click(function(){
 		bar.attr('value', records_done);
 		var stepping = 1; // items on 1 request
 		span_counter.text(records_done + '/' + records_total);
-			
+
 		var batcher = function(stepping) {
 			var post = data.slice(records_done, records_done+stepping);
 			if(post.length <= 0) {
 				span_message.text(' Action was successful');
 				return;
-			}			
+			}
 			$.post('<?= Yii::$app->urlManager->createUrl(['config/import-files']);?>',
 				{ post: post}, function(response) {
 					//console.log(response);
@@ -344,7 +341,7 @@ $('#sync-import-fs-files').click(function(){
 				}
 			}, 'json');
 		};
-		
+
 		batcher(stepping);
 	}, 'json');
 });
@@ -407,7 +404,7 @@ $('#sync-import-new-cover-from-pdf').click(function(){
 
 $('#sync-check-files').click(function(){
 	var res = $('#sync-check-files-result');
-	
+
 	$.get('<?= Yii::$app->urlManager->createUrl('config/check-files');?>', function(data) {
 		res.empty();
 
@@ -415,13 +412,13 @@ $('#sync-check-files').click(function(){
 			res.setMsg('Great news! Your library is synced already. Keep it up.', 'Check files', true);
 			return;
 		}
-		
+
 		res.append('<br /><p><b>FileSystem only records (files)</b></p>' + '<ul>');
 		for(var i = 0; i < data.fs.length; i++) {
 			res.append('<li>'+data.fs[i]+'</li>');
 		}
 		res.append('</ul><br />');
-		
+
 		res.append('<p><b>DB only records</b></p>' + '<ul>');
 		for(var i = 0; i < data.db.length; i++) {
 			res.append('<li>'+data.db[i]+'</li>');

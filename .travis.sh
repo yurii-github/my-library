@@ -6,11 +6,6 @@ function install()
 {
 	case $1 in
 
-		phpunit*)
-			echo -e "${color}getting latest PHPUnit..."
-			wget https://phar.phpunit.de/phpunit-8.phar -O vendor/phpunit.phar --no-check-certificate
-			;;
-
 		selenium*)
 			echo -e "${color}getting latest Selenium Server Standalone";
 			wget http://goo.gl/PJUZfa -O vendor/selenium.jar
@@ -47,9 +42,6 @@ function install()
 			;;
 
 		deps*)
-			echo -e "${color}removing dev deps as we have ones in CI or not required for testing";
-			composer remove yiisoft/yii2-debug --dev --no-update
-			composer remove phpunit/phpunit --dev --no-update
 			echo -e "${color}downloading required dependencies...";
 			composer require codeclimate/php-test-reporter --no-update
 			composer install --prefer-dist --optimize-autoloader --no-progress
@@ -83,8 +75,7 @@ then
 		composer self-update
 		composer config -g github-oauth.github.com $GITHUB_TOKEN
 
-		install phpunit
-		install apcu
+		#install apcu
 		#install selenium
 		#install chromium
 		#install chromedriver
@@ -107,9 +98,9 @@ then
 	# if php7.2 use clover
 	if [ "${TRAVIS_PHP_VERSION:0:3}" == "7.2" ] && [ "${DB_TYPE}" == "sqlite" ]
 	then
-		php vendor/phpunit.phar $CLOVER
+		./phpunit $CLOVER
 	else
-		php vendor/phpunit.phar
+		./phpunit
 	fi
 
 	export RES=$?
@@ -124,7 +115,7 @@ then
 	# if php7.2 use clover
 	if [ "${TRAVIS_PHP_VERSION:0:3}" == "7.2" ] && [ "${DB_TYPE}" == "sqlite" ] && [ -n "$CLOVER" ]
 	then
-		vendor/bin/test-reporter
+		./vendor/bin/test-reporter
 	else
 		echo -e "${color}skipping codeclimate reporter";
 	fi

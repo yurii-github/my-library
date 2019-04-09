@@ -44,14 +44,18 @@ I do recommend to use github approach because you can get more fresh code
     git clone git@github.com:yurii-github/yii2-mylib.git
     cd yii2-mylib
     composer update
-    ./yii serve -t @app/public
     ```
 * Packagist/Composer - [https://packagist.org](https://packagist.org/packages/yurii-github/yii2-mylib)
     ```
     composer create-project  yurii-github/yii2-mylib  --prefer-dist --stability=stable --no-dev
     cd yii2-mylib
-    ./yii serve -t @app/public
     ```
+
+Now, you can start your application
+
+```
+php yii serve
+```
 
 Application will be available at [http://localhost:8080](http://localhost:8080)
 
@@ -62,7 +66,7 @@ Here's the list of most interesting places:
 │   ├── assets      -  -  -  -  -  -  -  - CDN assets
 │   ├── config
 │   │   └── config.local.php -  -  -  -  - your custom app configuration (that cannot be set via settings)
-│   ├── public      -  -  -  -  -  -  -  - entry point of the application  
+│   ├── web         -  -  -  -  -  -  -  - entry point of the application  
 ├── data            -  -  -  -  -  -  -  - your data is stored here
 │   ├── config.json          -  -  -  -  - settings set via web interface
 │   └── mydb.s3db            -  -  -  -  - book SQLite database
@@ -86,5 +90,5 @@ It will import all file system books that are not in database yet.
 
 To export translations, run
 ```
-./yii message app/config/message-config.php
+php yii message app/config/message-config.php
 ```

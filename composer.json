@@ -14,24 +14,10 @@
     "bower-asset/bootstrap" : "*",
     "bower-asset/typeahead.js": "*",
     "bower-asset/inputmask": "*",
-
     "yiisoft/yii2-composer": "*",
     "cebe/markdown": "*",
-
     "ezyang/htmlpurifier": "*"
   },
-  "config": {
-    "process-timeout": 1800,
-    "fxp-asset": {
-      "enabled": false
-    }
-  },
-  "repositories": [
-    {
-      "type": "composer",
-      "url": "https://asset-packagist.org"
-    }
-  ],
   "require" : {
     "php" : "~7.2",
     "ext-json": "*",

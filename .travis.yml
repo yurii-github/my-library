@@ -7,6 +7,7 @@
 # base shell dir: /home/travis/build/yurii-github/yii2-mylib/
 # pear config: pear config-show
 #
+dist: trusty
 language: php
 php:
   - 7.2

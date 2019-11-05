@@ -20,7 +20,7 @@
 
 namespace app\controllers;
 
-use Yii;
+use app\helpers\Tools;
 use app\models\Books;
 use app\components\Controller;
 use yii\db\Exception;
@@ -135,60 +135,19 @@ class ConfigController extends Controller
         return $this->render('index');
     }
 
-    //TODO: separate and add tests
+
     public function actionVacuum()
     {
-        \Yii::$app->db->open();
+        $result = Tools::compact(\Yii::$app->mycfg);
 
-        $filename = $newSize = $oldSize = $error = null;
-        $type = 'UNSUPPORTED TYPE';
+        $msgString = implode("\n", array_filter([
+            $result[0] ? "Type: $result[0]" : null,
+            $result[1] ? "ERROR: $result[1]" : null,
+            $result[2] ? "Old size: $result[2]" : null,
+            $result[3] ? "New size: $result[3]" : null,
+        ]));
 
-        $returnMsg = ":type \n :error old size: :oldSize \n new size: :newSize";
-
-        // SQLITE3 VACUUM
-        if (\Yii::$app->mycfg->database->format == 'sqlite') {
-            $type = 'SQLITE VACUUM';
-            $filename = \Yii::$app->mycfg->database->filename;
-
-            try {
-                /* @var $pdo \PDO */
-                $oldSize = (new \SplFileInfo($filename))->getSize();
-                \Yii::$app->db->pdo->query("VACUUM");
-                clearstatcache(true, $filename); // we need new size, not old one
-                $newSize = (new \SplFileInfo($filename))->getSize();
-            } catch (\Exception $e) {
-                $error = $e->getMessage();
-                $error = "Error: $error \n";
-            }
-        }
-
-        // MYSQL OPTIMIZE
-        if (\Yii::$app->mycfg->database->format == 'mysql') {
-            $type = 'MYSQL OPTIMIZE';
-            try {
-                $querySize = <<<SQL
-SELECT SQL_NO_CACHE SUM(DATA_LENGTH + INDEX_LENGTH) FROM information_schema.TABLES 
-WHERE table_schema = :dbname
-GROUP BY table_schema
-SQL;
-
-                /* @var $sSize \PDOStatement */
-                $sSize = \Yii::$app->db->pdo->prepare($querySize);
-                $sSize->bindValue(':dbname', \Yii::$app->mycfg->database->dbname);
-                $sSize->execute();
-                $oldSize = $sSize->fetchColumn();
-                $tables = \Yii::$app->db->pdo->query("SHOW TABLES")->fetchAll(\PDO::FETCH_COLUMN);
-                $tables = implode(',', $tables);
-                \Yii::$app->db->pdo->query("OPTIMIZE TABLE $tables");
-                $sSize->execute();
-                $newSize = $sSize->fetchColumn();
-            } catch (\Exception $e) {
-                $error = $e->getMessage();
-                $error = "Error: $error \n";
-            }
-        }
-
-        return str_replace([':type', ':error', ':oldSize', ':newSize'], [$type, $error, $oldSize, $newSize], $returnMsg);
+        return $msgString;
     }
 
     public function actionCheckFiles()

@@ -23,7 +23,6 @@ namespace app\models;
 use app\components\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
-use yii\web\Response;
 use yii\web\HttpException;
 use app\helpers\Tools;
 
@@ -75,13 +74,12 @@ class Books extends ActiveRecord
 
     /**
      * {@inheritdoc}
-     *
-     * NOTE: ignore book 'book_cover' on regular select for performance
      */
     public static function find()
     {
         return parent::find()->select([
             'book_guid',
+            // 'book_cover', <-- ignore cover on regular select for performance gains!
             'created_date',
             'updated_date',
             'favorite',
@@ -131,7 +129,6 @@ class Books extends ActiveRecord
 
     public function buildFilename()
     {
-        // TODO: filesystem security
         return str_replace(array(
             '{year}',
             '{title}',

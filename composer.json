@@ -20,18 +20,6 @@
 
 		"ezyang/htmlpurifier": "*"
 	},
-	"config": {
-		"process-timeout": 1800,
-		"fxp-asset": {
-			"enabled": false
-		}
-	},
-	"repositories": [
-		{
-			"type": "composer",
-			"url": "https://asset-packagist.org"
-		}
-	],
 	"require" : {
 		"php" : "~7.2",
 		"ext-json": "*",

@@ -62,20 +62,30 @@ class CategoryController extends Controller
      */
     public function actionManage()
     {
-        switch (\Yii::$app->request->post('oper')) {
+        $request = \Yii::$app->request;
+
+        switch ($request->post('oper')) {
             case 'add':
-                $this->add(\Yii::$app->request->post());
+                $this->add($request->post());
                 break;
 
             case 'del':
-                $this->delete(\Yii::$app->request->post('id'));
+                Categories::findOne(['guid' => $request->post('id')])->delete();
                 break;
 
             case 'edit':
-                $this->update(\Yii::$app->request->post('id'), \Yii::$app->request->post());
+                $category = Categories::findOne(['guid' => $request->post('id')]);
+                $book = Books::findOne(['book_guid' => $request->get('nodeid')]);
+
+                if ($book) {
+                    $this->setMarker($book, $category, (bool)$request->post('marker', false));
+                } else {
+                    $this->update($category, $request->post());
+                }
                 break;
         }
     }
+
 
     private function add($attributes)
     {
@@ -84,28 +94,21 @@ class CategoryController extends Controller
         $category->save();
     }
 
-    private function update($id, $attributes)
+
+    private function setMarker(Books $book, Categories $category, bool $marker)
     {
-        $book_guid = \Yii::$app->request->get('nodeid');
-
-        $category = Categories::findOne(['guid' => $id]);
-        $category->attributes = $attributes;
-        $category->save();
-
-        if (!empty($book_guid) && !empty($attributes['marker'])) {
-            $book = Books::findOne(['book_guid' => $book_guid]);
-            if ($attributes['marker'] == 1) {
-                $book->link('categories', $category);
-            } else {
-                $book->unlink('categories', $category);
-            }
+        if ($marker) {
+            $book->link('categories', $category);
+        } else {
+            $book->unlink('categories', $category, true);
         }
     }
 
-    private function delete($id)
+
+    private function update(Categories $category, $attributes)
     {
-        $category = Categories::findOne(['guid' => $id]);
-        $category->delete();
+        $category->setAttributes($attributes);
+        $category->save();
     }
 
 }

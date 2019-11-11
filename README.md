@@ -33,7 +33,6 @@ It supports all JQuery UI themes.
 
 - PHP 7.2+
 - SQLite or MySQL database
-- Internet connection (JS/CSS comes from CDN networks, so if you want to work offline you should check code at /app/assets/*)
 
 ## Setup & Run
 
@@ -63,7 +62,8 @@ Application will be available at [http://localhost:8080](http://localhost:8080)
 Here's the list of most interesting places:
 <pre>
 ├── app
-│   ├── assets      -  -  -  -  -  -  -  - CDN assets
+│   ├── 3rd         -  -  -  -  -  -  -  - 3rd party assets
+│   ├── assets      -  -  -  -  -  -  -  - our assets
 │   ├── config
 │   │   └── config.local.php -  -  -  -  - your custom app configuration (that cannot be set via settings)
 │   ├── web         -  -  -  -  -  -  -  - entry point of the application  

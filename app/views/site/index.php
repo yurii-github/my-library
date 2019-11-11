@@ -232,7 +232,7 @@
             }
 
 			$(".book-filename").on('click', function(e){
-				window.prompt ("Copy to clipboard: Ctrl+C, Enter", $(this).attr('data-filename'));
+				window.prompt ("Copy to clipboard: Ctrl+C, Enter", 'evince ' + $(this).attr('data-filename'));
 			});
 
 			$(".book-favorite").raty(ratyOptions); //rating init

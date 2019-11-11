@@ -1,19 +1,17 @@
 <?php
 
-if (1) {//todo: condition
-    define('YII_DEBUG', true);
-    define('YII_ENV', 'test'); //prod | test
-    define('YII_ENABLE_ERROR_HANDLE', true);
-}
+require '../../vendor/autoload.php';
+$config = require '../config/config.php';
+$isDevMode = $config['params']['mode'] === 'dev';
 
-$basedir = dirname(dirname(__DIR__));
-require $basedir . '/vendor/autoload.php';
-require $basedir . '/vendor/yiisoft/yii2/Yii.php';
+define('YII_DEBUG', $isDevMode);
+define('YII_ENV', $isDevMode ? 'dev' : 'prod'); // prod | dev | test
+define('YII_ENABLE_ERROR_HANDLE', $isDevMode);
 
-$config = require $basedir . '/app/config/config.php';
+require '../../vendor/yiisoft/yii2/Yii.php';
 
-if (file_exists($basedir . '/app/config/config.local.php')) {
-    $config = \yii\helpers\ArrayHelper::merge($config, require $basedir . '/app/config/config.local.php');
+if (file_exists('../config/config.local.php')) {
+    $config = \yii\helpers\ArrayHelper::merge($config, require '../config/config.local.php');
 }
 
 (new yii\web\Application($config))->run();

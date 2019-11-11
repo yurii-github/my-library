@@ -27,7 +27,9 @@ return [
 	'defaultRoute' => 'site',
 	'layout' => 'main',
 	'controllerNamespace' => 'app\controllers',
-	'params' => [],
+	'params' => [
+	    'mode' => 'dev' // workaround
+    ],
 	'bootstrap' => [
 		[ 'class' => app\components\MyLibraryBootstrap::class],
 	],

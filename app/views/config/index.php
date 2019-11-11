@@ -5,7 +5,7 @@ $this->title = \Yii::t('frontend/config', 'Configuration');
 
 /* @var $cfg \app\components\Configuration */
 $cfg =  \Yii::$app->mycfg;
-$SUPPORTED_VALUES = $cfg::SUPPORTED_VALUES; //PDT 3.4 fails to understand const array support. TODO: bug report
+$SUPPORTED_VALUES = $cfg::SUPPORTED_VALUES;
 $checked = 'checked="checked"';
 $html_valid = '<span style="display: inline-block;" class="status ui-icon ui-icon-circle-check"></span>';
 ?>

@@ -28,7 +28,7 @@ $this->title = "MyLibrary ~ {$this->title}";
   <script src="<?= Yii::getAlias("@web/3rd/fancybox-2.1.5/source/jquery.fancybox.pack.js");?>"></script>
   <script src="<?= Yii::getAlias("@web/3rd/raty-2.8.0/lib/jquery.raty.js");?>"></script>
   <script src="<?= Yii::getAlias("@web/3rd/jqgrid-4.6.0/jquery.jqGrid.min.js");?>"></script>
-  <script src="<?= Yii::getAlias("@web/3rd/jqgrid-4.6.0/grid.locale-".(['uk-UA' => 'ua'][\Yii::$app->language] ?? 'en').".js");?>"></script>
+  <script src="<?= Yii::getAlias("@web/3rd/jqgrid-4.6.0/i18n/grid.locale-".(['uk-UA' => 'ua'][\Yii::$app->language] ?? 'en').".js");?>"></script>
   <script src="<?= Yii::getAlias('@web/3rd/js.cookie.js');?>"></script>
 
 </head>

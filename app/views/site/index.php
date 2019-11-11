@@ -46,7 +46,7 @@
 		number: 5,
 		cancel: false,
 		half: true,
-		path: '<?= Yii::getAlias('@web/assets/jquery-raty/img/')?>'
+		path: '<?= Yii::getAlias('@web/3rd/raty-2.8.0/lib/images/')?>'
 	};
 
 	book_list.jqGrid({

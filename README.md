@@ -33,7 +33,6 @@ It supports all JQuery UI themes.
 
 - PHP 7.2+
 - SQLite or MySQL database
-- Internet connection (JS/CSS comes from CDN networks, so if you want to work offline you should check code at /app/assets/*)
 
 ## Setup & Run
  

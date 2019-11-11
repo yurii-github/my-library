@@ -14,10 +14,8 @@
 		"bower-asset/bootstrap" : "*",
 		"bower-asset/typeahead.js": "*",
 		"bower-asset/inputmask": "*",
-
 		"yiisoft/yii2-composer": "*",
 		"cebe/markdown": "*",
-
 		"ezyang/htmlpurifier": "*"
 	},
 	"require" : {

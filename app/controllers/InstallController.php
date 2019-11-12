@@ -42,8 +42,7 @@ class InstallController extends Controller
             'rbac' => \Yii::getAlias('@yii/rbac/migrations')];
 
         // this class is pure workaround for shit in Yii2
-        $controllerMigrate = new class(null, null, $cfg) extends YiiConsoleMigrateController
-        {
+        $controllerMigrate = new class(null, null, $cfg) extends YiiConsoleMigrateController {
             public $stdout;
             public function stdout($string) { $this->stdout .= $string; }
             function output_callback($buffer, $size = 0) { $this->stdout($buffer); }
@@ -60,15 +59,14 @@ class InstallController extends Controller
 
         $result = false;
         $content = $controllerMigrate->stdout;
-        $content_html = str_replace("\n", '<br/>', $content);
 
-        if (stripos('failed', $content) === false) { //successful migration. update config with new version
+        //successful migration. update config with new version
+        if (stripos('failed', $content) === false) {
             $result = true;
             \Yii::$app->mycfg->system->version = \Yii::$app->mycfg->getVersion();
             \Yii::$app->mycfg->save();
         }
 
-        //TODO: add success and error messages
         $this->view->title = 'Migration Installer';
 
         return $this->render('//site/migration', ['result' => $result, 'content' => $content]);

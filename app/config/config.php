@@ -18,6 +18,10 @@
  * along with this program.  If not, see http://www.gnu.org/licenses
  */
 
+defined('YII_ENV') || define('YII_ENV', 'prod'); // prod | dev | test
+defined('YII_DEBUG') || define('YII_DEBUG', YII_ENV !== 'prod');
+defined('YII_ENABLE_ERROR_HANDLE') || define('YII_ENABLE_ERROR_HANDLE', YII_ENV === 'prod');
+
 return [
 	'charset' => 'utf-8',
 	'id'		=> 'mylib',
@@ -27,15 +31,10 @@ return [
 	'defaultRoute' => 'site',
 	'layout' => 'main',
 	'controllerNamespace' => 'app\controllers',
-	'params' => [
-	    'mode' => 'dev' // workaround
-    ],
 	'bootstrap' => [
 		[ 'class' => app\components\MyLibraryBootstrap::class],
 	],
 	'aliases' => [
-        '@bower' => '@vendor/bower-asset',
-        '@npm'   => '@vendor/npm-asset',
         '@data'  => dirname(__DIR__, 2) .'/data',
 	],
 	'language' => 'en-US',

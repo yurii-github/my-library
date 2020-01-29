@@ -55,7 +55,14 @@ after_deployment:
 #
 # other
 #
+services:
+  - mysql
 addons:
+  apt:
+    sources:
+      - google-chrome
+    packages:
+#      - google-chrome-stable
   code_climate:
     repo_token: 28adcb727addc35197cb35d4bced9b010ed2f14f611ade92b9ac1210484f92e0
 #

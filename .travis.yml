@@ -9,7 +9,7 @@
 #
 # NOTES:
 # - selenium is failing
-#
+# - TODO https://docs.travis-ci.com/user/trusty-to-xenial-migration-guide
 #
 dist: xenial
 language: php

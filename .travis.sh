@@ -13,8 +13,8 @@ function install()
 
 		apcu*)
 			echo -e "${color}installing APCu via PEAR/PECL..."
-			echo 'yes' | pecl install apcu-5.1.17
-			cp $(pear config-get ext_dir)/apcu.so $(pwd)/vendor/apcu.so
+      echo 'yes' | pecl install apcu-5.1.18
+      cp $(pear config-get ext_dir)/apcu.so $(pwd)/vendor/apcu.so
 			;;
 
 		chromium*)
@@ -43,7 +43,7 @@ function install()
 
 		deps*)
 			echo -e "${color}downloading required dependencies...";
-			composer require codeclimate/php-test-reporter --no-update
+      composer require codeclimate/php-test-reporter --no-update
 			composer install --prefer-dist --optimize-autoloader --no-progress
 			echo -e "${color}show installed dependencies:";
 			composer show --installed
@@ -61,21 +61,18 @@ function install()
 #
 if [ "$1" == "install" ]
 then
-
-	# cache usage
-	#
+	# with cache usage
 	if [ -d vendor/bin ]
 	then
 		echo -e "${color}Using cache.";
-		#
-		echo -e "${color}Loading cached apcu.so for PHP";
-		echo -e "extension = $(pwd)/vendor/apcu.so\napc.enabled=1\napc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+	  echo -e "${color}Enable APCU PHP...";
+	  echo -e "extension = $(pwd)/vendor/apcu.so\napc.enabled=1\napc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 	else
 		echo -e "${color}Update Composer and set github oauth token..";
 		composer self-update
 		composer config -g github-oauth.github.com $GITHUB_TOKEN
 
-		#install apcu
+		install apcu
 		#install selenium
 		#install chromium
 		#install chromedriver
@@ -83,7 +80,6 @@ then
 
 		echo -e "${color}DEBUG: show vendor dir. IT will be cached";
 		ls vendor -l
-
 	fi
 
 	exit $?

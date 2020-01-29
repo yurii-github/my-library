@@ -10,5 +10,6 @@ exclude_paths:
   - app/i18n
   - app/emails
   - app/tests
+  - app/web/3rd
   - vendor
 

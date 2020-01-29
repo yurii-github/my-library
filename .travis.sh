@@ -13,8 +13,13 @@ function install()
 
 		apcu*)
 			echo -e "${color}installing APCu via PEAR/PECL..."
-			echo 'yes' | pecl install apcu-5.1.18
-			cp $(pear config-get ext_dir)/apcu.so $(pwd)/vendor/apcu.so
+			if [ "${TRAVIS_PHP_VERSION:0:3}" == "7.4" ]
+			then
+			  echo -e "${color}PHP 7.4 detected. Skipped due to errors in PEAR."
+			else
+			  echo 'yes' | pecl install apcu-5.1.18
+			  cp $(pear config-get ext_dir)/apcu.so $(pwd)/vendor/apcu.so
+			fi
 			;;
 
 		chromium*)
@@ -43,7 +48,10 @@ function install()
 
 		deps*)
 			echo -e "${color}downloading required dependencies...";
-			composer require codeclimate/php-test-reporter --no-update
+			if [ "${TRAVIS_PHP_VERSION:0:3}" == "7.2" ]
+	    then
+		    composer require codeclimate/php-test-reporter --no-update
+	    fi
 			composer install --prefer-dist --optimize-autoloader --no-progress
 			echo -e "${color}show installed dependencies:";
 			composer show --installed
@@ -61,13 +69,10 @@ function install()
 #
 if [ "$1" == "install" ]
 then
-
-	# cache usage
-	#
+	# with cache usage
 	if [ -d vendor/bin ]
 	then
 		echo -e "${color}Using cache.";
-		#
 		echo -e "${color}Loading cached apcu.so for PHP";
 		echo -e "extension = $(pwd)/vendor/apcu.so\napc.enabled=1\napc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 	else

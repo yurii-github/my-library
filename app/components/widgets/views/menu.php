@@ -1,12 +1,20 @@
-<?php use yii\helpers\Url; ?>
-<div id="mylibrary-menu" style="-webkit-user-select: none; /* Chrome/Safari */        
--moz-user-select: none; /* Firefox */
--ms-user-select: none; /* IE10+ */ user-select: none;">
+<?php
+
+/**
+ * @var array $items
+ */
+
+use yii\helpers\Url;
+
+$checked = function($url) {
+    return \Yii::$app->getRequest()->getUrl() == Url::to($url) ? 'checked="checked"' : '';
+};
+
+?>
+<div id="mylibrary-menu" class="no-selection">
 	<?php for ($i = 0; $i < count($items); $i++): ?>
-	<input id="menu_<?=$i;?>" type="radio" 
-		value="<?php echo Url::to($items[$i]['link']);?>" <?php echo (\Yii::$app->getRequest()->getUrl() == Url::to($items[$i]['link']) ? 'checked="checked"' : ''); ?> />
-	<label <?= (!empty($items[$i]['style']) ? 'style="'.$items[$i]['style'].'"' : ''); ?> for="menu_<?=$i;?>"
-		<?= (!empty($items[$i]['id']) ? 'id="'.$items[$i]['id'].'"' : ''); ?>
-	><?= $items[$i]['title']; ?></label>
+  <?php $id = "menu_$i"; ?>
+	<input id="<?= $id;?>" type="radio" value="<?= Url::to($items[$i]['link']); ?>" <?= $checked($items[$i]['link']); ?> />
+	<label for="<?= $id;?>"><?= $items[$i]['title']; ?></label>
 	<?php endfor; ?>
 </div>

@@ -7,21 +7,26 @@
 # base shell dir: /home/travis/build/yurii-github/yii2-mylib/
 # pear config: pear config-show
 #
-dist: trusty
+# NOTES:
+# - selenium is failing
+# - TODO https://docs.travis-ci.com/user/trusty-to-xenial-migration-guide
+#
+dist: xenial
 language: php
 php:
   - 7.2
+  - 7.4
 matrix:
   allow_failures:
     - php: nightly
 #
-# Parallelizing builds
+# Parallelize builds
 #
 env:
   - DB_TYPE=sqlite
   - DB_TYPE=mysql
 #
-# build lifecycle
+# Build lifecycle
 #
 before_install:
   - if git log -1 --oneline | grep -qie "\[sc\]"; then echo -e "\e[0;34;40m[sc] is presented. clover will not be set"; else export CLOVER="--coverage-clover build/logs/clover.xml"; fi
@@ -50,7 +55,14 @@ after_deployment:
 #
 # other
 #
+services:
+  - mysql
 addons:
+  apt:
+    sources:
+      - google-chrome
+    packages:
+#      - google-chrome-stable
   code_climate:
     repo_token: 28adcb727addc35197cb35d4bced9b010ed2f14f611ade92b9ac1210484f92e0
 #

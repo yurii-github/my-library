@@ -64,6 +64,8 @@ function install()
 }
 
 
+php --info | grep -i gd
+exit
 #
 # INSTALL
 #

@@ -7,7 +7,11 @@
 # base shell dir: /home/travis/build/yurii-github/yii2-mylib/
 # pear config: pear config-show
 #
-dist: trusty
+# NOTES:
+# - selenium is failing
+#
+#
+dist: xenial
 language: php
 php:
   - 7.2
@@ -38,7 +42,6 @@ before_script:
   #- java -jar vendor/selenium.jar -Dwebdriver.chrome.driver=$(pwd)/vendor/chromedrv -log $(pwd)/selenium.log 2> /dev/null &
   #- sleep 6
   - mysql -e "CREATE DATABASE IF NOT EXISTS test_mylib" -utravis
-  - echo "extension=gd.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 script:
   - bash .travis.sh script
 after_success:

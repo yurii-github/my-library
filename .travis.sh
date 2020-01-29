@@ -13,13 +13,8 @@ function install()
 
 		apcu*)
 			echo -e "${color}installing APCu via PEAR/PECL..."
-			if [ "${TRAVIS_PHP_VERSION:0:3}" == "7.4" ]
-			then
-			  echo -e "${color}PHP 7.4 detected. Skipped due to errors in PEAR."
-			else
-			  echo 'yes' | pecl install apcu-5.1.18
-			  cp $(pear config-get ext_dir)/apcu.so $(pwd)/vendor/apcu.so
-			fi
+      echo 'yes' | pecl install apcu-5.1.18
+      cp $(pear config-get ext_dir)/apcu.so $(pwd)/vendor/apcu.so
 			;;
 
 		chromium*)
@@ -48,13 +43,10 @@ function install()
 
 		deps*)
 			echo -e "${color}downloading required dependencies...";
-			if [ "${TRAVIS_PHP_VERSION:0:3}" == "7.2" ]
-	    then
-		    composer require codeclimate/php-test-reporter --no-update
-	    fi
+      composer require codeclimate/php-test-reporter --no-update
 			composer install --prefer-dist --optimize-autoloader --no-progress
 			echo -e "${color}show installed dependencies:";
-			composer show --installed
+			composer show --all
 			;;
 
 		*)

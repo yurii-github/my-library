@@ -46,7 +46,7 @@ function install()
       composer require codeclimate/php-test-reporter --no-update
 			composer install --prefer-dist --optimize-autoloader --no-progress
 			echo -e "${color}show installed dependencies:";
-			composer show --all
+			composer show --installed
 			;;
 
 		*)

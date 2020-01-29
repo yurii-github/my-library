@@ -13,7 +13,7 @@ function install()
 
 		apcu*)
 			echo -e "${color}installing APCu via PEAR/PECL..."
-			echo 'yes' | pecl install apcu-5.1.17
+			echo 'yes' | pecl install apcu-5.1.18
 			cp $(pear config-get ext_dir)/apcu.so $(pwd)/vendor/apcu.so
 			;;
 
@@ -75,7 +75,7 @@ then
 		composer self-update
 		composer config -g github-oauth.github.com $GITHUB_TOKEN
 
-		#install apcu
+		install apcu
 		#install selenium
 		#install chromium
 		#install chromedriver

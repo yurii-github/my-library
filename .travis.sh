@@ -65,8 +65,7 @@ then
 	if [ -d vendor/bin ]
 	then
 		echo -e "${color}Using cache.";
-		echo -e "${color}Loading cached apcu.so for PHP";
-		echo -e "extension = $(pwd)/vendor/apcu.so\napc.enabled=1\napc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+
 	else
 		echo -e "${color}Update Composer and set github oauth token..";
 		composer self-update
@@ -80,8 +79,10 @@ then
 
 		echo -e "${color}DEBUG: show vendor dir. IT will be cached";
 		ls vendor -l
-
 	fi
+
+	echo -e "${color}Enable APCU PHP...";
+	echo -e "extension = $(pwd)/vendor/apcu.so\napc.enabled=1\napc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 
 	exit $?
 fi

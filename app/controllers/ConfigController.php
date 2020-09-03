@@ -54,60 +54,91 @@ class ConfigController extends Controller
     public function actionImportNewCoverFromPdf()
     {
         \Yii::$app->response->format = Response::FORMAT_JSON;
-
-        $books = Books::find()->select(['book_guid', 'filename'])
-            ->where(new Expression('book_cover IS NULL'))
-            ->andWhere(new Expression("filename LIKE '%.pdf'"))
-            ->asArray()
-            ->all();
-
+        
         if (\Yii::$app->request->getMethod() == 'GET') {
-            return $books;
+            return $this->GET_actionImportNewCoverFromPdf();
         }
 
-        $post = \Yii::$app->request->post('post', []);
+        return $this->POST_actionImportNewCoverFromPdf();
+    }
 
-        $arr_added = [];
-        $tmpFilename = tempnam(sys_get_temp_dir(), 'MYL');
-        @unlink($tmpFilename); // small cheat for ghostscript error handling
-
-        try {
-            foreach ($post as $f) {
-                $filename = \Yii::$app->mycfg->library->directory . $f['filename'];
-
-                if (!file_exists($filename)) {
-                    throw new Exception('file not found ' . $filename);
-                }
-
-                $book = Books::findOne(['book_guid' => $f['book_guid']]);
-
-                $ghostScriptEXE = \Yii::$app->mycfg->book->ghostscript;
-                $srcPdfFile = $filename;
-                $outJpegFile = $tmpFilename;
-                $cmd = "\"$ghostScriptEXE\" -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -dSAFER -dNOPAUSE -dBATCH -dFirstPage=1 -sPageList=1 -dLastPage=1 -sDEVICE=jpeg -dJPEGQ=100 -sOutputFile=\"$outJpegFile\" -r96 \"$srcPdfFile\"";
-
-                $res = exec($cmd, $r);
-
+    
+    protected function POST_actionImportNewCoverFromPdf()
+    {
+        $bookIds = array_column(\Yii::$app->request->post('post', []), 'book_guid');
+        $addedBooks = [];
+        
+        foreach ($bookIds as $bookId) {
+            $book = Books::findOne(['book_guid' => $bookId]);
+            $srcPdfFile = \Yii::$app->mycfg->library->directory . $book->filename;
+            if (!file_exists($srcPdfFile)) {
+                \Yii::error("file '$srcPdfFile' not exist for book '$book->book_guid'");
+                continue;
+            }
+            
+            try {
+                $outJpegFile = tempnam(sys_get_temp_dir(), 'MYL');
                 if (!file_exists($outJpegFile)) {
-                    throw new Exception("Failed to convert from $srcPdfFile to $outJpegFile. Last Message: $res \n " .
-                        print_r($r, true));
+                    throw new Exception("Failed to create temporary file '$outJpegFile'");
+                }
+                chmod($outJpegFile, 0777);
+               
+                $command = $this->buildGhostCommand($srcPdfFile, $outJpegFile);
+                $res = exec($command, $output);
+
+                if (filesize($outJpegFile) == 0) {
+                    throw new Exception("Failed to convert from <b>$srcPdfFile</b> to <b>$outJpegFile</b>. <br>ERROR: $res<br><br>" . print_r($output, true));
                 }
 
                 $book->book_cover = file_get_contents($outJpegFile);
                 if (!$book->save()) {
-                    throw new Exception("Failed to save book");
+                    throw new Exception("Failed to save book cover for book '$book->book_guid'");
                 }
+
+                $addedBooks[] = $book->filename;
+            }
+            catch (\Throwable $t) {
+                return ['data' => $addedBooks, 'result' => false, 'error' => $t->getMessage()];
+            }
+            finally {
                 unlink($outJpegFile);
             }
-        } catch (\Throwable $t) {
-            return ['data' => $arr_added, 'result' => false, 'error' => $t->getMessage()];
-        } finally {
-            @unlink($tmpFilename);
         }
 
-        return ['data' => $arr_added, 'result' => true, 'error' => ''];
+        return ['data' => $addedBooks, 'result' => true, 'error' => null];
     }
-
+    
+    
+    protected function buildGhostCommand($srcPdfFile, $outJpegFile)
+    {
+        $ghostScriptEXE = \Yii::$app->mycfg->book->ghostscript;
+        return <<<CMD
+"$ghostScriptEXE" \
+-dTextAlphaBits=4 \
+-dGraphicsAlphaBits=4 \
+-dSAFER \
+-dNOPAUSE \
+-dBATCH \
+-dFirstPage=1 \
+-sPageList=1 \
+-dLastPage=1 \
+-sDEVICE=jpeg \
+-dJPEGQ=100 \
+-sOutputFile="$outJpegFile" \
+-r96 \
+"$srcPdfFile"
+CMD;
+    }
+    
+    protected function GET_actionImportNewCoverFromPdf()
+    {
+        return Books::find()->select(['book_guid'])
+            ->where(new Expression('book_cover IS NULL'))
+            ->andWhere(new Expression("filename LIKE '%.pdf'"))
+            ->asArray()
+            ->all();
+    }
+    
     /**
      * returns array of books filenames located in FS library folder
      * filename is in UTF-8

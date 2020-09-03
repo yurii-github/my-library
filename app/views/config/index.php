@@ -354,7 +354,7 @@ $('#sync-import-new-cover-from-pdf').click(function(){
             var records_total = data.length;
             var records_done = 0;
             res.empty();
-            if(records_total == 0) {
+            if(records_total === 0) {
                 res.setMsg('Nothing to do.', 'Import Book Cover', true);
                 return;
             }
@@ -383,14 +383,14 @@ $('#sync-import-new-cover-from-pdf').click(function(){
                             records_done += post.length;
                             bar.attr('value', records_done);
                             span_counter.text(records_done + '/' + records_total);
-                            span_message.text('');
+                            span_message.html('');
                             for(var i=0;i<response.data.length;i++){
                                 span_message.append('<p>'+response.data[i]+'</p>');
                             }
                             batcher(stepping);
                         } else {
                             //error or success
-                            span_message.text('<p>'+response.error+'</p>');
+                            span_message.html('<p><pre>'+response.error+'</pre></p>');
                             return;
                         }
                     }, 'json');

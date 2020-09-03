@@ -93,7 +93,7 @@ class BookController extends Controller
                 break;
 
             case 'del':
-                $this->delete(\Yii::$app->request->post('id'));
+                Books::findOne(['book_guid' => \Yii::$app->request->post('id')])->delete();
                 break;
 
             case 'edit':
@@ -114,16 +114,6 @@ class BookController extends Controller
         $book->insert();
     }
 
-    /**
-     * @param string|int $id
-     * @throws \Throwable
-     * @throws \yii\db\StaleObjectException
-     */
-    private function delete($id)
-    {
-        $book = Books::findOne(['book_guid' => $id]);
-        $book->delete();
-    }
 
     private function update($id, $attributes)
     {

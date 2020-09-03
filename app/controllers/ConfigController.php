@@ -56,7 +56,11 @@ class ConfigController extends Controller
         \Yii::$app->response->format = Response::FORMAT_JSON;
         
         if (\Yii::$app->request->getMethod() == 'GET') {
-            return $this->GET_actionImportNewCoverFromPdf();
+            return Books::find()->select(['book_guid'])
+                ->where(new Expression('book_cover IS NULL'))
+                ->andWhere(new Expression("filename LIKE '%.pdf'"))
+                ->asArray()
+                ->all();
         }
 
         return $this->POST_actionImportNewCoverFromPdf();
@@ -129,16 +133,7 @@ class ConfigController extends Controller
 "$srcPdfFile"
 CMD;
     }
-    
-    protected function GET_actionImportNewCoverFromPdf()
-    {
-        return Books::find()->select(['book_guid'])
-            ->where(new Expression('book_cover IS NULL'))
-            ->andWhere(new Expression("filename LIKE '%.pdf'"))
-            ->asArray()
-            ->all();
-    }
-    
+
     /**
      * returns array of books filenames located in FS library folder
      * filename is in UTF-8

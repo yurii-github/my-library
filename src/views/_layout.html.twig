@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="<?php echo Yii::$app->language ?>">
+<head>
+    <title>MyLibrary ~ {{ title }}</title>
+    <base href="{{ baseUrl }}">
+    <link type="image/x-icon" rel="shortcut icon" href="/assets/app/logo.ico"/>
+    <link type="text/css" href="3rd/yui-reset-3.5.0.css" rel="stylesheet"/>
+    <link type="text/css" href="3rd/jquery-ui-themes-1.12.1/themes/{{ appTheme }}/jquery-ui.css" rel="stylesheet">
+    <link type="text/css" href="3rd/jquery-ui-themes-1.12.1/themes/{{ appTheme }}/theme.css" rel="stylesheet">
+    <link type="text/css" href="3rd/fancybox-2.1.5/source/jquery.fancybox.css" rel="stylesheet">
+    <link type="text/css" href="3rd/raty-2.8.0/lib/jquery.raty.css" rel="stylesheet"/>
+    <link type="text/css" href="3rd/jqgrid-4.6.0/ui.jqgrid.css" rel="stylesheet"/>
+    <link type="text/css" href="assets/app/css/style.css" rel="stylesheet">
+    <script src="3rd/jquery-2.2.4/jquery.min.js"></script>
+    <script src="3rd/jquery-ui-1.12.1/jquery-ui.min.js"></script>
+    <script src="3rd/fancybox-2.1.5/source/jquery.fancybox.pack.js"></script>
+    <script src="3rd/raty-2.8.0/lib/jquery.raty.js"></script>
+    <script src="3rd/jqgrid-4.6.0/jquery.jqGrid.min.js"></script>
+    <script src="3rd/jqgrid-4.6.0/i18n/grid.locale-{{ gridLocale }}.js"></script>
+    <script src="3rd/js.cookie.js"></script>
+</head>
+<body>
+<header style="margin: auto !important; text-align: center; position: relative;">
+    <form style="margin: 30px;">
+        <div id="mylibrary-menu" class="no-selection">
+            {% include '_menu_item.html.twig' with {'id': 'home', 'link': '/', 'title': t.trans('Library'), 'path': path } only %}
+            {% include '_menu_item.html.twig' with {'id': 'config', 'link': '/config', 'title': t.trans('Configuration'), 'path': path } only %}
+            {% include '_menu_item.html.twig' with {'id': 'vacuum-link', 'link': '/config/vacuum', 'title': t.trans('Compact'), 'path': path } only %}
+            {% include '_menu_item.html.twig' with {'id': 'about', 'link': '/about', 'title': t.trans('About VERSION'), 'path': path } only %}
+        </div>
+        {# \Yii::$app->mycfg->version #}
+    </form>
+</header>
+{% block content %}{% endblock %}
+<footer></footer>
+<script>
+  $("#mylibrary-menu").buttonset()
+  $("#mylibrary-menu input").click(function () {
+    window.location.href = $(this).val()
+  })
+
+
+  //
+  //
+  $("#vacuum-link").on("click", function (e) {
+    e.preventDefault()
+    var $menuItem = $(this)
+    var link = $menuItem.prev().val()
+    var backupMenuText = $menuItem.children('span').text()
+
+    // dummy no multi click
+    if ($menuItem.prop('disabled')) {
+      return false
+    }
+    $menuItem.prop('disabled', true)
+    $('span', this).text('{{ t.trans('doing...') }}')
+    
+    console.log('compacting...')
+    var xhr = $.post(link, function (data) {
+      alert(data)
+    })
+    xhr.always(function () {
+      $menuItem.children('span').text(backupMenuText)
+      $menuItem.removeClass('ui-state-active')
+      $menuItem.prop('disabled', false)
+    })
+  })
+</script>
+</body>
+</html>

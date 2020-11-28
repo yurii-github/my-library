@@ -46,20 +46,4 @@ class SiteController extends Controller
         return $this->render('index', ['categories' => $categories]);
     }
 
-    public function actionAbout()
-    {
-        $this->view->title = \Yii::t('frontend/site', 'About');
-        $projects = [
-            'Yii ' . Yii::getVersion() => 'https://github.com/yiisoft/yii2',
-            'jQuery' => 'https://jquery.com',
-            'jQuery UI' => 'https://jqueryui.com',
-            'jQuery Grid' => 'http://www.trirand.com/blog',
-            'jQuery Raty' => 'http://wbotelhos.com/raty',
-            'jQuery FancyBox' => 'http://fancybox.net',
-            'JS-Cookie' => 'https://github.com/js-cookie/js-cookie',
-            'Ghostscript' => 'https://www.ghostscript.com/'
-        ];
-        return $this->render('//about/index', ['projects' => $projects]);
-    }
-
 }

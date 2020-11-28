@@ -1,1 +1,19 @@
-"Hello world! {$_ENV['APP_NAME']}"
+{% extends "_layout.html.twig" %}
+{% set title = t.trans('About Project') %}
+{% block content %}
+    <div style="margin: auto; width: 300px; text-align: left; font-size: 14px;">
+        <h1 style="text-align: center; font-size: 20px; margin-bottom: 20px">{{ title }}</h1>
+        <p>
+            <b><a href="https://github.com/yurii-github/yii2-mylib">MyLibrary</a></b>
+            {{ t.trans('is a software to manage your book library.') }}
+        </p>
+        <h1 style="text-align: center; font-size: 17px; margin: 20px 0">{{ t.trans('Used Sources &amp; Projects') }}</h1>
+        {% if projects is not empty %}
+            <ul>
+                {% for name,link in projects %}
+                    <li><a target='_blank' href="{{ link }}">{{ name }}</a></li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+{% endblock %}

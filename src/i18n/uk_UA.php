@@ -34,6 +34,7 @@ return [
     'Db' => '@@Бд@@',
     'Login' => '@@Вхід@@',
     'About' => 'Про',
+    'About Project' => 'Про Проект',
     'About {version}' => 'Про {version}',
     'Added' => 'Додано',
     'All' => 'Всі',
@@ -51,4 +52,9 @@ return [
     'Year' => 'Рік',
     'Yes' => 'Так',
     'doing...' => 'виконую...',
+    
+    //about
+    'Used Sources &amp; Projects' => 'Використані Джерела та Проекти',
+    'is a software to manage your book library.' => '- це програмне забезпечення, що дозволяє керувати вашою бібліотекою книжок.'
+    
 ];

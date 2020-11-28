@@ -8,6 +8,7 @@ use Symfony\Component\Translation\Loader\PhpFileLoader;
 use Symfony\Component\Translation\Translator;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
+use Twig\TwigFunction;
 
 class Bootstrap
 {
@@ -38,9 +39,18 @@ class Bootstrap
         $loader = new FilesystemLoader(SRC_DIR . '/views');
         $twig = new Environment($loader, [
             // 'cache' => DATA_DIR . '/cache',
-            'debug' => $_ENV['APP_DEBUG'],
+            //'debug' => $_ENV['APP_DEBUG'],
         ]);
 
+        $twig->registerUndefinedFunctionCallback(function ($name) {
+            if ($name === 'islinux') {
+                return new TwigFunction($name, function() {
+                    return strtoupper(PHP_OS) === 'LINUX';
+                });
+            }
+            return false;
+        });
+        
         return $twig;
     }
 

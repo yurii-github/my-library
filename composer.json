@@ -9,6 +9,7 @@
 		"ext-json": "*",
 		"ext-pdo": "*",
 		"ext-gd": "*",
-		"ext-mbstring": "*"
+		"ext-mbstring": "*",
+		"slim/slim": "4.*"
 	}
 }

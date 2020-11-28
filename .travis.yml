@@ -7,8 +7,5 @@ php:
   - 7.2
   - 7.4
   - nightly
-env:
-  - DB_TYPE=sqlite
-  - DB_TYPE=mysql
 git:
   submodules: false

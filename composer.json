@@ -9,6 +9,17 @@
     "ext-json": "*",
     "ext-pdo": "*",
     "ext-gd": "*",
-    "ext-mbstring": "*"
+    "ext-mbstring": "*",
+    "slim/slim": "4.*",
+    "guzzlehttp/psr7": "*",
+    "http-interop/http-factory-guzzle": "*",
+    "symfony/dotenv": "*",
+    "symfony/translation": "*",
+    "twig/twig": "^3.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    }
   }
 }

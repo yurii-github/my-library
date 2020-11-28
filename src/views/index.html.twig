@@ -18,7 +18,7 @@
 
       function getCookie(n, v) {
         var val = Cookies.get(n)
-        if (val == undefined) {
+        if (val === undefined) {
           val = v
         }
         //console.log('cookie:',n,v);
@@ -39,7 +39,7 @@
           $(this).attr('data-write', 'false')
         },
         readOnly: function () {
-          return ("false" == $(this).attr('data-write'))
+          return ('false' === $(this).attr('data-write'))
         },
         space: false,
         number: 5,
@@ -101,8 +101,7 @@
             edittype: 'custom',
             editoptions: {
               custom_element: function (value, options) {
-                var element = $('<div class="book-favorite" data-write="true" data-score="' + value + '"></div>').raty(ratyOptions)[0]
-                return element
+                return $('<div class="book-favorite" data-write="true" data-score="' + value + '"></div>').raty(ratyOptions)[0]
               },
               custom_value: function (element) {
                 return element.attr('data-score')
@@ -121,7 +120,7 @@
             },
             formatter: function (cellvalue, options, rowObject) {
               lastRead = cellvalue
-              return (cellvalue == 'yes' ? '<div class="book-read-yes"/>' : '')
+              return (cellvalue === 'yes' ? '<div class="book-read-yes"/>' : '')
             },
             unformat: function (cellvalue, options) {
               return lastRead
@@ -129,7 +128,7 @@
             edittype: 'custom',
             editoptions: {
               custom_element: function (value, options) {
-                return '<input type="checkbox" ' + (value == 'yes' ? 'checked="checked"' : '') + '/>'
+                return '<input type="checkbox" ' + (value === 'yes' ? 'checked="checked"' : '') + '/>'
               }
               ,
               custom_value: function (element) {
@@ -168,11 +167,8 @@
                 {% if islinux() %}
                 {# replace ' ' to '\ ' AND replace "'" to "\'" #}
               'cellvalue = cellvalue.replace(/\s/g, \'\\\\ \'); cellvalue = cellvalue.replace(/\'/g, "\\\\\'");'
-                {% else %}
-              ''
                 {% endif %}
-              return 'TODO'
-              //return '<span title="click to copy filename to clipboard" class="book-filename ui-icon ui-icon-document" data-filename="<?php echo str_replace('\\', '\\\\', Yii::$app->mycfg->library->directory); ?>' + cellvalue + '"></span>'
+              return '<span title="click to copy filename to clipboard" class="book-filename ui-icon ui-icon-document" data-filename="{{ copy_book_dir() | raw }}' + cellvalue + '"></span>'
             }
           },
           {
@@ -275,7 +271,7 @@
             $("#category_list input").click(function () {
               var id = $(this).attr('id')
 
-              if (id == 'category_ALL') { // select all
+              if (id === 'category_ALL') { // select all
                 if ($(this).prop('checked')) {
                   var category_ids = $('#category_list input:not(#category_ALL)').map(function () {
                     return $(this).val()
@@ -299,7 +295,10 @@
 
               $("#category_list input").button('refresh')
 
-              book_list.jqGrid('setGridParam', {url: 'api/book?filterCategories=' + filterCategories, page: 1}).trigger("reloadGrid")
+              book_list.jqGrid('setGridParam', {
+                url: 'api/book?filterCategories=' + filterCategories,
+                page: 1
+              }).trigger("reloadGrid")
             })
             filterCategories = 0 // avoid another append
           }
@@ -395,7 +394,7 @@
               xhr.open('POST', 'api/book/cover-save?book_guid=' + book_guid, true)
               xhr.send(file)
               xhr.onreadystatechange = function (e) {
-                if (this.readyState != 4 || this.status != 200) return
+                if (this.readyState !== 4 || this.status !== 200) return
                 //refresh view
                 var r = new FileReader()
                 r.readAsDataURL(file)

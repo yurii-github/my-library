@@ -15,8 +15,8 @@ Bootstrap::handleCliStaticData();
 Bootstrap::initDotEnv();
 $translator = Bootstrap::initTranslator();
 $app = Bootstrap::initApplication();
-$twig = Bootstrap::initTwig();
 $config = Bootstrap::initConfiguration();
+$twig = Bootstrap::initTwig($config);
 date_default_timezone_set($config->system->timezone);
 $locale = str_replace('-', '_', $config->system->language);
 $translator->setLocale($locale);
@@ -25,7 +25,7 @@ $capsule = Bootstrap::initCapsule($config);
 //
 // ROUTES
 //
-$app->get('/', function (Request $request, Response $response, $args) use ($twig, $translator) {
+$app->get('/', function (Request $request, Response $response, $args) use ($config, $twig, $translator) {
     $uri = $request->getUri();
     $gridLocale = [
         'en_US' => 'en',

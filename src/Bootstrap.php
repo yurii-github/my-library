@@ -92,7 +92,7 @@ class Bootstrap
 
     }
 
-    public static function initTwig()
+    public static function initTwig(Configuration $config)
     {
         $loader = new FilesystemLoader(SRC_DIR . '/views');
         $twig = new Environment($loader, [
@@ -100,14 +100,20 @@ class Bootstrap
             //'debug' => $_ENV['APP_DEBUG'],
         ]);
 
-        $twig->registerUndefinedFunctionCallback(function ($name) {
+        $twig->registerUndefinedFunctionCallback(function ($name) use ($config) {
             if ($name === 'islinux') {
                 return new TwigFunction($name, function () {
                     return strtoupper(PHP_OS) === 'LINUX';
                 });
+            } elseif ($name === 'copy_book_dir') {
+                return new TwigFunction($name, function () use ($config) {
+                    return str_replace("\\", "\\\\", $config->library->directory);
+                });
             }
             return false;
         });
+
+        //str_replace('\\', '\\\\', Yii::$app->mycfg->library->directory)
 
         return $twig;
     }

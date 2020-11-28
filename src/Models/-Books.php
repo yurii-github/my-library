@@ -282,29 +282,6 @@ class Books extends ActiveRecord
     }
 
     /**
-     * gets records in jqGrid format
-     *
-     * @param array $data
-     * @return \stdClass
-     */
-    public static function jgridBooks(array $data)
-    {
-        $nameColumns = ['created_date', 'book_guid', 'favorite', 'read', 'year', 'title', 'isbn13', 'author', 'publisher', 'ext', 'filename'];
-        $sortColumns = ['favorite', 'read', 'year', 'title', 'created_date', 'isbn13', 'author', 'publisher'];
-
-        $query = self::find()->alias('b')->select(['b.created_date', 'b.book_guid', 'b.favorite', 'b.read', 'b.year', 'b.title', 'b.isbn13', 'author', 'publisher', 'ext', 'filename']);
-
-        if (!empty($data['filterCategories'])) {
-            $query->innerJoinWith(['categories' => function (ActiveQuery $q) use ($data) {
-                $q->where(['in', 'guid', explode(',', $data['filterCategories'])]);
-            }]);
-        }
-
-        return self::jgridRecords($data, $nameColumns, $sortColumns, $query);
-    }
-
-
-    /**
      * @return string binary book cover
      */
     public static function getCover($guid)

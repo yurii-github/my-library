@@ -43,41 +43,6 @@ class BookController extends Controller
         ];
     }
 
-    /**
-     * Return list of books in jqgrid format
-     *
-     * @return \stdClass
-     * @throws \yii\db\Exception
-     */
-    public function actionIndex()
-    {
-        if (\Yii::$app->getDb()->getDriverName() === 'sqlite') {
-            $db = \Yii::$app->getDb();
-            $db->open();
-            // not documented feature of SQLite !
-            $db->pdo->sqliteCreateFunction('like', function ($x, $y, $escape) {
-                // Example: $x = '%ч'; $y = 'bЧ'; $escape = '\';
-                $x = str_replace('%', '', $x);
-                $x = preg_quote($x);
-                // return false;
-                return preg_match('/' . $x . '/iu', $y);
-            });
-        }
-
-        $data = [
-            'page' => \Yii::$app->request->get('page'),
-            'limit' => \Yii::$app->request->get('rows'),
-            'filters' => \Yii::$app->request->get('filters'),
-            'sort_column' => \Yii::$app->request->get('sidx'),
-            'sort_order' => \Yii::$app->request->get('sord'),
-
-            // custom stuff!
-            'filterCategories' => \Yii::$app->request->get('filterCategories')
-        ];
-
-        \Yii::$app->response->format = Response::FORMAT_JSON;
-        return Books::jgridBooks($data);
-    }
 
     /**
      * CRUD functionality for books via jqGrid interface

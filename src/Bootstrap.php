@@ -23,7 +23,6 @@ class Bootstrap
     
     public static function initCapsule(Configuration $config)
     {
-        
         $capsule = new Manager();
         $capsule->addConnection([
             'driver'    => $config->database->format,
@@ -37,6 +36,20 @@ class Bootstrap
         ]);
         $capsule->setAsGlobal();
         $capsule->bootEloquent();
+
+        $pdo = $capsule->getConnection()->getPdo();
+        if ($pdo->getAttribute(\PDO::ATTR_DRIVER_NAME) === 'sqlite') {
+            // not documented feature of SQLite !
+            $pdo->sqliteCreateFunction('like', function ($x, $y, $escape) {
+                // Example: $x = '%ч'; $y = 'bЧ'; $escape = '\';
+                $x = str_replace('%', '', $x);
+                $x = preg_quote($x);
+                // return false;
+                return preg_match('/' . $x . '/iu', $y);
+            });
+        }
+        
+        return $capsule;
     }
     
     

@@ -20,7 +20,7 @@ $config = Bootstrap::initConfiguration();
 date_default_timezone_set($config->system->timezone);
 $locale = str_replace('-', '_', $config->system->language);
 $translator->setLocale($locale);
-Bootstrap::initCapsule($config);
+$capsule = Bootstrap::initCapsule($config);
 
 //
 // ROUTES
@@ -43,21 +43,25 @@ $app->get('/', function (Request $request, Response $response, $args) use ($twig
     return $response;
 });
 
+// Return list of books in jqgrid format
 $app->get('/api/book', function (Request $request, Response $response, $args) use ($twig, $translator) {
-    $uri = $request->getUri();
-    $gridLocale = [
-        'en_US' => 'en',
-        'uk_UA' => 'ua',
-    ];
-    $categories = \App\Models\Category::all();
-    $response->getBody()->write($twig->render('index.html.twig', [
-        't' => $translator,
-        'categories' => $categories,
-        'path' => $uri->getPath(),
-        'baseUrl' => $uri->getScheme() . '://' . $uri->getAuthority(),
-        'appTheme' => $_ENV['APP_THEME'],
-        'gridLocale' => $gridLocale[$translator->getLocale()],
-    ]));
+    $filterCategories = $request->getAttribute('filterCategories');
+    $columns = ['created_date', 'book_guid', 'favorite', 'read', 'year', 'title', 'isbn13', 'author', 'publisher', 'ext', 'filename'];
+    $query = \App\Models\Book::query()->select($columns);
+
+    if (!empty($filterCategories)) {
+        $query->whereHas('categories', function(\Illuminate\Database\Query\Builder $query) use ($filterCategories){
+            $query->whereIn('guid', explode(',', $filterCategories));
+        });
+    }
+
+    $gridQuery = new \App\JGridRequestQuery($query, $request);
+    $data = $gridQuery
+        ->withFilters()
+        ->withSorting('created_date', 'desc')
+        ->paginate($columns);
+
+    $response->getBody()->write(json_encode($data));
     return $response;
 });
 

@@ -1,0 +1,3 @@
+{% set item_id = "menu_"~id %}
+<input id="{{ item_id }}" type="radio" value="{{ link }}" {{ path is same as (link) ? 'checked="checked"' : "" }} />
+<label for="{{ item_id }}">{{ title }}</label>

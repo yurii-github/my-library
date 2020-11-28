@@ -1,17 +1,17 @@
 <?php
 return [
     // config
-    'PHP info: ' => '',
-    'dbname' => '',
-    'email' => '',
-    'enable email' => '',
-    'host' => '',
-    'login' => '',
-    'password' => '',
+    'PHP info: ' => 'PHP info: ',
+    'dbname' => 'База даних',
+    'email' => 'email',
+    'enable email' => 'enable email',
+    'host' => 'Хост',
+    'login' => 'Логін',
+    'password' => 'Пароль',
     'permissions' => '',
-    'system' => '',
-    'PHP info' => '@@PHP інфо@@',
-    'users' => '@@користувачі@@',
+    'system' => 'Система',
+    'PHP info' => 'PHP інфо',
+    'users' => 'користувачі',
     'DB format' => 'БД формат',
     'book' => 'Книга',
     'cover max width, px' => 'макс. ширина обкладинки, px',
@@ -30,10 +30,11 @@ return [
     'yes' => 'так',
 
     // site
-    'ISBN-13' => '',
-    'Db' => '@@Бд@@',
-    'Login' => '@@Вхід@@',
+    'ISBN-13' => 'ISBN-13',
+    'Db' => 'Бд',
+    'Login' => 'Вхід',
     'About' => 'Про',
+    'About Project' => 'Про Проект',
     'About {version}' => 'Про {version}',
     'Added' => 'Додано',
     'All' => 'Всі',
@@ -51,4 +52,9 @@ return [
     'Year' => 'Рік',
     'Yes' => 'Так',
     'doing...' => 'виконую...',
+    
+    //about
+    'Used Sources &amp; Projects' => 'Використані Джерела та Проекти',
+    'is a software to manage your book library.' => '- це програмне забезпечення, що дозволяє керувати вашою бібліотекою книжок.'
+    
 ];

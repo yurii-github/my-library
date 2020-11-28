@@ -6,6 +6,8 @@ use Slim\Factory\AppFactory;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\Translation\Loader\PhpFileLoader;
 use Symfony\Component\Translation\Translator;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
 class Bootstrap
 {
@@ -29,5 +31,16 @@ class Bootstrap
         $translator->addResource('php', SRC_DIR . '/i18n/uk_UA.php', 'uk_UA');
         return $translator;
 
+    }
+    
+    public static function initTwig()
+    {
+        $loader = new FilesystemLoader(SRC_DIR.'/views');
+        $twig = new Environment($loader, [
+            'cache' => DATA_DIR . '/cache',
+            'debug' => $_ENV['APP_DEBUG'],
+        ]);
+        
+        return $twig;
     }
 }

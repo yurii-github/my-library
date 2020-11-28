@@ -1,11 +1,17 @@
 <?php
 
-require '../../vendor/autoload.php';
-$config = require '../config/config.php';
-require '../../vendor/yiisoft/yii2/Yii.php';
 
-if (file_exists('../config/config.local.php')) {
-    $config = \yii\helpers\ArrayHelper::merge($config, require '../config/config.local.php');
-}
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Slim\Factory\AppFactory;
 
-(new yii\web\Application($config))->run();
+require __DIR__ . '/../vendor/autoload.php';
+
+$app = AppFactory::create();
+
+$app->get('/', function (Request $request, Response $response, $args) {
+    $response->getBody()->write("Hello world!");
+    return $response;
+});
+
+$app->run();

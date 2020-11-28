@@ -11,6 +11,7 @@
 		"ext-gd": "*",
 		"ext-mbstring": "*",
 		"slim/slim": "4.*",
-		"guzzlehttp/psr7": "^1.7"
+		"guzzlehttp/psr7": "*",
+		"http-interop/http-factory-guzzle": "*"
 	}
 }

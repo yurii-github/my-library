@@ -30,7 +30,7 @@
         Cookies.set('page', book_list.jqGrid('getGridParam', 'page'))
       }
 
-      var ratyOptions = {
+      let ratyOptions = {
         score: function () {
           return $(this).attr('data-score')
         },
@@ -215,10 +215,13 @@
         subGridRowExpanded: function (subgrid_id, row_id) {
           // If we wan to pass additinal parameters to the url we can use
           // a method getRowData(row_id) - which returns associative array in type name-value
-          var subgrid_table_id = subgrid_id + "_t"
-          var pager_id = "p_" + subgrid_table_id
-          $("#" + subgrid_id).html("<table id='" + subgrid_table_id + "' class='scroll'></table><div id='" + pager_id + "' class='scroll'></div>")
-          jQuery("#" + subgrid_table_id).jqGrid({
+          const subgrid_table_id = subgrid_id + "_t"
+          const jq_subgrid_table_id = '#' + subgrid_table_id
+          const pager_id = "p_" + subgrid_table_id
+          const jq_subgrid_id = '#' + subgrid_id
+          
+          $(jq_subgrid_id).html("<table id='" + subgrid_table_id + "' class='scroll'></table><div id='" + pager_id + "' class='scroll'></div>")
+          jQuery(jq_subgrid_table_id).jqGrid({
             caption: 'Categories',
             rownumbers: true,
             url: 'api/category?nodeid=' + row_id,
@@ -247,7 +250,7 @@
             sortname: 'title'
           })
 
-          jQuery("#" + subgrid_table_id).jqGrid('navGrid', "#" + pager_id, {edit: true, add: true, del: true})
+          jQuery(jq_subgrid_table_id).jqGrid('navGrid', "#" + pager_id, {edit: true, add: true, del: true})
         }
 
         ,

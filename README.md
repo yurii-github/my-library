@@ -1,7 +1,8 @@
 
+
 # My Library
 
-[![Build Status](https://travis-ci.org/yurii-github/yii2-mylib.svg?branch=master)](https://travis-ci.org/yurii-github/yii2-mylib) [![Code Climate](https://codeclimate.com/github/yurii-github/yii2-mylib/badges/gpa.svg)](https://codeclimate.com/github/yurii-github/yii2-mylib) [![Test Coverage](https://codeclimate.com/github/yurii-github/yii2-mylib/badges/coverage.svg)](https://codeclimate.com/github/yurii-github/yii2-mylib/coverage) [![Yii2](https://img.shields.io/badge/Powered_by-Yii_Framework-green.svg?style=flat)](http://www.yiiframework.com/)
+[![Build Status](https://travis-ci.org/yurii-github/yii2-mylib.svg?branch=slim-master)](https://travis-ci.org/yurii-github/yii2-mylib) [![Code Climate](https://codeclimate.com/github/yurii-github/yii2-mylib/badges/gpa.svg)](https://codeclimate.com/github/yurii-github/yii2-mylib) [![Test Coverage](https://codeclimate.com/github/yurii-github/yii2-mylib/badges/coverage.svg)](https://codeclimate.com/github/yurii-github/yii2-mylib/coverage)
 
 ## About
 
@@ -53,7 +54,7 @@ I do recommend to use github approach because you can get more fresh code
 Now, you can start your application
 
 ```
-php yii serve
+./serve
 ```
 
 Application will be available at [http://localhost:8080](http://localhost:8080)
@@ -61,16 +62,21 @@ Application will be available at [http://localhost:8080](http://localhost:8080)
 ## Structure
 Here's the list of most interesting places:
 <pre>
-├── app
-│   ├── 3rd         -  -  -  -  -  -  -  - 3rd party assets
-│   ├── assets      -  -  -  -  -  -  -  - our assets
-│   ├── config
-│   │   └── config.local.php -  -  -  -  - your custom app configuration (that cannot be set via settings)
-│   ├── web         -  -  -  -  -  -  -  - entry point of the application  
 ├── data            -  -  -  -  -  -  -  - your data is stored here
 │   ├── config.json          -  -  -  -  - settings set via web interface
 │   └── mydb.s3db            -  -  -  -  - book SQLite database
-└── yii             -  -  -  -  -  -  -  - console app
+├── src
+├── tests
+├── public
+│   ├── 3rd         -  -  -  -  -  -  -  - 3rd party assets
+│   ├── assets      -  -  -  -  -  -  -  - our assets
+├── └── index.php   -  -  -  -  -  -  -  - entry point of the application  
+└── serve           -  -  -  -  -  -  -  - run webapp locally
+
+--------
+│   ├── config
+│   │   └── config.local.php -  -  -  -  - your custom app configuration (that cannot be set via settings)
+------
 </pre>
 
 ## Sync
@@ -84,11 +90,3 @@ If you have enabled synchronization application will sync changes to your filesy
 ## Importing new books
 The simplest way is to drop your books to library folder you've set in configuration and then on "synchronization" press "import fs only".
 It will import all file system books that are not in database yet.
-
-
-# Development
-
-To export translations, run
-```
-php yii message app/config/message-config.php
-```

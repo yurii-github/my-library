@@ -1,82 +1,14 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Continuous Integration and Deployment: https://travis-ci.org
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# EXTRA INFO
-# VM image: ubuntu x86_64
-# php ext dir: /home/travis/.phpenv/versions/$(phpenv version-name)/lib/php/extensions/no-debug-zts-20131226/
-# base shell dir: /home/travis/build/yurii-github/yii2-mylib/
-# pear config: pear config-show
-#
-# NOTES:
-# - selenium is failing
-# - TODO https://docs.travis-ci.com/user/trusty-to-xenial-migration-guide
-#
 dist: xenial
 language: php
 php:
   - 7.2
   - 7.4
-matrix:
-  allow_failures:
-    - php: nightly
-#
-# Parallelize builds
-#
+  - nightly
 env:
   - DB_TYPE=sqlite
   - DB_TYPE=mysql
-#
-# Build lifecycle
-#
-before_install:
-  - if git log -1 --oneline | grep -qie "\[sc\]"; then echo -e "\e[0;34;40m[sc] is presented. clover will not be set"; else export CLOVER="--coverage-clover build/logs/clover.xml"; fi
-install:
-  - bash .travis.sh install
-  - export PATH=$PATH:$(pwd)/vendor/chrome-linux
-before_script:
-  # fake GUI
-  #- /sbin/start-stop-daemon --start --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16
-  #- export DISPLAY=:99.0
-  # run php web server and selenium server
-  #- php -S 127.0.0.1:8080 -t $(pwd)/app/public 2> /dev/null &
-  #- java -jar vendor/selenium.jar -Dwebdriver.chrome.driver=$(pwd)/vendor/chromedrv -log $(pwd)/selenium.log 2> /dev/null &
-  #- sleep 6
-  - mysql -e "CREATE DATABASE IF NOT EXISTS test_mylib" -utravis
-script:
-  - bash .travis.sh script
-after_success:
-  - bash .travis.sh after_success
-after_failure:
-after_script:
-  #- head -20 selenium.log
-before_deployment:
-deployment:
-after_deployment:
-#
-# other
-#
-services:
-  - mysql
-addons:
-  apt:
-    sources:
-      - google-chrome
-    packages:
-#      - google-chrome-stable
-  code_climate:
-    repo_token: 28adcb727addc35197cb35d4bced9b010ed2f14f611ade92b9ac1210484f92e0
-#
-# cache on success. lifetime?
-#
-cache:
-  directories:
-    - vendor
-#
-# for Docker, use of new container-based stack
-#
-sudo: false
-#
-# for git client on Travis
-#
 git:
   submodules: false

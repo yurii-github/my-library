@@ -64,11 +64,9 @@ return [
 				'install' => 'install/install',
 			]
 		],
-		'mycfg' => [
-			'class' =>  \app\components\Configuration::class,
-			'config_file' => '@data/config.json',
-            'version' => '1.3',
-		],
+        
+
+        
 		'log' => [
 			'traceLevel' => YII_DEBUG ? 1 : 0,
 			'targets' => [

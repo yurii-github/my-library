@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Configuration\Configuration;
+use Illuminate\Database\Capsule\Manager;
 use Slim\Factory\AppFactory;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\Translation\Loader\PhpFileLoader;
@@ -12,6 +14,32 @@ use Twig\TwigFunction;
 
 class Bootstrap
 {
+    public static function initConfiguration()
+    {
+        $config = new Configuration(DATA_DIR .'/config.json', '1.3');
+        return $config;
+    }
+    
+    
+    public static function initCapsule(Configuration $config)
+    {
+        
+        $capsule = new Manager();
+        $capsule->addConnection([
+            'driver'    => $config->database->format,
+            'host'      => $config->database->host,
+            'database'  => $config->database->format === 'sqlite' ? $config->database->filename : $config->database->dbname,
+            'username'  => $config->database->login,
+            'password'  => $config->database->password,
+            'charset'   => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix'    => '',
+        ]);
+        $capsule->setAsGlobal();
+        $capsule->bootEloquent();
+    }
+    
+    
     public static function initApplication()
     {
         $app = AppFactory::create();

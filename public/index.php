@@ -1,6 +1,5 @@
 <?php
 
-use app\models\Categories;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use \App\Bootstrap;
@@ -17,7 +16,11 @@ Bootstrap::initDotEnv();
 $translator = Bootstrap::initTranslator();
 $app = Bootstrap::initApplication();
 $twig = Bootstrap::initTwig();
-
+$config = Bootstrap::initConfiguration();
+date_default_timezone_set($config->system->timezone);
+$locale = str_replace('-', '_', $config->system->language);
+$translator->setLocale($locale);
+Bootstrap::initCapsule($config);
 
 //
 // ROUTES
@@ -28,10 +31,7 @@ $app->get('/', function (Request $request, Response $response, $args) use ($twig
         'en_US' => 'en',
         'uk_UA' => 'ua',
     ];
-
-    //$categories = Categories::find()->all();
-    $categories = [];
-    
+    $categories = \App\Models\Category::all();
     $response->getBody()->write($twig->render('index.html.twig', [
         't' => $translator,
         'categories' => $categories,
@@ -42,6 +42,25 @@ $app->get('/', function (Request $request, Response $response, $args) use ($twig
     ]));
     return $response;
 });
+
+$app->get('/api/book', function (Request $request, Response $response, $args) use ($twig, $translator) {
+    $uri = $request->getUri();
+    $gridLocale = [
+        'en_US' => 'en',
+        'uk_UA' => 'ua',
+    ];
+    $categories = \App\Models\Category::all();
+    $response->getBody()->write($twig->render('index.html.twig', [
+        't' => $translator,
+        'categories' => $categories,
+        'path' => $uri->getPath(),
+        'baseUrl' => $uri->getScheme() . '://' . $uri->getAuthority(),
+        'appTheme' => $_ENV['APP_THEME'],
+        'gridLocale' => $gridLocale[$translator->getLocale()],
+    ]));
+    return $response;
+});
+
 
 $app->get('/about', function (Request $request, Response $response, $args) use ($twig, $translator) {
     $uri = $request->getUri();

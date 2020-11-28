@@ -4,18 +4,20 @@
 	"description" : "my book library",
 	"license" : "GPL-3.0",
 	"minimum-stability" : "stable",
+	"version": "0.0.1",
 	"require" : {
 		"php" : "~7.2",
 		"ext-json": "*",
 		"ext-pdo": "*",
 		"ext-gd": "*",
 		"ext-mbstring": "*",
-		"slim/slim": "4.*",
 		"guzzlehttp/psr7": "*",
 		"http-interop/http-factory-guzzle": "*",
-		"symfony/dotenv": "*",
-		"symfony/translation": "*",
-		"twig/twig": "^3.1"
+		"twig/twig": "^3.1",
+		"illuminate/database": "^7.29",
+		"symfony/dotenv": "^5.1",
+		"symfony/translation": "^5.1",
+		"slim/slim": "^4.6"
 	},
 	"autoload": {
 		"psr-4": {

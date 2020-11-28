@@ -12,6 +12,7 @@
 		"ext-mbstring": "*",
 		"slim/slim": "4.*",
 		"guzzlehttp/psr7": "*",
-		"http-interop/http-factory-guzzle": "*"
+		"http-interop/http-factory-guzzle": "*",
+		"symfony/dotenv": "*"
 	}
 }

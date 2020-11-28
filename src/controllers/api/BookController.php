@@ -88,21 +88,6 @@ class BookController extends Controller
         $book->save();
     }
 
-    /**
-     * @param string $book_guid
-     * @return mixed
-     */
-    public function actionCover($book_guid)
-    {
-        \Yii::$app->response->headers->set('Cache-Control', 'no-cache');
-        \Yii::$app->response->headers->set('Pragma', 'no-cache');
-        \Yii::$app->response->headers->set('Content-Type', 'image/jpeg');
-        \Yii::$app->response->format = Response::FORMAT_RAW;
-
-        return \Yii::$app->cache->getOrSet(Books::CACHE_BOOK_COVER . $book_guid, function (CacheInterface $cache) use ($book_guid) {
-            return Books::getCover($book_guid);
-        }, 0);
-    }
 
     /**
      * saves cover for book via book_guid. cover is sent as request body

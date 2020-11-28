@@ -72,37 +72,6 @@ class Books extends ActiveRecord
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function find()
-    {
-        return parent::find()->select([
-            'book_guid',
-            // 'book_cover', <-- ignore cover on regular select for performance gains!
-            'created_date',
-            'updated_date',
-            'favorite',
-            'read',
-            'year',
-            'title',
-            'isbn13',
-            'author',
-            'publisher',
-            'ext',
-            'filename'
-        ]);
-    }
-
-    /**
-     * @return ActiveQuery
-     * @throws \yii\base\InvalidConfigException
-     */
-    public function getCategories()
-    {
-        return $this->hasMany(Categories::class, ['guid' => 'category_guid'])
-            ->viaTable('books_categories', ['book_guid' => 'book_guid']);
-    }
 
     /**
      * resamples image to match boundary limits by width. Height is not checked and will resampled according to width's change percentage
@@ -253,12 +222,7 @@ class Books extends ActiveRecord
         return $isChanged;
     }
 
-    protected function flushCache()
-    {
-        if (\Yii::$app->cache) {
-            \Yii::$app->cache->delete(static::CACHE_BOOK_COVER. $this->book_guid);
-        }
-    }
+
 
     /**
      * @param bool $insert
@@ -279,15 +243,6 @@ class Books extends ActiveRecord
         } else { // UPDATE
             return $this->myBeforeUpdate();
         }
-    }
-
-    /**
-     * @return string binary book cover
-     */
-    public static function getCover($guid)
-    {
-        $cover = self::find()->select(['book_cover'])->where(['book_guid' => $guid])->limit(1)->scalar();
-        return $cover ? $cover : file_get_contents(\Yii::getAlias('@webroot') . '/assets/app/book-cover-empty.jpg');
     }
 
 }

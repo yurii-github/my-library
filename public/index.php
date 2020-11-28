@@ -43,6 +43,21 @@ $app->get('/', function (Request $request, Response $response, $args) use ($twig
     return $response;
 });
 
+
+$app->get('/api/book/cover', function (Request $request, Response $response, $args) use ($twig, $translator) {
+    $book_guid = $request->getQueryParams()['book_guid'];
+    $cover = \App\Models\Book::query()
+        ->where('book_guid', $book_guid)
+        ->first('book_cover')
+        ->book_cover;
+    $response = $response
+        ->withHeader('Cache-Control', 'no-cache')
+        ->withHeader('Content-Type', 'image/jpeg');
+     $response->getBody()->write(!empty($cover) ? $cover : file_get_contents(WEB_DIR.'/assets/app/book-cover-empty.jpg'));
+    return $response;
+});
+
+
 // Return list of books in jqgrid format
 $app->get('/api/book', function (Request $request, Response $response, $args) use ($twig, $translator) {
     $params = $request->getQueryParams();

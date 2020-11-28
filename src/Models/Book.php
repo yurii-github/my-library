@@ -27,6 +27,7 @@ class Book extends Model
     protected $primaryKey = 'book_guid';
     protected $keyType = 'string';
     
+    
     public function categories()
     {
         return $this->belongsToMany(Category::class, 'books_categories', 'book_guid', 'category_guid', 'book_guid', 'guid');

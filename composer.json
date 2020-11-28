@@ -13,6 +13,7 @@
 		"slim/slim": "4.*",
 		"guzzlehttp/psr7": "*",
 		"http-interop/http-factory-guzzle": "*",
-		"symfony/dotenv": "*"
+		"symfony/dotenv": "*",
+		"symfony/translation": "*"
 	}
 }

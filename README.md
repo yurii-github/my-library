@@ -62,16 +62,21 @@ Application will be available at [http://localhost:8080](http://localhost:8080)
 ## Structure
 Here's the list of most interesting places: 
 <pre>
-├── app
-│   ├── 3rd         -  -  -  -  -  -  -  - 3rd party assets
-│   ├── assets      -  -  -  -  -  -  -  - our assets
-│   ├── config
-│   │   └── config.local.php -  -  -  -  - your custom app configuration (that cannot be set via settings)
-│   ├── web         -  -  -  -  -  -  -  - entry point of the application  
 ├── data            -  -  -  -  -  -  -  - your data is stored here
 │   ├── config.json          -  -  -  -  - settings set via web interface
 │   └── mydb.s3db            -  -  -  -  - book SQLite database
-└── yii             -  -  -  -  -  -  -  - console app
+├── src
+├── tests
+├── public
+│   ├── 3rd         -  -  -  -  -  -  -  - 3rd party assets
+│   ├── assets      -  -  -  -  -  -  -  - our assets
+├── └── index.php   -  -  -  -  -  -  -  - entry point of the application  
+└── serve           -  -  -  -  -  -  -  - run webapp locally
+
+--------
+│   ├── config
+│   │   └── config.local.php -  -  -  -  - your custom app configuration (that cannot be set via settings)
+------
 </pre>
 
 ## Sync
@@ -85,11 +90,3 @@ If you have enabled synchronization application will sync changes to your filesy
 ## Importing new books
 The simplest way is to drop your books to library folder you've set in configuration and then on "synchronization" press "import fs only". 
 It will import all file system books that are not in database yet.
-
-
-# Development
-
-To export translations, run
-```
-php yii message app/config/message-config.php
-```

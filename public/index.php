@@ -11,6 +11,7 @@ require BASE_DIR . '/vendor/autoload.php';
 (new Dotenv())->load(BASE_DIR.'/.env');
 
 $app = AppFactory::create();
+$app->addErrorMiddleware($_ENV['APP_DEBUG'], true, true);
 
 $app->get('/', function (Request $request, Response $response, $args) {
     $response->getBody()->write("Hello world! {$_ENV['APP_NAME']}");

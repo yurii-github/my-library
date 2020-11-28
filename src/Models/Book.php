@@ -22,6 +22,13 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Book extends Model
 {
-    protected $table = 'books';
-    protected $primaryKey = 'guid';
+    public $incrementing = false;
+    protected $table='books';
+    protected $primaryKey = 'book_guid';
+    protected $keyType = 'string';
+    
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'books_categories', 'book_guid', 'category_guid', 'book_guid', 'guid');
+    }
 }

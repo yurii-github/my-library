@@ -45,23 +45,22 @@ $app->get('/', function (Request $request, Response $response, $args) use ($twig
 
 // Return list of books in jqgrid format
 $app->get('/api/book', function (Request $request, Response $response, $args) use ($twig, $translator) {
-    $filterCategories = $request->getAttribute('filterCategories');
+    $params = $request->getQueryParams();
+    $filterCategories = $params['filterCategories'] ?? null;
     $columns = ['created_date', 'book_guid', 'favorite', 'read', 'year', 'title', 'isbn13', 'author', 'publisher', 'ext', 'filename'];
     $query = \App\Models\Book::query()->select($columns);
 
     if (!empty($filterCategories)) {
-        $query->whereHas('categories', function(\Illuminate\Database\Query\Builder $query) use ($filterCategories){
+        $query->whereHas('categories', function (\Illuminate\Database\Eloquent\Builder $query) use ($filterCategories) {
             $query->whereIn('guid', explode(',', $filterCategories));
         });
     }
 
     $gridQuery = new \App\JGridRequestQuery($query, $request);
-    $data = $gridQuery
+    $gridQuery
         ->withFilters()
-        ->withSorting('created_date', 'desc')
-        ->paginate($columns);
-
-    $response->getBody()->write(json_encode($data));
+        ->withSorting('created_date', 'desc');;
+    $response->getBody()->write(json_encode($gridQuery->paginate($columns)));
     return $response;
 });
 
@@ -69,8 +68,8 @@ $app->get('/api/book', function (Request $request, Response $response, $args) us
 $app->get('/about', function (Request $request, Response $response, $args) use ($twig, $translator) {
     $uri = $request->getUri();
     $gridLocale = [
-            'en_US' => 'en',
-            'uk_UA' => 'ua',
+        'en_US' => 'en',
+        'uk_UA' => 'ua',
     ];
     $response->getBody()->write($twig->render('about.html.twig', [
         't' => $translator,

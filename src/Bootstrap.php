@@ -22,6 +22,7 @@ namespace App;
 
 use App\Configuration\Configuration;
 use Illuminate\Database\Capsule\Manager;
+use Psr\Container\ContainerInterface;
 use Slim\Factory\AppFactory;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\Translation\Loader\PhpFileLoader;
@@ -32,12 +33,6 @@ use Twig\TwigFunction;
 
 class Bootstrap
 {
-    public static function initConfiguration()
-    {
-        return new Configuration(DATA_DIR . '/config.json', '1.3');
-    }
-
-
     public static function initCapsule(Configuration $config)
     {
         $capsule = new Manager();
@@ -70,9 +65,9 @@ class Bootstrap
     }
 
 
-    public static function initApplication()
+    public static function initApplication(ContainerInterface $container)
     {
-        $app = AppFactory::create();
+        $app = AppFactory::create(null, $container);
         $app->addErrorMiddleware($_ENV['APP_DEBUG'], true, true);
         return $app;
     }

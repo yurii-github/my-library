@@ -23,7 +23,6 @@ namespace App\Configuration;
 /**
  * @property-read string $version
  * @property-read string $config_file
- * 
  * @property System $system
  * @property Library $library
  * @property Database $database
@@ -84,7 +83,7 @@ class Configuration
     {
         $this->version = $version;
         $this->config_file = $filename;
-        
+
         if (!file_exists($this->config_file)) {
             $this->saveDefaultCfg();
         } else {
@@ -97,7 +96,7 @@ class Configuration
         if (in_array($name, $this->options)) {
             return $this->config->$name;
         }
-        
+
         return $this->$name;
     }
 
@@ -109,8 +108,8 @@ class Configuration
 
 
     /**
-     * @deprecated 
      * @return string
+     * @deprecated
      */
     public function getVersion(): string
     {
@@ -156,46 +155,35 @@ class Configuration
     }
 
 
-    /**
-     * returns default configuration as php object
-     * @return mixed
-     */
-    public function getDefaultConfiguration()
+    public function getDefaultConfiguration(): object 
     {
-        $config = <<<JSON
-{
-    "system": {
-        "version": "{version}",
-        "theme": "smoothness",
-        "timezone": "Europe\/Kiev",
-        "language": "en-US"
-    },
-    "library": {
-        "codepage": "cp1251",
-        "directory": "%data_directory%\/books\/",
-        "sync": false
-    },
-    "database": {
-        "format": "sqlite",
-        "filename": "%data_directory%\/mydb.s3db",
-        "host": "localhost",
-        "dbname": "mylib",
-        "login": "",
-        "password": ""
-    },
-    "book": {
-        "covermaxwidth": 800,
-        "covertype": "image\/jpeg",
-        "nameformat": "{year}, ''{title}'', {publisher} [{isbn13}].{ext}",
-        "ghostscript": ""
-    }
-}
-JSON;
-
-        $config = str_replace('{version}', $this->version, $config);
-        $config = str_replace('%data_directory%', addslashes(DATA_DIR), $config);
-
-        return json_decode($config);
+        return (object)[
+            'system' => (object)[
+                'version' => $this->version,
+                'theme' => 'smoothness',
+                'timezone' => 'Europe\/Kiev',
+                'language' => 'en-US'
+            ],
+            'library' => (object)[
+                'codepage' => 'cp1251',
+                'directory' => sprintf('%s\/books\/', addslashes(DATA_DIR)),
+                'sync' => false
+            ],
+            'database' => (object)[
+                'format' => 'sqlite',
+                'filename' => sprintf('%s\/mydb.s3db', addslashes(DATA_DIR)),
+                'host' => 'localhost',
+                'dbname' => 'mylib',
+                'login' => '',
+                'password' => ''
+            ],
+            'book' => (object)[
+                'covermaxwidth' => 800,
+                'covertype' => 'image\/jpeg',
+                'nameformat' => '{year}, \'\'{title}\'\', {publisher} [{isbn13}].{ext}',
+                'ghostscript' => ''
+            ]
+        ];
     }
 
 
@@ -203,6 +191,7 @@ JSON;
      * gets encoded utf-8 string in filesystem codepage type
      * @param string $filename
      * @return string
+     * @deprecated 
      */
     public function Encode($filename)
     {
@@ -218,6 +207,7 @@ JSON;
      *
      * @param string $filename
      * @return string
+     * @deprecated
      */
     public function Decode($filename)
     {

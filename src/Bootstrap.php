@@ -67,8 +67,13 @@ class Bootstrap
 
     public static function initApplication(ContainerInterface $container)
     {
+        $config = $container->get(Configuration::class);
+        date_default_timezone_set($config->system->timezone);
+        $capsule = Bootstrap::initCapsule($config);
+        
         $app = AppFactory::create(null, $container);
         $app->addErrorMiddleware($_ENV['APP_DEBUG'], true, true);
+        
         return $app;
     }
 

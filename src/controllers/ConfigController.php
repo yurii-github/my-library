@@ -20,7 +20,7 @@
 
 namespace app\controllers;
 
-use app\helpers\Tools;
+use app\Helpers\Tools;
 use app\models\Books;
 use app\components\Controller;
 use yii\db\Exception;

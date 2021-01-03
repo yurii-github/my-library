@@ -22,7 +22,7 @@ namespace app\models;
 
 use app\components\ActiveRecord;
 use Yii;
-use app\helpers\Tools;
+use app\Helpers\Tools;
 
 /**
  * Category entity AR

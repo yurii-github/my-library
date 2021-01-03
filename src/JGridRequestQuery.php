@@ -35,7 +35,7 @@ class JGridRequestQuery
         $data = [
             'page' => $params['page'],
             'limit' => $params['rows'],
-            'filters' => $params['filters'],
+            'filters' => $params['filters'] ?? null,
             'sort_column' => $params['sidx'],
             'sort_order' => $params['sord'],
         ];
@@ -49,7 +49,7 @@ class JGridRequestQuery
     
     public function withFilters()
     {
-        $filters = empty($this->data['filters']) ? null : json_decode($this->data['filters']);
+        $filters = $this->data['filters'];
         $conditions = ['bw' => 'like', 'eq' => '='];
 
         if ($filters instanceof \stdClass && is_array($filters->rules)) {
@@ -58,9 +58,9 @@ class JGridRequestQuery
                     continue; // unknown condition, skip
                 }
                 if (!empty($filters->groupOp) && $filters->groupOp == 'AND') {
-                    $this->query->where($rule->field, $conditions[$rule->op], $rule->data);
+                    $this->query->where($rule->field, $conditions[$rule->op], (string)$rule->data); // TODO: better security
                 } else {
-                    $this->query->orWhere($rule->field, $conditions[$rule->op], $rule->data);
+                    $this->query->orWhere($rule->field, $conditions[$rule->op], (string)$rule->data); // TODO: better security
                 }
             }
         }

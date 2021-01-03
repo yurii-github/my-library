@@ -28,9 +28,9 @@ namespace App\Configuration;
  * @property Database $database
  * @property Book $book
  */
-class Configuration
+final class Configuration
 {
-    const SUPPORTED_VALUES = [
+    public const SUPPORTED_VALUES = [
         'system_language' => [
             'en-US' => 'English - en-US',
             'uk-UA' => 'Українська - uk-UA'
@@ -68,18 +68,17 @@ class Configuration
 
     ];
 
-    /** @var string Database Version. Increase version if database changes after release */
     public $version;
-    /** @var string filename of config file with current app configuration */
     public $config_file;
+    protected $config;
+    protected $options = ['system', 'database', 'library', 'book'];
+    protected $isInstall = false; // TODO: remove, depend on migration history manually
 
-    private $config;
-    private $options = ['system', 'database', 'library', 'book'];
-
-    private $isInstall = false;
-
-
-    public function __construct($filename, $version)
+    /**
+     * @param string $filename database version. Increase version if database changes after release
+     * @param string $version filename of config file with current app configuration
+     */
+    public function __construct(string $filename, string $version)
     {
         $this->version = $version;
         $this->config_file = $filename;
@@ -186,39 +185,7 @@ class Configuration
         ];
     }
 
-
-    /**
-     * gets encoded utf-8 string in filesystem codepage type
-     * @param string $filename
-     * @return string
-     * @deprecated 
-     */
-    public function Encode($filename)
-    {
-        if (PHP_MAJOR_VERSION >= 7) {
-            return $filename;
-        }
-
-        return mb_convert_encoding($filename, $this->library->codepage, 'utf-8');
-    }
-
-    /**
-     * gets utf-8 string decoded from filesystem codepage type
-     *
-     * @param string $filename
-     * @return string
-     * @deprecated
-     */
-    public function Decode($filename)
-    {
-        if (PHP_MAJOR_VERSION >= 7) {
-            return $filename;
-        }
-
-        return mb_convert_encoding($filename, 'utf-8', $this->library->codepage);
-    }
-
-
+    
     public function save()
     {
         $filename = $this->config_file;

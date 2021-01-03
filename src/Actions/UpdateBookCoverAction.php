@@ -20,38 +20,49 @@
 
 namespace App\Actions;
 
+use App\Configuration\Configuration;
+use App\Helpers\Tools;
+use App\Models\Book;
+use app\models\Books;
+use Illuminate\Translation\ArrayLoader;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Validator;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use \App\Models\Book;
-use \App\JGridRequestQuery;
-use \Illuminate\Database\Eloquent\Builder;
+use Symfony\Component\Translation\Translator;
+use Twig\Environment;
+use \App\Models\Category;
 
-
-class GetBookListAction
+/**
+ * saves cover for book via book_guid. cover is sent as request body
+ */
+class UpdateBookCoverAction
 {
+    /**
+     * @var Configuration
+     */
+    protected $config;
+    protected $twig;
+    protected $translator;
+
+
     public function __construct(ContainerInterface $container)
     {
+        $this->config = $container->get(Configuration::class);
+        $this->twig = $container->get(Environment::class);
+        $this->translator = $container->get(Translator::class);
     }
 
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $params = $request->getQueryParams();
-        $filterCategories = $params['filterCategories'] ?? null;
-        $columns = ['created_date', 'book_guid', 'favorite', 'read', 'year', 'title', 'isbn13', 'author', 'publisher', 'ext', 'filename'];
-        $query = Book::query()->select($columns);
-
-        if (!empty($filterCategories)) {
-            $query->whereHas('categories', function (Builder $query) use ($filterCategories) {
-                $query->whereIn('guid', explode(',', $filterCategories));
-            });
-        }
-
-        $gridQuery = new JGridRequestQuery($query, $request);
-        $gridQuery->withFilters()->withSorting('created_date', 'desc');;
-        $response->getBody()->write(json_encode($gridQuery->paginate($columns)));
+        $book = Book::where(['book_guid' => $params['book_guid'] ?? null])->firstOrFail();
+        $bookCover = Tools::getResampledImageByWidthAsBlob($request->getBody()->getContents(), $this->config->book->covermaxwidth);
+        $book->book_cover = $bookCover;
+        $book->save();
         
-        return $response->withHeader('Content-Type', 'application/json');
+        return  $response;
     }
 }

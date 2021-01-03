@@ -24,7 +24,7 @@ use app\components\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\web\HttpException;
-use app\helpers\Tools;
+use app\Helpers\Tools;
 
 
 /**
@@ -58,11 +58,8 @@ class Books extends ActiveRecord
         return [
             // - cover (get)
             [['book_cover'], 'string', 'on' => ['cover']],
-            // - edit (update)
-            [['year'], 'integer', 'on' => ['edit']],
-            [['favorite'], 'number', 'on' => ['edit']],
-            [['updated_date', 'favorite', 'read', 'year', 'title', 'isbn13', 'author', 'publisher', 'ext'], 'safe', 'on' => 'edit'],
-            ['book_cover', 'image', 'skipOnEmpty' => true, 'extensions' => 'gif,jpg,png', 'on' => ['edit']],
+            
+            
             // - filter (get)
             [['title', 'publishers.name'], 'string', 'on' => ['filter'] /*  'message' => 'must be integer!'*/],
             // - import (from fs, get)
@@ -73,176 +70,5 @@ class Books extends ActiveRecord
     }
 
 
-    /**
-     * resamples image to match boundary limits by width. Height is not checked and will resampled according to width's change percentage
-     *
-     * @param string $img_blob image source as blob string
-     * @param int $max_width max allowed width for picture in pixels
-     *
-     * @return string image as string BLOB
-     */
-    static public function getResampledImageByWidthAsBlob($img_blob, $max_width = 800)
-    {
-        list($src_w, $src_h) = getimagesizefromstring($img_blob);
-
-        $src_image = imagecreatefromstring($img_blob);
-        $dst_w = $src_w > $max_width ? $max_width : $src_w;
-        $dst_h = $src_w > $max_width ? ($max_width / $src_w * $src_h) : $src_h; //minimize height in percent to width
-        $dst_image = imagecreatetruecolor($dst_w, $dst_h);
-        imagecopyresized($dst_image, $src_image, 0, 0, 0, 0, $dst_w, $dst_h, $src_w, $src_h);
-        ob_start();
-        imagejpeg($dst_image);
-
-        return ob_get_clean();
-    }
-
-    public function buildFilename()
-    {
-        return str_replace(array(
-            '{year}',
-            '{title}',
-            '{publisher}',
-            '{author}',
-            '{isbn13}',
-            '{ext}'
-        ), array(
-            $this->year,
-            $this->title,
-            $this->publisher,
-            $this->author,
-            $this->isbn13,
-            $this->ext
-        ), \Yii::$app->mycfg->book->nameformat);
-    }
-
-    public function behaviors()
-    {
-        return [
-            'autotime' => [
-                'class' => TimestampBehavior::className(),
-                'createdAtAttribute' => 'created_date',
-                'updatedAtAttribute' => 'updated_date',
-                'value' => function () {
-                    return (new \DateTime())->format('Y-m-d H:i:s');
-                }
-            ]
-        ];
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function afterDelete()
-    {
-        $this->flushCache();
-
-        $filename_utf8 = \Yii::$app->mycfg->library->directory . $this->filename;
-        $filename_encoded = \Yii::$app->mycfg->Encode($filename_utf8);
-
-        if (\Yii::$app->mycfg->library->sync) {
-            if (!file_exists($filename_encoded)) {
-                \Yii::warning("file '{$filename_utf8}' was removed before record deletion with sync enabled");
-            } else {
-                unlink($filename_encoded);
-            }
-        }
-
-        parent::afterDelete();
-    }
-
-    private function myBeforeInsert()
-    {
-        $this->book_guid = Tools::com_create_guid();
-
-        if ($this->getScenario() != 'import') {
-            $this->filename = $this->buildFilename();
-        }
-
-        return true;
-    }
-
-    /**
-     * + update filename in database and rename filename in filesystem accordinly
-     * + resize and update book cover
-     *
-     * @throws \yii\base\InvalidValueException
-     * @throws HttpException
-     * @return boolean
-     */
-    private function myBeforeUpdate()
-    {
-        if ($this->book_cover) {//resize
-            $this->book_cover = self::getResampledImageByWidthAsBlob($this->book_cover, \Yii::$app->mycfg->book->covermaxwidth);
-        }
-
-        // just cover update, ignore anything else
-        if ($this->getScenario() == 'cover') {
-            return true;
-        }
-
-        // sync with filesystem is enabled. update filename and rename physical file
-        if (\Yii::$app->mycfg->library->sync && $this->filenameAttrsChanged()) {
-            $old_filename = $this->getOldAttribute('filename');
-            $new_filename = $this->buildFilename();
-            $this->filename = $new_filename; // will be stored in database
-            $filename_encoded_old = \Yii::$app->mycfg->Encode(\Yii::$app->mycfg->library->directory . $old_filename);
-            $filename_encoded_new = \Yii::$app->mycfg->Encode(\Yii::$app->mycfg->library->directory . $new_filename);
-
-            // update file in filesystem
-            if ($filename_encoded_old != $filename_encoded_new) {
-                if (!file_exists($filename_encoded_old)) {
-                    throw new \yii\base\InvalidValueException("Sync for file failed. Source file '{$filename_encoded_old}' does not exist", 1);
-                }
-                // PHP 7: throw error if file is open
-                if (!rename($filename_encoded_old, $filename_encoded_new)) {
-                    throw new HttpException(500, "Failed to rename file. \n\n OLD: $filename_encoded_old \n\n NEW: $filename_encoded_new ");
-                }
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * checks if filename dependant attributes were changed
-     * @return bool
-     */
-    private function filenameAttrsChanged()
-    {
-        $isChanged = false;
-        $keys = ['year', 'title', 'isbn13', 'author', 'publisher', 'ext'];
-
-        foreach ($keys as $key) {
-            if ($this->getOldAttribute($key) != $this->$key) {
-                $isChanged = true;
-                break;
-            }
-        }
-
-        return $isChanged;
-    }
-
-
-
-    /**
-     * @param bool $insert
-     * @return bool
-     * @throws HttpException
-     */
-    public function beforeSave($insert)
-    {
-        $this->flushCache();
-
-        // yii2 event handling logic. do not remove!
-        if (!parent::beforeSave($insert)) {
-            return false;
-        }
-
-        if ($insert) { // INSERT
-            return $this->myBeforeInsert();
-        } else { // UPDATE
-            return $this->myBeforeUpdate();
-        }
-    }
 
 }

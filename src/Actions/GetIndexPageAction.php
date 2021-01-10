@@ -56,7 +56,7 @@ class GetIndexPageAction
             'categories' => $categories,
             'path' => $uri->getPath(),
             'baseUrl' => $uri->getScheme() . '://' . $uri->getAuthority(),
-            'appTheme' => $_ENV['APP_THEME'],
+            'appTheme' => $this->config->getSystem()->theme,
             'gridLocale' => $gridLocale[$this->translator->getLocale()],
         ]));
 

@@ -20,6 +20,7 @@
 
 namespace App\Actions;
 
+use App\Configuration\Configuration;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -29,12 +30,17 @@ use Twig\Environment;
 
 class GetAboutPageAction
 {
+    /**
+     * @var Configuration
+     */
+    protected $config;
     protected $twig;
     protected $translator;
 
 
     public function __construct(ContainerInterface $container)
     {
+        $this->config = $container->get(Configuration::class);
         $this->twig = $container->get(Environment::class);
         $this->translator = $container->get(Translator::class);
     }
@@ -51,7 +57,7 @@ class GetAboutPageAction
             't' => $this->translator,
             'path' => $uri->getPath(),
             'baseUrl' => $uri->getScheme() . '://' . $uri->getAuthority(),
-            'appTheme' => $_ENV['APP_THEME'],
+            'appTheme' => $this->config->getSystem()->theme,
             'gridLocale' => $gridLocale[$this->translator->getLocale()],
             'projects' => [
                 'Slim 4' => 'https://www.slimframework.com/',

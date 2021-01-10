@@ -67,10 +67,13 @@ class Bootstrap
 
     public static function initApplication(ContainerInterface $container)
     {
+        /** @var Configuration $config */
         $config = $container->get(Configuration::class);
         date_default_timezone_set($config->system->timezone);
         $capsule = Bootstrap::initCapsule($config);
-        
+
+        $config->getSystem()->theme = $config->getSystem()->theme ?? 'smoothness';
+            
         $app = AppFactory::create(null, $container);
         $app->addErrorMiddleware($_ENV['APP_DEBUG'], true, true);
         

@@ -62,7 +62,7 @@ class GetConfigIndexAction
             'path' => $uri->getPath(),
             'baseUrl' => $uri->getScheme() . '://' . $uri->getAuthority(),
             'url' => $uri->getScheme() . '://' . $uri->getAuthority() . $uri->getPath(),
-            'appTheme' => $_ENV['APP_THEME'],
+            'appTheme' => $this->config->getSystem()->theme,
             'gridLocale' => $gridLocale[$this->translator->getLocale()],
 
             'PHP_VERSION' => PHP_VERSION,

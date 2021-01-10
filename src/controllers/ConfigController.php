@@ -156,11 +156,6 @@ CMD;
         return $files;
     }
 
-    public function actionIndex()
-    {
-        return $this->render('index');
-    }
-
 
     public function actionVacuum()
     {

@@ -40,4 +40,15 @@ $app->get('/api/book', Actions\GetBookListAction::class);
 $app->post('/api/book/manage', Actions\ManageBookAction::class);
 $app->post('/api/book/cover-save', Actions\UpdateBookCoverAction::class);
 $app->get('/about', Actions\GetAboutPageAction::class);
+$app->get('/config', Actions\GetConfigIndexAction::class);
+/*
+ * config/clear-db-files?count=all
+config/clear-db-files?stepping=
+config/import-files
+GET/POST config/import-new-cover-from-pdf
+GET config/check-files
+config/php-info
+config/save
+ */
+
 $app->run();

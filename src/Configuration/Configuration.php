@@ -98,8 +98,28 @@ final class Configuration
 
         return $this->$name;
     }
-
-
+    
+    // for twig
+    public function getSystem()
+    {
+        return $this->system;
+    }
+    // for twig
+    public function getLibrary()
+    {
+        return $this->library;
+    }
+    // for twig
+    public function getDatabase()
+    {
+        return $this->database;
+    }
+    // for twig
+    public function getBook()
+    {
+        return $this->book;
+    }
+    
     public function isInstall(): bool
     {
         return $this->isInstall;
@@ -164,7 +184,6 @@ final class Configuration
                 'language' => 'en-US'
             ],
             'library' => (object)[
-                'codepage' => 'cp1251',
                 'directory' => sprintf('%s\/books\/', addslashes(DATA_DIR)),
                 'sync' => false
             ],

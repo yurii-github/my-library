@@ -19,8 +19,9 @@
 		"symfony/translation": "^5.1",
 		"slim/slim": "^4.6",
 		"ext-fileinfo": "*",
-		"illuminate/validation": "^7.30"
-	},
+		"illuminate/validation": "^7.30",
+      "ext-intl": "*"
+    },
 	"autoload": {
 		"psr-4": {
 			"App\\": "src/"

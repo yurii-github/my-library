@@ -36,6 +36,9 @@ use Twig\Environment;
  */
 class ManageBookAction
 {
+    /**
+     * @var Configuration
+     */
     protected $config;
     protected $twig;
     protected $translator;
@@ -78,6 +81,7 @@ class ManageBookAction
                 }
                 $book = new Book();
                 $book->fill($input);
+                $book->filename = Book::buildFilename($book, $this->config->book->nameformat);
                 $book->save();
                 break;
 

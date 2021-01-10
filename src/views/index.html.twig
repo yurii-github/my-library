@@ -290,7 +290,7 @@
                 // reset ALL
                 $('#category_list input#category_ALL').prop('checked', false)
 
-                var category_ids = $('#category_list input:checked').map(function () {
+                let category_ids = $('#category_list input:checked').map(function () {
                   return $(this).val()
                 })
                 filterCategories = Array.prototype.join.call(category_ids, ",")

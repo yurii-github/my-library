@@ -13,7 +13,6 @@ namespace App\Configuration
     class System {}
 
     /**
-     * @property string $codepage
      * @property string $directory
      * @property string $sync
      */

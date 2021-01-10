@@ -71,9 +71,6 @@ class Book extends Model
         static::creating(function(self $book) {
             $book->book_guid = Tools::com_create_guid();
             $book->favorite = $book->favorite == null ? 0 : $book->favorite;
-//            if ($this->getScenario() != 'import') {
-            $this->filename = $this->buildFilename();
-//            }
         });
         
         /*
@@ -128,7 +125,7 @@ class Book extends Model
     }
     
     
-    protected function buildFilename()
+    public static function buildFilename(self $book, $format)
     {
         return str_replace(array(
             '{year}',
@@ -138,13 +135,13 @@ class Book extends Model
             '{isbn13}',
             '{ext}'
         ), array(
-            $this->year,
-            $this->title,
-            $this->publisher,
-            $this->author,
-            $this->isbn13,
-            $this->ext
-        ), \Yii::$app->mycfg->book->nameformat);
+            $book->year,
+            $book->title,
+            $book->publisher,
+            $book->author,
+            $book->isbn13,
+            $book->ext
+        ), $format);
     }
     
 

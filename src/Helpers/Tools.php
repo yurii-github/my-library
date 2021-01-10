@@ -18,13 +18,37 @@
  * along with this program.  If not, see http://www.gnu.org/licenses
  */
 
-namespace app\helpers;
+namespace App\Helpers;
 
 use app\components\Configuration;
 use yii\base\NotSupportedException;
 
 class Tools
 {
+    /**
+     * resamples image to match boundary limits by width. Height is not checked and will resampled according to width's change percentage
+     *
+     * @param string $img_blob image source as blob string
+     * @param int $max_width max allowed width for picture in pixels
+     *
+     * @return string image as string BLOB
+     */
+    static public function getResampledImageByWidthAsBlob($img_blob, $max_width = 800)
+    {
+        list($src_w, $src_h) = getimagesizefromstring($img_blob);
+
+        $src_image = imagecreatefromstring($img_blob);
+        $dst_w = $src_w > $max_width ? $max_width : $src_w;
+        $dst_h = $src_w > $max_width ? ($max_width / $src_w * $src_h) : $src_h; //minimize height in percent to width
+        $dst_image = imagecreatetruecolor($dst_w, $dst_h);
+        imagecopyresized($dst_image, $src_image, 0, 0, 0, 0, $dst_w, $dst_h, $src_w, $src_h);
+        ob_start();
+        imagejpeg($dst_image);
+
+        return ob_get_clean();
+    }
+    
+    
     /**
      * Compact database
      *

@@ -36,8 +36,8 @@ class ConfigController extends Controller
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
-                    'index' => ['GET'],
-                    'save' => ['POST'],
+               
+         
                     'vacuum' => ['POST'],
                     'sync-import-new-cover-from-pdf' => ['GET', 'POST']
                 ]
@@ -261,32 +261,6 @@ CMD;
         return json_encode($data, JSON_UNESCAPED_UNICODE);
     }
 
-    public function actionSave()
-    {
-        $resp = new \stdClass();
-        $resp->msg = '';
-        $resp->result = false;
-        $resp->title = '';
-
-        $field = \Yii::$app->request->post('field');
-        $value = \Yii::$app->request->post('value');
-
-        list($group, $attr) = explode('_', $field);
-
-        try {
-            \Yii::$app->mycfg->$group->$attr = $value;
-            \Yii::$app->mycfg->save();
-            $resp->msg = "<b>$attr</b> was successfully updated";
-            $resp->result = true;
-        } catch (\Exception $e) {
-            $resp->msg = __FILE__ . ': ' . __LINE__ . ' ' . $e->getMessage();
-            $resp->result = false;
-        } finally {
-            $resp->title = $group;
-        }
-
-        return json_encode($resp);
-    }
 
     public function actionPhpInfo()
     {

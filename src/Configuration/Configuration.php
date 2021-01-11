@@ -128,7 +128,6 @@ final class Configuration
 
     /**
      * @return string
-     * @deprecated
      */
     public function getVersion(): string
     {

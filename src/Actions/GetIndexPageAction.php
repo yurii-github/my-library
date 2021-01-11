@@ -30,6 +30,7 @@ use \App\Models\Category;
 
 class GetIndexPageAction
 {
+    /** @var Configuration */
     protected $config;
     protected $twig;
     protected $translator;
@@ -52,11 +53,13 @@ class GetIndexPageAction
         ];
         $categories = Category::all();
         $response->getBody()->write($this->twig->render('index.html.twig', [
+            'VERSION' => 'v.'.$this->config->getVersion(),
             't' => $this->translator,
             'categories' => $categories,
             'path' => $uri->getPath(),
             'baseUrl' => $uri->getScheme() . '://' . $uri->getAuthority(),
             'appTheme' => $this->config->getSystem()->theme,
+            'LANGUAGE' => $this->config->getSystem()->language,
             'gridLocale' => $gridLocale[$this->translator->getLocale()],
         ]));
 

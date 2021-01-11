@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="<?php echo Yii::$app->language ?>">
+<html lang="{{ LANGUAGE }}">
 <head>
     <title>MyLibrary ~ {{ title }}</title>
     <base href="{{ baseUrl }}">
@@ -26,37 +26,37 @@
             {% include '_menu_item.html.twig' with {'id': 'home', 'link': '/', 'title': t.trans('Library'), 'path': path } only %}
             {% include '_menu_item.html.twig' with {'id': 'config', 'link': '/config', 'title': t.trans('Configuration'), 'path': path } only %}
             {% include '_menu_item.html.twig' with {'id': 'vacuum-link', 'link': '/config/vacuum', 'title': t.trans('Compact'), 'path': path } only %}
-            {% include '_menu_item.html.twig' with {'id': 'about', 'link': '/about', 'title': t.trans('About VERSION'), 'path': path } only %}
+            {% include '_menu_item.html.twig' with {'id': 'about', 'link': '/about', 'title': t.trans('About') ~ ' ' ~ VERSION, 'path': path } only %}
         </div>
-        {# \Yii::$app->mycfg->version #}
     </form>
 </header>
 {% block content %}{% endblock %}
 <footer></footer>
 <script>
   $("#mylibrary-menu").buttonset()
-  $("#mylibrary-menu input").click(function () {
+  $("#mylibrary-menu input").on('click', function (e) {
+    if (e.target.id === 'menu_vacuum-link') {
+      e.preventDefault()
+      e.stopPropagation()
+      runVacuum($(e.target))
+      return
+    }
     window.location.href = $(this).val()
   })
 
 
-  //
-  //
-  $("#vacuum-link").on("click", function (e) {
-    e.preventDefault()
-    var $menuItem = $(this)
-    var link = $menuItem.prev().val()
-    var backupMenuText = $menuItem.children('span').text()
-
+  function runVacuum($menuItem) {
+    let link = $menuItem.val()
+    let backupMenuText = $menuItem.children('span').text()
     // dummy no multi click
     if ($menuItem.prop('disabled')) {
       return false
     }
     $menuItem.prop('disabled', true)
-    $('span', this).text('{{ t.trans('doing...') }}')
+    $('span', $menuItem).text('{{ t.trans('doing...') }}')
     
     console.log('compacting...')
-    var xhr = $.post(link, function (data) {
+    let xhr = $.post(link, function (data) {
       alert(data)
     })
     xhr.always(function () {
@@ -64,7 +64,8 @@
       $menuItem.removeClass('ui-state-active')
       $menuItem.prop('disabled', false)
     })
-  })
+  }
+
 </script>
 </body>
 </html>

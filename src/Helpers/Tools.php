@@ -20,9 +20,6 @@
 
 namespace App\Helpers;
 
-use app\components\Configuration;
-use yii\base\NotSupportedException;
-
 class Tools
 {
     /**
@@ -47,87 +44,6 @@ class Tools
 
         return ob_get_clean();
     }
-    
-    
-    /**
-     * Compact database
-     *
-     * @param Configuration $cfg
-     * @throws NotSupportedException
-     * @throws \yii\db\Exception
-     * @return array [type, error, oldSize, new Size]
-     */
-    static public function compact(Configuration $cfg)
-    {
-        \Yii::$app->db->open();
-        $driver = \Yii::$app->db->getDriverName();
-        $msg = null;
-
-        switch ($driver) {
-            case 'sqlite':
-                $msg = self::compactSqlite($cfg, \Yii::$app->db->pdo);
-                break;
-            case 'mysql':
-                $msg = self::compactMysql($cfg, \Yii::$app->db->pdo);
-                break;
-            default:
-                throw new NotSupportedException("DB Driver '$driver' is not supported yet!");
-        }
-
-        return $msg;
-    }
-
-    /**
-     * @param Configuration $cfg
-     * @param \PDO $pdo
-     * @return array [type, error, oldSize, new Size]
-     */
-    static protected function compactMysql(Configuration $cfg, \PDO $pdo)
-    {
-        try {
-            $querySize = <<<SQL
-SELECT SQL_NO_CACHE SUM(DATA_LENGTH + INDEX_LENGTH) FROM information_schema.TABLES 
-WHERE table_schema = :dbname
-GROUP BY table_schema
-SQL;
-
-            $sSize = $pdo->prepare($querySize);
-            $sSize->bindValue(':dbname', $cfg->database->dbname);
-            $sSize->execute();
-            $oldSize = $sSize->fetchColumn();
-            $tables = $pdo->query("SHOW TABLES")->fetchAll(\PDO::FETCH_COLUMN);
-            $tables = implode(',', $tables);
-            $pdo->query("OPTIMIZE TABLE $tables");
-            $sSize->execute();
-            $newSize = $sSize->fetchColumn();
-        } catch (\Exception $e) {
-            $error = $e->getMessage();
-        }
-
-        return ['MYSQL OPTIMIZE', $error ?? '', $oldSize ?? null, $newSize ?? null];
-    }
-
-
-    /**
-     * @param Configuration $cfg
-     * @param \PDO $pdo
-     * @return array [type, error, oldSize, new Size]
-     */
-    static protected function compactSqlite(Configuration $cfg, \PDO $pdo)
-    {
-        try {
-            $filename = $cfg->database->filename;
-            $pdo->query("VACUUM");
-            $oldSize = (new \SplFileInfo($filename))->getSize();
-            clearstatcache(true, $filename); // we need new size, not old one
-            $newSize = (new \SplFileInfo($filename))->getSize();
-        } catch (\Exception $e) {
-            $error = $e->getMessage();
-        }
-
-        return ['SQLITE VACUUM', $error ?? '', $oldSize ?? null, $newSize ?? null];
-    }
-
 
     /**
      * generates global unique id

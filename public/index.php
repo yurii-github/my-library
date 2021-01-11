@@ -43,6 +43,7 @@ $app->get('/about', Actions\GetAboutPageAction::class);
 $app->get('/config', Actions\GetConfigIndexAction::class);
 $app->get('/config/php-info', Actions\GetPhpInfoAction::class);
 $app->post('/config/save', Actions\UpdateConfigAction::class);
+$app->post('/config/vacuum', Actions\ConfigDbVacuumAction::class);
 /*
  * config/clear-db-files?count=all
 config/clear-db-files?stepping=

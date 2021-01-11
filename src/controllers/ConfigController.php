@@ -38,7 +38,6 @@ class ConfigController extends Controller
                 'actions' => [
                
          
-                    'vacuum' => ['POST'],
                     'sync-import-new-cover-from-pdf' => ['GET', 'POST']
                 ]
             ]
@@ -157,19 +156,7 @@ CMD;
     }
 
 
-    public function actionVacuum()
-    {
-        $result = Tools::compact(\Yii::$app->mycfg);
 
-        $msgString = implode("\n", array_filter([
-            $result[0] ? "Type: $result[0]" : null,
-            $result[1] ? "ERROR: $result[1]" : null,
-            $result[2] ? "Old size: $result[2]" : null,
-            $result[3] ? "New size: $result[3]" : null,
-        ]));
-
-        return $msgString;
-    }
 
     public function actionCheckFiles()
     {

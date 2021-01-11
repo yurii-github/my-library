@@ -177,36 +177,5 @@ CMD;
         return $arr_fs_only;
     }
 
-    public function actionClearDbFiles()
-    {
-        //count number of records to clean
-        if (\Yii::$app->request->get('count') == 'all') {
-            $counter = 0;
-            foreach (Books::find()->select(['book_guid', 'filename'])->each() as $r) {
-                $file =
-                    \Yii::$app->mycfg->Encode(\Yii::$app->mycfg->library->directory . '/' . $r->filename);
-                if (!file_exists($file)) {
-                    $counter++;
-                }
-            }
-            return $counter;
-        }
-
-        //else clean records in stepping/waves
-        $stepping = \Yii::$app->request->get('stepping', 5); //records to delete in 1 wave
-        $data = [];
-        $counter = 0;
-        foreach (Books::find()->select(['book_guid', 'filename'])->each() as $r) {
-            if ($counter >= $stepping) break;
-            $file = \Yii::$app->mycfg->Encode(\Yii::$app->mycfg->library->directory . '/' . $r->filename);
-            if (!file_exists($file)) {
-                Books::deleteAll(['book_guid' => $r->book_guid]);
-                $data[] = $r->book_guid;
-                $counter++;
-            }
-        }
-        //sleep(1);
-        return json_encode($data, JSON_UNESCAPED_UNICODE);
-    }
 
 }

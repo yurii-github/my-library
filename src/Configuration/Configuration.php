@@ -98,28 +98,31 @@ final class Configuration
 
         return $this->$name;
     }
-    
+
     // for twig
     public function getSystem()
     {
         return $this->system;
     }
+
     // for twig
     public function getLibrary()
     {
         return $this->library;
     }
+
     // for twig
     public function getDatabase()
     {
         return $this->database;
     }
+
     // for twig
     public function getBook()
     {
         return $this->book;
     }
-    
+
     public function isInstall(): bool
     {
         return $this->isInstall;
@@ -130,7 +133,7 @@ final class Configuration
      * Returns array of books filenames located in FS library folder.
      * @return array
      */
-    public function getLibraryBookFilenames()
+    public function getLibraryBookFilenames(): array
     {
         $files = [];
         foreach (new \DirectoryIterator($this->getLibrary()->directory) as $file) {
@@ -142,7 +145,13 @@ final class Configuration
         return $files;
     }
 
-    
+
+    public function getFilepath(string $filename): string
+    {
+        return $this->getLibrary()->directory . '/' . $filename;
+    }
+
+
     /**
      * @return string
      */
@@ -190,7 +199,7 @@ final class Configuration
     }
 
 
-    public function getDefaultConfiguration(): object 
+    public function getDefaultConfiguration(): object
     {
         return (object)[
             'system' => (object)[
@@ -220,7 +229,7 @@ final class Configuration
         ];
     }
 
-    
+
     public function save()
     {
         $filename = $this->config_file;

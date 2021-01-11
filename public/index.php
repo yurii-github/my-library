@@ -45,9 +45,8 @@ $app->get('/config/php-info', Actions\GetPhpInfoAction::class);
 $app->post('/config/save', Actions\UpdateConfigAction::class);
 $app->post('/config/vacuum', Actions\ConfigDbVacuumAction::class);
 $app->get('/config/check-files', Actions\ConfigCheckFilesAction::class);
+$app->get('/config/clear-db-files', Actions\ConfigClearDbFilesAction::class);
 /*
- * config/clear-db-files?count=all
-config/clear-db-files?stepping=
 config/import-files
 GET/POST config/import-new-cover-from-pdf
  */

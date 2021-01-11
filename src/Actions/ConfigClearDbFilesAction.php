@@ -22,11 +22,12 @@ namespace App\Actions;
 
 use App\Configuration\Configuration;
 use App\Models\Book;
+use Illuminate\Support\Arr;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class ConfigCheckFilesAction
+class ConfigClearDbFilesAction
 {
     /**
      * @var Configuration
@@ -42,23 +43,42 @@ class ConfigCheckFilesAction
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        // TODO: read with iterator, not all. may use too much memory
-        $files_db = [];
-        foreach (Book::query()->select(['filename'])->get()->all() as $book) {
-            $files_db[] = $book['filename'];
+        $params = $request->getQueryParams();
+        
+        // count number of records to clean
+        if (Arr::get($params, 'count') === 'all') {
+            $response->getBody()->write($this->countFilesToClear());
+            return $response;
         }
 
-        $files = $this->config->getLibraryBookFilenames();
-        $arr_db_only = array_diff($files_db, $files);
-        $arr_fs_only = array_diff($files, $files_db);
+        //else clean records in stepping/waves
+        $stepping = Arr::get($params, 'stepping', 5); //records to delete in 1 wave
+        $data = [];
+        $counter = 0;
+        Book::query()->select(['book_guid', 'filename'])->limit($stepping)->get()->each(function (Book $book) use (&$counter) {
+            if (!file_exists($this->config->getFilepath($book->filename))) {
+                $counter++;
+                $data[] = $book->book_guid;
+                $book->delete();
+            }
+        });
 
-        $response->getBody()->write(json_encode([
-            'db' => array_values($arr_db_only),
-            'fs' => array_values($arr_fs_only)
-        ], JSON_UNESCAPED_UNICODE));
+        $response->getBody()->write(json_encode($data, JSON_UNESCAPED_UNICODE));
 
         return $response;
     }
 
+
+    protected function countFilesToClear()
+    {
+        $counter = 0;
+        Book::query()->select(['book_guid', 'filename'])->each(function (Book $book) use (&$counter) {
+            if (!file_exists($this->config->getFilepath($book->filename))) {
+                $counter++;
+            }
+        });
+
+        return $counter;
+    }
 
 }

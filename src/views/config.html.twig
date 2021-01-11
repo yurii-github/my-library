@@ -425,7 +425,7 @@
         $.get('config/check-files', function (data) {
             res.empty()
 
-            if (data.fs === 0 && data.db === 0) {
+            if (data.fs.length === 0 && data.db.length === 0) {
               res.setMsg('Great news! Your library is synced already. Keep it up.', 'Check files', true)
               return
             }

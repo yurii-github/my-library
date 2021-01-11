@@ -46,8 +46,9 @@ $app->post('/config/save', Actions\UpdateConfigAction::class);
 $app->post('/config/vacuum', Actions\ConfigDbVacuumAction::class);
 $app->get('/config/check-files', Actions\ConfigCheckFilesAction::class);
 $app->get('/config/clear-db-files', Actions\ConfigClearDbFilesAction::class);
+$app->get('/config/import-files', Actions\ConfigGetImportFilesAction::class);
+$app->post('/config/import-files', Actions\ConfigDoImportFilesAction::class);
 /*
-config/import-files
 GET/POST config/import-new-cover-from-pdf
  */
 

@@ -134,48 +134,4 @@ CMD;
     }
 
 
-
-
-
-    public function actionImportFiles()
-    {
-        if (\Yii::$app->request->getMethod() == 'GET') {
-            return json_encode($this->getFiles_FileSystemOnly(), JSON_UNESCAPED_UNICODE);
-        }
-
-        if (\Yii::$app->request->getMethod() == 'POST') {
-            $error = '';
-            $post = \Yii::$app->request->post('post', []);
-
-            $arr_added = [];
-            try {
-                foreach ($post as $f) {
-                    $book = new Books(['scenario' => 'import']);
-                    $book->filename = $book->title = $f;
-                    $book->insert();
-                    $arr_added[] = $f;
-                }
-            } catch (\Exception $e) {
-                return json_encode(['data' => $arr_added, 'result' => false, 'error' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
-            }
-
-            return json_encode(['data' => $arr_added, 'result' => true, 'error' => ''], JSON_UNESCAPED_UNICODE);
-        }
-    }
-
-    protected function getFiles_FileSystemOnly()
-    {
-        // TODO: read with iterator, not all. may use too much memory
-        $files_db = [];
-        $books = Books::find()->select(['filename'])->asArray()->all();
-
-        foreach ($books as $book) {
-            $files_db[] = $book['filename'];
-        }
-        $files = $this->getLibraryBookFilenames(); // TODO: USE NEW CODE!!!!!!!!!!! \App\Configuration\Configuration::getLibraryBookFilenames
-        $arr_fs_only = array_values(array_diff($files, $files_db));
-        return $arr_fs_only;
-    }
-
-
 }

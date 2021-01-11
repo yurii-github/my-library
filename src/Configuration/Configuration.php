@@ -148,7 +148,7 @@ final class Configuration
 
     public function getFilepath(string $filename): string
     {
-        return $this->getLibrary()->directory . '/' . $filename;
+        return $this->getLibrary()->directory . $filename;
     }
 
 

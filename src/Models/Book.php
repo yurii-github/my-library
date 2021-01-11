@@ -23,17 +23,17 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $ext
  * @property string $filename
  * @property-read Category[] $categories
- * 
+ *
  * @mixin Builder
  */
 class Book extends Model
 {
     const CREATED_AT = 'created_date'; // TODO: return (new \DateTime())->format('Y-m-d H:i:s');
     const UPDATED_AT = 'updated_date';
-    
+
     public $incrementing = false;
-    
-    protected $table='books';
+
+    protected $table = 'books';
     protected $primaryKey = 'book_guid';
     protected $keyType = 'string';
     protected $fillable = [
@@ -46,57 +46,51 @@ class Book extends Model
         'publisher',
         'ext',
     ];
-    
-    
+
+
     protected static function boot()
     {
-        parent::boot();
-        
-        static::deleted(function(self $book) {
-            /** @var Configuration $config */
-            $config = Container::getInstance()->get(Configuration::class);
-            
-            $filename = $config->library->directory . $book->filename; 
+        /** @var Configuration $config */
+        $config = Container::getInstance()->get(Configuration::class);
 
+        parent::boot();
+
+        static::deleted(function (self $book) use ($config) {
+            $filename = $config->getFilepath($book->filename);
             if ($config->library->sync) {
                 if (!file_exists($filename)) {
                     throw new \Exception("file '{$filename}' was removed before record deletion with sync enabled");
                 } else {
-                    throw new \Exception('UNLINK '. $filename);
-                    //unlink($filename);
+                    unlink($filename);
                 }
             }
         });
-        
-        static::creating(function(self $book) {
+
+        static::creating(function (self $book) {
             $book->book_guid = Tools::com_create_guid();
             $book->favorite = $book->favorite == null ? 0 : $book->favorite;
         });
-        
-        /*
-         * + update filename in database and rename filename in filesystem accordinly
-         * + resize and update book cover
-         */
-        static::updating(function(self $book) {
-            /** @var Configuration $config */
-            $config = Container::getInstance()->get(Configuration::class);
 
+        /*
+         * update filename in database and rename filename in filesystem accordinly
+         */
+        static::updating(function (self $book) use ($config) {
             // sync with filesystem is enabled. update filename and rename physical file
-            if ($config->library->sync && $this->filenameAttrsChanged($book)) {
+            if ($config->library->sync && self::filenameAttrsChanged($book)) {
                 $old_filename = $book->getOriginal('filename');
                 $new_filename = $this->buildFilename();
                 $book->filename = $new_filename;
-                $filename_encoded_old = $config->library->directory . $old_filename;
-                $filename_encoded_new = $config->library->directory . $new_filename;
+                $filepathOld = $config->getFilepath($old_filename);
+                $filepathNew = $config->getFilepath($new_filename);
 
                 // update file in filesystem
-                if ($filename_encoded_old != $filename_encoded_new) {
-                    if (!file_exists($filename_encoded_old)) {
-                        throw new \InvalidArgumentException("Sync for file failed. Source file '{$filename_encoded_old}' does not exist", 1);
+                if ($filepathOld != $filepathNew) {
+                    if (!file_exists($filepathOld)) {
+                        throw new \InvalidArgumentException("Sync for file failed. Source file '{$filepathOld}' does not exist", 1);
                     }
                     // PHP 7: throw error if file is open
-                    if (!rename($filename_encoded_old, $filename_encoded_new)) {
-                        throw new \Exception("Failed to rename file. \n\n OLD: $filename_encoded_old \n\n NEW: $filename_encoded_new ");
+                    if (!rename($filepathOld, $filepathNew)) {
+                        throw new \Exception("Failed to rename file. \n\n OLD: $filepathOld \n\n NEW: $filepathNew ");
                     }
                 }
             }
@@ -107,9 +101,11 @@ class Book extends Model
 
     /**
      * checks if filename dependant attributes were changed
+     *
+     * @param Book $book
      * @return bool
      */
-    protected function filenameAttrsChanged(self $book)
+    protected static function filenameAttrsChanged(self $book)
     {
         $isChanged = false;
         $keys = ['year', 'title', 'isbn13', 'author', 'publisher', 'ext'];
@@ -123,8 +119,8 @@ class Book extends Model
 
         return $isChanged;
     }
-    
-    
+
+
     public static function buildFilename(self $book, $format)
     {
         return str_replace(array(
@@ -143,8 +139,11 @@ class Book extends Model
             $book->ext
         ), $format);
     }
-    
 
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
     public function categories()
     {
         return $this->belongsToMany(Category::class, 'books_categories', 'book_guid', 'category_guid', 'book_guid', 'guid');

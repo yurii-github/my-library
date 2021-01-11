@@ -21,7 +21,9 @@
 namespace App;
 
 use App\Configuration\Configuration;
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Database\Capsule\Manager;
+use Illuminate\Events\Dispatcher;
 use Psr\Container\ContainerInterface;
 use Slim\Factory\AppFactory;
 use Symfony\Component\Dotenv\Dotenv;
@@ -33,7 +35,7 @@ use Twig\TwigFunction;
 
 class Bootstrap
 {
-    public static function initCapsule(Configuration $config)
+    public static function initCapsule(Configuration $config, Container $container)
     {
         $capsule = new Manager();
         $capsule->addConnection([
@@ -47,13 +49,14 @@ class Bootstrap
             'prefix' => '',
         ]);
         $capsule->setAsGlobal();
+        $capsule->setEventDispatcher(new Dispatcher($container));
         $capsule->bootEloquent();
-
+        
         $pdo = $capsule->getConnection()->getPdo();
         if ($pdo->getAttribute(\PDO::ATTR_DRIVER_NAME) === 'sqlite') {
             // not documented feature of SQLite !
-            $pdo->sqliteCreateFunction('like', function ($x, $y, $escape) {
-                // Example: $x = '%ч'; $y = 'bЧ'; $escape = '\';
+            $pdo->sqliteCreateFunction('like', function ($x, $y) {
+                // Example: $x = '%ч'; $y = 'bЧ';
                 $x = str_replace('%', '', $x);
                 $x = preg_quote($x);
                 // return false;
@@ -70,7 +73,7 @@ class Bootstrap
         /** @var Configuration $config */
         $config = $container->get(Configuration::class);
         date_default_timezone_set($config->system->timezone);
-        $capsule = Bootstrap::initCapsule($config);
+        $capsule = Bootstrap::initCapsule($config, $container);
 
         $config->getSystem()->theme = $config->getSystem()->theme ?? 'smoothness';
             

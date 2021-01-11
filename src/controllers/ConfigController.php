@@ -133,48 +133,9 @@ class ConfigController extends Controller
 CMD;
     }
 
-    /**
-     * returns array of books filenames located in FS library folder
-     * filename is in UTF-8
-     */
-    private function getLibraryBookFilenames()
-    {
-        $files = [];
-        try {
-            $libDir = new \DirectoryIterator(\Yii::$app->mycfg->library->directory);
-            foreach ($libDir as $file) {
-                if ($file->isFile()) {
-                    $files[] = \Yii::$app->mycfg->Decode($file->getFilename());
-                }
-            }
-        } finally {//suppress any errors
-            if (!is_array($files)) {
-                $files = [];
-            }
-        }
-        return $files;
-    }
 
 
 
-
-    public function actionCheckFiles()
-    {
-        // TODO: read with iterator, not all. may use too much memory
-        $files_db = [];
-        foreach (Books::find()->select(['filename'])->all() as $book) {
-            $files_db[] = $book['filename'];
-        }
-
-        $files = $this->getLibraryBookFilenames();
-        $arr_db_only = array_diff($files_db, $files);
-        $arr_fs_only = array_diff($files, $files_db);
-
-        return json_encode(array(
-            'db' => array_values($arr_db_only),
-            'fs' => array_values($arr_fs_only)
-        ), JSON_UNESCAPED_UNICODE);
-    }
 
     public function actionImportFiles()
     {
@@ -211,7 +172,7 @@ CMD;
         foreach ($books as $book) {
             $files_db[] = $book['filename'];
         }
-        $files = $this->getLibraryBookFilenames();
+        $files = $this->getLibraryBookFilenames(); // TODO: USE NEW CODE!!!!!!!!!!! \App\Configuration\Configuration::getLibraryBookFilenames
         $arr_fs_only = array_values(array_diff($files, $files_db));
         return $arr_fs_only;
     }

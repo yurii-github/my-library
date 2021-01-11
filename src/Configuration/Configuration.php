@@ -127,6 +127,23 @@ final class Configuration
 
 
     /**
+     * Returns array of books filenames located in FS library folder.
+     * @return array
+     */
+    public function getLibraryBookFilenames()
+    {
+        $files = [];
+        foreach (new \DirectoryIterator($this->getLibrary()->directory) as $file) {
+            if ($file->isFile()) {
+                $files[] = $file->getFilename();
+            }
+        }
+
+        return $files;
+    }
+
+    
+    /**
      * @return string
      */
     public function getVersion(): string

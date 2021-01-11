@@ -261,10 +261,4 @@ CMD;
         return json_encode($data, JSON_UNESCAPED_UNICODE);
     }
 
-
-    public function actionPhpInfo()
-    {
-        return $this->renderPartial('phpinfo');
-    }
-
 }

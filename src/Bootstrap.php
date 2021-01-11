@@ -100,8 +100,14 @@ class Bootstrap
         $loader = new FilesystemLoader(SRC_DIR . '/views');
         $twig = new Environment($loader, [
             // 'cache' => DATA_DIR . '/cache',
-            //'debug' => $_ENV['APP_DEBUG'],
+            'debug' => true,// $_ENV['APP_DEBUG'],
         ]);
+        
+        $twig->addFunction(new TwigFunction('dump', function($var) use($twig) {
+            if ($twig->isDebug()) {
+                var_dump($var);
+            }
+        }));
 
         $twig->registerUndefinedFunctionCallback(function ($name) use ($config) {
             if ($name === 'islinux') {
@@ -116,8 +122,6 @@ class Bootstrap
             return false;
         });
 
-        //str_replace('\\', '\\\\', Yii::$app->mycfg->library->directory)
-
         return $twig;
     }
 
@@ -129,7 +133,7 @@ class Bootstrap
             $filename = WEB_DIR . $url['path'];
 
             // check the file types, only serve standard files
-            if (preg_match('/\.(?:png|js|jpg|jpeg|gif|css)$/', $filename)) {
+            if (preg_match('/\.(?:png|js|jpg|jpeg|gif|css|ico)$/', $filename)) {
                 if (file_exists($filename)) {
                     $fi = new \SplFileInfo($filename);
                     if ($fi->getExtension() === 'css') {

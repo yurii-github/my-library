@@ -29,6 +29,7 @@ class JGridRequestQuery
     protected $data;
     protected $query;
 
+
     public function __construct(Builder $query, ServerRequestInterface $request)
     {
         $params = $request->getQueryParams();
@@ -47,7 +48,7 @@ class JGridRequestQuery
     }
 
     
-    public function withFilters()
+    public function withFilters(): self
     {
         $filters = $this->data['filters'];
         $conditions = ['bw' => 'like', 'eq' => '='];
@@ -69,7 +70,7 @@ class JGridRequestQuery
     }
 
 
-    public function withSorting($defaultColumn, $defaultOrder = 'asc')
+    public function withSorting($defaultColumn, $defaultOrder = 'asc'): self
     {
         $column = !empty($this->data['sort_column']) ? $this->data['sort_column'] : $defaultColumn;
         $order = !empty($this->data['sort_column']) && !empty($this->data['sort_order']) ? $this->data['sort_order'] : $defaultOrder;

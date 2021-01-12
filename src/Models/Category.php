@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\Tools;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,4 +18,15 @@ class Category extends Model
     protected $table='categories';
     protected $primaryKey = 'guid';
     protected $keyType = 'string';
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function (self $book) {
+            $book->guid = Tools::com_create_guid();
+        });
+    }
+    
+    
 }

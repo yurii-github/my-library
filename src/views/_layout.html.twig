@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE }}">
+<html lang="{{ APP_LANGUAGE }}">
 <head>
     <title>MyLibrary ~ {{ title }}</title>
     <base href="{{ baseUrl }}">
@@ -26,7 +26,7 @@
             {% include '_menu_item.html.twig' with {'id': 'home', 'link': '/', 'title': t.trans('Library'), 'path': path } only %}
             {% include '_menu_item.html.twig' with {'id': 'config', 'link': '/config', 'title': t.trans('Configuration'), 'path': path } only %}
             {% include '_menu_item.html.twig' with {'id': 'vacuum-link', 'link': '/config/vacuum', 'title': t.trans('Compact'), 'path': path } only %}
-            {% include '_menu_item.html.twig' with {'id': 'about', 'link': '/about', 'title': t.trans('About') ~ ' ' ~ VERSION, 'path': path } only %}
+            {% include '_menu_item.html.twig' with {'id': 'about', 'link': '/about', 'title': t.trans('About') ~ ' ' ~ APP_VERSION, 'path': path } only %}
         </div>
     </form>
 </header>

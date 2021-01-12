@@ -20,45 +20,14 @@
 
 namespace App\Actions\Pages;
 
-use App\Configuration\Configuration;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\Translation\Translator;
-use Twig\Environment;
 
-
-class GetAboutPageAction
+class AboutPageAction extends AbstractPageAction
 {
-    /**
-     * @var Configuration
-     */
-    protected $config;
-    protected $twig;
-    protected $translator;
-
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->config = $container->get(Configuration::class);
-        $this->twig = $container->get(Environment::class);
-        $this->translator = $container->get(Translator::class);
-    }
-
-
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $uri = $request->getUri();
-        $gridLocale = [
-            'en_US' => 'en',
-            'uk_UA' => 'ua',
-        ];
-        $response->getBody()->write($this->twig->render('about.html.twig', [
-            't' => $this->translator,
-            'path' => $uri->getPath(),
-            'baseUrl' => $uri->getScheme() . '://' . $uri->getAuthority(),
-            'appTheme' => $this->config->getSystem()->theme,
-            'gridLocale' => $gridLocale[$this->translator->getLocale()],
+        $data = [
             'projects' => [
                 'Slim 4' => 'https://www.slimframework.com/',
                 'jQuery' => 'https://jquery.com',
@@ -69,7 +38,8 @@ class GetAboutPageAction
                 'JS-Cookie' => 'https://github.com/js-cookie/js-cookie',
                 'Ghostscript' => 'https://www.ghostscript.com/'
             ]
-        ]));
+        ];
+        $response->getBody()->write($this->render($request, 'about.html.twig', $data));
 
         return $response;
     }

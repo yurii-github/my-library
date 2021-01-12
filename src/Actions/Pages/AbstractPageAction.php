@@ -22,18 +22,16 @@ namespace App\Actions\Pages;
 
 use App\Configuration\Configuration;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Translation\Translator;
 use Twig\Environment;
-use \App\Models\Category;
 
-class GetConfigIndexAction
+
+abstract class AbstractPageAction
 {
-    /**
-     * @var Configuration
-     */
+    /** @var Configuration */
     protected $config;
+    /** @var Environment */
     protected $twig;
     protected $translator;
 
@@ -45,35 +43,28 @@ class GetConfigIndexAction
         $this->translator = $container->get(Translator::class);
     }
 
-
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    
+    protected function render(ServerRequestInterface $request, string $view, array $data)
     {
         $uri = $request->getUri();
         $gridLocale = [
             'en_US' => 'en',
             'uk_UA' => 'ua',
         ];
-        
-        $c = 1;
-        $categories = Category::all();
-        $params = [
+        $baseData = [
             't' => $this->translator,
-            'categories' => $categories,
             'path' => $uri->getPath(),
             'baseUrl' => $uri->getScheme() . '://' . $uri->getAuthority(),
-            'url' => $uri->getScheme() . '://' . $uri->getAuthority() . $uri->getPath(),
             'appTheme' => $this->config->getSystem()->theme,
             'gridLocale' => $gridLocale[$this->translator->getLocale()],
-
-            'PHP_VERSION' => PHP_VERSION,
-            'SUPPORTED_VALUES' => $this->config::SUPPORTED_VALUES,
-            'SUPPORTED_DATABASES' => ['sqlite' => 'SQLite','mysql' => 'MySQL'],
             'config' => $this->config,
-            'INTL_ICU_VERSION' => INTL_ICU_VERSION,
-            'timeZones' => \DateTimeZone::listIdentifiers()
+            'currentUrl' => $uri->getScheme() . '://' . $uri->getAuthority() . $uri->getPath(),
+            'APP_VERSION' => 'v.'.$this->config->getVersion(),
+            'APP_LANGUAGE' => $this->config->getSystem()->language,
         ];
-        $response->getBody()->write($this->twig->render('config.html.twig', $params));
-
-        return $response;
+        $data = array_merge($baseData, $data);
+        
+        return $this->twig->render($view, $data);
     }
+
 }

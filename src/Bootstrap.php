@@ -21,7 +21,6 @@
 namespace App;
 
 use App\Configuration\Configuration;
-use Illuminate\Contracts\Container\Container as ContainerContract;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Events\Dispatcher;
 use Slim\Factory\AppFactory;

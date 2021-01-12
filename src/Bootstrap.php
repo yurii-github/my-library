@@ -21,10 +21,9 @@
 namespace App;
 
 use App\Configuration\Configuration;
-use Illuminate\Contracts\Container\Container;
+use Illuminate\Contracts\Container\Container as ContainerContract;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Events\Dispatcher;
-use Psr\Container\ContainerInterface;
 use Slim\Factory\AppFactory;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\Translation\Loader\PhpFileLoader;
@@ -32,12 +31,14 @@ use Symfony\Component\Translation\Translator;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 use Twig\TwigFunction;
+use Illuminate\Database\Migrations\MigrationRepositoryInterface;
+use \Illuminate\Container\Container;
 
 class Bootstrap
 {
-    public static function initCapsule(Configuration $config, Container $container)
+    public static function initCapsule(Configuration $config, ContainerContract $container)
     {
-        $capsule = new Manager();
+        $capsule = new Manager($container);
         $capsule->addConnection([
             'driver' => $config->database->format,
             'host' => $config->database->host,
@@ -51,7 +52,7 @@ class Bootstrap
         $capsule->setAsGlobal();
         $capsule->setEventDispatcher(new Dispatcher($container));
         $capsule->bootEloquent();
-        
+
         $pdo = $capsule->getConnection()->getPdo();
         if ($pdo->getAttribute(\PDO::ATTR_DRIVER_NAME) === 'sqlite') {
             // not documented feature of SQLite !
@@ -68,15 +69,53 @@ class Bootstrap
     }
 
 
-    public static function initApplication(ContainerInterface $container)
+    public static function initApplication()
     {
+        Bootstrap::handleCliStaticData();
+        Bootstrap::initDotEnv();
+
+        /** @var Container $container */
+        $container = Container::getInstance();
+        $container->singleton(Configuration::class, function () {
+            return new Configuration(DATA_DIR . '/config.json', '1.3');
+        });
+        $container->singleton('db', function () {
+            $config = Container::getInstance()->get(Configuration::class);
+            return Bootstrap::initCapsule($config, Container::getInstance());
+        });
+        $container->bind(MigrationRepositoryInterface::class, function () use ($container) {
+            /** @var \Illuminate\Database\Capsule\Manager $manager */
+            $manager = Container::getInstance()->get('db');
+            return new \Illuminate\Database\Migrations\DatabaseMigrationRepository($manager->getDatabaseManager(), 'migrations');
+        });
+        $container->bind(\Illuminate\Database\Migrations\Migrator::class, function () use ($container) {
+            /** @var \Illuminate\Database\Capsule\Manager $manager */
+            $container = Container::getInstance();
+            $manager = Container::getInstance()->get('db');
+            return new \Illuminate\Database\Migrations\Migrator(
+                $container->get(MigrationRepositoryInterface::class),
+                $manager->getDatabaseManager(),
+                new \Illuminate\Filesystem\Filesystem(),
+                new \Illuminate\Events\Dispatcher($container)
+            );
+        });
+        $container->singleton(Environment::class, function () {
+            $config = Container::getInstance()->get(Configuration::class);
+            return Bootstrap::initTwig($config);
+        });
+        $container->singleton(Translator::class, function () {
+            $translator = Bootstrap::initTranslator();
+            $config = Container::getInstance()->get(Configuration::class);
+            $locale = str_replace('-', '_', $config->system->language);
+            $translator->setLocale($locale);
+            return $translator;
+        });
+        
+        
         /** @var Configuration $config */
         $config = $container->get(Configuration::class);
         date_default_timezone_set($config->system->timezone);
-        $capsule = Bootstrap::initCapsule($config, $container);
-
         $config->getSystem()->theme = $config->getSystem()->theme ?? 'smoothness';
-            
         $app = AppFactory::create(null, $container);
         $app->addErrorMiddleware($_ENV['APP_DEBUG'], true, true);
         

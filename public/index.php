@@ -1,10 +1,6 @@
 <?php
 
-use App\Configuration\Configuration;
 use \App\Bootstrap;
-use Symfony\Component\Translation\Translator;
-use Twig\Environment;
-use \Illuminate\Container\Container;
 use \App\Actions;
 
 define('BASE_DIR', dirname(__DIR__));
@@ -14,26 +10,7 @@ define('WEB_DIR', dirname(__DIR__) . '/public');
 
 require BASE_DIR . '/vendor/autoload.php';
 
-Bootstrap::handleCliStaticData();
-Bootstrap::initDotEnv();
-
-$container = Container::getInstance();
-$container->singleton(Configuration::class, function () {
-    return new Configuration(DATA_DIR . '/config.json', '1.3');
-});
-$container->singleton(Environment::class, function () {
-    $config = Container::getInstance()->get(Configuration::class);
-    return Bootstrap::initTwig($config);
-});
-$container->singleton(Translator::class, function () {
-    $translator = Bootstrap::initTranslator();
-    $config = Container::getInstance()->get(Configuration::class);
-    $locale = str_replace('-', '_', $config->system->language);
-    $translator->setLocale($locale);
-    return $translator;
-});
-
-$app = Bootstrap::initApplication($container);
+$app = Bootstrap::initApplication();
 
 $app->get('/', Actions\Pages\IndexPageAction::class);
 $app->get('/api/book/cover', Actions\GetBookCoverAction::class);
@@ -53,5 +30,6 @@ $app->get('/config/import-files', Actions\ConfigGetImportFilesAction::class);
 $app->post('/config/import-files', Actions\ConfigDoImportFilesAction::class);
 $app->get('/config/import-new-cover-from-pdf', Actions\ConfigGetImportNewCoverFromPdfAction::class);
 $app->post('/config/import-new-cover-from-pdf', Actions\ConfigDoImportNewCoverFromPdfAction::class);
+$app->get('/api/migrate', Actions\MigrateDatabaseAction::class);
 
 $app->run();

@@ -28,19 +28,18 @@ class CreateBooksTable extends Migration
     {
         if (!Manager::schema()->hasTable('books')) {
             Manager::schema()->create('books', function (Blueprint $table) {
-                $table->char('book_guid', 36);
-                $table->primary('book_guid');
+                $table->char('book_guid', 36)->primary();
+                $table->string('title', 255);
                 $table->dateTime('created_date')->nullable();
                 $table->dateTime('updated_date')->nullable();
                 $table->binary('book_cover')->nullable();
-                $table->decimal('book_cover', 3, 1)->default(0);
+                $table->decimal('favorite', 3, 1)->default(0);
                 $table->string('read', 3)->default('no');
-                $table->integer('year');
-                $table->string('title', 255);
-                $table->string('isbn13', 255);
-                $table->string('author', 255);
-                $table->string('publisher', 255);
-                $table->string('ext', 255);
+                $table->integer('year')->nullable();
+                $table->string('isbn13', 255)->nullable();
+                $table->string('author', 255)->nullable();
+                $table->string('publisher', 255)->nullable();
+                $table->string('ext', 255)->nullable();
                 $table->text('filename');
             });
         }

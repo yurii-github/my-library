@@ -36,7 +36,7 @@ use \Illuminate\Container\Container;
 
 class Bootstrap
 {
-    public static function initCapsule(Configuration $config, ContainerContract $container)
+    protected static function initCapsule(Configuration $config, Container $container, Dispatcher $eventDispatcher)
     {
         $capsule = new Manager($container);
         $capsule->addConnection([
@@ -50,7 +50,7 @@ class Bootstrap
             'prefix' => '',
         ]);
         $capsule->setAsGlobal();
-        $capsule->setEventDispatcher(new Dispatcher($container));
+        $capsule->setEventDispatcher($eventDispatcher);
         $capsule->bootEloquent();
 
         $pdo = $capsule->getConnection()->getPdo();
@@ -76,19 +76,21 @@ class Bootstrap
 
         /** @var Container $container */
         $container = Container::getInstance();
+        $eventDispatcher = new Dispatcher($container);
+        
         $container->singleton(Configuration::class, function () {
             return new Configuration(DATA_DIR . '/config.json', '1.3');
         });
-        $container->singleton('db', function () {
-            $config = Container::getInstance()->get(Configuration::class);
-            return Bootstrap::initCapsule($config, Container::getInstance());
+        $dbManager = Bootstrap::initCapsule(Container::getInstance()->get(Configuration::class), Container::getInstance(), $eventDispatcher);
+        $container->singleton('db', function () use ($dbManager) {
+            return $dbManager;
         });
-        $container->bind(MigrationRepositoryInterface::class, function () use ($container) {
+        $container->bind(MigrationRepositoryInterface::class, function () {
             /** @var \Illuminate\Database\Capsule\Manager $manager */
             $manager = Container::getInstance()->get('db');
             return new \Illuminate\Database\Migrations\DatabaseMigrationRepository($manager->getDatabaseManager(), 'migrations');
         });
-        $container->bind(\Illuminate\Database\Migrations\Migrator::class, function () use ($container) {
+        $container->bind(\Illuminate\Database\Migrations\Migrator::class, function () use ($eventDispatcher) {
             /** @var \Illuminate\Database\Capsule\Manager $manager */
             $container = Container::getInstance();
             $manager = Container::getInstance()->get('db');
@@ -96,7 +98,7 @@ class Bootstrap
                 $container->get(MigrationRepositoryInterface::class),
                 $manager->getDatabaseManager(),
                 new \Illuminate\Filesystem\Filesystem(),
-                new \Illuminate\Events\Dispatcher($container)
+                $eventDispatcher
             );
         });
         $container->singleton(Environment::class, function () {
@@ -122,12 +124,12 @@ class Bootstrap
         return $app;
     }
 
-    public static function initDotEnv()
+    protected static function initDotEnv()
     {
         (new Dotenv())->load(BASE_DIR . '/.env');
     }
 
-    public static function initTranslator()
+    protected static function initTranslator()
     {
         $translator = new Translator('en_US');
         $translator->setLocale('uk_UA');
@@ -137,7 +139,7 @@ class Bootstrap
 
     }
 
-    public static function initTwig(Configuration $config)
+    protected static function initTwig(Configuration $config)
     {
         $loader = new FilesystemLoader(SRC_DIR . '/views');
         $twig = new Environment($loader, [
@@ -168,7 +170,7 @@ class Bootstrap
     }
 
     // https://stackoverflow.com/a/55090273
-    public static function handleCliStaticData()
+    protected static function handleCliStaticData()
     {
         if (PHP_SAPI === 'cli-server') {
             $url = parse_url($_SERVER['REQUEST_URI']);

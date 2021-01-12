@@ -18,7 +18,7 @@
  * along with this program.  If not, see http://www.gnu.org/licenses
  */
 
-namespace App\Actions;
+namespace App\Actions\Pages;
 
 use App\Configuration\Configuration;
 use Psr\Container\ContainerInterface;
@@ -28,9 +28,11 @@ use Symfony\Component\Translation\Translator;
 use Twig\Environment;
 use \App\Models\Category;
 
-class GetIndexPageAction
+class GetConfigIndexAction
 {
-    /** @var Configuration */
+    /**
+     * @var Configuration
+     */
     protected $config;
     protected $twig;
     protected $translator;
@@ -51,17 +53,26 @@ class GetIndexPageAction
             'en_US' => 'en',
             'uk_UA' => 'ua',
         ];
+        
+        $c = 1;
         $categories = Category::all();
-        $response->getBody()->write($this->twig->render('index.html.twig', [
-            'VERSION' => 'v.'.$this->config->getVersion(),
+        $params = [
             't' => $this->translator,
             'categories' => $categories,
             'path' => $uri->getPath(),
             'baseUrl' => $uri->getScheme() . '://' . $uri->getAuthority(),
+            'url' => $uri->getScheme() . '://' . $uri->getAuthority() . $uri->getPath(),
             'appTheme' => $this->config->getSystem()->theme,
-            'LANGUAGE' => $this->config->getSystem()->language,
             'gridLocale' => $gridLocale[$this->translator->getLocale()],
-        ]));
+
+            'PHP_VERSION' => PHP_VERSION,
+            'SUPPORTED_VALUES' => $this->config::SUPPORTED_VALUES,
+            'SUPPORTED_DATABASES' => ['sqlite' => 'SQLite','mysql' => 'MySQL'],
+            'config' => $this->config,
+            'INTL_ICU_VERSION' => INTL_ICU_VERSION,
+            'timeZones' => \DateTimeZone::listIdentifiers()
+        ];
+        $response->getBody()->write($this->twig->render('config.html.twig', $params));
 
         return $response;
     }

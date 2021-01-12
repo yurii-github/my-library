@@ -35,15 +35,15 @@ $container->singleton(Translator::class, function () {
 
 $app = Bootstrap::initApplication($container);
 
-$app->get('/', Actions\GetIndexPageAction::class);
+$app->get('/', Actions\Pages\GetIndexPageAction::class);
 $app->get('/api/book/cover', Actions\GetBookCoverAction::class);
 $app->get('/api/book', Actions\GetBookListAction::class);
 $app->post('/api/book/manage', Actions\ManageBookAction::class);
 $app->post('/api/book/cover-save', Actions\UpdateBookCoverAction::class);
 $app->get('/api/category', Actions\GetBookCategoryListAction::class);
 $app->post('/api/category/manage', Actions\ManageBookCategoryAction::class);
-$app->get('/about', Actions\GetAboutPageAction::class);
-$app->get('/config', Actions\GetConfigIndexAction::class);
+$app->get('/about', Actions\Pages\GetAboutPageAction::class);
+$app->get('/config', Actions\Pages\GetConfigIndexAction::class);
 $app->get('/config/php-info', Actions\GetPhpInfoAction::class);
 $app->post('/config/save', Actions\UpdateConfigAction::class);
 $app->post('/config/vacuum', Actions\ConfigDbVacuumAction::class);

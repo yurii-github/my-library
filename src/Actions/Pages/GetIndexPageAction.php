@@ -18,7 +18,7 @@
  * along with this program.  If not, see http://www.gnu.org/licenses
  */
 
-namespace App\Actions;
+namespace App\Actions\Pages;
 
 use App\Configuration\Configuration;
 use Psr\Container\ContainerInterface;
@@ -26,13 +26,11 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Translation\Translator;
 use Twig\Environment;
+use \App\Models\Category;
 
-
-class GetAboutPageAction
+class GetIndexPageAction
 {
-    /**
-     * @var Configuration
-     */
+    /** @var Configuration */
     protected $config;
     protected $twig;
     protected $translator;
@@ -53,22 +51,16 @@ class GetAboutPageAction
             'en_US' => 'en',
             'uk_UA' => 'ua',
         ];
-        $response->getBody()->write($this->twig->render('about.html.twig', [
+        $categories = Category::all();
+        $response->getBody()->write($this->twig->render('index.html.twig', [
+            'VERSION' => 'v.'.$this->config->getVersion(),
             't' => $this->translator,
+            'categories' => $categories,
             'path' => $uri->getPath(),
             'baseUrl' => $uri->getScheme() . '://' . $uri->getAuthority(),
             'appTheme' => $this->config->getSystem()->theme,
+            'LANGUAGE' => $this->config->getSystem()->language,
             'gridLocale' => $gridLocale[$this->translator->getLocale()],
-            'projects' => [
-                'Slim 4' => 'https://www.slimframework.com/',
-                'jQuery' => 'https://jquery.com',
-                'jQuery UI' => 'https://jqueryui.com',
-                'jQuery Grid' => 'http://www.trirand.com/blog',
-                'jQuery Raty' => 'http://wbotelhos.com/raty',
-                'jQuery FancyBox' => 'http://fancybox.net',
-                'JS-Cookie' => 'https://github.com/js-cookie/js-cookie',
-                'Ghostscript' => 'https://www.ghostscript.com/'
-            ]
         ]));
 
         return $response;

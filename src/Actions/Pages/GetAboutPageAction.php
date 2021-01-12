@@ -18,7 +18,7 @@
  * along with this program.  If not, see http://www.gnu.org/licenses
  */
 
-namespace App\Actions;
+namespace App\Actions\Pages;
 
 use App\Configuration\Configuration;
 use Psr\Container\ContainerInterface;
@@ -26,9 +26,9 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Translation\Translator;
 use Twig\Environment;
-use \App\Models\Category;
 
-class GetConfigIndexAction
+
+class GetAboutPageAction
 {
     /**
      * @var Configuration
@@ -53,26 +53,23 @@ class GetConfigIndexAction
             'en_US' => 'en',
             'uk_UA' => 'ua',
         ];
-        
-        $c = 1;
-        $categories = Category::all();
-        $params = [
+        $response->getBody()->write($this->twig->render('about.html.twig', [
             't' => $this->translator,
-            'categories' => $categories,
             'path' => $uri->getPath(),
             'baseUrl' => $uri->getScheme() . '://' . $uri->getAuthority(),
-            'url' => $uri->getScheme() . '://' . $uri->getAuthority() . $uri->getPath(),
             'appTheme' => $this->config->getSystem()->theme,
             'gridLocale' => $gridLocale[$this->translator->getLocale()],
-
-            'PHP_VERSION' => PHP_VERSION,
-            'SUPPORTED_VALUES' => $this->config::SUPPORTED_VALUES,
-            'SUPPORTED_DATABASES' => ['sqlite' => 'SQLite','mysql' => 'MySQL'],
-            'config' => $this->config,
-            'INTL_ICU_VERSION' => INTL_ICU_VERSION,
-            'timeZones' => \DateTimeZone::listIdentifiers()
-        ];
-        $response->getBody()->write($this->twig->render('config.html.twig', $params));
+            'projects' => [
+                'Slim 4' => 'https://www.slimframework.com/',
+                'jQuery' => 'https://jquery.com',
+                'jQuery UI' => 'https://jqueryui.com',
+                'jQuery Grid' => 'http://www.trirand.com/blog',
+                'jQuery Raty' => 'http://wbotelhos.com/raty',
+                'jQuery FancyBox' => 'http://fancybox.net',
+                'JS-Cookie' => 'https://github.com/js-cookie/js-cookie',
+                'Ghostscript' => 'https://www.ghostscript.com/'
+            ]
+        ]));
 
         return $response;
     }

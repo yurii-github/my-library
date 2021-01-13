@@ -34,7 +34,7 @@ class Routes
         $app->get('/api/category', Actions\GetBookCategoryListAction::class);
         $app->post('/api/category/manage', Actions\ManageBookCategoryAction::class);
         $app->get('/about', Actions\Pages\AboutPageAction::class);
-        $app->get('/config', Actions\Pages\ConfigIndexAction::class);
+        $app->get('/config', Actions\Pages\ConfigPageAction::class);
         $app->get('/config/php-info', Actions\GetPhpInfoAction::class);
         $app->post('/config/save', Actions\UpdateConfigAction::class);
         $app->post('/config/vacuum', Actions\ConfigDbVacuumAction::class);

@@ -68,8 +68,13 @@ class Bootstrap
     }
 
 
-    public static function initApplication()
+    public static function initApplication(string $dataDir)
     {
+        define('BASE_DIR', dirname(__DIR__));
+        define('DATA_DIR', $dataDir);
+        define('SRC_DIR', dirname(__DIR__) . '/src');
+        define('WEB_DIR', dirname(__DIR__) . '/public');
+        
         Bootstrap::handleCliStaticData();
         Bootstrap::initDotEnv();
 
@@ -120,6 +125,8 @@ class Bootstrap
         $app = AppFactory::create(null, $container);
         $app->addErrorMiddleware($_ENV['APP_DEBUG'], true, true);
         
+        Routes::register($app);
+
         return $app;
     }
 

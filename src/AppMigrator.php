@@ -18,32 +18,35 @@
  * along with this program.  If not, see http://www.gnu.org/licenses
  */
 
-namespace App\Actions;
+namespace App;
 
-use App\AppMigrator;
-use Illuminate\Database\Migrations\Migrator;
-use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Component\Console\Output\StreamOutput;
+use \Illuminate\Database\Migrations\Migrator;
 
-class MigrateDatabaseAction
+class AppMigrator
 {
-    /** @var AppMigrator */
     protected $migrator;
-
     
-    public function __construct(ContainerInterface $container)
+    public function __construct(Migrator $migrator)
     {
-        $this->migrator = new AppMigrator($container->get(Migrator::class));
-    }
-
-
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
-    {
-        $output = $this->migrator->migrate();
-        $response->getBody()->write(implode("<br>", explode("\n", $output)));
-
-        return $response;
+        $this->migrator = $migrator;
     }
     
+    
+    public function migrate()
+    {
+        if (!$this->migrator->repositoryExists()) {
+            $this->migrator->getRepository()->createRepository();
+        }
+
+        $output = new StreamOutput(fopen('php://temp', 'r+'));
+        $this->migrator->setOutput($output);
+        $this->migrator->run(SRC_DIR.'/migrations', [
+            'pretend' => false,
+            'step' => true,
+        ]);
+        rewind($output->getStream());
+        
+        return stream_get_contents($output->getStream());
+    }
 }

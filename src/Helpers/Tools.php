@@ -20,6 +20,8 @@
 
 namespace App\Helpers;
 
+use App\Exception\InvalidImageException;
+
 class Tools
 {
     /**
@@ -30,8 +32,20 @@ class Tools
      *
      * @return string image as string BLOB
      */
+    /**
+     * @param $img_blob
+     * @param int $max_width
+     * @throws InvalidImageException
+     * @return false|string
+     */
     static public function getResampledImageByWidthAsBlob($img_blob, $max_width = 800)
     {
+        $size = getimagesizefromstring($img_blob);
+        
+        if ($size === false) {
+            throw new InvalidImageException();
+        }
+        
         list($src_w, $src_h) = getimagesizefromstring($img_blob);
 
         $src_image = imagecreatefromstring($img_blob);

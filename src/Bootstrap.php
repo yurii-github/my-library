@@ -22,6 +22,7 @@ namespace App;
 
 use App\Configuration\Configuration;
 use Illuminate\Database\Capsule\Manager;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Events\Dispatcher;
 use Slim\Factory\AppFactory;
 use Symfony\Component\Dotenv\Dotenv;
@@ -35,6 +36,8 @@ use \Illuminate\Container\Container;
 
 class Bootstrap
 {
+    const CURRENT_APP_VERSION = '1.3';
+    
     protected static function initCapsule(Configuration $config, Container $container, Dispatcher $eventDispatcher)
     {
         $capsule = new Manager($container);
@@ -51,7 +54,6 @@ class Bootstrap
         $capsule->setAsGlobal();
         $capsule->setEventDispatcher($eventDispatcher);
         $capsule->bootEloquent();
-
         $pdo = $capsule->getConnection()->getPdo();
         if ($pdo->getAttribute(\PDO::ATTR_DRIVER_NAME) === 'sqlite') {
             // not documented feature of SQLite !
@@ -70,22 +72,23 @@ class Bootstrap
 
     public static function initApplication(string $dataDir)
     {
-        define('BASE_DIR', dirname(__DIR__));
-        define('DATA_DIR', $dataDir);
-        define('SRC_DIR', dirname(__DIR__) . '/src');
-        define('WEB_DIR', dirname(__DIR__) . '/public');
-        
+        defined('BASE_DIR') || define('BASE_DIR', dirname(__DIR__));
+        defined('DATA_DIR') || define('DATA_DIR', $dataDir);
+        defined('SRC_DIR') || define('SRC_DIR', BASE_DIR . '/src');
+        defined('WEB_DIR') || define('WEB_DIR', BASE_DIR . '/public');
+
         Bootstrap::handleCliStaticData();
-        Bootstrap::initDotEnv();
+        (new Dotenv())->load(BASE_DIR . '/.env');
 
         /** @var Container $container */
+        Container::setInstance(null);
         $container = Container::getInstance();
         $eventDispatcher = new Dispatcher($container);
-        
+
         $container->singleton(Configuration::class, function () {
-            return new Configuration(DATA_DIR . '/config.json', '1.3');
+            return new Configuration(DATA_DIR . '/config.json', self::CURRENT_APP_VERSION);
         });
-        $dbManager = Bootstrap::initCapsule(Container::getInstance()->get(Configuration::class), Container::getInstance(), $eventDispatcher);
+        $dbManager = Bootstrap::initCapsule($container->get(Configuration::class), $container, $eventDispatcher);
         $container->singleton('db', function () use ($dbManager) {
             return $dbManager;
         });
@@ -116,24 +119,19 @@ class Bootstrap
             $translator->setLocale($locale);
             return $translator;
         });
-        
-        
+
         /** @var Configuration $config */
         $config = $container->get(Configuration::class);
         date_default_timezone_set($config->system->timezone);
         $config->getSystem()->theme = $config->getSystem()->theme ?? 'smoothness';
         $app = AppFactory::create(null, $container);
         $app->addErrorMiddleware($_ENV['APP_DEBUG'], true, true);
-        
+
         Routes::register($app);
 
         return $app;
     }
 
-    protected static function initDotEnv()
-    {
-        (new Dotenv())->load(BASE_DIR . '/.env');
-    }
 
     protected static function initTranslator()
     {
@@ -152,8 +150,8 @@ class Bootstrap
             // 'cache' => DATA_DIR . '/cache',
             'debug' => true,// $_ENV['APP_DEBUG'],
         ]);
-        
-        $twig->addFunction(new TwigFunction('dump', function($var) use($twig) {
+
+        $twig->addFunction(new TwigFunction('dump', function ($var) use ($twig) {
             if ($twig->isDebug()) {
                 var_dump($var);
             }

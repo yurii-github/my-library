@@ -12,7 +12,7 @@
     },
     "database": {
         "format": "sqlite",
-        "filename": "vfs:\/\/base\/data\/mydb.s3db",
+        "filename": "WILL_BE_UPDATED_IN_TEST",
         "host": "localhost",
         "dbname": "mylib",
         "login": "",

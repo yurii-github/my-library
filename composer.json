@@ -1,31 +1,39 @@
 {
-  "name" : "yurii-github/yii2-mylib",
-  "type" : "yii2-application",
-  "description" : "my book library",
-  "license" : "GPL-3.0",
-  "minimum-stability" : "stable",
-  "version": "0.0.1",
-  "require" : {
-    "php" : "~7.2",
-    "ext-json": "*",
-    "ext-pdo": "*",
-    "ext-gd": "*",
-    "ext-mbstring": "*",
-    "guzzlehttp/psr7": "*",
-    "http-interop/http-factory-guzzle": "*",
-    "twig/twig": "^3.1",
-    "illuminate/database": "^7.29",
-    "symfony/dotenv": "^5.1",
-    "symfony/translation": "^5.1",
-    "slim/slim": "^4.6",
-    "ext-fileinfo": "*",
-    "illuminate/validation": "^7.30",
-    "ext-intl": "*",
-    "illuminate/events": "^7.30"
-  },
-  "autoload": {
-    "psr-4": {
-      "App\\": "src/"
-    }
-  }
+	"name" : "yurii-github/yii2-mylib",
+	"type" : "yii2-application",
+	"description" : "my book library",
+	"license" : "GPL-3.0",
+	"minimum-stability" : "stable",
+	"version": "0.0.1",
+	"require" : {
+		"php" : "~7.2",
+		"ext-json": "*",
+		"ext-pdo": "*",
+		"ext-gd": "*",
+		"ext-mbstring": "*",
+		"guzzlehttp/psr7": "*",
+		"http-interop/http-factory-guzzle": "*",
+		"twig/twig": "^3.1",
+		"illuminate/database": "^7.29",
+		"symfony/dotenv": "^5.1",
+		"symfony/translation": "^5.1",
+		"slim/slim": "^4.6",
+		"ext-fileinfo": "*",
+		"illuminate/validation": "^7.30",
+      	"ext-intl": "*",
+		"illuminate/events": "^7.30"
+    },
+	"autoload": {
+		"psr-4": {
+			"App\\": "src/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Tests\\": "tests/"
+		}
+	},
+	"require-dev": {
+		"mikey179/vfsstream": "^1.6"
+	}
 }

@@ -34,11 +34,11 @@ class JGridRequestQuery
     {
         $params = $request->getQueryParams();
         $data = [
-            'page' => $params['page'],
-            'limit' => $params['rows'],
+            'page' => $params['page'] ?? null,
+            'limit' => $params['rows']?? null,
             'filters' => $params['filters'] ?? null,
-            'sort_column' => $params['sidx'],
-            'sort_order' => $params['sord'],
+            'sort_column' => $params['sidx']?? null,
+            'sort_order' => $params['sord']?? null,
         ];
         $data['limit'] = empty($data['limit']) || $data['limit'] <= 0 || $data['limit'] > 30 ? 10 : $data['limit'];
         $data['page'] = empty($data['page']) || $data['page'] <= 0 ? 1 : $data['page'];
@@ -50,7 +50,7 @@ class JGridRequestQuery
     
     public function withFilters(): self
     {
-        $filters = $this->data['filters'];
+        $filters = json_decode($this->data['filters']);
         $conditions = ['bw' => 'like', 'eq' => '='];
 
         if ($filters instanceof \stdClass && is_array($filters->rules)) {

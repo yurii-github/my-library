@@ -27,7 +27,6 @@ use \App\Models\Book;
 use \App\JGridRequestQuery;
 use \Illuminate\Database\Eloquent\Builder;
 
-
 class GetBookListAction
 {
     public function __construct(ContainerInterface $container)

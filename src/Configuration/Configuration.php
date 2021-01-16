@@ -76,7 +76,7 @@ final class Configuration
 
     /**
      * @param string $filename database version. Increase version if database changes after release
-     * @param string $version filename of config file with current app configuration
+     * @param string $version current app configuration
      */
     public function __construct(string $filename, string $version)
     {

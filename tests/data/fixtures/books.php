@@ -2,7 +2,7 @@
 // dataset to return
 $books = [ 'inserted' => [], 'expected' => [] ];
 
-// for dataset. mantain column order!
+// for dataset. maintain column order!
 $defaults = [
 	'book_guid' => '?', 
 	'created_date' => '?',

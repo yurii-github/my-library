@@ -33,12 +33,17 @@ abstract class AbstractTestCase extends TestCase
         $this->app = Bootstrap::initApplication(vfsStream::url('base/data'));
         $migrator = new AppMigrator(Container::getInstance()->get(Migrator::class));
         $output = $migrator->migrate();
-        Manager::connection()->beginTransaction();
+
+        $db = $this->app->getContainer()->get('db');
+        assert($db instanceof Manager);
+        $db->getConnection()->beginTransaction();
     }
 
     protected function tearDown(): void
     {
-        Manager::connection()->rollBack();
+        $db = $this->app->getContainer()->get('db');
+        assert($db instanceof Manager);
+        $db->getConnection()->rollBack();
     }
 
 

@@ -18,16 +18,15 @@
  * along with this program.  If not, see http://www.gnu.org/licenses
  */
 
-use \Illuminate\Database\Migrations\Migration;
 use \Illuminate\Database\Schema\Blueprint;
-use \Illuminate\Database\Capsule\Manager;
+use \App\AppMigration;
 
-class CreateBooksTable extends Migration
+class CreateBooksTable extends AppMigration
 {
     public function up()
     {
-        if (!Manager::schema()->hasTable('books')) {
-            Manager::schema()->create('books', function (Blueprint $table) {
+        if (!$this->getSchema()->hasTable('books')) {
+            $this->getSchema()->create('books', function (Blueprint $table) {
                 $table->char('book_guid', 36)->primary();
                 $table->string('title', 255);
                 $table->dateTime('created_date')->nullable();
@@ -48,6 +47,6 @@ class CreateBooksTable extends Migration
 
     public function down()
     {
-        Manager::schema()->dropIfExists('books');
+        $this->getSchema()->dropIfExists('books');
     }
 }

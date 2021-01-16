@@ -12,7 +12,7 @@ class UpdateBookCoverActionTest extends AbstractTestCase
 
 
     
-    public function _testCoverResize()
+    public function testCoverResize()
     {
         $books = $this->populateBooks();
         

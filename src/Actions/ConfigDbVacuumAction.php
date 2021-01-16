@@ -35,17 +35,21 @@ class ConfigDbVacuumAction
      * @var Configuration
      */
     protected $config;
+    
+    /** @var Manager */
+    protected $db;
 
 
     public function __construct(ContainerInterface $container)
     {
         $this->config = $container->get(Configuration::class);
+        $this->db =  $container->get('db');
     }
 
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $connection = Manager::connection();
+        $connection = $this->db->getConnection();
         $driver = $connection->getDriverName();
 
         if ($driver === 'sqlite') {

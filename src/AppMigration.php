@@ -18,14 +18,22 @@
  * along with this program.  If not, see http://www.gnu.org/licenses
  */
 
-use \App\AppMigration;
+namespace App;
 
-class CleanDatabase extends AppMigration
+use \Illuminate\Database\Migrations\Migration;
+use \Illuminate\Database\Capsule\Manager;
+use \Illuminate\Container\Container;
+use Illuminate\Database\Schema\Builder;
+
+class AppMigration extends Migration
 {
-    public function up()
+    protected function getCapsule(): Manager
     {
-        $this->getSchema()->dropIfExists('migration');
-        $this->getSchema()->dropIfExists('yii2_migrations');
+        return Container::getInstance()->get('db');
     }
 
+    protected function getSchema(): Builder
+    {
+        return $this->getCapsule()->getDatabaseManager()->getSchemaBuilder();
+    }
 }

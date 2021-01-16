@@ -18,24 +18,23 @@
  * along with this program.  If not, see http://www.gnu.org/licenses
  */
 
-use \Illuminate\Database\Migrations\Migration;
 use \Illuminate\Database\Schema\Blueprint;
-use \Illuminate\Database\Capsule\Manager;
+use \App\AppMigration;
 
-class CreateBooksCategories extends Migration
+class CreateBooksCategories extends AppMigration
 {
     public function up()
     {
-        if (!Manager::schema()->hasTable('categories')) {
-            Manager::schema()->create('categories', function (Blueprint $table) {
+        if (!$this->getSchema()->hasTable('categories')) {
+            $this->getSchema()->create('categories', function (Blueprint $table) {
                 $table->char('guid', 36);
                 $table->primary('guid');
                 $table->string('title', 255);
             });
         }
 
-        if (!Manager::schema()->hasTable('books_categories')) {
-            Manager::schema()->create('books_categories', function (Blueprint $table) {
+        if (!$this->getSchema()->hasTable('books_categories')) {
+            $this->getSchema()->create('books_categories', function (Blueprint $table) {
                 $table->char('book_guid', 36);
                 $table->char('category_guid', 36);
                 $table->primary(['book_guid', 'category_guid']);
@@ -46,8 +45,8 @@ class CreateBooksCategories extends Migration
 
     public function down()
     {
-        Manager::schema()->dropIfExists('books_categories');
-        Manager::schema()->dropIfExists('categories');
+        $this->getSchema()->dropIfExists('books_categories');
+        $this->getSchema()->dropIfExists('categories');
     }
 
 }

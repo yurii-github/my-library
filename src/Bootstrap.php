@@ -33,12 +33,17 @@ use Twig\Loader\FilesystemLoader;
 use Twig\TwigFunction;
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use \Illuminate\Container\Container;
+use \Illuminate\Contracts\Container\Container as ContainerInterface;
+use Illuminate\Contracts\Events\Dispatcher as EventDispatcherInterface;
+use \Illuminate\Database\Migrations\DatabaseMigrationRepository;
+use \Illuminate\Database\Migrations\Migrator;
+use \Illuminate\Filesystem\Filesystem;
 
 class Bootstrap
 {
     const CURRENT_APP_VERSION = '1.3';
     
-    protected static function initCapsule(Configuration $config, Container $container, Dispatcher $eventDispatcher)
+    protected static function initCapsule(Configuration $config, ContainerInterface $container, Dispatcher $eventDispatcher): Manager
     {
         $capsule = new Manager($container);
         $capsule->addConnection([
@@ -51,7 +56,7 @@ class Bootstrap
             'collation' => 'utf8_unicode_ci',
             'prefix' => '',
         ]);
-        $capsule->setAsGlobal();
+        //$capsule->setAsGlobal();
         $capsule->setEventDispatcher($eventDispatcher);
         $capsule->bootEloquent();
         $pdo = $capsule->getConnection()->getPdo();
@@ -78,38 +83,51 @@ class Bootstrap
         defined('WEB_DIR') || define('WEB_DIR', BASE_DIR . '/public');
 
         Bootstrap::handleCliStaticData();
+
         (new Dotenv())->load(BASE_DIR . '/.env');
-
-        /** @var Container $container */
+        
         Container::setInstance(null);
+        
         $container = Container::getInstance();
-        $eventDispatcher = new Dispatcher($container);
-
-        $container->singleton(Configuration::class, function () {
-            return new Configuration(DATA_DIR . '/config.json', self::CURRENT_APP_VERSION);
+        $container->singleton(Filesystem::class, function (ContainerInterface $container, $args) {
+            return new Filesystem();
         });
-        $dbManager = Bootstrap::initCapsule($container->get(Configuration::class), $container, $eventDispatcher);
-        $container->singleton('db', function () use ($dbManager) {
-            return $dbManager;
+        $container->singleton(EventDispatcherInterface::class, function (ContainerInterface $container, $args) {
+            return new Dispatcher($container);
         });
-        $container->bind(MigrationRepositoryInterface::class, function () {
-            /** @var \Illuminate\Database\Capsule\Manager $manager */
-            $manager = Container::getInstance()->get('db');
-            return new \Illuminate\Database\Migrations\DatabaseMigrationRepository($manager->getDatabaseManager(), 'migrations');
+        $container->singleton(Configuration::class, function (ContainerInterface $container, $args) {
+            $config = new Configuration(DATA_DIR . '/config.json', self::CURRENT_APP_VERSION);
+            date_default_timezone_set($config->system->timezone);
+            $config->getSystem()->theme = $config->getSystem()->theme ?? 'smoothness';
+            return $config;
         });
-        $container->bind(\Illuminate\Database\Migrations\Migrator::class, function () use ($eventDispatcher) {
-            /** @var \Illuminate\Database\Capsule\Manager $manager */
-            $container = Container::getInstance();
-            $manager = Container::getInstance()->get('db');
-            return new \Illuminate\Database\Migrations\Migrator(
-                $container->get(MigrationRepositoryInterface::class),
-                $manager->getDatabaseManager(),
-                new \Illuminate\Filesystem\Filesystem(),
-                $eventDispatcher
-            );
+        $container->singleton(Manager::class, function (ContainerInterface $container, $args) {
+            $eventDispatcher = $container->get(EventDispatcherInterface::class);
+            assert($eventDispatcher instanceof EventDispatcherInterface);
+            $config = $container->get(Configuration::class);
+            assert($config instanceof Configuration);
+            return Bootstrap::initCapsule($config, $container, $eventDispatcher);
         });
-        $container->singleton(Environment::class, function () {
-            $config = Container::getInstance()->get(Configuration::class);
+        $container->alias(Manager::class, 'db');
+        $container->singleton(MigrationRepositoryInterface::class, function (ContainerInterface $container, $args) {
+            $manager = $container->get('db');
+            assert($manager instanceof Manager);
+            return new DatabaseMigrationRepository($manager->getDatabaseManager(), 'migrations');
+        });
+        $container->singleton(Migrator::class, function (ContainerInterface $container, $args) {
+            $eventDispatcher = $container->get(EventDispatcherInterface::class);
+            assert($eventDispatcher instanceof EventDispatcherInterface);
+            $manager = $container->get('db');
+            assert($manager instanceof Manager);
+            $fs = $container->get(Filesystem::class);
+            assert($fs instanceof Filesystem);
+            $repository = $container->get(MigrationRepositoryInterface::class);
+            assert($repository instanceof MigrationRepositoryInterface);
+            return new Migrator($repository, $manager->getDatabaseManager(), $fs, $eventDispatcher);
+        });
+        $container->singleton(Environment::class, function (ContainerInterface $container, $args) {
+            $config = $container->get(Configuration::class);
+            assert($config instanceof Configuration);
             return Bootstrap::initTwig($config);
         });
         $container->singleton(Translator::class, function () {
@@ -120,10 +138,6 @@ class Bootstrap
             return $translator;
         });
 
-        /** @var Configuration $config */
-        $config = $container->get(Configuration::class);
-        date_default_timezone_set($config->system->timezone);
-        $config->getSystem()->theme = $config->getSystem()->theme ?? 'smoothness';
         $app = AppFactory::create(null, $container);
         $app->addErrorMiddleware($_ENV['APP_DEBUG'], true, true);
 

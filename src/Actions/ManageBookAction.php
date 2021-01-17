@@ -83,6 +83,7 @@ class ManageBookAction
                 $book->fill($input);
                 $book->filename = Book::buildFilename($book, $this->config->book->nameformat);
                 $book->save();
+                $response->getBody()->write(json_encode($book->toArray(), JSON_UNESCAPED_UNICODE));
                 break;
 
             case 'del':

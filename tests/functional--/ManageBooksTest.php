@@ -26,47 +26,7 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 	}
 
 
-	/**
-	 * ACTION MUST:
-	 *
-	 * 1. generate book guid
-	 * 2. generate created and updated date
-	 * 3. generate filename based on title etc..
-	 */
-	public function test_action_Manage_Add()
-	{
-		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$book_1 = $this->books['inserted'][0];
-		$book_1_expected =  $this->books['expected'][0];
-		$_POST = $book_1;
-		$_POST['oper'] = 'add';
 
-		$this->controllerApiBook->runAction('manage');
-
-		$newRecord = $this->getPdo()->prepare('SELECT * FROM books WHERE book_guid NOT IN(1,2,3)')->fetch();
-		$oldRecords = $this->getPdo()->prepare('SELECT * FROM books WHERE book_guid IN(1,2,3)')->fetchAll();
-
-		// check existing data did not change
-		$this->assertTrue($oldRecords->matches($this->createArrayDataSet(['books' => $this->books['expected']])->getTable('books')), 'old records does not match as they were changed');
-
-		// pre verify
-		// [ 1 ]
-		$this->assertTrue((bool)preg_match('/[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{12}/', $newRecord['book_guid']),
-			"book_guid '{$newRecord['book_guid']}' is in wrong format");
-		// [ 2 ]
-		$this->assertEquals((new \DateTime())->format('Y-m-d'), \DateTime::createFromFormat('Y-m-d H:i:s', $newRecord['updated_date'])->format('Y-m-d'));
-		$this->assertEquals((new \DateTime())->format('Y-m-d'), \DateTime::createFromFormat('Y-m-d H:i:s', $newRecord['updated_date'])->format('Y-m-d'));
-		// [ 3 ]
-		$this->assertEquals(", ''title book #1'',  [].", $newRecord['filename']);
-
-		// mod expected with verified data
-		foreach (['book_guid','created_date','updated_date','filename'] as $k) {
-			$book_1_expected[$k] = $newRecord[$k];
-		}
-
-		//verify
-		$this->assertArraySubset($book_1_expected, $newRecord);
-	}
 
 
 	/**

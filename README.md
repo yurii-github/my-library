@@ -1,5 +1,3 @@
-
-
 # My Library
 
 [![Build Status](https://travis-ci.org/yurii-github/yii2-mylib.svg?branch=slim-master)](https://travis-ci.org/yurii-github/yii2-mylib) [![Code Climate](https://codeclimate.com/github/yurii-github/yii2-mylib/badges/gpa.svg)](https://codeclimate.com/github/yurii-github/yii2-mylib) [![Test Coverage](https://codeclimate.com/github/yurii-github/yii2-mylib/badges/coverage.svg)](https://codeclimate.com/github/yurii-github/yii2-mylib/coverage) 
@@ -34,22 +32,15 @@ It supports all JQuery UI themes.
 - PHP 7.2+
 - SQLite or MySQL database
 
-## Setup & Run
 
-Get project code
+## Setup & Run
 
 ```
 git clone git@github.com:yurii-github/yii2-mylib.git
 cd yii2-mylib
 composer update
-```
-
-Start this application as
-
-```
 ./serve
 ```
-
 Application will be available at [http://localhost:8080](http://localhost:8080)
 
 ## Structure
@@ -72,14 +63,17 @@ Here's the list of most interesting places:
 ------
 </pre>
 
+
 ## Sync
-If you have enabled synchronization application will sync changes to your filesystem
-* any cell change that has influence on filename of the book will cause its rename
-* if you delete book it will be removed from filesystem too 
-* you cannot remove records without corresponding real file (you may disable sync if required)
-* you have to manage file extension manually to rename file properly.
-* if you change book filename format it will not rename all books! It will apply new format only to newly renamed books
+
+If you have enabled synchronization application will sync changes to your filesystem!
+
+* Any cell change that has influence on filename of the book will cause its rename
+* If you delete book in MyLibrary it will delete corresponding real file if sync is *ON* 
+* You cannot remove records without corresponding real file if sync is *ON*
+* You have to manage file extension manually to rename file properly.
+* If you change book filename format it will not rename all books! It will apply new format only to newly renamed books
 
 ## Importing new books
-The simplest way is to drop your books to library folder you've set in configuration and then on "synchronization" press "import fs only". 
+To import books into the library you have to drop your books to library folder you've set in configuration and then on *Synchronization* tab press "import fs only". 
 It will import all file system books that are not in database yet.

@@ -13,7 +13,7 @@ class PagesTest extends AbstractTestCase
 
         $this->assertSame(200, $response->getStatusCode());
         $this->assertStringContainsString('</html>', $content);
-        $this->assertStringContainsString('<title>' . @$_ENV['APP_NAME'] . ' ~ Configuration</title>', $content);
+        $this->assertStringContainsString('<title>MyLibrary ~ Configuration</title>', $content);
     }
 
 
@@ -26,7 +26,7 @@ class PagesTest extends AbstractTestCase
 
         $this->assertSame(200, $response->getStatusCode());
         $this->assertStringContainsString('</html>', $content);
-        $this->assertStringContainsString('<title>' . @$_ENV['APP_NAME'] . ' ~ Books</title>', $content);
+        $this->assertStringContainsString('<title>MyLibrary ~ Books</title>', $content);
     }
 
 
@@ -39,7 +39,7 @@ class PagesTest extends AbstractTestCase
 
         $this->assertSame(200, $response->getStatusCode());
         $this->assertStringContainsString('</html>', $content);
-        $this->assertStringContainsString('<title>' . @$_ENV['APP_NAME'] . ' ~ About Project</title>', $content);
+        $this->assertStringContainsString('<title>MyLibrary ~ About Project</title>', $content);
     }
 
 }

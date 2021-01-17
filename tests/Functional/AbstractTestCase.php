@@ -115,6 +115,16 @@ abstract class AbstractTestCase extends TestCase
         }
         touch($testDbFilename);
     }
+
+    protected function useMySQL(\stdClass $config)
+    {
+        $config->database->format = 'mysql';
+        $config->database->host = 'localhost';
+        $config->database->dbname = 'test_mylib';
+        $config->database->login = 'travis';
+        $config->database->password = null;
+    }
+    
     
     protected function initVirtualFileSystem()
     {
@@ -129,8 +139,15 @@ abstract class AbstractTestCase extends TestCase
     protected function initConfig()
     {
         $config = json_decode(file_get_contents(dirname(__DIR__) . '/data/config_sqlite.json'));
-        //$this->useSqliteInFile($config);
-        $this->useSqliteInMemory($config);
+
+        if (empty(getenv('DB_TYPE')) || getenv('DB_TYPE') === 'sqlite') {
+            $this->useSqliteInMemory($config);
+        } elseif (getenv('DB_TYPE') === 'mysql') {
+            $this->useMySQL($config);
+        } else {
+            throw new \Exception('must setup env variable DB_TYPE. Supported values are \'mysql\' and \'sqlite\'');
+        }
+        
         file_put_contents(vfsStream::url('base/data/config.json'), json_encode($config, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
     }
 

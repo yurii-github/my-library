@@ -1,14 +1,29 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Continuous Integration and Deployment: https://travis-ci.org
+# Continuous Integration and Deployment: https://travis-ci.com/github/yurii-github
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 dist: xenial
+os: linux
 language: php
 php:
   - 7.2
   - 7.3
   - 7.4
+env:
+  - DB_TYPE=sqlite
+  - DB_TYPE=mysql
 install:
   - cp .env.example .env
   - composer install
+before_script:
+  - mysql -e "CREATE DATABASE IF NOT EXISTS test_mylib" -utravis
+  - wget -O cc-test-reporter https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+  - chmod +x cc-test-reporter
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" ]] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$DB_TYPE" == "sqlite"]; then ./cc-test-reporter before-build; fi
+script:
+  - ./vendor/bin/phpunit --coverage-text --coverage-clover build/logs/clover.xml
+after_script:
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" ]] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$DB_TYPE" == "sqlite"]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
+services:
+  - mysql
 git:
   submodules: false

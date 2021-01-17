@@ -106,19 +106,19 @@ final class Configuration
         return $this->$name;
     }
 
-//    public function __set(string $name, $value)
-//    {
-//        if (in_array($name, $this->options)) {
-//            $this->config->$name = $value;
-//            return;
-//        }
-//
-//        if (!property_exists($this, $name)) {
-//            throw new ConfigurationPropertyDoesNotExistException("Property '$name' does not exist");
-//        }
-//
-//        $this->$name = $value;
-//    }
+    public function __set(string $name, $value)
+    {
+        if (in_array($name, $this->options)) {
+            $this->config->$name = $value;
+            return;
+        }
+
+        if (!property_exists($this, $name)) {
+            throw new ConfigurationPropertyDoesNotExistException("Property '$name' does not exist");
+        }
+
+        $this->$name = $value;
+    }
 
     // for twig
     public function getSystem()

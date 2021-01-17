@@ -7,16 +7,7 @@ use App\Exception\ConfigFileIsNotWritableException;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
 use PHPUnit\Framework\TestCase;
-
 use \App\Exception\ConfigurationPropertyDoesNotExistException;
-
-//class mockConfiguration extends Configuration
-//{
-//    public function getDefaultConfiguration()
-//    {
-//        return parent::getDefaultConfiguration();
-//    }
-//}
 
 class ConfigurationTest extends TestCase
 {
@@ -39,7 +30,7 @@ class ConfigurationTest extends TestCase
     }
 
 
-    function test_getNotExistedProperty()
+    function testCannotGetNotExistedProperty()
     {
         $this->expectException(ConfigurationPropertyDoesNotExistException::class);
         $this->expectExceptionMessage("Property 'not_exist' does not exist");
@@ -47,24 +38,24 @@ class ConfigurationTest extends TestCase
     }
 
 
-//    function test_setNotExistedProperty()
-//    {
-//        $this->expectException(ConfigurationPropertyDoesNotExistException::class);
-//        $this->configLoaded->not_exist = 'value';
-//    }
-//    
-//    function test_setNotExistedProperty_ForNotExisted2ndLevel()
-//    {
-//        $this->expectException(ConfigurationPropertyDoesNotExistException::class);
-//        $this->configLoaded->not_exist->asd = 'value';
-//    }
-//
-//
-//    function __test_setNotExistedProperty_ForExisted2ndLevel()
-//    {
-//        $this->configLoaded->system->asd = 'value';
-//        $this->assertEquals('value', $this->configLoaded->system->asd);
-//    }
+    function testCannotSetNotExistedProperty()
+    {
+        $this->expectException(ConfigurationPropertyDoesNotExistException::class);
+        $this->configLoaded->not_exist = 'value';
+    }
+    
+    function testCannotSetNotExistedPropertyForNotExistedPropertyOfSecondLevel()
+    {
+        $this->expectException(ConfigurationPropertyDoesNotExistException::class);
+        $this->configLoaded->not_exist->asd = 'value';
+    }
+
+
+    function testCanSetNotExistedPropertyForExistedPropertyOfSecondLevel()
+    {
+        $this->configLoaded->system->asd = 'value';
+        $this->assertEquals('value', $this->configLoaded->system->asd);
+    }
     
     
     public function testGetters()

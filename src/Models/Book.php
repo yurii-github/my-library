@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Configuration\Configuration;
+use App\Exception\BookFileNotFoundException;
 use App\Helpers\Tools;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Builder;
@@ -85,7 +86,7 @@ class Book extends Model
                     // update file in filesystem
                     if ($filepathOld != $filepathNew) {
                         if (!file_exists($filepathOld)) {
-                            throw new \InvalidArgumentException("Sync for file failed. Source file '{$filepathOld}' does not exist", 1);
+                            throw new BookFileNotFoundException("Sync for file failed. Source file '{$filepathOld}' does not exist");
                         }
                         // PHP 7: throw error if file is open
                         if (!rename($filepathOld, $filepathNew)) {

@@ -13,7 +13,7 @@ class ManageBookActionTest extends AbstractTestCase
 
     public function testAddBook()
     {
-        $this->setBookSyncMode(false);
+        $this->setBookLibrarySync(false);
         Carbon::setTestNow(Carbon::now());
         $request = $this->createJsonRequest('POST', '/api/book/manage', [
             'title' => 'title book #1',
@@ -55,7 +55,7 @@ class ManageBookActionTest extends AbstractTestCase
 
     public function testBookDelete()
     {
-        $this->setBookSyncMode(false); //TODO: remove file if sync is ON
+        $this->setBookLibrarySync(false); //TODO: remove file if sync is ON
         $books = $this->populateBooks();
         $book = $books[0];
 
@@ -76,7 +76,7 @@ class ManageBookActionTest extends AbstractTestCase
         $createdAt = Carbon::now();
         $updatedAt = Carbon::now()->copy()->addDay();
         Carbon::setTestNow($createdAt);
-        $this->setBookSyncMode(false);
+        $this->setBookLibrarySync(false);
         $books = $this->populateBooks();
         $book = $books[0];
 
@@ -100,9 +100,9 @@ class ManageBookActionTest extends AbstractTestCase
     }
 
 
-    public function testChangeFilenameFromTitleIsSuccessful()
+    public function testCanChangeFilenameFromTitleWithoutFileWithoutSync()
     {
-        $this->setBookSyncMode(false); // TODO: rename file if sync is ON
+        $this->setBookLibrarySync(false); // TODO: rename file if sync is ON
         $books = $this->populateBooks();
         $book = $books[0];
 
@@ -122,6 +122,31 @@ class ManageBookActionTest extends AbstractTestCase
             'filename' => ", ''new title X'',  []."
         ]);
     }
+
+    
+    public function testCannotChangeFilenameFromTitleWithoutFileWithSync()
+    {
+        $this->setBookLibrarySync(true);
+        $books = $this->populateBooks();
+        $book = $books[0];
+
+        $request = $this->createJsonRequest('POST', '/api/book/manage', [
+            'id' => $book->book_guid,
+            'title' => 'new title X',
+            'oper' => 'edit'
+        ]);
+
+        $response = $this->app->handle($request);
+        $this->assertSame(400, $response->getStatusCode());
+        $this->assertJsonData([
+            'error' => "Sync for file failed. Source file 'vfs://base/data/books/, ''title book #1'',  [].' does not exist"
+        ], $response);
+        $this->assertDatabaseHas('books', [
+            'book_guid' => $book->book_guid,
+            'title' => $book->title,
+            'filename' => $book->filename
+        ]);
+    }
     
     
     /**
@@ -136,7 +161,7 @@ class ManageBookActionTest extends AbstractTestCase
      */
     public function __test_action_Manage_Edit(bool $syncMode)
     {
-        $this->setBookSyncMode($syncMode);
+        $this->setBookLibrarySync($syncMode);
         $books = $this->populateBooks();
         $book = $books[0];
 
@@ -214,7 +239,7 @@ class ManageBookActionTest extends AbstractTestCase
     }
 
 
-    protected function setBookSyncMode(bool $mode): void
+    protected function setBookLibrarySync(bool $mode): void
     {
         $config = $this->app->getContainer()->get(Configuration::class);
         assert($config instanceof Configuration);

@@ -20,6 +20,7 @@
 
 namespace App\Actions;
 
+use App\Exception\BookFileNotFoundException;
 use App\Models\Book;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -93,12 +94,15 @@ class ManageBookAction
                 $book = Book::where(['book_guid' => $post['id']])->firstOrFail(); // TODO: do not select book cover, add book cover class
                 try {
                     $input = $validator->validate();
+                    $book->fill($input);
+                    $book->save();
+                } catch (BookFileNotFoundException $e) {
+                    $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
+                    return $response->withStatus(400);
                 } catch (ValidationException $e) {
                     $response->getBody()->write(json_encode($e->errors()));
                     return $response->withStatus(422);
                 }
-                $book->fill($input);
-                $book->save();
                 break;
         }
 

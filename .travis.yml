@@ -20,7 +20,7 @@ before_script:
   - chmod +x cc-test-reporter
   - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" ]] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$DB_TYPE" == "sqlite"]; then ./cc-test-reporter before-build; fi
 script:
-  - ./vendor/bin/phpunit --coverage-text --coverage-clover build/logs/clover.xml
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" ]] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$DB_TYPE" == "sqlite"]; then ./vendor/bin/phpunit --coverage-text --coverage-clover build/logs/clover.xml; else ./vendor/bin/phpunit fi; 
 after_script:
   - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" ]] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$DB_TYPE" == "sqlite"]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
 services:

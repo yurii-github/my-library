@@ -10,7 +10,6 @@ class UpdateBookCoverActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;
 
-
     
     public function testCoverResize()
     {

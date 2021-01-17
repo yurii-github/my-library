@@ -8,36 +8,6 @@ class ManageBooksTest extends \tests\AppFunctionalTestCase
 {
 
 
-
-
-
-
-
-
-	function test_action_getCover_empty()
-	{
-		\Yii::$app->setAliases(['@webroot' => '@app/public']);
-		file_put_contents($this->initAppFileSystem() . '/public/assets/app/book-cover-empty.jpg', 'empty-cover-data');
-		$book_guid = 1;
-
-		$cover = $this->controllerApiBook->runAction('cover', ['book_guid' => $book_guid]);
-
-		$this->assertEquals('empty-cover-data', $cover);
-	}
-
-
-	function test_action_getCover_exists()
-	{
-		$book_guid = 1;
-		\Yii::$app->setAliases(['@webroot' => '@app/public']);
-		file_put_contents($this->initAppFileSystem() . '/public/assets/app/book-cover-empty.jpg', 'empty-cover-data');
-		$this->getPdo()->exec("UPDATE books SET book_cover='valid-cover-data' WHERE book_guid='$book_guid'");
-		$cover = $this->controllerApiBook->runAction('cover', ['book_guid' => $book_guid]);
-
-		$this->assertEquals('valid-cover-data', $cover);
-	}
-
-
 	/**
 	 * MUST
 	 * 1. remove record from books table based on book_guid

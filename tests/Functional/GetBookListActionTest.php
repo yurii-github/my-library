@@ -123,7 +123,7 @@ class GetBookListActionTest extends AbstractTestCase
         $this->assertSame(3, $data['records']);
         $this->assertIsArray($data['rows']);
         $this->assertCount(1, $data['rows']);
-        $this->assertSame($books[1]->book_guid, $data['rows'][0]['id']);
+        $this->assertTrue(in_array($data['rows'][0]['id'], Collection::make($books)->pluck('book_guid')->all()));
     }
 
 

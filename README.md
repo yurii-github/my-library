@@ -1,6 +1,6 @@
 # My Library
 
-[![Build Status](https://travis-ci.com/yurii-github/yii2-mylib.svg?branch=slim-master)](https://travis-ci.com/yurii-github/yii2-mylib) [![Code Climate](https://codeclimate.com/github/yurii-github/yii2-mylib/badges/gpa.svg)](https://codeclimate.com/github/yurii-github/yii2-mylib) [![Test Coverage](https://codeclimate.com/github/yurii-github/yii2-mylib/badges/coverage.svg)](https://codeclimate.com/github/yurii-github/yii2-mylib/coverage) 
+[![Build Status](https://travis-ci.com/yurii-github/yii2-mylib.svg?branch=master)](https://travis-ci.com/yurii-github/yii2-mylib) [![Code Climate](https://codeclimate.com/github/yurii-github/yii2-mylib/badges/gpa.svg)](https://codeclimate.com/github/yurii-github/yii2-mylib) [![Test Coverage](https://codeclimate.com/github/yurii-github/yii2-mylib/badges/coverage.svg)](https://codeclimate.com/github/yurii-github/yii2-mylib/coverage) 
 
 ## About
 
@@ -8,7 +8,7 @@ This is book library manager, written in PHP and based on JqueryUI.
 The main purpose of it is to manage own book library as excel table with ratings and other stuff like filename syncronizations of your books and more.  
 It supports all JQuery UI themes.  
 
-![library page](app/web/library.png)
+![library page](public/library.png)
 
 
 ## Functionality

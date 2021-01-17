@@ -11,6 +11,27 @@ class ManageBookActionTest extends AbstractTestCase
     use PopulateBooksTrait;
 
 
+    public function testCannotAddBookWithoutFileWithSync()
+    {
+        $this->setBookLibrarySync(true);
+        Carbon::setTestNow(Carbon::now());
+        $request = $this->createJsonRequest('POST', '/api/book/manage', [
+            'title' => 'title book #1',
+            'read' => 'no',
+            'favorite' => 0,
+            'oper' => 'add'
+        ]);
+
+        $response = $this->app->handle($request);
+
+        $this->assertSame(400, $response->getStatusCode());
+        $this->assertJsonData([
+            'error' => "Book 'vfs://base/data/books/, ''title book #1'',  [].' does not exist."
+        ], $response);
+        $this->assertDatabaseCount('books', 0);
+    }
+    
+    
     public function testAddBook()
     {
         $this->setBookLibrarySync(false);
@@ -126,9 +147,10 @@ class ManageBookActionTest extends AbstractTestCase
 
     public function testCannotChangeFilenameFromTitleWithoutFileWithSync()
     {
-        $this->setBookLibrarySync(true);
+        $this->setBookLibrarySync(false);
         $books = $this->populateBooks();
         $book = $books[0];
+        $this->setBookLibrarySync(true);
 
         $request = $this->createJsonRequest('POST', '/api/book/manage', [
             'id' => $book->book_guid,

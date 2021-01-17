@@ -65,13 +65,16 @@ class ManageBookAction
                 $validator = new Validator($this->translator, $post, $rules);
                 try {
                     $input = $validator->validate();
+                    $book = new Book();
+                    $book->fill($input);
+                    $book->save();
+                } catch (BookFileNotFoundException $e) {
+                    $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
+                    return $response->withStatus(400);
                 } catch (ValidationException $e) {
                     $response->getBody()->write(json_encode($e->errors()));
                     return $response->withStatus(422);
                 }
-                $book = new Book();
-                $book->fill($input);
-                $book->save();
                 $response->getBody()->write(json_encode($book->toArray(), JSON_UNESCAPED_UNICODE));
                 break;
 

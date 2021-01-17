@@ -51,18 +51,18 @@ class Book extends Model
 
     protected static function boot()
     {
+        parent::boot();
+        
         $config = Container::getInstance()->get(Configuration::class);
         assert($config instanceof Configuration);
 
-        parent::boot();
-
         static::deleted(function (self $book) use ($config) {
-            $filename = $config->getFilepath($book->filename);
             if ($config->library->sync) {
-                if (!file_exists($filename)) {
-                    throw new \Exception("file '{$filename}' was removed before record deletion with sync enabled");
+                $filepath = $config->getFilepath($book->filename);
+                if (!file_exists($filepath)) {
+                    throw new \Exception("File '{$filepath}' was removed before record deletion with sync enabled");
                 } else {
-                    unlink($filename);
+                    unlink($filepath);
                 }
             }
         });
@@ -71,6 +71,12 @@ class Book extends Model
             $book->book_guid = Tools::com_create_guid();
             $book->favorite = $book->favorite == null ? 0 : $book->favorite;
             $book->filename = self::buildFilename($book, $config->book->nameformat);
+            if ($config->library->sync) {
+                $filepath = $config->getFilepath($book->filename);
+                if (!file_exists($filepath)) {
+                    throw new BookFileNotFoundException("Book '{$filepath}' does not exist.", 1);
+                }
+            }
         });
 
         /*
@@ -86,7 +92,7 @@ class Book extends Model
                     // update file in filesystem
                     if ($filepathOld != $filepathNew) {
                         if (!file_exists($filepathOld)) {
-                            throw new BookFileNotFoundException("Sync for file failed. Source file '{$filepathOld}' does not exist");
+                            throw new BookFileNotFoundException("Sync for file failed. Source file '{$filepathOld}' does not exist", 2);
                         }
                         // PHP 7: throw error if file is open
                         if (!rename($filepathOld, $filepathNew)) {

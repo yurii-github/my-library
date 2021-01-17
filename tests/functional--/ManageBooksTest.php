@@ -7,28 +7,6 @@ use app\components\ApcCache;
 class ManageBooksTest extends \tests\AppFunctionalTestCase
 {
 
-
-	/**
-	 * MUST
-	 * 1. remove record from books table based on book_guid
-	 * 2. TODO: remove file if sync is ON
-	 */
-	public function test_action_Manage_Delete()
-	{
-		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$_POST['oper'] = 'del';
-		$_POST['id'] = 3; // book_guid
-
-		$this->controllerApiBook->runAction('manage');
-
-		unset($this->books['expected'][2]);
-		$this->assertDataSetsEqual($this->createArrayDataSet(['books' => $this->books['expected']]), $this->createDataSet(['books']));
-	}
-
-
-
-
-
 	/**
 	 * @dataProvider pSync
 	 *

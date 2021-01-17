@@ -21,6 +21,7 @@ class ManageBookActionTest extends AbstractTestCase
         ]);
         $response = $this->app->handle($request);
         $response->getBody()->rewind();
+        
         $this->assertSame(200, $response->getStatusCode());
         $content = (string)$response->getBody();
         $this->assertNotEmpty($content);
@@ -48,4 +49,27 @@ class ManageBookActionTest extends AbstractTestCase
             "book_guid '{$content['book_guid']}' is in wrong format"
         );
     }
+
+
+    /**
+     * MUST
+     * 1. remove record from books table based on book_guid
+     * 2. TODO: remove file if sync is ON
+     */
+    public function test_action_Manage_Delete()
+    {
+        $books = $this->populateBooks();
+        $book = $books[0];
+        
+        $request = $this->createJsonRequest('POST', '/api/book/manage', [
+            'id' => $book->book_guid,
+            'oper' => 'del'
+        ]);
+        $response = $this->app->handle($request);
+        $this->assertSame('', (string)$response->getBody());
+        
+        $this->assertDatabaseCount('books', 2);
+        $this->assertDatabaseMissing('books', ['book_guid' => $book->book_guid]);
+   }
+
 }

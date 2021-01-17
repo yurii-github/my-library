@@ -2,6 +2,7 @@
 
 namespace Tests\Functional;
 
+use Illuminate\Support\Collection;
 use Tests\PopulateBooksTrait;
 
 class GetBookListActionTest extends AbstractTestCase
@@ -67,9 +68,10 @@ class GetBookListActionTest extends AbstractTestCase
         $this->assertSame(3, $data['records']);
         $this->assertIsArray($data['rows']);
         $this->assertCount(3, $data['rows']);
-        $this->assertSame($books[0]->book_guid, $data['rows'][0]['id']);
-        $this->assertSame($books[1]->book_guid, $data['rows'][1]['id']);
-        $this->assertSame($books[2]->book_guid, $data['rows'][2]['id']);
+        $this->assertEqualsCanonicalizing(
+            Collection::make([$books[0],$books[1],$books[2]])->pluck('book_guid')->all(),
+            Collection::make($data['rows'])->pluck('id')->all()
+        );
     }
 
 
@@ -128,11 +130,10 @@ class GetBookListActionTest extends AbstractTestCase
     function testNoFilters()
     {
         $books = $this->populateBooks();
-        $response = $this->getBooksResponse();
-        $content = $response->getBody()->getContents();
-
+        $request = $this->createJsonRequest('GET', '/api/book');
+        $response = $this->app->handle($request);
         $this->assertSame(200, $response->getStatusCode());
-        $data = json_decode($content, true);
+        $data = json_decode((string)$response->getBody(), true);
 
         $this->assertSame(1, $data['page']);
         $this->assertSame(3, $data['total']);
@@ -140,16 +141,10 @@ class GetBookListActionTest extends AbstractTestCase
         $this->assertIsArray($data['rows']);
         $this->assertCount(3, $data['rows']);
 
-        $this->assertSame($books[0]->book_guid, $data['rows'][0]['id']);
-        $this->assertSame($books[1]->book_guid, $data['rows'][1]['id']);
+        $this->assertEqualsCanonicalizing(
+            Collection::make([$books[0],$books[1],$books[2]])->pluck('book_guid')->all(),
+            Collection::wrap($data['rows'])->pluck('id')->all()
+        );
     }
 
-    protected function getBooksResponse(array $data = null)
-    {
-        $request = $this->createJsonRequest('GET', '/api/book', $data);
-        $response = $this->app->handle($request);
-        $response->getBody()->rewind();
-
-        return $response;
-    }
 }

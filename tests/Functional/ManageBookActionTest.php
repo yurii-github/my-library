@@ -176,9 +176,7 @@ class ManageBookActionTest extends AbstractTestCase
         $this->setBookLibrarySync(false);
         $books = $this->populateBooks();
         $book = $books[0];
-
-        $config = $this->app->getContainer()->get(Configuration::class);
-        assert($config instanceof Configuration);
+        $config = $this->getLibraryConfig();
 
         file_put_contents($config->getFilepath($book->filename), 'sample-data');
         $this->assertFileExists($config->getFilepath($book->filename));
@@ -207,11 +205,4 @@ class ManageBookActionTest extends AbstractTestCase
         $this->assertStringEqualsFile($config->getFilepath($newFilename), 'sample-data');
     }
 
-
-    protected function setBookLibrarySync(bool $mode): void
-    {
-        $config = $this->app->getContainer()->get(Configuration::class);
-        assert($config instanceof Configuration);
-        $config->getLibrary()->sync = $mode;
-    }
 }

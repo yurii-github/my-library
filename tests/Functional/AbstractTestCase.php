@@ -3,6 +3,7 @@
 namespace Tests\Functional;
 
 use App\AppMigrator;
+use App\Configuration\Configuration;
 use Http\Factory\Guzzle\ServerRequestFactory;
 use Illuminate\Container\Container;
 use Illuminate\Database\Capsule\Manager;
@@ -138,5 +139,17 @@ abstract class AbstractTestCase extends TestCase
         //$this->useSqliteInFile($config);
         $this->useSqliteInMemory($config);
         file_put_contents(vfsStream::url('base/data/config.json'), json_encode($config, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+    }
+
+    
+    protected function getLibraryConfig(): Configuration
+    {
+        return $this->app->getContainer()->get(Configuration::class);
+    }
+
+    
+    protected function setBookLibrarySync(bool $mode): void
+    {
+        $this->getLibraryConfig()->getLibrary()->sync = $mode;
     }
 }

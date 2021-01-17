@@ -2,14 +2,11 @@
 
 namespace Tests\Functional;
 
-use App\Configuration\Configuration;
-
 class UpdateConfigActionTest extends AbstractTestCase
 {
     public function testSave()
     {
-        $config = $this->app->getContainer()->get(Configuration::class);
-        assert($config instanceof Configuration);
+        $config = $this->getLibraryConfig();
         $this->assertSame('en-US', $config->getSystem()->language);
         $this->assertStringContainsString('"language": "en-US",', file_get_contents($config->config_file));
         $this->assertStringNotContainsString('"language": "uk-UA",', file_get_contents($config->config_file));
@@ -35,8 +32,7 @@ class UpdateConfigActionTest extends AbstractTestCase
 
     public function testCannotSaveWithoutWriteAccess()
     {
-        $config = $this->app->getContainer()->get(Configuration::class);
-        assert($config instanceof Configuration);
+        $config = $this->getLibraryConfig();
         $this->assertSame('en-US', $config->getSystem()->language);
         $this->assertStringContainsString('"language": "en-US",', file_get_contents($config->config_file));
         $this->assertStringNotContainsString('"language": "uk-UA",', file_get_contents($config->config_file));

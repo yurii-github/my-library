@@ -32,17 +32,6 @@ class ConfigTest extends \tests\AppFunctionalTestCase
 	}
 
 
-	public function test_getLibraryBookFilenames()
-	{
-		$resp = json_decode($this->controller->runAction('check-files'));
-
-		$this->assertEquals(2, count($resp->db), 'db only records does not match');
-		$this->assertArraySubset(['filename-1','filename-2'], $resp->db, 'filename of db only files does not match');
-		$this->assertEquals(1, count($resp->fs), 'file system only file count does not match');
-		$this->assertEquals($this->filename_fs_only, $resp->fs[0], 'filename of file system only file does not match');
-	}
-
-
 	public function test_actionClearDbFiles_recordsCount()
 	{
 		$_GET['count'] = 'all';

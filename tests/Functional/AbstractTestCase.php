@@ -99,7 +99,7 @@ abstract class AbstractTestCase extends TestCase
     protected function assertJsonData(array $expected, ResponseInterface $response): void
     {
         $actual = (string)$response->getBody();
-        $this->assertSame($expected, (array)json_decode($actual, true, 512, JSON_THROW_ON_ERROR));
+        $this->assertSame($expected, (array)json_decode($actual, true, 512));
     }
     
     protected function useSqliteInMemory(\stdClass $config)

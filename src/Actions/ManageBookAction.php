@@ -20,59 +20,48 @@
 
 namespace App\Actions;
 
-use App\Configuration\Configuration;
 use App\Models\Book;
-use Illuminate\Translation\ArrayLoader;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\Translation\Translator;
-use Twig\Environment;
+use \Illuminate\Translation\Translator;
 
 /**
  * CRUD functionality for books via jqGrid interface
  */
 class ManageBookAction
 {
-    /**
-     * @var Configuration
-     */
-    protected $config;
-    protected $twig;
+    /** @var Translator */
     protected $translator;
 
 
     public function __construct(ContainerInterface $container)
     {
-        $this->config = $container->get(Configuration::class);
-        $this->twig = $container->get(Environment::class);
         $this->translator = $container->get(Translator::class);
     }
 
-    
+
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $post = $request->getParsedBody();
-        
-        $t = new \Illuminate\Translation\Translator(new ArrayLoader(), 'en-US');
-        $rules = [
-            'year' => ['sometimes'],
-            'favorite' => ['required'],
-            'read' => ['required'], // yes, no
-            'title' => ['required'],
-            'isbn13' => ['sometimes'],
-            'author' => ['sometimes'],
-            'publisher' => ['sometimes'],
-            'ext' => ['sometimes'],
-        ];
 
-        $validator = new Validator($t, $post, $rules);
-        
         switch ($post['oper']) {
-            
+
             case 'add':
+                $rules = [
+                    'year' => ['sometimes'],
+                    'favorite' => ['required'],
+                    'read' => ['required', Rule::in(['yes', 'no'])],
+                    'title' => ['required'],
+                    'isbn13' => ['sometimes'],
+                    'author' => ['sometimes'],
+                    'publisher' => ['sometimes'],
+                    'ext' => ['sometimes'],
+                ];
+                $validator = new Validator($this->translator, $post, $rules);
                 try {
                     $input = $validator->validate();
                 } catch (ValidationException $e) {
@@ -81,7 +70,6 @@ class ManageBookAction
                 }
                 $book = new Book();
                 $book->fill($input);
-                $book->filename = Book::buildFilename($book, $this->config->book->nameformat);
                 $book->save();
                 $response->getBody()->write(json_encode($book->toArray(), JSON_UNESCAPED_UNICODE));
                 break;
@@ -91,6 +79,17 @@ class ManageBookAction
                 break;
 
             case 'edit':
+                $rules = [
+                    'year' => ['sometimes'],
+                    'favorite' => ['sometimes', 'required'],
+                    'read' => ['sometimes', 'required', Rule::in(['yes', 'no'])],
+                    'title' => ['sometimes', 'required'],
+                    'isbn13' => ['sometimes', 'sometimes'],
+                    'author' => ['sometimes', 'string'],
+                    'publisher' => ['sometimes', 'string'],
+                    'ext' => ['sometimes'],
+                ];
+                $validator = new Validator($this->translator, $post, $rules);
                 $book = Book::where(['book_guid' => $post['id']])->firstOrFail(); // TODO: do not select book cover, add book cover class
                 try {
                     $input = $validator->validate();
@@ -102,8 +101,8 @@ class ManageBookAction
                 $book->save();
                 break;
         }
-        
+
         return $response;
     }
-    
+
 }

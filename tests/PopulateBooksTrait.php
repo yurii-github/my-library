@@ -2,6 +2,7 @@
 namespace Tests;
 
 use App\Models\Book;
+use Illuminate\Support\Carbon;
 
 trait PopulateBooksTrait
 {
@@ -14,8 +15,8 @@ trait PopulateBooksTrait
         $book = new Book();
         $book->title = 'title book #1';
         $book->filename = 'filename-1';
-        $book->created_date = '2014-01-01 00:00:00';
-        $book->updated_date = '2014-01-01 00:00:00';
+        $book->created_date = Carbon::now()->toDateTimeString();
+        $book->updated_date = Carbon::now()->toDateTimeString();
         $book->save();
         $books[] = $book;
 
@@ -23,8 +24,8 @@ trait PopulateBooksTrait
         $book->title = 'title book #2';
         $book->filename = 'filename-2';
         $book->favorite = 1.0;
-        $book->created_date = '2014-01-01 00:00:00';
-        $book->updated_date = '2014-01-01 00:00:00';
+        $book->created_date = Carbon::now()->toDateTimeString();
+        $book->updated_date = Carbon::now()->toDateTimeString();
         $book->save();
         $books[] = $book;
 
@@ -32,8 +33,8 @@ trait PopulateBooksTrait
         $book->title = 'title book #3';
         $book->filename = 'filename-3';
         $book->favorite = 0.0;
-        $book->created_date = '2014-01-01 00:00:00';
-        $book->updated_date = '2014-01-01 00:00:00';
+        $book->created_date = Carbon::now()->toDateTimeString();
+        $book->updated_date = Carbon::now()->toDateTimeString();
         $book->save();
         $books[] = $book;
 

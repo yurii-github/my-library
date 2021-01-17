@@ -50,8 +50,8 @@ class Book extends Model
 
     protected static function boot()
     {
-        /** @var Configuration $config */
         $config = Container::getInstance()->get(Configuration::class);
+        assert($config instanceof Configuration);
 
         parent::boot();
 
@@ -66,36 +66,34 @@ class Book extends Model
             }
         });
 
-        static::creating(function (self $book) {
+        static::creating(function (self $book) use ($config) {
             $book->book_guid = Tools::com_create_guid();
             $book->favorite = $book->favorite == null ? 0 : $book->favorite;
+            $book->filename = self::buildFilename($book, $config->book->nameformat);
         });
 
         /*
-         * update filename in database and rename filename in filesystem accordinly
+         * update filename in database and rename filename in filesystem accordingly
          */
         static::updating(function (self $book) use ($config) {
-            // sync with filesystem is enabled. update filename and rename physical file
-            if ($config->library->sync && self::filenameAttrsChanged($book)) {
-                $old_filename = $book->getOriginal('filename');
-                $new_filename = $this->buildFilename();
-                $book->filename = $new_filename;
-                $filepathOld = $config->getFilepath($old_filename);
-                $filepathNew = $config->getFilepath($new_filename);
-
-                // update file in filesystem
-                if ($filepathOld != $filepathNew) {
-                    if (!file_exists($filepathOld)) {
-                        throw new \InvalidArgumentException("Sync for file failed. Source file '{$filepathOld}' does not exist", 1);
-                    }
-                    // PHP 7: throw error if file is open
-                    if (!rename($filepathOld, $filepathNew)) {
-                        throw new \Exception("Failed to rename file. \n\n OLD: $filepathOld \n\n NEW: $filepathNew ");
+            if (self::filenameAttrsChanged($book)) {
+                $book->filename = self::buildFilename($book, $config->book->nameformat);
+                // sync with filesystem is enabled. update filename and rename physical file
+                if ($config->library->sync) {
+                    $filepathOld = $config->getFilepath($book->getOriginal('filename'));
+                    $filepathNew = $config->getFilepath($book->filename);
+                    // update file in filesystem
+                    if ($filepathOld != $filepathNew) {
+                        if (!file_exists($filepathOld)) {
+                            throw new \InvalidArgumentException("Sync for file failed. Source file '{$filepathOld}' does not exist", 1);
+                        }
+                        // PHP 7: throw error if file is open
+                        if (!rename($filepathOld, $filepathNew)) {
+                            throw new \Exception("Failed to rename file. \n\n OLD: $filepathOld \n\n NEW: $filepathNew ");
+                        }
                     }
                 }
             }
-
-            return true;
         });
     }
 

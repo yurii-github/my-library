@@ -1,5 +1,5 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Continuous Integration and Deployment: https://travis-ci.com/github/yurii-github
+# https://travis-ci.com/github/yurii-github
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 dist: xenial
 os: linux

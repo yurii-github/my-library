@@ -27,7 +27,6 @@ It supports all JQuery UI themes.
 - synchronization with filesystem (renames, deletes)
 - migrations
 - compact: optimizes DB via run vacuum for SQLite or table optimization for MySQL
-- 1-hour caching for images from DB (if you setup cache in config)
 - configuration is done via web interface
 
 ## Requirements
@@ -36,22 +35,16 @@ It supports all JQuery UI themes.
 - SQLite or MySQL database
 
 ## Setup & Run
- 
-I do recommend to use github approach because you can get more fresh code
 
-* Github
-    ```
-    git clone git@github.com:yurii-github/yii2-mylib.git
-    cd yii2-mylib
-    composer update
-    ```
-* Packagist/Composer - [https://packagist.org](https://packagist.org/packages/yurii-github/yii2-mylib)
-    ```
-    composer create-project  yurii-github/yii2-mylib  --prefer-dist --stability=stable --no-dev
-    cd yii2-mylib
-    ```
+Get project code
 
-Now, you can start your application
+```
+git clone git@github.com:yurii-github/yii2-mylib.git
+cd yii2-mylib
+composer update
+```
+
+Start this application as
 
 ```
 ./serve

@@ -32,30 +32,6 @@ class ConfigTestXXX
 	}
 
 
-	public function test_actionClearDbFiles_recordsCount()
-	{
-		$_GET['count'] = 'all';
-
-		$resp = json_decode($this->controller->runAction('clear-db-files')); // db only records count
-
-		$this->assertEquals(2, $resp);
-	}
-
-
-	public function test_actionClearDbFiles_clearDb()
-	{
-		$resp = json_decode($this->controller->runAction('clear-db-files')); // db cleared files that are not if fs, filename-3 left only
-
-		$this->assertArraySubset([1,2], $resp);//removed ids
-		$this->assertEquals(1, $this->getPdo()->query('SELECT * FROM books')->rowCount());
-
-		//TODO: fix test
-		$this->assertDataSetsEqual($this->createArrayDataSet(
-			['books' => [$this->books['expected'][2]]]),
-			$this->getConnection()->createDataSet(['books']), 'filename-3 was not left in db');
-	}
-
-
 	/**
 	 * returns list of files available in filesystem only (no database records)
 	 */

@@ -4,29 +4,37 @@
 	"description" : "my book library",
 	"license" : "GPL-3.0",
 	"minimum-stability" : "stable",
-	"::COMMENT REPLACE::" : "it doesn't replace anything, it just removes dependencies on useless yii2 and composer shit",
-	"replace" : {
-		"fxp/composer-asset-plugin" : "*",
-		"bower-asset/jquery" : "*",
-		"bower-asset/jquery.inputmask" : "*",
-		"bower-asset/punycode" : "*",
-		"bower-asset/yii2-pjax" : "*",
-		"bower-asset/bootstrap" : "*",
-		"bower-asset/typeahead.js": "*",
-		"bower-asset/inputmask": "*",
-		"yiisoft/yii2-composer": "*",
-		"cebe/markdown": "*",
-		"ezyang/htmlpurifier": "*"
-	},
+	"version": "0.0.1",
 	"require" : {
 		"php" : "~7.2",
 		"ext-json": "*",
 		"ext-pdo": "*",
 		"ext-gd": "*",
 		"ext-mbstring": "*",
-		"yiisoft/yii2" : "~2.0.15"
+		"guzzlehttp/psr7": "*",
+		"http-interop/http-factory-guzzle": "*",
+		"twig/twig": "^3.1",
+		"illuminate/database": "^7.29",
+		"symfony/dotenv": "^5.1",
+		"symfony/translation": "^5.1",
+		"slim/slim": "^4.6",
+		"ext-fileinfo": "*",
+		"illuminate/validation": "^7.30",
+      	"ext-intl": "*",
+		"illuminate/events": "^7.30"
+    },
+	"autoload": {
+		"psr-4": {
+			"App\\": "src/"
+		}
 	},
-	"require-dev" : {
-		"mikey179/vfsstream" : "*"
+	"autoload-dev": {
+		"psr-4": {
+			"Tests\\": "tests/"
+		}
+	},
+	"require-dev": {
+		"mikey179/vfsstream": "^1.6",
+		"phpunit/phpunit": "^8.5"
 	}
 }

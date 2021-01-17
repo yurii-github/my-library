@@ -7,9 +7,9 @@ languages:
   PHP: true
   Python: false
 exclude_paths:
-  - app/i18n
-  - app/emails
-  - app/tests
-  - app/web/3rd
+  - data
+  - public
+  - src/i18n
+  - src/views
+  - tests
   - vendor
-

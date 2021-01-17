@@ -21,16 +21,14 @@
 namespace App\Actions;
 
 use App\Configuration\Configuration;
+use Illuminate\Support\Arr;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-
 class UpdateConfigAction
 {
-    /**
-     * @var Configuration
-     */
+    /** @var Configuration */
     protected $config;
 
 
@@ -48,12 +46,16 @@ class UpdateConfigAction
         $resp->title = '';
 
         $post = $request->getParsedBody();
-        $field = $post['field'];
-        $value = $post['value'];
+        $field = Arr::get($post, 'field');
+        $value = Arr::get($post, 'value');
 
         list($group, $attr) = explode('_', $field);
 
+        
         try {
+            if (!isset($this->config->$group->$attr)) {
+                throw new \Exception("invalid property name '{$group}.{$attr}'");
+            }
             $this->config->$group->$attr = $value;
             $this->config->save();
             $resp->msg = "<b>$attr</b> was successfully updated";

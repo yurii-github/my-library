@@ -25,11 +25,8 @@ class UpdateBookCoverActionTest extends AbstractTestCase
         $stream->rewind();
         $request = $request->withBody($stream);
         $response = $this->app->handle($request);
-        $response->getBody()->rewind();
-        $content = $response->getBody()->getContents();
-        
         $this->assertSame(200, $response->getStatusCode());
-        $content = json_decode($content, true);
+        $content = json_decode((string)$response->getBody(), true);
         $this->assertNull($content);
         
         /** @var Book $book */

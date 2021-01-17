@@ -247,7 +247,7 @@ final class Configuration
             $this->isInstall = true;
         }
 
-        file_put_contents($filename, json_encode($this->config, JSON_PRETTY_PRINT));
+        file_put_contents($filename, json_encode($this->config, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
     }
 }
 

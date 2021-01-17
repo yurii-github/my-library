@@ -137,6 +137,6 @@ abstract class AbstractTestCase extends TestCase
         $config = json_decode(file_get_contents(dirname(__DIR__) . '/data/config_sqlite.json'));
         //$this->useSqliteInFile($config);
         $this->useSqliteInMemory($config);
-        file_put_contents(vfsStream::url('base/data/config.json'), json_encode($config, JSON_UNESCAPED_UNICODE));
+        file_put_contents(vfsStream::url('base/data/config.json'), json_encode($config, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
     }
 }

@@ -4,14 +4,6 @@ namespace tests\functional;
 use app\controllers\ConfigController;
 use org\bovigo\vfs\vfsStreamDirectory;
 
-class mockConfigController extends ConfigController
-{
-	public function getFiles_FileSystemOnly()
-	{
-		return parent::getFiles_FileSystemOnly();
-	}
-}
-
 
 class ConfigTest extends \tests\AppFunctionalTestCase
 {
@@ -135,25 +127,7 @@ class ConfigTest extends \tests\AppFunctionalTestCase
 	}
 
 
-	public function test_actionSave()
-	{
-		/*
-		 * MUST
-		 * 1. save data to config file
-		 * 2. respond with json string
-		 */
-		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$_POST['field'] = 'system_language';
-		$_POST['value'] = 'uk-UA';
 
-		$resp = json_decode($this->controller->runAction('save'));
-
-		$this->assertEquals("<b>language</b> was successfully updated", $resp->msg);
-		$this->assertTrue($resp->result);
-		$this->assertEquals('system', $resp->title);
-
-		//TODO: check file change. not really needed as it will be checked configuration unit test
-	}
 
 
 	public function test_actionSave_noWriteRights()

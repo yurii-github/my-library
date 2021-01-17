@@ -35,10 +35,10 @@ class JGridRequestQuery
         $params = $request->getQueryParams();
         $data = [
             'page' => $params['page'] ?? null,
-            'limit' => $params['rows']?? null,
+            'limit' => $params['rows'] ?? null,
             'filters' => $params['filters'] ?? null,
-            'sort_column' => $params['sidx']?? null,
-            'sort_order' => $params['sord']?? null,
+            'sort_column' => $params['sidx'] ?? null,
+            'sort_order' => $params['sord'] ?? null,
         ];
         $data['limit'] = empty($data['limit']) || $data['limit'] <= 0 || $data['limit'] > 30 ? 10 : $data['limit'];
         $data['page'] = empty($data['page']) || $data['page'] <= 0 ? 1 : $data['page'];
@@ -47,7 +47,7 @@ class JGridRequestQuery
         $this->query = $query;
     }
 
-    
+
     public function withFilters(): self
     {
         $filters = json_decode($this->data['filters']);
@@ -58,10 +58,11 @@ class JGridRequestQuery
                 if (empty($conditions[$rule->op])) {
                     continue; // unknown condition, skip
                 }
+                $like = $conditions[$rule->op] === 'like' ? '%' : '';
                 if (!empty($filters->groupOp) && $filters->groupOp == 'AND') {
-                    $this->query->where($rule->field, $conditions[$rule->op], (string)$rule->data); // TODO: better security
+                    $this->query->where($rule->field, $conditions[$rule->op], $like . $rule->data . $like);
                 } else {
-                    $this->query->orWhere($rule->field, $conditions[$rule->op], (string)$rule->data); // TODO: better security
+                    $this->query->orWhere($rule->field, $conditions[$rule->op], $like . $rule->data . $like);
                 }
             }
         }

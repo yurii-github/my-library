@@ -48,8 +48,9 @@ class GetBookListAction
         }
 
         $gridQuery = new JGridRequestQuery($query, $request);
-        $gridQuery->withFilters()->withSorting('created_date', 'desc');;
-        $response->getBody()->write(json_encode($gridQuery->paginate($columns)));
+        $gridQuery->withFilters()->withSorting('created_date', 'desc');
+        $data = $gridQuery->paginate($columns);
+        $response->getBody()->write(json_encode($data));
         
         return $response->withHeader('Content-Type', 'application/json');
     }

@@ -21,6 +21,7 @@
 namespace App\Configuration;
 
 use App\Exception\ConfigFileIsNotWritableException;
+use App\Exception\ConfigurationPropertyDoesNotExistException;
 
 /**
  * @property-read string $version
@@ -97,9 +98,27 @@ final class Configuration
         if (in_array($name, $this->options)) {
             return $this->config->$name;
         }
+        
+        if (!property_exists($this, $name)) {
+            throw new ConfigurationPropertyDoesNotExistException("Property '$name' does not exist");
+        }
 
         return $this->$name;
     }
+
+//    public function __set(string $name, $value)
+//    {
+//        if (in_array($name, $this->options)) {
+//            $this->config->$name = $value;
+//            return;
+//        }
+//
+//        if (!property_exists($this, $name)) {
+//            throw new ConfigurationPropertyDoesNotExistException("Property '$name' does not exist");
+//        }
+//
+//        $this->$name = $value;
+//    }
 
     // for twig
     public function getSystem()
@@ -169,7 +188,7 @@ final class Configuration
     }
 
 
-    public function load($filename)
+    protected function load($filename)
     {
         if (!is_readable($filename)) {
             throw new \InvalidArgumentException('cannot read config file at this location: ' . $filename);

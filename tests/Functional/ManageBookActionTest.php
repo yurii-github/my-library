@@ -161,7 +161,7 @@ class ManageBookActionTest extends AbstractTestCase
         $response = $this->app->handle($request);
         $this->assertSame(400, $response->getStatusCode());
         $this->assertJsonData([
-            'error' => "Sync for file failed. Source file 'vfs://base/data/books/, ''title book #1'',  [].' does not exist"
+            'error' => "Sync for file failed. Source file 'vfs://base/data/books/filename-1' does not exist"
         ], $response);
         $this->assertDatabaseHas('books', [
             'book_guid' => $book->book_guid,

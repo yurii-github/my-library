@@ -70,7 +70,9 @@ class Book extends Model
         static::creating(function (self $book) use ($config) {
             $book->book_guid = Tools::com_create_guid();
             $book->favorite = $book->favorite == null ? 0 : $book->favorite;
-            $book->filename = self::buildFilename($book, $config->book->nameformat);
+            if (empty($book->filename)) {
+                $book->filename = self::buildFilename($book, $config->book->nameformat);
+            }
             if ($config->library->sync) {
                 $filepath = $config->getFilepath($book->filename);
                 if (!file_exists($filepath)) {
@@ -84,10 +86,11 @@ class Book extends Model
          */
         static::updating(function (self $book) use ($config) {
             if (self::filenameAttrsChanged($book)) {
+                $oldFilename = $book->getOriginal('filename');
                 $book->filename = self::buildFilename($book, $config->book->nameformat);
                 // sync with filesystem is enabled. update filename and rename physical file
                 if ($config->library->sync) {
-                    $filepathOld = $config->getFilepath($book->getOriginal('filename'));
+                    $filepathOld = $config->getFilepath($oldFilename);
                     $filepathNew = $config->getFilepath($book->filename);
                     // update file in filesystem
                     if ($filepathOld != $filepathNew) {

@@ -63,13 +63,15 @@ class Bootstrap
         Model::setConnectionResolver($capsule->getDatabaseManager());
         Model::setEventDispatcher($eventDispatcher);
 
-        $pdo = $capsule->getConnection('default')->getPdo();
+        $pdo = $capsule->getConnection()->getPdo();
         if ($pdo->getAttribute(\PDO::ATTR_DRIVER_NAME) === 'sqlite') {
             // not documented feature of SQLite !
             $pdo->sqliteCreateFunction('like', function ($x, $y) {
-                // Example: $x = '%ч'; $y = 'bЧ';
-                $x = preg_quote(str_replace('%', '', $x));
-                return preg_match('/' . $x . '/iu', $y);
+                // Example: $x = '%ч'; $y = 'Чasd';
+                $x = str_replace('%', '', $x);
+                $x = preg_quote($x);
+                $matched = preg_match('/' . $x . '/iu', $y);
+                return (bool)$matched;
             });
         }
 

@@ -10,7 +10,6 @@ use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\Migrations\Migrator;
 use Illuminate\Testing\InteractsWithDatabase;
 use org\bovigo\vfs\vfsStream;
-use org\bovigo\vfs\vfsStreamDirectory;
 use PHPUnit\Framework\TestCase;
 use \App\Bootstrap;
 use Psr\Http\Message\ResponseInterface;
@@ -21,9 +20,7 @@ use Slim\App;
 abstract class AbstractTestCase extends TestCase
 {
     use InteractsWithDatabase;
-    
-    /** @var vfsStreamDirectory|null  */
-    protected static $fs = null;
+
     /** @var App */
     protected $app;
     /** @var Manager */
@@ -121,11 +118,7 @@ abstract class AbstractTestCase extends TestCase
     
     protected function initVirtualFileSystem()
     {
-        if (self::$fs) {
-            return;
-        }
-
-        self::$fs = vfsStream::setup('base', null, [
+        vfsStream::setup('base', null, [
             'data' => [
                 'books' => [],
                 'logs' => [],

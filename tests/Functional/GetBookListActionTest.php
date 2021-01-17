@@ -18,9 +18,9 @@ class GetBookListActionTest extends AbstractTestCase
                 'groupOp' => 'AND',
                 'rules' => [
                     [
-                        'op' => 'bw', // ['bw'=>'like','eq'=>'='];
+                        'op' => 'bw',
                         'field' => 'title',
-                        'data' => 'title' // matches '%title%'
+                        'data' => 'title'
                     ],
                     [
                         'op' => 'eq',
@@ -31,10 +31,8 @@ class GetBookListActionTest extends AbstractTestCase
             ]),
         ]);
         $response = $this->app->handle($request);
-        $response->getBody()->rewind();
-        $content = $response->getBody()->getContents();
-
         $this->assertSame(200, $response->getStatusCode());
+        $content = (string)$response->getBody();
         $data = json_decode($content, true);
         $this->assertSame(1, $data['page']);
         $this->assertSame(1, $data['total']);
@@ -82,7 +80,7 @@ class GetBookListActionTest extends AbstractTestCase
         $request = $request->withQueryParams([
             'filters' => json_encode([
                 'rules' => [[
-                    'op' => 'bw',    // 'bw'=> 'like';
+                    'op' => 'bw',
                     'field' => 'title',
                     'data' => '#2'
                 ]]
@@ -91,17 +89,15 @@ class GetBookListActionTest extends AbstractTestCase
         ]);
         $response = $this->app->handle($request);
         $response->getBody()->rewind();
-        $content = $response->getBody()->getContents();
-
         $this->assertSame(200, $response->getStatusCode());
-        $data = json_decode($content, true);
+        $data = json_decode((string)$response->getBody(), true);
         $this->assertSame(1, $data['page']);
         $this->assertSame(1, $data['total']);
-        $this->assertSame(3, $data['records']);
+        $this->assertSame(1, $data['records']);
         $this->assertIsArray($data['rows']);
         $this->assertCount(1, $data['rows']);
-        $this->assertSame($books[0]->book_guid, $data['rows'][0]['id']);
-        $this->assertEquals($books[0]->title, $data['rows'][0]['cell']['title']);
+        $this->assertSame($books[1]->book_guid, $data['rows'][0]['id']);
+        $this->assertEquals($books[1]->title, $data['rows'][0]['cell']['title']);
     }
 
 

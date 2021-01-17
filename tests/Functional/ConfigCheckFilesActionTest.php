@@ -31,7 +31,7 @@ class ConfigCheckFilesActionTest extends AbstractTestCase
         $resp = json_decode((string)$response->getBody());
 
         $this->assertCount(2, $resp->db, 'db only records does not match');
-        $this->assertSame([", ''title book #2'',  [].", ", ''title book #3'',  []."], $resp->db, 'filename of db only files does not match');
+        $this->assertSame(["filename-2", "filename-3"], $resp->db, 'filename of db only files does not match');
         $this->assertCount(1, $resp->fs, 'file system only file count does not match');
         $this->assertSame($fsOnlyFilename, $resp->fs[0], 'filename of file system only file does not match');
     }

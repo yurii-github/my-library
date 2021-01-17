@@ -9,7 +9,7 @@ class ConfigCheckFilesActionTest extends AbstractTestCase
     use PopulateBooksTrait;
 
 
-    public function test_getLibraryBookFilenames()
+    public function testComplexCheck()
     {
         $this->setBookLibrarySync(false);
         $books = $this->populateBooks();

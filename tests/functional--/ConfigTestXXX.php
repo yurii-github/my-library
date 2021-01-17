@@ -5,7 +5,7 @@ use app\controllers\ConfigController;
 use org\bovigo\vfs\vfsStreamDirectory;
 
 
-class ConfigTest extends \tests\AppFunctionalTestCase
+class ConfigTestXXX
 {
 	private $books; //fixture
 

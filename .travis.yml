@@ -16,11 +16,11 @@ before_script:
   - mysql -e "CREATE DATABASE IF NOT EXISTS test_mylib" -utravis
   - wget -O cc-test-reporter https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
   - chmod +x cc-test-reporter
-  - if [ ${TRAVIS_PHP_VERSION:0:3} == "7.2" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$DB_TYPE" == "sqlite"]; then ./cc-test-reporter before-build; fi
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" && "$TRAVIS_PULL_REQUEST" == "false" && "$DB_TYPE" == "sqlite" ]]; then ./cc-test-reporter before-build; fi;
 script:
-  - if [ ${TRAVIS_PHP_VERSION:0:3} == "7.2" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$DB_TYPE" == "sqlite"]; then ./vendor/bin/phpunit --coverage-text --coverage-clover build/logs/clover.xml; else ./vendor/bin/phpunit; fi 
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" && "$TRAVIS_PULL_REQUEST" == "false" && "$DB_TYPE" == "sqlite" ]]; then ./vendor/bin/phpunit --coverage-text --coverage-clover build/logs/clover.xml; else ./vendor/bin/phpunit; fi; 
 after_script:
-  - if [ ${TRAVIS_PHP_VERSION:0:3} == "7.2" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$DB_TYPE" == "sqlite"]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" && "$TRAVIS_PULL_REQUEST" == "false" && "$DB_TYPE" == "sqlite" ]]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi;
 services:
   - mysql
 git:

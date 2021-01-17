@@ -7,7 +7,9 @@ use Http\Factory\Guzzle\ServerRequestFactory;
 use Illuminate\Container\Container;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\Migrations\Migrator;
+use Illuminate\Testing\InteractsWithDatabase;
 use org\bovigo\vfs\vfsStream;
+use org\bovigo\vfs\vfsStreamDirectory;
 use PHPUnit\Framework\TestCase;
 use \App\Bootstrap;
 use Psr\Http\Message\ResponseInterface;
@@ -17,10 +19,14 @@ use Slim\App;
 
 abstract class AbstractTestCase extends TestCase
 {
-    protected static $fs = null;
+    use InteractsWithDatabase;
     
+    /** @var vfsStreamDirectory|null  */
+    protected static $fs = null;
     /** @var App */
     protected $app;
+    /** @var Manager */
+    protected $db;
 
 
     /**
@@ -34,16 +40,20 @@ abstract class AbstractTestCase extends TestCase
         $migrator = new AppMigrator(Container::getInstance()->get(Migrator::class));
         $output = $migrator->migrate();
 
-        $db = $this->app->getContainer()->get('db');
-        assert($db instanceof Manager);
-        $db->getConnection()->beginTransaction();
+        $this->db = $this->app->getContainer()->get('db');
+        assert($this->db instanceof Manager);
+        $this->db->getConnection()->beginTransaction();
     }
 
     protected function tearDown(): void
     {
-        $db = $this->app->getContainer()->get('db');
-        assert($db instanceof Manager);
-        $db->getConnection()->rollBack();
+        $this->db->getConnection()->rollBack();
+    }
+    
+    
+    protected function getConnection($connection = null)
+    {
+        return $this->db->getConnection($connection);
     }
 
 

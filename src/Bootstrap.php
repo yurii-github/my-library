@@ -42,8 +42,8 @@ use \Illuminate\Filesystem\Filesystem;
 class Bootstrap
 {
     const CURRENT_APP_VERSION = '1.3';
-    
-    protected static function initCapsule(Configuration $config, ContainerInterface $container, Dispatcher $eventDispatcher): Manager
+
+    protected static function initCapsule(Configuration $config, Container $container, Dispatcher $eventDispatcher): Manager
     {
         $capsule = new Manager($container);
         $capsule->addConnection([
@@ -56,17 +56,17 @@ class Bootstrap
             'collation' => 'utf8_unicode_ci',
             'prefix' => '',
         ]);
-        //$capsule->setAsGlobal();
-        $capsule->setEventDispatcher($eventDispatcher);
-        $capsule->bootEloquent();
-        $pdo = $capsule->getConnection()->getPdo();
+
+        Model::clearBootedModels();
+        Model::setConnectionResolver($capsule->getDatabaseManager());
+        Model::setEventDispatcher($eventDispatcher);
+
+        $pdo = $capsule->getConnection('default')->getPdo();
         if ($pdo->getAttribute(\PDO::ATTR_DRIVER_NAME) === 'sqlite') {
             // not documented feature of SQLite !
             $pdo->sqliteCreateFunction('like', function ($x, $y) {
                 // Example: $x = '%ч'; $y = 'bЧ';
-                $x = str_replace('%', '', $x);
-                $x = preg_quote($x);
-                // return false;
+                $x = preg_quote(str_replace('%', '', $x));
                 return preg_match('/' . $x . '/iu', $y);
             });
         }
@@ -85,9 +85,9 @@ class Bootstrap
         Bootstrap::handleCliStaticData();
 
         (new Dotenv())->load(BASE_DIR . '/.env');
-        
+
         Container::setInstance(null);
-        
+
         $container = Container::getInstance();
         $container->singleton(Filesystem::class, function (ContainerInterface $container, $args) {
             return new Filesystem();
@@ -137,6 +137,9 @@ class Bootstrap
             $translator->setLocale($locale);
             return $translator;
         });
+        
+        //boot services
+        $container->get('db');
 
         $app = AppFactory::create(null, $container);
         $app->addErrorMiddleware($_ENV['APP_DEBUG'], true, true);

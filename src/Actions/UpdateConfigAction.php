@@ -49,26 +49,21 @@ class UpdateConfigAction
         $field = Arr::get($post, 'field');
         $value = Arr::get($post, 'value');
 
-        list($group, $attr) = explode('_', $field);
-
-        
         try {
-            if (!isset($this->config->$group->$attr)) {
-                throw new \Exception("invalid property name '{$group}.{$attr}'");
-            }
+            list($group, $attr) = explode('_', $field);
             $this->config->$group->$attr = $value;
             $this->config->save();
+            $resp->title = $group;
             $resp->msg = "<b>$attr</b> was successfully updated";
             $resp->result = true;
         } catch (\Exception $e) {
-            $resp->msg = __FILE__ . ': ' . __LINE__ . ' ' . $e->getMessage();
+            $resp->msg = $e->getMessage();
             $resp->result = false;
-        } finally {
-            $resp->title = $group;
         }
 
         $response->getBody()->write(json_encode($resp));
+        $response = $response->withHeader('Content-Type', 'application/json');
         
-        return $response->withHeader('Content-Type', 'application/json');
+        return $response;
     }
 }

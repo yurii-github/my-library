@@ -20,6 +20,8 @@
 
 namespace App\Configuration;
 
+use App\Exception\ConfigFileIsNotWritableException;
+
 /**
  * @property-read string $version
  * @property-read string $config_file
@@ -236,9 +238,9 @@ final class Configuration
         $config_dir = dirname($this->config_file);
 
         if (file_exists($filename) && !is_writable($filename)) {
-            throw new \InvalidArgumentException("file '$filename' is not writable", 1);
+            throw new ConfigFileIsNotWritableException("File '$filename' is not writable", 1);
         } elseif (is_dir($config_dir) && !is_writable($config_dir)) {
-            throw new \InvalidArgumentException("config directory '$config_dir' is not writable", 2);
+            throw new ConfigFileIsNotWritableException("config directory '$config_dir' is not writable", 2);
         } elseif (!is_dir($config_dir)) {
             throw new \InvalidArgumentException("Directory does not exist", 3);
         }

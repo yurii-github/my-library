@@ -127,21 +127,4 @@ class ConfigTest extends \tests\AppFunctionalTestCase
 	}
 
 
-
-
-
-	public function test_actionSave_noWriteRights()
-	{
-		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$_POST['field'] = 'system_language';
-		$_POST['value'] = 'uk-UA';
-
-		chmod(\Yii::$app->mycfg->config_file, 0444);
-
-		$resp = json_decode($this->controller->runAction('save'));
-
-		$this->assertFalse($resp->result);
-	}
-
-
 }

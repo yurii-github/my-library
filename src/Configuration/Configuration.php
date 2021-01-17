@@ -20,6 +20,9 @@
 
 namespace App\Configuration;
 
+use App\Exception\ConfigFileIsNotWritableException;
+use App\Exception\ConfigurationPropertyDoesNotExistException;
+
 /**
  * @property-read string $version
  * @property-read string $config_file
@@ -95,8 +98,26 @@ final class Configuration
         if (in_array($name, $this->options)) {
             return $this->config->$name;
         }
+        
+        if (!property_exists($this, $name)) {
+            throw new ConfigurationPropertyDoesNotExistException("Property '$name' does not exist");
+        }
 
         return $this->$name;
+    }
+
+    public function __set(string $name, $value)
+    {
+        if (in_array($name, $this->options)) {
+            $this->config->$name = $value;
+            return;
+        }
+
+        if (!property_exists($this, $name)) {
+            throw new ConfigurationPropertyDoesNotExistException("Property '$name' does not exist");
+        }
+
+        $this->$name = $value;
     }
 
     // for twig
@@ -167,7 +188,7 @@ final class Configuration
     }
 
 
-    public function load($filename)
+    protected function load($filename)
     {
         if (!is_readable($filename)) {
             throw new \InvalidArgumentException('cannot read config file at this location: ' . $filename);
@@ -236,9 +257,9 @@ final class Configuration
         $config_dir = dirname($this->config_file);
 
         if (file_exists($filename) && !is_writable($filename)) {
-            throw new \InvalidArgumentException("file '$filename' is not writable", 1);
+            throw new ConfigFileIsNotWritableException("File '$filename' is not writable", 1);
         } elseif (is_dir($config_dir) && !is_writable($config_dir)) {
-            throw new \InvalidArgumentException("config directory '$config_dir' is not writable", 2);
+            throw new ConfigFileIsNotWritableException("config directory '$config_dir' is not writable", 2);
         } elseif (!is_dir($config_dir)) {
             throw new \InvalidArgumentException("Directory does not exist", 3);
         }
@@ -247,7 +268,7 @@ final class Configuration
             $this->isInstall = true;
         }
 
-        file_put_contents($filename, json_encode($this->config, JSON_PRETTY_PRINT));
+        file_put_contents($filename, json_encode($this->config, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
     }
 }
 

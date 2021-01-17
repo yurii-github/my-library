@@ -1,7 +1,7 @@
 #
 # app
 #
-/data
+/data/config.json
 /vendor
 /.env
 
@@ -11,3 +11,4 @@
 /.idea
 /.phpunit.result.cache
 /reports/*
+/composer.lock

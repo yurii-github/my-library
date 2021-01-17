@@ -45,19 +45,15 @@ class ConfigClearDbFilesAction
     {
         $params = $request->getQueryParams();
         
-        // count number of records to clean
         if (Arr::get($params, 'count') === 'all') {
             $response->getBody()->write($this->countFilesToClear());
             return $response;
         }
 
-        //else clean records in stepping/waves
         $stepping = Arr::get($params, 'stepping', 5); //records to delete in 1 wave
         $data = [];
-        $counter = 0;
-        Book::query()->select(['book_guid', 'filename'])->limit($stepping)->get()->each(function (Book $book) use (&$counter) {
+        Book::query()->select(['book_guid', 'filename'])->limit($stepping)->get()->each(function (Book $book) use (&$data) {
             if (!file_exists($this->config->getFilepath($book->filename))) {
-                $counter++;
                 $data[] = $book->book_guid;
                 $book->delete();
             }

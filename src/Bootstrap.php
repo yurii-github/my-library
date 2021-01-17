@@ -24,6 +24,7 @@ use App\Configuration\Configuration;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Events\Dispatcher;
+use Illuminate\Translation\ArrayLoader;
 use Slim\Factory\AppFactory;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\Translation\Loader\PhpFileLoader;
@@ -38,6 +39,7 @@ use Illuminate\Contracts\Events\Dispatcher as EventDispatcherInterface;
 use \Illuminate\Database\Migrations\DatabaseMigrationRepository;
 use \Illuminate\Database\Migrations\Migrator;
 use \Illuminate\Filesystem\Filesystem;
+use \Illuminate\Translation\Translator as IlluminateTranslator;
 
 class Bootstrap
 {
@@ -61,13 +63,15 @@ class Bootstrap
         Model::setConnectionResolver($capsule->getDatabaseManager());
         Model::setEventDispatcher($eventDispatcher);
 
-        $pdo = $capsule->getConnection('default')->getPdo();
+        $pdo = $capsule->getConnection()->getPdo();
         if ($pdo->getAttribute(\PDO::ATTR_DRIVER_NAME) === 'sqlite') {
             // not documented feature of SQLite !
             $pdo->sqliteCreateFunction('like', function ($x, $y) {
-                // Example: $x = '%ч'; $y = 'bЧ';
-                $x = preg_quote(str_replace('%', '', $x));
-                return preg_match('/' . $x . '/iu', $y);
+                // Example: $x = '%ч'; $y = 'Чasd';
+                $x = str_replace('%', '', $x);
+                $x = preg_quote($x);
+                $matched = preg_match('/' . $x . '/iu', $y);
+                return (bool)$matched;
             });
         }
 
@@ -130,12 +134,19 @@ class Bootstrap
             assert($config instanceof Configuration);
             return Bootstrap::initTwig($config);
         });
-        $container->singleton(Translator::class, function () {
+        $container->singleton(Translator::class, function (ContainerInterface $container, $args) {
             $translator = Bootstrap::initTranslator();
             $config = Container::getInstance()->get(Configuration::class);
             $locale = str_replace('-', '_', $config->system->language);
             $translator->setLocale($locale);
             return $translator;
+        });
+        $container->bind(IlluminateTranslator::class, function (ContainerInterface $container, $args) {
+            // TODO: correct it
+            return new IlluminateTranslator((new ArrayLoader())
+                ->addMessages('en-Us', '', [
+                    'validation.required' => 'ssssssss'
+                ]), 'en-US');
         });
         
         //boot services

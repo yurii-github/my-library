@@ -21,16 +21,14 @@
 namespace App\Actions;
 
 use App\Configuration\Configuration;
+use Illuminate\Support\Arr;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-
 class UpdateConfigAction
 {
-    /**
-     * @var Configuration
-     */
+    /** @var Configuration */
     protected $config;
 
 
@@ -48,25 +46,24 @@ class UpdateConfigAction
         $resp->title = '';
 
         $post = $request->getParsedBody();
-        $field = $post['field'];
-        $value = $post['value'];
-
-        list($group, $attr) = explode('_', $field);
+        $field = Arr::get($post, 'field');
+        $value = Arr::get($post, 'value');
 
         try {
+            list($group, $attr) = explode('_', $field);
             $this->config->$group->$attr = $value;
             $this->config->save();
+            $resp->title = $group;
             $resp->msg = "<b>$attr</b> was successfully updated";
             $resp->result = true;
         } catch (\Exception $e) {
-            $resp->msg = __FILE__ . ': ' . __LINE__ . ' ' . $e->getMessage();
+            $resp->msg = $e->getMessage();
             $resp->result = false;
-        } finally {
-            $resp->title = $group;
         }
 
         $response->getBody()->write(json_encode($resp));
+        $response = $response->withHeader('Content-Type', 'application/json');
         
-        return $response->withHeader('Content-Type', 'application/json');
+        return $response;
     }
 }

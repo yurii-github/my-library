@@ -1,38 +1,51 @@
 <?php
-//
-// config type hints support
-//
-namespace App\Configuration
-{
-    /**
-     * @property string $theme
-     * @property string $timezone
-     * @property string $language
-     * @property string $version this param is only set after successful migration install
-     */
-    class System {}
 
-    /**
-     * @property string $directory
-     * @property string $sync
-     */
-    class Library {}
+namespace App\Configuration {
+    class System
+    {
+        /** @var string */
+        public $theme;
+        /** @var string */
+        public $timezone;
+        /** @var string */
+        public $language;
+        /** @var string */
+        public $version;
+    }
 
-    /**
-     * @property string $filename
-     * @property string $dbname
-     * @property string $format
-     * @property string $host
-     * @property string $login
-     * @property string $password
-     */
-    class Database {}
+    class Library
+    {
+        /** @var string */
+        public $directory;
+        /** @var string */
+        public $sync;
+    }
 
-    /**
-     * @property string $nameformat
-     * @property string $covertype
-     * @property int $covermaxwidth
-     * @property  string ghostscript
-     */
-    class Book {}
+    class Database
+    {
+        /** @var string */
+        public $filename;
+        /** @var string */
+        public $dbname;
+        /** @var string */
+        public $format;
+        /** @var string */
+        public $host;
+        /** @var string */
+        public $login;
+        /** @var string */
+        public $password;
+    }
+
+    class Book
+    {
+        /** @var string */
+        public $nameformat;
+        /** @var string */
+        public $covertype;
+        /** @var int */
+        public $covermaxwidth;
+        /** @var string */
+        public $ghostscript;
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Configuration\Configuration;
+use App\Exception\BookFileNotFoundException;
 use App\Helpers\Tools;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Builder;
@@ -50,52 +51,59 @@ class Book extends Model
 
     protected static function boot()
     {
-        /** @var Configuration $config */
-        $config = Container::getInstance()->get(Configuration::class);
-
         parent::boot();
+        
+        $config = Container::getInstance()->get(Configuration::class);
+        assert($config instanceof Configuration);
 
         static::deleted(function (self $book) use ($config) {
-            $filename = $config->getFilepath($book->filename);
             if ($config->library->sync) {
-                if (!file_exists($filename)) {
-                    throw new \Exception("file '{$filename}' was removed before record deletion with sync enabled");
+                $filepath = $config->getFilepath($book->filename);
+                if (!file_exists($filepath)) {
+                    throw new \Exception("File '{$filepath}' was removed before record deletion with sync enabled");
                 } else {
-                    unlink($filename);
+                    unlink($filepath);
                 }
             }
         });
 
-        static::creating(function (self $book) {
+        static::creating(function (self $book) use ($config) {
             $book->book_guid = Tools::com_create_guid();
             $book->favorite = $book->favorite == null ? 0 : $book->favorite;
+            if (empty($book->filename)) {
+                $book->filename = self::buildFilename($book, $config->book->nameformat);
+            }
+            if ($config->library->sync) {
+                $filepath = $config->getFilepath($book->filename);
+                if (!file_exists($filepath)) {
+                    throw new BookFileNotFoundException("Book '{$filepath}' does not exist.", 1);
+                }
+            }
         });
 
         /*
-         * update filename in database and rename filename in filesystem accordinly
+         * update filename in database and rename filename in filesystem accordingly
          */
         static::updating(function (self $book) use ($config) {
-            // sync with filesystem is enabled. update filename and rename physical file
-            if ($config->library->sync && self::filenameAttrsChanged($book)) {
-                $old_filename = $book->getOriginal('filename');
-                $new_filename = $this->buildFilename();
-                $book->filename = $new_filename;
-                $filepathOld = $config->getFilepath($old_filename);
-                $filepathNew = $config->getFilepath($new_filename);
-
-                // update file in filesystem
-                if ($filepathOld != $filepathNew) {
-                    if (!file_exists($filepathOld)) {
-                        throw new \InvalidArgumentException("Sync for file failed. Source file '{$filepathOld}' does not exist", 1);
-                    }
-                    // PHP 7: throw error if file is open
-                    if (!rename($filepathOld, $filepathNew)) {
-                        throw new \Exception("Failed to rename file. \n\n OLD: $filepathOld \n\n NEW: $filepathNew ");
+            if (self::filenameAttrsChanged($book)) {
+                $oldFilename = $book->getOriginal('filename');
+                $book->filename = self::buildFilename($book, $config->book->nameformat);
+                // sync with filesystem is enabled. update filename and rename physical file
+                if ($config->library->sync) {
+                    $filepathOld = $config->getFilepath($oldFilename);
+                    $filepathNew = $config->getFilepath($book->filename);
+                    // update file in filesystem
+                    if ($filepathOld != $filepathNew) {
+                        if (!file_exists($filepathOld)) {
+                            throw new BookFileNotFoundException("Sync for file failed. Source file '{$filepathOld}' does not exist", 2);
+                        }
+                        // PHP 7: throw error if file is open
+                        if (!rename($filepathOld, $filepathNew)) {
+                            throw new \Exception("Failed to rename file. \n\n OLD: $filepathOld \n\n NEW: $filepathNew ");
+                        }
                     }
                 }
             }
-
-            return true;
         });
     }
 

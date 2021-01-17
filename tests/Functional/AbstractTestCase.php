@@ -3,13 +3,13 @@
 namespace Tests\Functional;
 
 use App\AppMigrator;
+use App\Configuration\Configuration;
 use Http\Factory\Guzzle\ServerRequestFactory;
 use Illuminate\Container\Container;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\Migrations\Migrator;
 use Illuminate\Testing\InteractsWithDatabase;
 use org\bovigo\vfs\vfsStream;
-use org\bovigo\vfs\vfsStreamDirectory;
 use PHPUnit\Framework\TestCase;
 use \App\Bootstrap;
 use Psr\Http\Message\ResponseInterface;
@@ -20,9 +20,7 @@ use Slim\App;
 abstract class AbstractTestCase extends TestCase
 {
     use InteractsWithDatabase;
-    
-    /** @var vfsStreamDirectory|null  */
-    protected static $fs = null;
+
     /** @var App */
     protected $app;
     /** @var Manager */
@@ -99,7 +97,7 @@ abstract class AbstractTestCase extends TestCase
     protected function assertJsonData(array $expected, ResponseInterface $response): void
     {
         $actual = (string)$response->getBody();
-        $this->assertSame($expected, (array)json_decode($actual, true, 512, JSON_THROW_ON_ERROR));
+        $this->assertSame($expected, (array)json_decode($actual, true, 512));
     }
     
     protected function useSqliteInMemory(\stdClass $config)
@@ -117,14 +115,20 @@ abstract class AbstractTestCase extends TestCase
         }
         touch($testDbFilename);
     }
+
+    protected function useMySQL(\stdClass $config)
+    {
+        $config->database->format = 'mysql';
+        $config->database->host = 'localhost';
+        $config->database->dbname = 'test_mylib';
+        $config->database->login = 'travis';
+        $config->database->password = null;
+    }
+    
     
     protected function initVirtualFileSystem()
     {
-        if (self::$fs) {
-            return;
-        }
-
-        self::$fs = vfsStream::setup('base', null, [
+        vfsStream::setup('base', null, [
             'data' => [
                 'books' => [],
                 'logs' => [],
@@ -135,8 +139,27 @@ abstract class AbstractTestCase extends TestCase
     protected function initConfig()
     {
         $config = json_decode(file_get_contents(dirname(__DIR__) . '/data/config_sqlite.json'));
-        //$this->useSqliteInFile($config);
-        $this->useSqliteInMemory($config);
-        file_put_contents(vfsStream::url('base/data/config.json'), json_encode($config, JSON_UNESCAPED_UNICODE));
+
+        if (empty(getenv('DB_TYPE')) || getenv('DB_TYPE') === 'sqlite') {
+            $this->useSqliteInMemory($config);
+        } elseif (getenv('DB_TYPE') === 'mysql') {
+            $this->useMySQL($config);
+        } else {
+            throw new \Exception('must setup env variable DB_TYPE. Supported values are \'mysql\' and \'sqlite\'');
+        }
+        
+        file_put_contents(vfsStream::url('base/data/config.json'), json_encode($config, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+    }
+
+    
+    protected function getLibraryConfig(): Configuration
+    {
+        return $this->app->getContainer()->get(Configuration::class);
+    }
+
+    
+    protected function setBookLibrarySync(bool $mode): void
+    {
+        $this->getLibraryConfig()->getLibrary()->sync = $mode;
     }
 }

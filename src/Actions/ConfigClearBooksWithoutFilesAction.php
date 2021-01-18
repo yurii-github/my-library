@@ -27,7 +27,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class ConfigClearDbFilesAction
+class ConfigClearBooksWithoutFilesAction
 {
     /**
      * @var Configuration
@@ -43,14 +43,9 @@ class ConfigClearDbFilesAction
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $params = $request->getQueryParams();
+        $post = $request->getParsedBody();
+        $stepping = Arr::get($post, 'stepping', 5);
         
-        if (Arr::get($params, 'count') === 'all') {
-            $response->getBody()->write($this->countFilesToClear());
-            return $response;
-        }
-
-        $stepping = Arr::get($params, 'stepping', 5); //records to delete in 1 wave
         $data = [];
         Book::query()->select(['book_guid', 'filename'])->limit($stepping)->get()->each(function (Book $book) use (&$data) {
             if (!$book->fileExists()) {
@@ -62,19 +57,6 @@ class ConfigClearDbFilesAction
         $response->getBody()->write(json_encode($data, JSON_UNESCAPED_UNICODE));
 
         return $response;
-    }
-
-
-    protected function countFilesToClear()
-    {
-        $counter = 0;
-        Book::query()->select(['book_guid', 'filename'])->each(function (Book $book) use (&$counter) {
-            if (!$book->fileExists()) {
-                $counter++;
-            }
-        });
-
-        return $counter;
     }
 
 }

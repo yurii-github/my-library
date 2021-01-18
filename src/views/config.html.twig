@@ -270,7 +270,7 @@
         let res = $('#sync-check-files-result')
 
         // get number of unmatched records for progress bar
-        $.get('config/clear-db-files?count=all', function (data) {
+        $.get('config/count-books-without-files', function (data) {
           res.empty()
           let records_to_remove = parseInt(data)
           let records_removed = 0
@@ -291,7 +291,7 @@
           let stepping = Math.ceil(width / records_to_remove)
 
           let batcher = function (stepping) {
-            $.get('config/clear-db-files?stepping=' + stepping, function (data) {
+            $.post('config/clear-books-without-files', { stepping: stepping }, function (data) {
               if (data.length > 0 && bar.val() < bar.attr('max')) {
                 bar.attr('value', bar.val() + data.length)
                 records_removed += data.length

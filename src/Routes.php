@@ -39,7 +39,8 @@ class Routes
         $app->post('/config/save', Actions\UpdateConfigAction::class);
         $app->post('/config/vacuum', Actions\ConfigDbVacuumAction::class);
         $app->get('/config/check-files', Actions\ConfigCheckFilesAction::class);
-        $app->get('/config/clear-db-files', Actions\ConfigClearDbFilesAction::class);
+        $app->get('/config/count-books-without-files', Actions\ConfigCountBooksWithoutFilesAction::class);
+        $app->post('/config/clear-books-without-files', Actions\ConfigClearBooksWithoutFilesAction::class);
         $app->get('/config/import-files', Actions\ConfigGetImportFilesAction::class);
         $app->post('/config/import-files', Actions\ConfigDoImportFilesAction::class);
         $app->get('/config/import-new-cover-from-pdf', Actions\ConfigGetImportNewCoverFromPdfAction::class);

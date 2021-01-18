@@ -4,25 +4,9 @@ namespace Tests\Functional;
 
 use Tests\PopulateBooksTrait;
 
-class ConfigClearDbFilesActionTest extends AbstractTestCase
+class ConfigClearBooksWithoutFilesActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;
-
-
-    public function testCountRecords()
-    {
-        $this->setBookLibrarySync(false);
-        $books = $this->populateBooks();
-        file_put_contents($this->getLibraryConfig()->getFilepath($books[0]->filename), 'test data');
-        
-        $request = $this->createRequest('GET', '/config/clear-db-files');
-        $request = $request->withQueryParams(['count' => 'all']);
-        $response = $this->app->handle($request);
-        
-        $this->assertSame(200, $response->getStatusCode());
-        $this->assertEquals(2, (string)$response->getBody(), 'db only records count is wrong');
-        $this->assertDatabaseCount('books', 3);
-    }
 
 
     public function testClearDatabaseFromBooksWithoutFiles()
@@ -34,7 +18,7 @@ class ConfigClearDbFilesActionTest extends AbstractTestCase
 
         $this->assertDatabaseCount('books', 3);
         
-        $request = $this->createRequest('GET', '/config/clear-db-files');
+        $request = $this->createRequest('POST', '/config/clear-books-without-files');
         $response = $this->app->handle($request);
 
         $this->assertSame(200, $response->getStatusCode());

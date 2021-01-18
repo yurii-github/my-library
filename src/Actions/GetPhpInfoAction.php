@@ -48,7 +48,8 @@ class GetPhpInfoAction
         $params = [
             'phpInfo' => Tools::getPhpInfo()
         ];
-        $response->getBody()->write($this->twig->render('phpinfo.html.twig', $params));
+        $html = $this->twig->render('phpinfo.html.twig', $params);
+        $response->getBody()->write($html);
 
         return $response;
     }

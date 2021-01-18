@@ -20,41 +20,28 @@
 
 namespace App\Actions;
 
-use App\Configuration\Configuration;
 use App\Models\Book;
 use Illuminate\Support\Arr;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class ConfigClearBooksWithoutFilesAction
 {
-    /**
-     * @var Configuration
-     */
-    protected $config;
-
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->config = $container->get(Configuration::class);
-    }
-
-
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $post = $request->getParsedBody();
         $stepping = Arr::get($post, 'stepping', 5);
-        
-        $data = [];
-        Book::query()->select(['book_guid', 'filename'])->limit($stepping)->get()->each(function (Book $book) use (&$data) {
-            if (!$book->fileExists()) {
-                $data[] = $book->book_guid;
-                $book->delete();
-            }
-        });
 
-        $response->getBody()->write(json_encode($data, JSON_UNESCAPED_UNICODE));
+        $deletedBooks = Book::query()->select(['book_guid', 'filename'])->limit($stepping)->get()
+            ->filter(function (Book $book) {
+                return !$book->fileExists();
+            })->each(function (Book $book) {
+                $book->delete();
+            })->map(function (Book $book) {
+                return $book->book_guid;
+            })->toArray();
+
+        $response->getBody()->write(json_encode($deletedBooks, JSON_UNESCAPED_UNICODE));
 
         return $response;
     }

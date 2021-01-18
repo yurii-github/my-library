@@ -20,38 +20,20 @@
 
 namespace App\Actions;
 
-use App\Configuration\Configuration;
 use App\Models\Book;
-use Illuminate\Support\Arr;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class ConfigCountBooksWithoutFilesAction
 {
-    /**
-     * @var Configuration
-     */
-    protected $config;
-
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->config = $container->get(Configuration::class);
-    }
-
-
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $counter = 0;
-        
-        Book::query()->select(['book_guid', 'filename'])->each(function (Book $book) use (&$counter) {
-            if (!$book->fileExists()) {
-                $counter++;
-            }
-        });
+        $count = Book::query()->select(['book_guid', 'filename'])->get()->filter(function (Book $book) {
+            return !$book->fileExists();
+        })->count();
 
-        $response->getBody()->write($counter);
+        $response->getBody()->write($count);
+
         return $response;
     }
 

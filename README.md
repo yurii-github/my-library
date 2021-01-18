@@ -1,6 +1,7 @@
-# My Library
+# My Book Library
 
 [![Build Status](https://travis-ci.com/yurii-github/yii2-mylib.svg?branch=master)](https://travis-ci.com/yurii-github/yii2-mylib) [![Code Climate](https://codeclimate.com/github/yurii-github/yii2-mylib/badges/gpa.svg)](https://codeclimate.com/github/yurii-github/yii2-mylib) [![Test Coverage](https://codeclimate.com/github/yurii-github/yii2-mylib/badges/coverage.svg)](https://codeclimate.com/github/yurii-github/yii2-mylib/coverage) 
+
 
 ## About
 
@@ -27,6 +28,7 @@ It supports all JQuery UI themes.
 - compact: optimizes DB via run vacuum for SQLite or table optimization for MySQL
 - configuration is done via web interface
 
+
 ## Requirements
 
 - PHP 7.2+
@@ -38,10 +40,12 @@ It supports all JQuery UI themes.
 ```
 git clone git@github.com:yurii-github/yii2-mylib.git
 cd yii2-mylib
+cp .env.example .env
 composer update
 ./serve
 ```
 Application will be available at [http://localhost:8080](http://localhost:8080)
+
 
 ## Structure
 Here's the list of most interesting places: 
@@ -74,6 +78,8 @@ If you have enabled synchronization application will sync changes to your filesy
 * You have to manage file extension manually to rename file properly.
 * If you change book filename format it will not rename all books! It will apply new format only to newly renamed books
 
+
 ## Importing new books
+
 To import books into the library you have to drop your books to library folder you've set in configuration and then on *Synchronization* tab press "import fs only". 
 It will import all file system books that are not in database yet.

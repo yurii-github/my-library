@@ -52,7 +52,7 @@ class Book extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
         $config = Container::getInstance()->get(Configuration::class);
         assert($config instanceof Configuration);
 
@@ -155,5 +155,13 @@ class Book extends Model
     public function categories()
     {
         return $this->belongsToMany(Category::class, 'books_categories', 'book_guid', 'category_guid', 'book_guid', 'guid');
+    }
+
+    public function fileExists(): bool
+    {
+        $config = Container::getInstance()->get(Configuration::class);
+        assert($config instanceof Configuration);
+
+        return file_exists($config->getFilepath($this->filename));
     }
 }

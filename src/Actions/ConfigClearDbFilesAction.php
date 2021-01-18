@@ -53,7 +53,7 @@ class ConfigClearDbFilesAction
         $stepping = Arr::get($params, 'stepping', 5); //records to delete in 1 wave
         $data = [];
         Book::query()->select(['book_guid', 'filename'])->limit($stepping)->get()->each(function (Book $book) use (&$data) {
-            if (!file_exists($this->config->getFilepath($book->filename))) {
+            if (!$book->fileExists()) {
                 $data[] = $book->book_guid;
                 $book->delete();
             }
@@ -69,7 +69,7 @@ class ConfigClearDbFilesAction
     {
         $counter = 0;
         Book::query()->select(['book_guid', 'filename'])->each(function (Book $book) use (&$counter) {
-            if (!file_exists($this->config->getFilepath($book->filename))) {
+            if (!$book->fileExists()) {
                 $counter++;
             }
         });

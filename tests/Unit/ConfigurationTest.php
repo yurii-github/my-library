@@ -5,14 +5,11 @@ namespace Tests;
 use \App\Configuration\Configuration;
 use App\Exception\ConfigFileIsNotWritableException;
 use org\bovigo\vfs\vfsStream;
-use org\bovigo\vfs\vfsStreamDirectory;
 use PHPUnit\Framework\TestCase;
 use \App\Exception\ConfigurationPropertyDoesNotExistException;
 
 class ConfigurationTest extends TestCase
 {
-    /** @var vfsStreamDirectory|null */
-    protected static $fs = null;
     /**  @var Configuration loaded from default config file */
     private $configLoaded; // config
     /** @var \stdClass not real configuration, just json decode of default configuration file */
@@ -98,7 +95,7 @@ class ConfigurationTest extends TestCase
 
     protected function initVirtualFileSystem()
     {
-        self::$fs = vfsStream::setup('base', null, [
+        vfsStream::setup('base', null, [
             'data' => [
                 'books' => [],
                 'logs' => [],

@@ -44,6 +44,5 @@ class Routes
         $app->post('/config/import-files', Actions\ConfigDoImportFilesAction::class);
         $app->get('/config/import-new-cover-from-pdf', Actions\ConfigGetImportNewCoverFromPdfAction::class);
         $app->post('/config/import-new-cover-from-pdf', Actions\ConfigDoImportNewCoverFromPdfAction::class);
-        $app->get('/api/migrate', Actions\MigrateDatabaseAction::class);
     }
 }

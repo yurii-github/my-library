@@ -45,8 +45,8 @@ class CreateBooksTable extends AppMigration
     }
 
 
-    public function down()
-    {
-        $this->getSchema()->dropIfExists('books');
-    }
+//    public function down()
+//    {
+//        $this->getSchema()->dropIfExists('books');
+//    }
 }

@@ -20,14 +20,29 @@
 
 namespace App\Actions\Pages;
 
+use App\AppMigrator;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use \App\Models\Category;
 
 class IndexPageAction extends AbstractPageAction
 {
+    /** @var AppMigrator */
+    protected $migrator;
+
+    public function __construct(ContainerInterface $container)
+    {
+        parent::__construct($container);
+        $this->migrator = $container->get(AppMigrator::class);
+        assert($this->migrator instanceof AppMigrator);
+    }
+    
+    
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
+        $this->migrator->migrate();
+        
         $data = [
             'categories' => Category::all(),
         ];

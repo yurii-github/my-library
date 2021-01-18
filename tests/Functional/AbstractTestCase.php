@@ -35,7 +35,7 @@ abstract class AbstractTestCase extends TestCase
         $this->initVirtualFileSystem();
         $this->initConfig();
         $this->app = Bootstrap::initApplication(vfsStream::url('base/data'));
-        $migrator = new AppMigrator(Container::getInstance()->get(Migrator::class));
+        $migrator = Container::getInstance()->get(AppMigrator::class);
         $output = $migrator->migrate();
 
         $this->db = $this->app->getContainer()->get('db');

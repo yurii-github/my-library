@@ -43,10 +43,10 @@ class CreateBooksCategories extends AppMigration
     }
 
 
-    public function down()
-    {
-        $this->getSchema()->dropIfExists('books_categories');
-        $this->getSchema()->dropIfExists('categories');
-    }
+//    public function down()
+//    {
+//        $this->getSchema()->dropIfExists('books_categories');
+//        $this->getSchema()->dropIfExists('categories');
+//    }
 
 }

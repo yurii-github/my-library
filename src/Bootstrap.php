@@ -129,6 +129,9 @@ class Bootstrap
             assert($repository instanceof MigrationRepositoryInterface);
             return new Migrator($repository, $manager->getDatabaseManager(), $fs, $eventDispatcher);
         });
+        $container->bind(AppMigrator::class, function (ContainerInterface $container, $args) {
+            return new AppMigrator($container->get(Migrator::class));
+        });
         $container->singleton(Environment::class, function (ContainerInterface $container, $args) {
             $config = $container->get(Configuration::class);
             assert($config instanceof Configuration);

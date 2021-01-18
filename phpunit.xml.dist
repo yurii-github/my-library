@@ -31,13 +31,9 @@ beStrictAboutChangesToGlobalState="false"
 		</whitelist>
 	</filter>
 
-	<!--
-
-
 	<logging>
 		<log  type="coverage-html" target="reports" />
 	</logging>
-	 -->
 
 
 </phpunit>

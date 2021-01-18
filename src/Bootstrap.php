@@ -151,12 +151,12 @@ class Bootstrap
                     'validation.required' => 'ssssssss'
                 ]), 'en-US');
         });
-        
+
         //boot services
         $container->get('db');
 
         $app = AppFactory::create(null, $container);
-        $app->addErrorMiddleware($_ENV['APP_DEBUG'], true, true);
+        $app->addErrorMiddleware($_ENV['APP_DEBUG'] ?? false, true, true);
 
         Routes::register($app);
 
@@ -179,27 +179,19 @@ class Bootstrap
         $loader = new FilesystemLoader(SRC_DIR . '/views');
         $twig = new Environment($loader, [
             // 'cache' => DATA_DIR . '/cache',
-            'debug' => true,// $_ENV['APP_DEBUG'],
+            'debug' => $_ENV['APP_DEBUG'] ?? false,
         ]);
-
         $twig->addFunction(new TwigFunction('dump', function ($var) use ($twig) {
             if ($twig->isDebug()) {
                 var_dump($var);
             }
         }));
-
-        $twig->registerUndefinedFunctionCallback(function ($name) use ($config) {
-            if ($name === 'islinux') {
-                return new TwigFunction($name, function () {
-                    return strtoupper(PHP_OS) === 'LINUX';
-                });
-            } elseif ($name === 'copy_book_dir') {
-                return new TwigFunction($name, function () use ($config) {
-                    return str_replace("\\", "\\\\", $config->library->directory);
-                });
-            }
-            return false;
-        });
+        $twig->addFunction(new TwigFunction('islinux', function () {
+            return strtoupper(PHP_OS) === 'LINUX';
+        }));
+        $twig->addFunction(new TwigFunction('copy_book_dir', function () use ($config) {
+            return str_replace("\\", "\\\\", $config->library->directory);
+        }));
 
         return $twig;
     }

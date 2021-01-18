@@ -42,9 +42,7 @@ class ConfigGetImportFilesAction
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        // TODO: read with iterator, not all. may use too much memory
-        $books = Book::query()->select(['filename'])->get();
-        $files_db = $books->map(function (Book $book) {
+        $files_db = Book::query()->select(['filename'])->get()->map(function (Book $book) {
             return $book->filename;
         })->toArray();
 

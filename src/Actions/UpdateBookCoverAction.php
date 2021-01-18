@@ -33,12 +33,10 @@ class UpdateBookCoverAction
     /** @var Configuration */
     protected $config;
 
-
     public function __construct(ContainerInterface $container)
     {
         $this->config = $container->get(Configuration::class);
     }
-
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {

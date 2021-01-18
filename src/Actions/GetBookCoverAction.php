@@ -20,18 +20,12 @@
 
 namespace App\Actions;
 
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use \App\Models\Book;
 
 class GetBookCoverAction
 {
-    public function __construct(ContainerInterface $container)
-    {
-    }
-
-
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $book_guid = $request->getQueryParams()['book_guid'];

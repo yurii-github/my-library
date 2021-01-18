@@ -20,48 +20,28 @@
 
 namespace App\Actions;
 
-use App\Configuration\Configuration;
+use App\Models\Book;
 use Illuminate\Support\Arr;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class UpdateConfigAction
+class ConfigClearBooksWithoutFilesAction
 {
-    /** @var Configuration */
-    protected $config;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->config = $container->get(Configuration::class);
-    }
-
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $resp = new \stdClass();
-        $resp->msg = '';
-        $resp->result = false;
-        $resp->title = '';
-
         $post = $request->getParsedBody();
-        $field = Arr::get($post, 'field');
-        $value = Arr::get($post, 'value');
+        $stepping = Arr::get($post, 'stepping', 5);
 
-        try {
-            list($group, $attr) = explode('_', $field);
-            $this->config->$group->$attr = $value;
-            $this->config->save();
-            $resp->title = $group;
-            $resp->msg = "<b>$attr</b> was successfully updated";
-            $resp->result = true;
-        } catch (\Exception $e) {
-            $resp->msg = $e->getMessage();
-            $resp->result = false;
-        }
+        $deletedBooks = Book::query()->select(['book_guid', 'filename'])->limit($stepping)->get()
+            ->filter(function (Book $book) {
+                return !$book->file_exists;
+            })->each(function (Book $book) {
+                $book->delete();
+            })->modelKeys();
 
-        $response->getBody()->write(json_encode($resp));
-        $response = $response->withHeader('Content-Type', 'application/json');
-        
+        $response->getBody()->write(json_encode($deletedBooks, JSON_UNESCAPED_UNICODE));
+
         return $response;
     }
+
 }

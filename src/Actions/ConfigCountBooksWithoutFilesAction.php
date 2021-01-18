@@ -20,43 +20,21 @@
 
 namespace App\Actions;
 
-use App\Configuration\Configuration;
 use App\Models\Book;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class ConfigCheckFilesAction
+class ConfigCountBooksWithoutFilesAction
 {
-    /**
-     * @var Configuration
-     */
-    protected $config;
-
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->config = $container->get(Configuration::class);
-    }
-
-
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $files_db = Book::query()->select(['filename'])->get()->transform(function(Book $book) {
-            return $book->filename;
-        })->all();
+        $count = Book::query()->select(['book_guid', 'filename'])->get()->filter(function (Book $book) {
+            return !$book->file_exists;
+        })->count();
 
-        $files = $this->config->getLibraryBookFilenames();
-        $arr_db_only = array_diff($files_db, $files);
-        $arr_fs_only = array_diff($files, $files_db);
-
-        $response->getBody()->write(json_encode([
-            'db' => array_values($arr_db_only),
-            'fs' => array_values($arr_fs_only)
-        ], JSON_UNESCAPED_UNICODE));
+        $response->getBody()->write($count);
 
         return $response;
     }
-
 
 }

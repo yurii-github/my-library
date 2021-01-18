@@ -20,36 +20,21 @@
 
 namespace App\Actions;
 
-use App\Configuration\Configuration;
 use App\Models\Book;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * Imports book cover from book if it is PDF
- * Basically, get image from its 1st page
- */
-class ConfigGetImportNewCoverFromPdfAction
+class ConfigGetBooksWithoutCoverAction
 {
-    /**
-     * @var Configuration
-     */
-    protected $config;
-
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->config = $container->get(Configuration::class);
-    }
-
-
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
+        $type = 'pdf'; // TODO: throw errors
+        
         $books = Book::query()->select(['filename', 'book_guid'])
             ->whereRaw('book_cover IS NULL')
-            ->whereRaw("filename LIKE '%.pdf'")
-            ->get()->toArray();
+            ->where('filename', 'like', '%'.$type)
+            ->get()
+            ->toArray();
 
         $response->getBody()->write(json_encode($books, JSON_UNESCAPED_UNICODE));
 

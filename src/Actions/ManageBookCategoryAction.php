@@ -22,18 +22,12 @@ namespace App\Actions;
 
 use App\Models\Book;
 use Illuminate\Support\Arr;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use \App\Models\Category;
 
 class ManageBookCategoryAction
 {
-    public function __construct(ContainerInterface $container)
-    {
-    }
-
-
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $post = $request->getParsedBody();

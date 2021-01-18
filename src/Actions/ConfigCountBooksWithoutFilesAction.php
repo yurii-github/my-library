@@ -29,7 +29,7 @@ class ConfigCountBooksWithoutFilesAction
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $count = Book::query()->select(['book_guid', 'filename'])->get()->filter(function (Book $book) {
-            return !$book->fileExists();
+            return !$book->file_exists;
         })->count();
 
         $response->getBody()->write($count);

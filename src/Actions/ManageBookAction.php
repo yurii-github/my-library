@@ -30,9 +30,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use \Illuminate\Translation\Translator;
 
-/**
- * CRUD functionality for books via jqGrid interface
- */
 class ManageBookAction
 {
     /** @var Translator */
@@ -43,7 +40,6 @@ class ManageBookAction
     {
         $this->translator = $container->get(Translator::class);
     }
-
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {

@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $ext
  * @property string $filename
  * @property-read Category[] $categories
+ * @property-read bool $file_exists
  *
  * @mixin Builder
  */
@@ -157,7 +158,7 @@ class Book extends Model
         return $this->belongsToMany(Category::class, 'books_categories', 'book_guid', 'category_guid', 'book_guid', 'guid');
     }
 
-    public function fileExists(): bool
+    public function getFileExistsAttribute(): bool
     {
         $config = Container::getInstance()->get(Configuration::class);
         assert($config instanceof Configuration);

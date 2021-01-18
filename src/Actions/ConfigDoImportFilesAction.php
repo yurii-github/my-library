@@ -20,27 +20,13 @@
 
 namespace App\Actions;
 
-use App\Configuration\Configuration;
 use App\Models\Book;
 use Illuminate\Support\Arr;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class ConfigDoImportFilesAction
 {
-    /**
-     * @var Configuration
-     */
-    protected $config;
-
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->config = $container->get(Configuration::class);
-    }
-
-
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $addFilenames = Arr::get($request->getParsedBody(), 'post', []);

@@ -34,12 +34,10 @@ class ConfigClearBooksWithoutFilesAction
 
         $deletedBooks = Book::query()->select(['book_guid', 'filename'])->limit($stepping)->get()
             ->filter(function (Book $book) {
-                return !$book->fileExists();
+                return !$book->file_exists;
             })->each(function (Book $book) {
                 $book->delete();
-            })->map(function (Book $book) {
-                return $book->book_guid;
-            })->toArray();
+            })->modelKeys();
 
         $response->getBody()->write(json_encode($deletedBooks, JSON_UNESCAPED_UNICODE));
 

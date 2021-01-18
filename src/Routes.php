@@ -43,7 +43,7 @@ class Routes
         $app->post('/config/clear-books-without-files', Actions\ConfigClearBooksWithoutFilesAction::class);
         $app->get('/config/import-files', Actions\ConfigGetImportFilesAction::class);
         $app->post('/config/import-files', Actions\ConfigDoImportFilesAction::class);
-        $app->get('/config/import-new-cover-from-pdf', Actions\ConfigGetImportNewCoverFromPdfAction::class);
+        $app->get('/config/books-without-cover', Actions\ConfigGetBooksWithoutCoverAction::class);
         $app->post('/config/import-new-cover-from-pdf', Actions\ConfigDoImportNewCoverFromPdfAction::class);
     }
 }

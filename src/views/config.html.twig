@@ -366,7 +366,7 @@
       $('#sync-import-new-cover-from-pdf').click(function () {
         var res = $('#sync-check-files-result')
 
-        $.get('config/import-new-cover-from-pdf', function (data) {
+        $.get('config/books-without-cover', function (data) {
 
           var records_total = data.length
           var records_done = 0

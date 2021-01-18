@@ -20,7 +20,6 @@
 
 namespace App\Actions;
 
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use \App\Models\Book;
@@ -29,11 +28,6 @@ use \Illuminate\Database\Eloquent\Builder;
 
 class GetBookListAction
 {
-    public function __construct(ContainerInterface $container)
-    {
-    }
-
-
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $params = $request->getQueryParams();

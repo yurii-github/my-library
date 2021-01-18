@@ -42,11 +42,9 @@ class ConfigCheckFilesAction
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        // TODO: read with iterator, not all. may use too much memory
-        $files_db = [];
-        foreach (Book::query()->select(['filename'])->get()->all() as $book) {
-            $files_db[] = $book['filename'];
-        }
+        $files_db = Book::query()->select(['filename'])->get()->transform(function(Book $book) {
+            return $book->filename;
+        })->all();
 
         $files = $this->config->getLibraryBookFilenames();
         $arr_db_only = array_diff($files_db, $files);

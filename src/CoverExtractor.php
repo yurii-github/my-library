@@ -21,6 +21,7 @@
 namespace App;
 
 use App\Exception\BookFileNotFoundException;
+use App\Exception\GhostscriptIsNotConfiguredException;
 use App\Exception\InvalidBookFormatException;
 use Illuminate\Support\Str;
 
@@ -45,7 +46,7 @@ class CoverExtractor
     public function extract(string $srcPdfFile)
     {
         if (!Str::endsWith($srcPdfFile, '.pdf')) {
-            throw new InvalidBookFormatException("Invalid book format for '{$srcPdfFile}'");
+            throw new InvalidBookFormatException("Unsupported book format for '{$srcPdfFile}'");
         }
         if (!file_exists($srcPdfFile)) {
             throw new BookFileNotFoundException("Book file '{$srcPdfFile}' does not exist!");
@@ -61,10 +62,9 @@ class CoverExtractor
             }
             chmod($outJpegFile, 0777);
 
-            $command = $this->buildGhostCommand($srcPdfFile, $outJpegFile);
+            $command = $this->buildGhostscriptCommand($srcPdfFile, $outJpegFile);
             $res = exec($command, $output);
 
-            $c = file_get_contents($outJpegFile);
             if (filesize($outJpegFile) == 0) {
                 throw new \Exception("Failed to convert from <b>$srcPdfFile</b> to <b>$outJpegFile</b>. <br>ERROR: $res<br><br>" . print_r($output, true));
             }
@@ -79,24 +79,18 @@ class CoverExtractor
         return $coverData;
     }
 
-    protected function buildGhostCommand($srcPdfFile, $outJpegFile)
+    protected function buildGhostscriptCommand($srcPdfFile, $outJpegFile)
     {
         $ghostScriptEXE = $this->config->getBook()->ghostscript;
+        
+        if (!$ghostScriptEXE) {
+            throw new GhostscriptIsNotConfiguredException('Ghostscript is not configured');
+        }
+
         return <<<CMD
-"$ghostScriptEXE" \
--dTextAlphaBits=4 \
--dGraphicsAlphaBits=4 \
--dSAFER \
--dNOPAUSE \
--dBATCH \
--dFirstPage=1 \
--sPageList=1 \
--dLastPage=1 \
--sDEVICE=jpeg \
--dJPEGQ=100 \
--sOutputFile="$outJpegFile" \
--r96 \
-"$srcPdfFile"
+"$ghostScriptEXE" -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -dSAFER -dNOPAUSE \
+-dBATCH -dFirstPage=1 -sPageList=1 -dLastPage=1 -sDEVICE=jpeg -dJPEGQ=100 -r96 \
+-sOutputFile="$outJpegFile" "$srcPdfFile"
 CMD;
     }
 }

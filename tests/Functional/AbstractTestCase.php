@@ -31,6 +31,7 @@ abstract class AbstractTestCase extends TestCase
      */
     protected function setUp(): void
     {
+        Bootstrap::initEnvironment();
         $this->initVirtualFileSystem();
         $this->initConfig();
         $this->app = Bootstrap::initApplication(vfsStream::url('base/data'));
@@ -119,9 +120,9 @@ abstract class AbstractTestCase extends TestCase
     {
         $config->database->format = 'mysql';
         $config->database->host = 'localhost';
-        $config->database->dbname = 'test_mylib';
-        $config->database->login = 'travis';
-        $config->database->password = null;
+        $config->database->dbname = $_ENV['DB_DBNAME'] ?? 'test_mylib';
+        $config->database->login = $_ENV['DB_LOGIN'] ?? 'travis';
+        $config->database->password = $_ENV['DB_PASSWORD'] ?? null;
     }
     
     
@@ -138,10 +139,11 @@ abstract class AbstractTestCase extends TestCase
     protected function initConfig()
     {
         $config = json_decode(file_get_contents(dirname(__DIR__) . '/data/config_sqlite.json'));
+        $dbType = $_ENV['DB_TYPE'] ?? 'sqlite';
 
-        if (empty(getenv('DB_TYPE')) || getenv('DB_TYPE') === 'sqlite') {
+        if ($dbType === 'sqlite') {
             $this->useSqliteInMemory($config);
-        } elseif (getenv('DB_TYPE') === 'mysql') {
+        } elseif ($dbType === 'mysql') {
             $this->useMySQL($config);
         } else {
             throw new \Exception('must setup env variable DB_TYPE. Supported values are \'mysql\' and \'sqlite\'');

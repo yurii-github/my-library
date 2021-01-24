@@ -86,8 +86,6 @@ class Bootstrap
 
     public static function initApplication(string $dataDir)
     {
-        self::initEnvironment();
-        
         defined('BASE_DIR') || define('BASE_DIR', dirname(__DIR__));
         defined('DATA_DIR') || define('DATA_DIR', $dataDir);
         defined('SRC_DIR') || define('SRC_DIR', BASE_DIR . '/src');

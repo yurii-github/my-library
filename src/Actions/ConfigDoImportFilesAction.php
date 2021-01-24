@@ -20,6 +20,7 @@
 
 namespace App\Actions;
 
+use App\Exception\BookFileNotFoundException;
 use App\Models\Book;
 use Illuminate\Support\Arr;
 use Psr\Http\Message\ResponseInterface;
@@ -37,8 +38,11 @@ class ConfigDoImportFilesAction
                 $book = new Book();
                 $book->title = $filename;
                 $book->filename = $filename;
+                if(!$book->file_exists) {
+                    throw new BookFileNotFoundException('Book file does not exist!');
+                }
                 $book->saveOrFail();
-                $arr_added[] = $filename;
+                $arr_added[] = $book->filename;
             }
             $message = ['data' => $arr_added, 'result' => true, 'error' => ''];
         } catch (\Throwable $e) {

@@ -46,4 +46,27 @@ class ConfigDoImportFilesActionTest extends AbstractTestCase
             'error' => ''
         ], $response);
     }
+
+    public function testFailsWhenFileDoesNotExist()
+    {
+        $this->setBookLibrarySync(false);
+        $books = $this->populateBooks();
+        $filename = 'fs-only.pdf';
+        
+        $this->assertDatabaseCount('books', 3);
+
+        $request = $this->createRequest('POST', '/config/import-files');
+        $request = $request->withParsedBody([
+            'post' => [$filename]
+        ]);
+        $response = $this->app->handle($request);
+        $content = (string)$response->getBody();
+        $this->assertJsonData([
+            'data' => [],
+            'result' => false,
+            'error' => 'Book file does not exist!'
+        ], $response);
+
+        $this->assertDatabaseCount('books', 3);
+    }
 }

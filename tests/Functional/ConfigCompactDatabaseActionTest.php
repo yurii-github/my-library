@@ -19,7 +19,12 @@ class ConfigCompactDatabaseActionTest extends AbstractTestCase
 
             $this->assertSame(200, $response->getStatusCode());
             $content = (string)$response->getBody();
-            $this->assertStringContainsString('MYSQL COMPACT', $content);
+            if ($_ENV['DB_TYPE'] ==='mysql') {
+                $this->assertStringContainsString('MYSQL COMPACT', $content);
+            } else {
+                $this->assertStringContainsString('SQLITE COMPACT', $content);
+            }
+            
         } finally {
             Book::query()->whereIn('book_guid', Collection::make($books)->pluck('book_guid'))->delete();
         }

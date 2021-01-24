@@ -1,7 +1,6 @@
 # My Book Library
 
-[![Build Status](https://travis-ci.com/yurii-github/yii2-mylib.svg?branch=master)](https://travis-ci.com/yurii-github/yii2-mylib) [![Code Climate](https://codeclimate.com/github/yurii-github/yii2-mylib/badges/gpa.svg)](https://codeclimate.com/github/yurii-github/yii2-mylib) [![Test Coverage](https://codeclimate.com/github/yurii-github/yii2-mylib/badges/coverage.svg)](https://codeclimate.com/github/yurii-github/yii2-mylib/coverage) 
-
+[![Build Status](https://travis-ci.com/yurii-github/my-library.svg?branch=master)](https://travis-ci.com/yurii-github/my-library) [![Maintainability](https://api.codeclimate.com/v1/badges/24ed64181b13e21cd2ec/maintainability)](https://codeclimate.com/github/yurii-github/my-library/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/24ed64181b13e21cd2ec/test_coverage)](https://codeclimate.com/github/yurii-github/my-library/test_coverage)
 
 ## About
 

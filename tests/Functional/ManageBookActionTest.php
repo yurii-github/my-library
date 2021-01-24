@@ -9,7 +9,7 @@ class ManageBookActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;
 
-    public function _testUnsupportedOperationThrowsException()
+    public function testUnsupportedOperationThrowsException()
     {
         $request = $this->createJsonRequest('POST', '/api/book/manage');
         $response = $this->app->handle($request);
@@ -19,7 +19,7 @@ class ManageBookActionTest extends AbstractTestCase
         $this->assertStringContainsString('Unsupported operation!', $content);
     }
     
-    public function testCannotAddBookWithoutFileWithSync()
+    public function testAddBook_CannotAddBookWithoutFileWithSync()
     {
         $this->setBookLibrarySync(true);
         Carbon::setTestNow(Carbon::now());
@@ -40,7 +40,7 @@ class ManageBookActionTest extends AbstractTestCase
     }
     
     
-    public function testAddBook()
+    public function testAddBook_Successful()
     {
         $this->setBookLibrarySync(false);
         Carbon::setTestNow(Carbon::now());
@@ -81,8 +81,7 @@ class ManageBookActionTest extends AbstractTestCase
         );
     }
 
-
-    public function testBookDelete()
+    public function testDeleteBook_Successful()
     {
         $this->setBookLibrarySync(false); //TODO: remove file if sync is ON
         $books = $this->populateBooks();
@@ -99,8 +98,7 @@ class ManageBookActionTest extends AbstractTestCase
         $this->assertDatabaseMissing('books', ['book_guid' => $book->book_guid]);
     }
 
-
-    public function testChangeFilenameIsSkipped()
+    public function testEditBook_ChangeFilenameIsSkipped()
     {
         $createdAt = Carbon::now();
         $updatedAt = Carbon::now()->copy()->addDay();
@@ -129,8 +127,24 @@ class ManageBookActionTest extends AbstractTestCase
         ]);
     }
 
+    public function testEditBook_BookRecordMustExist()
+    {
+        $this->assertDatabaseCount('books', 0);
+        
+        $request = $this->createJsonRequest('POST', '/api/book/manage', [
+            'id' => 'unknown-id',
+            'filename' => 'some-new-filename.pdf',
+            'oper' => 'edit'
+        ]);
+        $response = $this->app->handle($request);
 
-    public function testCanChangeFilenameFromTitleWithoutFileWithoutSync()
+        $content = (string)$response->getBody();
+        $this->assertSame(422, $response->getStatusCode());
+        $this->assertJsonData(['id' => ['validation.exists']], $response);
+        $this->assertDatabaseCount('books', 0);
+    }
+
+    public function testEditBook_CanChangeFilenameFromTitleWithoutFileWithoutSync()
     {
         $this->setBookLibrarySync(false); // TODO: rename file if sync is ON
         $books = $this->populateBooks();
@@ -154,7 +168,7 @@ class ManageBookActionTest extends AbstractTestCase
     }
 
 
-    public function testCannotChangeFilenameFromTitleWithoutFileWithSync()
+    public function testEditBook_CannotChangeFilenameFromTitleWithoutFileWithSync()
     {
         $this->setBookLibrarySync(false);
         $books = $this->populateBooks();
@@ -180,7 +194,7 @@ class ManageBookActionTest extends AbstractTestCase
     }
 
 
-    public function testCannotChangeFilenameFromTitleWithFileWithSync()
+    public function testEditBook_CannotChangeFilenameFromTitleWithFileWithSync()
     {
         $this->setBookLibrarySync(false);
         $books = $this->populateBooks();

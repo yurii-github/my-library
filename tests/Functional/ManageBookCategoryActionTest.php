@@ -180,9 +180,9 @@ class ManageBookCategoryActionTest extends AbstractTestCase
         $request = $this->createJsonRequest('POST', '/api/category/manage', [
             'oper' => 'edit',
             'id' => $category->guid,
-            'nodeid' => $bookWithMarker->book_guid,
             'marker' => 'true'
         ]);
+        $request = $request->withQueryParams(['nodeid' => $bookWithMarker->book_guid]);
 
         $response = $this->app->handle($request);
 
@@ -195,7 +195,7 @@ class ManageBookCategoryActionTest extends AbstractTestCase
         $this->assertDatabaseCount('books_categories', 0);
     }
 
-    public function testEditCategory_CanChangeBookMarkerAndUpdateCategoryTitle()
+    public function testEditCategory_CanSetBookMarkerAndUpdateCategoryTitle()
     {
         list($category, $category2) = $this->populateCategories();
         $books = $this->populateBooks();
@@ -211,9 +211,9 @@ class ManageBookCategoryActionTest extends AbstractTestCase
             'oper' => 'edit',
             'id' => $category->guid,
             'title' => 'updated title',
-            'nodeid' => $bookWithMarker->book_guid,
             'marker' => true
         ]);
+        $request = $request->withQueryParams(['nodeid' => $bookWithMarker->book_guid]);
 
         $response = $this->app->handle($request);
 
@@ -228,6 +228,41 @@ class ManageBookCategoryActionTest extends AbstractTestCase
         $this->assertCount(1, $bookWithMarker->categories);
         $this->assertInstanceOf(Category::class, $bookWithMarker->categories->first());
         $this->assertTrue($category->is($bookWithMarker->categories->first()));
+    }
+
+    public function testEditCategory_CanUnsetBookMarkerAndUpdateCategoryTitle()
+    {
+        list($category, $category2) = $this->populateCategories();
+        $books = $this->populateBooks();
+        $bookWithMarker = $books[0];
+        $bookWithMarker->categories()->attach($category);
+        $bookWithMarker->refresh();
+
+        $this->assertDatabaseCount('categories', 2);
+        $this->assertDatabaseHas('categories', ['guid' => $category->guid, 'title' => $category->title]);
+        $this->assertDatabaseHas('categories', ['guid' => $category2->guid, 'title' => $category2->title]);
+        $this->assertDatabaseCount('books_categories', 1);
+        $this->assertCount(1, $bookWithMarker->categories);
+
+        $request = $this->createJsonRequest('POST', '/api/category/manage', [
+            'oper' => 'edit',
+            'id' => $category->guid,
+            'title' => 'updated title',
+            'marker' => false
+        ]);
+        $request = $request->withQueryParams(['nodeid' => $bookWithMarker->book_guid]);
+
+        $response = $this->app->handle($request);
+
+        $content = (string)$response->getBody();
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('', $content);
+        $this->assertDatabaseCount('categories', 2);
+        $this->assertDatabaseHas('categories', ['guid' => $category->guid, 'title' => 'updated title']);
+        $this->assertDatabaseHas('categories', ['guid' => $category2->guid, 'title' => $category2->title]);
+        $this->assertDatabaseCount('books_categories', 0);
+        $bookWithMarker->refresh();
+        $this->assertCount(0, $bookWithMarker->categories);
     }
 
     public function testEditCategory_BookMarkerIsRequiredWithNodeId()
@@ -246,8 +281,8 @@ class ManageBookCategoryActionTest extends AbstractTestCase
             'oper' => 'edit',
             'id' => $category->guid,
             'title' => 'updated title',
-            'nodeid' => $bookWithMarker->book_guid
         ]);
+        $request = $request->withQueryParams(['nodeid' => $bookWithMarker->book_guid]);
 
         $response = $this->app->handle($request);
 

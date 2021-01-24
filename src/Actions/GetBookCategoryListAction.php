@@ -32,8 +32,8 @@ class GetBookCategoryListAction
 {
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $params = $request->getQueryParams();
-        $bookId = Arr::get($params, 'nodeid');
+        $bookId = Arr::get($request->getQueryParams(), 'nodeid');
+        $bookId = $bookId ? (string)$bookId : null;
         $query = Category::query()
             ->select([
                 'guid',
@@ -45,7 +45,7 @@ class GetBookCategoryListAction
                     ->whereRaw('bc.category_guid = categories.guid')
                     ->where('bc.book_guid', '=', $bookId);
             });
-        
+
         $gridQuery = new JGridRequestQuery($query, $request);
         $gridQuery->withFilters()->withSorting('title', 'asc');;
         $response->getBody()->write(json_encode($gridQuery->paginate(['guid', 'title', 'marker'])));

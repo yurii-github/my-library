@@ -2,7 +2,6 @@
 
 namespace Tests\Functional;
 
-use App\Configuration\Configuration;
 use Illuminate\Support\Carbon;
 use Tests\PopulateBooksTrait;
 
@@ -10,7 +9,16 @@ class ManageBookActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;
 
+    public function _testUnsupportedOperationThrowsException()
+    {
+        $request = $this->createJsonRequest('POST', '/api/book/manage');
+        $response = $this->app->handle($request);
 
+        $content = (string)$response->getBody();
+        $this->assertSame(500, $response->getStatusCode());
+        $this->assertStringContainsString('Unsupported operation!', $content);
+    }
+    
     public function testCannotAddBookWithoutFileWithSync()
     {
         $this->setBookLibrarySync(true);
@@ -109,8 +117,9 @@ class ManageBookActionTest extends AbstractTestCase
         ]);
         $response = $this->app->handle($request);
 
+        $content = (string)$response->getBody();
         $this->assertSame(200, $response->getStatusCode());
-        $this->assertSame('', (string)$response->getBody());
+        $this->assertSame('', $content);
         $this->assertDatabaseHas('books', [
             'book_guid' => $book->book_guid,
             'title' => $book->title,

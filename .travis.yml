@@ -23,5 +23,9 @@ after_script:
   - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" && "$TRAVIS_PULL_REQUEST" == "false" && "$DB_TYPE" == "sqlite" ]]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi;
 services:
   - mysql
+addons:
+  apt:
+    packages:
+      - ghostscript
 git:
   submodules: false

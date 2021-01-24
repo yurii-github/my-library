@@ -78,17 +78,22 @@ class Bootstrap
         return $capsule;
     }
 
+    public static function initEnvironment()
+    {
+        defined('BASE_DIR') || define('BASE_DIR', dirname(__DIR__));
+        (new Dotenv())->load(BASE_DIR . '/.env');
+    }
 
     public static function initApplication(string $dataDir)
     {
+        self::initEnvironment();
+        
         defined('BASE_DIR') || define('BASE_DIR', dirname(__DIR__));
         defined('DATA_DIR') || define('DATA_DIR', $dataDir);
         defined('SRC_DIR') || define('SRC_DIR', BASE_DIR . '/src');
         defined('WEB_DIR') || define('WEB_DIR', BASE_DIR . '/public');
 
         Bootstrap::handleCliStaticData();
-
-        (new Dotenv())->load(BASE_DIR . '/.env');
 
         Container::setInstance(null);
 

@@ -8,12 +8,13 @@ use App\Helpers\Tools;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
 /**
  * @property string $book_guid
- * @property string $created_date
- * @property string $updated_date
+ * @property Carbon $created_date
+ * @property Carbon $updated_date
  * @property string $book_cover binary cover
  * @property float $favorite
  * @property string $read 'yes'|'no'
@@ -48,6 +49,9 @@ class Book extends Model
         'author',
         'publisher',
         'ext',
+    ];
+    protected $casts = [
+        'favorite' => 'float'
     ];
 
 

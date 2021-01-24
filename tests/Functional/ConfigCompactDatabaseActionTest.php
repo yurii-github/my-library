@@ -19,7 +19,8 @@ class ConfigCompactDatabaseActionTest extends AbstractTestCase
 
             $this->assertSame(200, $response->getStatusCode());
             $content = (string)$response->getBody();
-            if ($_ENV['DB_TYPE'] ==='mysql') {
+            $config = $this->getLibraryConfig();
+            if ($config->getDatabase()->format ==='mysql') {
                 $this->assertStringContainsString('MYSQL COMPACT', $content);
             } else {
                 $this->assertStringContainsString('SQLITE COMPACT', $content);

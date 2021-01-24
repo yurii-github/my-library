@@ -22,6 +22,9 @@ namespace App\Actions;
 
 use App\Exception\BookFileNotFoundException;
 use App\Models\Book;
+use Illuminate\Database\Capsule\Manager;
+use Illuminate\Support\Arr;
+use Illuminate\Validation\DatabasePresenceVerifier;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
@@ -34,78 +37,103 @@ class ManageBookAction
 {
     /** @var Translator */
     protected $translator;
-
+    /** @var Manager */
+    protected $db;
 
     public function __construct(ContainerInterface $container)
     {
+        $this->db = $container->get('db');
+        assert($this->db instanceof Manager);
         $this->translator = $container->get(Translator::class);
     }
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $post = $request->getParsedBody();
+        $operation = Arr::get($post, 'oper');
 
-        switch ($post['oper']) {
-
-            case 'add':
-                $rules = [
-                    'year' => ['sometimes'],
-                    'favorite' => ['required'],
-                    'read' => ['required', Rule::in(['yes', 'no'])],
-                    'title' => ['required'],
-                    'isbn13' => ['sometimes'],
-                    'author' => ['sometimes'],
-                    'publisher' => ['sometimes'],
-                    'ext' => ['sometimes'],
-                ];
-                $validator = new Validator($this->translator, $post, $rules);
-                try {
-                    $input = $validator->validate();
-                    $book = new Book();
-                    $book->fill($input);
-                    $book->save();
-                } catch (BookFileNotFoundException $e) {
-                    $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
-                    return $response->withStatus(400);
-                } catch (ValidationException $e) {
-                    $response->getBody()->write(json_encode($e->errors()));
-                    return $response->withStatus(422);
-                }
+        try {
+            if ($operation === 'add') {
+                $book = $this->addBook($post);
                 $response->getBody()->write(json_encode($book->toArray(), JSON_UNESCAPED_UNICODE));
-                break;
-
-            case 'del':
-                Book::where(['book_guid' => $post['id']])->delete();
-                break;
-
-            case 'edit':
-                $rules = [
-                    'year' => ['sometimes'],
-                    'favorite' => ['sometimes', 'required'],
-                    'read' => ['sometimes', 'required', Rule::in(['yes', 'no'])],
-                    'title' => ['sometimes', 'required'],
-                    'isbn13' => ['sometimes', 'sometimes'],
-                    'author' => ['sometimes', 'string'],
-                    'publisher' => ['sometimes', 'string'],
-                    'ext' => ['sometimes'],
-                ];
-                $validator = new Validator($this->translator, $post, $rules);
-                $book = Book::where(['book_guid' => $post['id']])->firstOrFail(); // TODO: do not select book cover, add book cover class
-                try {
-                    $input = $validator->validate();
-                    $book->fill($input);
-                    $book->save();
-                } catch (BookFileNotFoundException $e) {
-                    $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
-                    return $response->withStatus(400);
-                } catch (ValidationException $e) {
-                    $response->getBody()->write(json_encode($e->errors()));
-                    return $response->withStatus(422);
-                }
-                break;
+                return $response;
+            } elseif ($operation === 'del') {
+                $this->deleteBook($post);
+                return $response;
+            } elseif ($operation === 'edit') {
+                $book = $this->editBook($post);
+                return $response;
+            }
+        } catch (BookFileNotFoundException $e) {
+            $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
+            return $response->withStatus(400);
+        } catch (ValidationException $e) {
+            $response->getBody()->write(json_encode($e->errors()));
+            return $response->withStatus(422);
         }
 
-        return $response;
+        throw new \Exception('Unsupported operation!');
+    }
+
+    protected function editBook(array $post): ?Book
+    {
+        $rules = [
+            'year' => ['sometimes'],
+            'favorite' => ['sometimes', 'required'],
+            'read' => ['sometimes', 'required', Rule::in(['yes', 'no'])],
+            'title' => ['sometimes', 'required'],
+            'isbn13' => ['sometimes', 'sometimes'],
+            'author' => ['sometimes', 'string'],
+            'publisher' => ['sometimes', 'string'],
+            'ext' => ['sometimes'],
+            'id' => ['required', 'exists:books,book_guid']
+        ];
+        $validator = new Validator($this->translator, $post, $rules);
+        $validator->setPresenceVerifier(new DatabasePresenceVerifier($this->db->getDatabaseManager()));
+        $input = $validator->validate();
+        // TODO: do not select book cover, add book cover class
+        $book = Book::find($input['id']);
+        assert($book instanceof Book);
+        $book->fill($input);
+        $book->save();
+
+        return $book;
+    }
+
+    protected function deleteBook(array $post): ?Book
+    {
+        $rules = [
+            'id' => ['required', 'string']
+        ];
+        $input = (new Validator($this->translator, $post, $rules))->validate();
+        $book = Book::find($input['id']);
+        assert($book instanceof Book || $book === null);
+        if ($book) {
+            $book->delete();
+        }
+
+        return $book;
+    }
+
+    protected function addBook(array $post): Book
+    {
+        $rules = [
+            'year' => ['sometimes'],
+            'favorite' => ['required'],
+            'read' => ['required', Rule::in(['yes', 'no'])],
+            'title' => ['required'],
+            'isbn13' => ['sometimes'],
+            'author' => ['sometimes'],
+            'publisher' => ['sometimes'],
+            'ext' => ['sometimes'],
+        ];
+        $validator = new Validator($this->translator, $post, $rules);
+        $input = $validator->validate();
+        $book = new Book();
+        $book->fill($input);
+        $book->save();
+
+        return $book;
     }
 
 }

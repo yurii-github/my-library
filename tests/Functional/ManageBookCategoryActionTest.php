@@ -11,11 +11,10 @@ class ManageBookCategoryActionTest extends AbstractTestCase
     use PopulateBooksTrait;
     use PopulateCategoriesTrait;
 
-    public function _testUnsupportedOperationThrowsException()
+    public function testUnsupportedOperationThrowsException()
     {
         $request = $this->createJsonRequest('POST', '/api/category/manage');
         $response = $this->app->handle($request);
-
         $content = (string)$response->getBody();
         $this->assertSame(500, $response->getStatusCode());
         $this->assertStringContainsString('Unsupported operation!', $content);

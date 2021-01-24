@@ -164,7 +164,7 @@ class Bootstrap
         $container->get('db');
 
         $app = AppFactory::create(null, $container);
-        $app->addErrorMiddleware($_ENV['APP_DEBUG'] ?? false, true, true);
+        $app->addErrorMiddleware($_ENV['APP_DEBUG'] ?? false, true, false); // TODO: logErrorDetails = false for now
 
         Routes::register($app);
 

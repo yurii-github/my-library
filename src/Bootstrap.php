@@ -189,11 +189,6 @@ class Bootstrap
             // 'cache' => DATA_DIR . '/cache',
             'debug' => $_ENV['APP_DEBUG'] ?? false,
         ]);
-        $twig->addFunction(new TwigFunction('dump', function ($var) use ($twig) {
-            if ($twig->isDebug()) {
-                var_dump($var);
-            }
-        }));
         $twig->addFunction(new TwigFunction('copy_book_dir', function () use ($config) {
             return str_replace("\\", "\\\\", $config->library->directory);
         }));

@@ -21,50 +21,124 @@
 namespace App\Actions;
 
 use App\Models\Book;
+use Illuminate\Database\Capsule\Manager;
 use Illuminate\Support\Arr;
+use Illuminate\Translation\Translator;
+use Illuminate\Validation\DatabasePresenceVerifier;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Validator;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use \App\Models\Category;
 
 class ManageBookCategoryAction
 {
+    /** @var Translator */
+    protected $translator;
+    /** @var Manager */
+    protected $db;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->db = $container->get('db');
+        assert($this->db instanceof Manager);
+        $this->translator = $container->get(Translator::class);
+    }
+
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $post = $request->getParsedBody();
         $operation = Arr::get($post, 'oper');
-        $bookId = Arr::get($request->getQueryParams(), 'nodeid');
-        $categoryId = Arr::get($post, 'id');
-        $categoryTitle = Arr::get($post, 'title');
-        $bookMarker = (bool)Arr::get($post, 'marker', false);
 
-        if ($operation === 'add') {
-            $category = new Category();
-            $category->title = $categoryTitle;
-            $category->saveOrFail();
-            return $response;
-        } elseif ($operation === 'del') {
-            Category::destroy($categoryId);
-            return $response;
-        } elseif ($operation === 'edit') {
-            $category = Category::query()->findOrFail(Arr::get($post, 'id'));
-            assert($category instanceof Category);
-            $book = Book::query()->find($bookId);
-            if ($book) {
-                assert($book instanceof Book);
-                if ($bookMarker) {
-                    $book->categories()->attach($category);
-                } else {
-                    $book->categories()->detach($category);
+        try {
+            if ($operation === 'add') {
+                $this->addCategory($post);
+                return $response;
+            } elseif ($operation === 'del') {
+                $this->deleteCategory($post);
+                return $response;
+            } elseif ($operation === 'edit') {
+                if ($nodeid = Arr::get($request->getQueryParams(), 'nodeid')) {
+                    $post = Arr::add($post, 'nodeid', $nodeid);
                 }
+                $this->editCategory($post);
+                return $response;
             }
-            if ($title = Arr::get($post, 'title')) {
-                $category->title = Arr::get($post, 'title');
-                $category->saveOrFail();
-            }
-            return $response;
+        } catch (ValidationException $e) {
+            $response->getBody()->write(json_encode($e->errors()));
+            return $response->withStatus(422);
         }
 
         throw new \Exception('Unsupported operation!');
     }
 
+    protected function editCategory(array $post): ?Category
+    {
+        $rules = [
+            'id' => ['required', 'string', 'max:255', Rule::exists('categories', 'guid')],
+            'title' => ['sometimes', 'string', 'max:255'],
+            'nodeid' => ['sometimes', 'string', 'max:255', Rule::exists('books', 'book_guid')],
+            'marker' => ['required_with:nodeid', 'bool']
+        ];
+
+        $validator = new Validator($this->translator, $post, $rules);
+        $validator->setPresenceVerifier(new DatabasePresenceVerifier($this->db->getDatabaseManager()));
+        $input = $validator->validate();
+
+        $category = Category::find($input['id']);
+        assert($category instanceof Category);
+
+        if (Arr::has($input, 'title')) {
+            $category->title = $input['title'];
+            $category->saveOrFail();
+        }
+
+        if (Arr::has($input, 'nodeid')) {
+            $book = Book::find($input['nodeid']);
+            assert($book instanceof Book);
+            if ($input['marker']) {
+                $book->categories()->attach($category);
+            } else {
+                $book->categories()->detach($category);
+            }
+        }
+
+        return $category;
+    }
+
+
+    protected function deleteCategory(array $post): ?Category
+    {
+        $rules = [
+            'id' => ['required', 'string', 'max:255'],
+        ];
+
+        $input = (new Validator($this->translator, $post, $rules))->validate();
+
+        $category = Category::find($input['id']);
+        assert($category instanceof Category || $category === null);
+
+        if ($category) {
+            $category->delete();
+        }
+
+        return $category;
+    }
+
+    protected function addCategory(array $post): Category
+    {
+        $rules = [
+            'title' => ['required'],
+        ];
+
+        $input = (new Validator($this->translator, $post, $rules))->validate();
+
+        $category = new Category();
+        $category->title = $input['title'];
+        $category->saveOrFail();
+
+        return $category;
+    }
 }

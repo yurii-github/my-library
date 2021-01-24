@@ -8,6 +8,7 @@ use App\Helpers\Tools;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 /**
  * @property string $book_guid
@@ -23,7 +24,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $publisher
  * @property string $ext
  * @property string $filename
- * @property-read Category[] $categories
+ * @property-read Collection|Category[] $categories
  * @property-read bool $file_exists
  *
  * @mixin Builder

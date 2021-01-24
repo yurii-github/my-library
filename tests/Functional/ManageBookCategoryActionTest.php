@@ -4,29 +4,12 @@ namespace Tests\Functional;
 
 use App\Models\Category;
 use Tests\PopulateBooksTrait;
+use Tests\PopulateCategoriesTrait;
 
 class ManageBookCategoryActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;
-
-    public function testInitialSetupWorksAsExpected()
-    {
-        $books = $this->populateBooks();
-        $this->assertDatabaseCount('categories', 0);
-
-        foreach ($books as $book) {
-            $this->assertCount(0, $book->categories);
-        }
-
-        $category = new Category();
-        $category->title = 'new category';
-        $category->save();
-
-        $this->assertDatabaseCount('categories', 1);
-        foreach ($books as $book) {
-            $this->assertCount(0, $book->categories);
-        }
-    }
+    use PopulateCategoriesTrait;
 
     public function _testUnsupportedOperationThrowsException()
     {
@@ -40,15 +23,12 @@ class ManageBookCategoryActionTest extends AbstractTestCase
 
     public function testAddCategory()
     {
-        $category = new Category();
-        $category->title = 'new category';
-        $category->save();
-
-        $this->assertDatabaseCount('categories', 1);
+        list($category, $category2) = $this->populateCategories();
+        $this->assertDatabaseCount('categories', 2);
 
         $request = $this->createJsonRequest('POST', '/api/category/manage', [
             'oper' => 'add',
-            'title' => 'new category 2'
+            'title' => 'new category 3'
         ]);
 
         $response = $this->app->handle($request);
@@ -56,18 +36,16 @@ class ManageBookCategoryActionTest extends AbstractTestCase
         $content = (string)$response->getBody();
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('', $content);
-        $this->assertDatabaseCount('categories', 2);
+        $this->assertDatabaseCount('categories', 3);
         $this->assertDatabaseHas('categories', ['title' => $category->title]);
         $this->assertDatabaseHas('categories', ['title' => 'new category 2']);
+        $this->assertDatabaseHas('categories', ['title' => 'new category 3']);
     }
 
     public function testAddCategory_TitleIsRequired()
     {
-        $category = new Category();
-        $category->title = 'new category';
-        $category->save();
-
-        $this->assertDatabaseCount('categories', 1);
+        list($category, $category2) = $this->populateCategories();
+        $this->assertDatabaseCount('categories', 2);
 
         $request = $this->createJsonRequest('POST', '/api/category/manage', [
             'oper' => 'add',
@@ -77,17 +55,15 @@ class ManageBookCategoryActionTest extends AbstractTestCase
         $content = (string)$response->getBody();
         $this->assertSame(422, $response->getStatusCode());
         $this->assertJsonData(['title' => ['validation.required']], $response); // TODO: fix validation text
-        $this->assertDatabaseCount('categories', 1);
-        $this->assertDatabaseHas('categories', ['title' => $category->title]);
+        $this->assertDatabaseCount('categories', 2);
+        $this->assertDatabaseHas('categories', ['guid' => $category->guid, 'title' => $category->title]);
+        $this->assertDatabaseHas('categories', ['guid' => $category2->guid, 'title' => $category2->title]);
     }
 
     public function testDeleteCategory_IdIsRequired()
     {
-        $category = new Category();
-        $category->title = 'new category';
-        $category->save();
-
-        $this->assertDatabaseCount('categories', 1);
+        list($category, $category2) = $this->populateCategories();
+        $this->assertDatabaseCount('categories', 2);
 
         $request = $this->createJsonRequest('POST', '/api/category/manage', [
             'oper' => 'del',
@@ -98,18 +74,16 @@ class ManageBookCategoryActionTest extends AbstractTestCase
 
         $content = (string)$response->getBody();
         $this->assertSame(422, $response->getStatusCode());
-        $this->assertJsonData(['id' => ['validation.required']], $response); // TODO: fix validation text
-        $this->assertDatabaseCount('categories', 1);
-        $this->assertDatabaseHas('categories', ['title' => $category->title]);
+        $this->assertJsonData(['id' => ['validation.required']], $response);
+        $this->assertDatabaseCount('categories', 2);
+        $this->assertDatabaseHas('categories', ['guid' => $category->guid, 'title' => $category->title]);
+        $this->assertDatabaseHas('categories', ['guid' => $category2->guid, 'title' => $category2->title]);
     }
 
     public function testDeleteCategory_CategoryDoesNotExist()
     {
-        $category = new Category();
-        $category->title = 'new category';
-        $category->save();
-
-        $this->assertDatabaseCount('categories', 1);
+        list($category, $category2) = $this->populateCategories();
+        $this->assertDatabaseCount('categories', 2);
 
         $request = $this->createJsonRequest('POST', '/api/category/manage', [
             'oper' => 'del',
@@ -121,23 +95,17 @@ class ManageBookCategoryActionTest extends AbstractTestCase
         $content = (string)$response->getBody();
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('', $content);
-        $this->assertDatabaseCount('categories', 1);
-        $this->assertDatabaseHas('categories', ['title' => $category->title]);
+        $this->assertDatabaseCount('categories', 2);
+        $this->assertDatabaseHas('categories', ['guid' => $category->guid, 'title' => $category->title]);
+        $this->assertDatabaseHas('categories', ['guid' => $category2->guid, 'title' => $category2->title]);
     }
 
     public function testDeleteCategory()
     {
-        $category = new Category();
-        $category->title = 'new category';
-        $category->save();
-
-        $category2 = new Category();
-        $category2->title = 'new category 2';
-        $category2->save();
-
+        list($category, $category2) = $this->populateCategories();
         $this->assertDatabaseCount('categories', 2);
-        $this->assertDatabaseHas('categories', ['title' => $category->title]);
-        $this->assertDatabaseHas('categories', ['title' => $category2->title]);
+        $this->assertDatabaseHas('categories', ['guid' => $category->guid, 'title' => $category->title]);
+        $this->assertDatabaseHas('categories', ['guid' => $category2->guid, 'title' => $category2->title]);
 
         $request = $this->createJsonRequest('POST', '/api/category/manage', [
             'oper' => 'del',
@@ -155,17 +123,10 @@ class ManageBookCategoryActionTest extends AbstractTestCase
 
     public function testEditCategory_NothingToDo()
     {
-        $category = new Category();
-        $category->title = 'new category';
-        $category->save();
-
-        $category2 = new Category();
-        $category2->title = 'new category 2';
-        $category2->save();
-
+        list($category, $category2) = $this->populateCategories();
         $this->assertDatabaseCount('categories', 2);
-        $this->assertDatabaseHas('categories', ['title' => $category->title]);
-        $this->assertDatabaseHas('categories', ['title' => $category2->title]);
+        $this->assertDatabaseHas('categories', ['guid' => $category->guid, 'title' => $category->title]);
+        $this->assertDatabaseHas('categories', ['guid' => $category2->guid, 'title' => $category2->title]);
 
         $request = $this->createJsonRequest('POST', '/api/category/manage', [
             'oper' => 'edit',
@@ -178,23 +139,16 @@ class ManageBookCategoryActionTest extends AbstractTestCase
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('', $content);
         $this->assertDatabaseCount('categories', 2);
-        $this->assertDatabaseHas('categories', ['title' => $category->title]);
-        $this->assertDatabaseHas('categories', ['title' => $category2->title]);
+        $this->assertDatabaseHas('categories', ['guid' => $category->guid, 'title' => $category->title]);
+        $this->assertDatabaseHas('categories', ['guid' => $category2->guid, 'title' => $category2->title]);
     }
 
     public function testEditCategory_ChangeTitle()
     {
-        $category = new Category();
-        $category->title = 'new category';
-        $category->save();
-
-        $category2 = new Category();
-        $category2->title = 'new category 2';
-        $category2->save();
-
+        list($category, $category2) = $this->populateCategories();
         $this->assertDatabaseCount('categories', 2);
-        $this->assertDatabaseHas('categories', ['title' => $category->title]);
-        $this->assertDatabaseHas('categories', ['title' => $category2->title]);
+        $this->assertDatabaseHas('categories', ['guid' => $category->guid, 'title' => $category->title]);
+        $this->assertDatabaseHas('categories', ['guid' => $category2->guid, 'title' => $category2->title]);
 
         $request = $this->createJsonRequest('POST', '/api/category/manage', [
             'oper' => 'edit',
@@ -214,20 +168,13 @@ class ManageBookCategoryActionTest extends AbstractTestCase
 
     public function testEditCategory_BookMarkerMustBeBoolean()
     {
-        $category = new Category();
-        $category->title = 'new category';
-        $category->save();
-
-        $category2 = new Category();
-        $category2->title = 'new category 2';
-        $category2->save();
-
+        list($category, $category2) = $this->populateCategories();
         $books = $this->populateBooks();
         $bookWithMarker = $books[0];
 
         $this->assertDatabaseCount('categories', 2);
-        $this->assertDatabaseHas('categories', ['title' => $category->title]);
-        $this->assertDatabaseHas('categories', ['title' => $category2->title]);
+        $this->assertDatabaseHas('categories', ['guid' => $category->guid, 'title' => $category->title]);
+        $this->assertDatabaseHas('categories', ['guid' => $category2->guid, 'title' => $category2->title]);
         $this->assertDatabaseCount('books_categories', 0);
         $this->assertCount(0, $bookWithMarker->categories);
 
@@ -251,20 +198,13 @@ class ManageBookCategoryActionTest extends AbstractTestCase
 
     public function testEditCategory_CanChangeBookMarkerAndUpdateCategoryTitle()
     {
-        $category = new Category();
-        $category->title = 'new category';
-        $category->save();
-
-        $category2 = new Category();
-        $category2->title = 'new category 2';
-        $category2->save();
-
+        list($category, $category2) = $this->populateCategories();
         $books = $this->populateBooks();
         $bookWithMarker = $books[0];
 
         $this->assertDatabaseCount('categories', 2);
-        $this->assertDatabaseHas('categories', ['title' => $category->title]);
-        $this->assertDatabaseHas('categories', ['title' => $category2->title]);
+        $this->assertDatabaseHas('categories', ['guid' => $category->guid, 'title' => $category->title]);
+        $this->assertDatabaseHas('categories', ['guid' => $category2->guid, 'title' => $category2->title]);
         $this->assertDatabaseCount('books_categories', 0);
         $this->assertCount(0, $bookWithMarker->categories);
 
@@ -293,20 +233,13 @@ class ManageBookCategoryActionTest extends AbstractTestCase
 
     public function testEditCategory_BookMarkerIsRequiredWithNodeId()
     {
-        $category = new Category();
-        $category->title = 'new category';
-        $category->save();
-
-        $category2 = new Category();
-        $category2->title = 'new category 2';
-        $category2->save();
-
+        list($category, $category2) = $this->populateCategories();
         $books = $this->populateBooks();
         $bookWithMarker = $books[0];
 
         $this->assertDatabaseCount('categories', 2);
-        $this->assertDatabaseHas('categories', ['title' => $category->title]);
-        $this->assertDatabaseHas('categories', ['title' => $category2->title]);
+        $this->assertDatabaseHas('categories', ['guid' => $category->guid, 'title' => $category->title]);
+        $this->assertDatabaseHas('categories', ['guid' => $category2->guid, 'title' => $category2->title]);
         $this->assertDatabaseCount('books_categories', 0);
         $this->assertCount(0, $bookWithMarker->categories);
 

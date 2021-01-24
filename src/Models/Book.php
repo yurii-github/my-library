@@ -32,7 +32,7 @@ use Illuminate\Support\Collection;
  */
 class Book extends Model
 {
-    const CREATED_AT = 'created_date'; // TODO: return (new \DateTime())->format('Y-m-d H:i:s');
+    const CREATED_AT = 'created_date';
     const UPDATED_AT = 'updated_date';
 
     public $incrementing = false;

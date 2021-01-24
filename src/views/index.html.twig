@@ -164,10 +164,6 @@
             sortable: false,
             editable: false,
             formatter: function (cellvalue, options, rowObject) {
-                {% if islinux() %}
-                {# replace ' ' to '\ ' AND replace "'" to "\'" #}
-              'cellvalue = cellvalue.replace(/\s/g, \'\\\\ \'); cellvalue = cellvalue.replace(/\'/g, "\\\\\'");'
-                {% endif %}
               return '<span title="click to copy filename to clipboard" class="book-filename ui-icon ui-icon-document" data-filename="{{ copy_book_dir() | raw }}' + cellvalue + '"></span>'
             }
           },
@@ -307,7 +303,8 @@
           }
 
           $(".book-filename").on('click', function (e) {
-            window.prompt("Copy to clipboard: Ctrl+C, Enter", 'evince ' + $(this).attr('data-filename'))
+            let clipboardText =  `evince "${$(this).attr('data-filename')}"`
+            window.prompt("Copy to clipboard: Ctrl+C, Enter", clipboardText)
           })
 
           $(".book-favorite").raty(ratyOptions) //rating init

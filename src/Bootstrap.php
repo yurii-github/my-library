@@ -194,9 +194,6 @@ class Bootstrap
                 var_dump($var);
             }
         }));
-        $twig->addFunction(new TwigFunction('islinux', function () {
-            return strtoupper(PHP_OS) === 'LINUX';
-        }));
         $twig->addFunction(new TwigFunction('copy_book_dir', function () use ($config) {
             return str_replace("\\", "\\\\", $config->library->directory);
         }));

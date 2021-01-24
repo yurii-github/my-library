@@ -38,6 +38,7 @@ class ConfigDoImportNewCoverFromPdfAction
     public function __construct(ContainerInterface $container)
     {
         $this->extractor = $container->get(CoverExtractor::class);
+        assert($this->extractor instanceof CoverExtractor);
     }
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface

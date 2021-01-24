@@ -165,4 +165,12 @@ class Book extends Model
 
         return file_exists($config->getFilepath($this->filename));
     }
+    
+    public function getFilepath(): string 
+    {
+        $config = Container::getInstance()->get(Configuration::class);
+        assert($config instanceof Configuration);
+
+        return $config->getFilepath($this->filename);
+    }
 }

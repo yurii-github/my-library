@@ -156,6 +156,9 @@ class Bootstrap
                     'validation.required' => 'ssssssss'
                 ]), 'en-US');
         });
+        $container->bind(CoverExtractor::class, function(ContainerInterface $container, $args){
+            return new CoverExtractor($container->get(Configuration::class));
+        });
 
         //boot services
         $container->get('db');

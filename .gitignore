@@ -12,3 +12,4 @@
 /.phpunit.result.cache
 /reports/*
 /composer.lock
+/tests/data/mytestdb.s3db

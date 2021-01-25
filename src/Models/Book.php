@@ -65,9 +65,8 @@ class Book extends Model
         static::deleted(function (self $book) use ($config) {
             if ($config->library->sync) {
                 $filepath = $config->getFilepath($book->filename);
-                if (!file_exists($filepath)) {
-                    throw new \Exception("File '{$filepath}' was removed before record deletion with sync enabled");
-                } else {
+                // TODO: write warning into log // "File '{$filepath}' was removed before record deletion with sync enabled"
+                if (file_exists($filepath)) {
                     unlink($filepath);
                 }
             }

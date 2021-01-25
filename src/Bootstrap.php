@@ -92,8 +92,6 @@ class Bootstrap
 
     public static function initApplication()
     {
-        Bootstrap::handleCliStaticData();
-
         Container::setInstance(null);
 
         $container = Container::getInstance();
@@ -193,34 +191,5 @@ class Bootstrap
         }));
 
         return $twig;
-    }
-
-    // https://stackoverflow.com/a/55090273
-    protected static function handleCliStaticData()
-    {
-        if (PHP_SAPI === 'cli-server') {
-            $url = parse_url($_SERVER['REQUEST_URI']);
-            $filename = WEB_DIR . $url['path'];
-
-            // check the file types, only serve standard files
-            if (preg_match('/\.(?:png|js|jpg|jpeg|gif|css|ico)$/', $filename)) {
-                if (file_exists($filename)) {
-                    $fi = new \SplFileInfo($filename);
-                    if ($fi->getExtension() === 'css') {
-                        $mime = 'text/css';
-                    } else {
-                        $mime = mime_content_type($filename);
-                    }
-                    header('Content-Type: ' . $mime);
-                    readfile($filename);
-                    die;
-                }
-
-                // file does not exist. return a 404
-                header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
-                printf('"%s" does not exist', $_SERVER['REQUEST_URI']);
-                die;
-            }
-        }
     }
 }

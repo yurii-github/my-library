@@ -20,12 +20,15 @@
 
 namespace App\Configuration;
 
-use App\Exception\ConfigFileIsNotWritableException;
+use App\Exception\ConfigurationDirectoryDoesNotExistException;
+use App\Exception\ConfigurationDirectoryIsNotWritableException;
+use App\Exception\ConfigurationFileIsNotWritableException;
+use App\Exception\ConfigurationFileIsNotReadableException;
 use App\Exception\ConfigurationPropertyDoesNotExistException;
 
 /**
- * @property-read string $version
- * @property-read string $config_file
+ * @property-read string $version TODO
+ * @property-read string $config_file TODO
  * @property System $system
  * @property Library $library
  * @property Database $database
@@ -75,7 +78,6 @@ final class Configuration
     public $config_file;
     protected $config;
     protected $options = ['system', 'database', 'library', 'book'];
-    protected $isInstall = false; // TODO: remove, depend on migration history manually
 
     /**
      * @param string $filename database version. Increase version if database changes after release
@@ -87,7 +89,8 @@ final class Configuration
         $this->config_file = $filename;
 
         if (!file_exists($this->config_file)) {
-            $this->saveDefaultCfg();
+            $this->config = $this->getDefaultConfiguration();
+            $this->save();
         } else {
             $this->load($this->config_file);
         }
@@ -98,7 +101,7 @@ final class Configuration
         if (in_array($name, $this->options)) {
             return $this->config->$name;
         }
-        
+
         if (!property_exists($this, $name)) {
             throw new ConfigurationPropertyDoesNotExistException("Property '$name' does not exist");
         }
@@ -144,16 +147,6 @@ final class Configuration
         return $this->book;
     }
 
-    public function isInstall(): bool
-    {
-        return $this->isInstall;
-    }
-
-
-    /**
-     * Returns array of books filenames located in FS library folder.
-     * @return array
-     */
     public function getLibraryBookFilenames(): array
     {
         $files = [];
@@ -166,61 +159,63 @@ final class Configuration
         return $files;
     }
 
-
     public function getFilepath(string $filename): string
     {
         return $this->getLibrary()->directory . $filename;
     }
 
-
-    /**
-     * @return string
-     */
     public function getVersion(): string
     {
         return $this->version;
     }
 
-    protected function saveDefaultCfg()
-    {
-        $this->config = $this->getDefaultConfiguration();
-        $this->save();
-    }
 
-
-    protected function load($filename)
+    /**
+     * Loads configuration from JSON file.
+     *
+     * @param string $filename
+     * @throws ConfigurationFileIsNotReadableException
+     */
+    protected function load(string $filename)
     {
         if (!is_readable($filename)) {
-            throw new \InvalidArgumentException('cannot read config file at this location: ' . $filename);
+            throw new ConfigurationFileIsNotReadableException("Cannot read configuration from file '$filename'");
         }
 
         $this->config = json_decode(file_get_contents($filename), false);
+        $this->populateNewProperties($this->config);
+    }
 
-        //
-        // silently injects newly introduced option into current config from default config
-        //
+
+    /**
+     * Silently injects newly introduced option into current config from default config
+     *
+     * @param \stdClass $config config to populate new properties
+     */
+    protected function populateNewProperties(\stdClass $config)
+    {
         $def_config = $this->getDefaultConfiguration();
         $rf1 = new \ReflectionObject($def_config);
         /* @var $p_base \ReflectionProperty */
-        foreach ($rf1->getProperties() as $p_base) {// lvl-1: system, book ...
+        foreach ($rf1->getProperties() as $p_base) { // lvl-1: system, book ...
             $lvl1 = $p_base->name;
             if (empty($this->config->$lvl1)) {
                 $this->config->$lvl1 = $def_config->$lvl1;
                 continue;
             }
             $rf2 = new \ReflectionObject($def_config->{$p_base->name});
-            foreach ($rf2->getProperties() as $p_option) {//lvl-2: system->theme ..
+            foreach ($rf2->getProperties() as $p_option) { //lvl-2: system->theme ..
                 $lvl2 = $p_option->name;
                 if (empty($this->config->$lvl1->$lvl2)) {
                     $this->config->$lvl1->$lvl2 = $def_config->$lvl1->$lvl2;
-                    continue;//reserved. required for lvl-3 if introduced
+                    continue; //reserved. required for lvl-3 if introduced
                 }
             }
         }
     }
 
 
-    public function getDefaultConfiguration(): object
+    protected function getDefaultConfiguration(): object
     {
         return (object)[
             'system' => (object)[
@@ -257,15 +252,11 @@ final class Configuration
         $config_dir = dirname($this->config_file);
 
         if (file_exists($filename) && !is_writable($filename)) {
-            throw new ConfigFileIsNotWritableException("File '$filename' is not writable", 1);
+            throw new ConfigurationFileIsNotWritableException("File '$filename' is not writable");
         } elseif (is_dir($config_dir) && !is_writable($config_dir)) {
-            throw new ConfigFileIsNotWritableException("config directory '$config_dir' is not writable", 2);
+            throw new ConfigurationDirectoryIsNotWritableException("Directory '$config_dir' is not writable");
         } elseif (!is_dir($config_dir)) {
-            throw new \InvalidArgumentException("Directory does not exist", 3);
-        }
-
-        if (!file_exists($filename)) {
-            $this->isInstall = true;
+            throw new ConfigurationDirectoryDoesNotExistException("Directory '$config_dir' does not exist");
         }
 
         file_put_contents($filename, json_encode($this->config, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));

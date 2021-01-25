@@ -3,7 +3,9 @@
 namespace Tests;
 
 use \App\Configuration\Configuration;
-use App\Exception\ConfigFileIsNotWritableException;
+use App\Exception\ConfigurationDirectoryDoesNotExistException;
+use App\Exception\ConfigurationDirectoryIsNotWritableException;
+use App\Exception\ConfigurationFileIsNotReadableException;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use \App\Exception\ConfigurationPropertyDoesNotExistException;
@@ -26,6 +28,64 @@ class ConfigurationTest extends TestCase
         $this->configDecoded = json_decode($configData);
     }
 
+    public function testPopulateNewProperties()
+    {
+        $this->assertTrue(property_exists($this->configDecoded->library, 'sync'));
+        unset($this->configDecoded->library->sync);
+        file_put_contents(vfsStream::url('base/data/config.json'), json_encode($this->configDecoded));
+        $this->assertFalse(property_exists($this->configDecoded->library, 'sync'));
+        $config = new Configuration(vfsStream::url('base/data/config.json'), '1.3');
+
+        $this->assertTrue(property_exists($config->library, 'sync'));
+        $this->assertIsBool($config->library->sync);
+        $this->assertFalse($config->library->sync);
+        
+        $loaded = json_decode(file_get_contents(vfsStream::url('base/data/config.json')), false);
+        $this->assertFalse(property_exists($loaded->library, 'sync'));
+
+        $config->save();
+        $loaded = json_decode(file_get_contents(vfsStream::url('base/data/config.json')), false);
+        $this->assertTrue(property_exists($loaded->library, 'sync'));
+        $this->assertIsBool($loaded->library->sync);
+        $this->assertFalse($loaded->library->sync);
+    }
+    
+    
+    public function testConfigurationSetupFromDefaults()
+    {
+        $newFilename = vfsStream::url('base/data/config_new.json');
+        $this->assertFileNotExists($newFilename);
+
+        $config = new Configuration($newFilename, '1.3');
+
+        $this->assertFileExists($newFilename);
+        $this->assertSame('1.3', $config->getVersion());
+        $this->assertStringStartsWith(vfsStream::url('base/data'), $config->getLibrary()->directory);
+        $this->assertStringStartsWith(vfsStream::url('base/data'), $config->getDatabase()->filename);
+    }
+
+    public function testCannotSaveConfigurationToNonExistingDirectory()
+    {
+        vfsStream::setup('base');
+        $this->assertDirectoryNotExists(vfsStream::url('base/data'));
+
+        $this->expectException(ConfigurationDirectoryDoesNotExistException::class);
+        $this->expectExceptionMessage("Directory 'vfs://base/data' does not exist");
+        $config = new Configuration(vfsStream::url('base/data/config.json'), '1.3');
+    }
+
+    public function testConfigurationFileIsNotReadable()
+    {
+        $this->expectException(ConfigurationFileIsNotReadableException::class);
+        $this->expectExceptionMessage("Cannot read configuration from file 'vfs://base/data/config_new.json'");
+
+        $newFilename = vfsStream::url('base/data/config_new.json');
+        file_put_contents($newFilename, '');
+        chmod($newFilename, 0000);
+        $this->assertNotIsReadable($newFilename);
+
+        $config = new Configuration($newFilename, '1.3');
+    }
 
     function testCannotGetNotExistedProperty()
     {
@@ -40,7 +100,7 @@ class ConfigurationTest extends TestCase
         $this->expectException(ConfigurationPropertyDoesNotExistException::class);
         $this->configLoaded->not_exist = 'value';
     }
-    
+
     function testCannotSetNotExistedPropertyForNotExistedPropertyOfSecondLevel()
     {
         $this->expectException(ConfigurationPropertyDoesNotExistException::class);
@@ -53,8 +113,8 @@ class ConfigurationTest extends TestCase
         $this->configLoaded->system->asd = 'value';
         $this->assertEquals('value', $this->configLoaded->system->asd);
     }
-    
-    
+
+
     public function testGetters()
     {
         $this->assertIsString($this->configLoaded->getVersion());
@@ -63,10 +123,10 @@ class ConfigurationTest extends TestCase
     }
 
 
-    function testDirectoryIsNotWritable()
+    function testConfigurationDirectoryIsNotWritable()
     {
-        $this->expectException(ConfigFileIsNotWritableException::class);
-        $this->expectExceptionCode(2);
+        $this->expectException(ConfigurationDirectoryIsNotWritableException::class);
+        $this->expectExceptionMessage("Directory 'vfs://base/data' is not writable");
         unlink($this->configLoaded->config_file);
         chmod(dirname($this->configLoaded->config_file), 0444);
         $this->configLoaded->save();

@@ -10,18 +10,9 @@ class ConfigDoImportNewCoverFromPdfActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;
 
-    protected function hasGhostcript()
-    {
-        return file_exists($this->getLibraryConfig()->getBook()->ghostscript);
-    }
-
     protected function withGhostscript()
     {
-        if (file('/usr/bin/ghostscript')) {
-            $this->getLibraryConfig()->getBook()->ghostscript = '/usr/bin/ghostscript';
-        }
-
-        return $this->hasGhostcript();
+        $this->getLibraryConfig()->getBook()->ghostscript = '/usr/bin/ghostscript';
     }
 
     public function testGhostcript_IsNotconfigured()
@@ -146,6 +137,45 @@ class ConfigDoImportNewCoverFromPdfActionTest extends AbstractTestCase
             'result' => false,
             'error' => "Unsupported book format for '{$bookWithCover->getFilepath()}'"
         ], $response);
+    }
+
+    public function testFailsToExtractFromInvalidPdfFile()
+    {
+        $this->withGhostscript();
+        
+        $books = $this->populateBooks();
+        $bookWithCover = $books[0];
+        $bookWithCover->filename .= '.pdf';
+        $bookWithCover->book_cover = 'some-data';
+        $bookWithCover->save();
+        file_put_contents($bookWithCover->getFilepath(), 'some invalid data');
+
+        $this->assertDatabaseHas('books', [
+            'book_guid' => $bookWithCover->book_guid,
+            'book_cover' => $bookWithCover->book_cover,
+        ]);
+
+        $request = $this->createJsonRequest('POST', '/config/import-new-cover-from-pdf', [
+            'post' => [
+                ['book_guid' => $bookWithCover->book_guid]
+            ]
+        ]);
+
+        $response = $this->app->handle($request);
+        $content = (string)$response->getBody();
+
+        $this->assertDatabaseHas('books', [
+            'book_guid' => $bookWithCover->book_guid,
+            'book_cover' => $bookWithCover->book_cover,
+            'filename' => $bookWithCover->filename,
+        ]);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $content = (string)$response->getBody();
+        $content = json_decode($content, true);
+        $this->assertSame([], $content['data']);
+        $this->assertSame(false, $content['result']);
+        $this->assertStringStartsWith('Failed to convert from <b>vfs://base/data/books/filename-1.pdf</b>', $content['error']);
     }
 
     public function testDoesNothingIfBookFileDoesNotExist()

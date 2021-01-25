@@ -32,10 +32,10 @@ abstract class AbstractTestCase extends TestCase
      */
     protected function setUp(): void
     {
-        Bootstrap::initEnvironment();
+        Bootstrap::initEnvironment(vfsStream::url('base/data'));
         $this->initVirtualFileSystem();
         $this->initConfig();
-        $this->app = Bootstrap::initApplication(vfsStream::url('base/data'));
+        $this->app = Bootstrap::initApplication();
         $migrator = Container::getInstance()->get(AppMigrator::class);
         $output = $migrator->migrate();
 

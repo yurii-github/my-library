@@ -1,5 +1,15 @@
 <?php
+
+use App\Bootstrap;
+use \App\PhpCliServer;
+
 require dirname(__DIR__) . '/vendor/autoload.php';
-\App\Bootstrap::initEnvironment();
-$app = \App\Bootstrap::initApplication(dirname(__DIR__) . '/data');
+
+Bootstrap::initEnvironment(dirname(__DIR__) . '/data');
+
+if (PhpCliServer::handle(WEB_DIR)) {
+    exit;
+}
+
+$app = Bootstrap::initApplication();
 $app->run();

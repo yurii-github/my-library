@@ -78,21 +78,20 @@ class Bootstrap
         return $capsule;
     }
 
-    public static function initEnvironment()
-    {
-        defined('BASE_DIR') || define('BASE_DIR', dirname(__DIR__));
-        (new Dotenv())->load(BASE_DIR . '/.env');
-    }
-
-    public static function initApplication(string $dataDir)
+    public static function initEnvironment(string $dataDir)
     {
         defined('BASE_DIR') || define('BASE_DIR', dirname(__DIR__));
         defined('DATA_DIR') || define('DATA_DIR', $dataDir);
         defined('SRC_DIR') || define('SRC_DIR', BASE_DIR . '/src');
         defined('WEB_DIR') || define('WEB_DIR', BASE_DIR . '/public');
+        
+        if(file_exists(BASE_DIR . '/.env')) {
+            (new Dotenv())->load(BASE_DIR . '/.env');
+        }
+    }
 
-        Bootstrap::handleCliStaticData();
-
+    public static function initApplication()
+    {
         Container::setInstance(null);
 
         $container = Container::getInstance();
@@ -192,34 +191,5 @@ class Bootstrap
         }));
 
         return $twig;
-    }
-
-    // https://stackoverflow.com/a/55090273
-    protected static function handleCliStaticData()
-    {
-        if (PHP_SAPI === 'cli-server') {
-            $url = parse_url($_SERVER['REQUEST_URI']);
-            $filename = WEB_DIR . $url['path'];
-
-            // check the file types, only serve standard files
-            if (preg_match('/\.(?:png|js|jpg|jpeg|gif|css|ico)$/', $filename)) {
-                if (file_exists($filename)) {
-                    $fi = new \SplFileInfo($filename);
-                    if ($fi->getExtension() === 'css') {
-                        $mime = 'text/css';
-                    } else {
-                        $mime = mime_content_type($filename);
-                    }
-                    header('Content-Type: ' . $mime);
-                    readfile($filename);
-                    die;
-                }
-
-                // file does not exist. return a 404
-                header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
-                printf('"%s" does not exist', $_SERVER['REQUEST_URI']);
-                die;
-            }
-        }
     }
 }

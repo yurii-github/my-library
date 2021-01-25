@@ -12,7 +12,7 @@
       //API: http://www.w3.org/TR/FileAPI/
       //identifying which image is currently open in fancybox
       //https://github.com/fancyapps/fancyBox/issues/40
-      //$.jgrid.no_legacy_api = true;
+      $.jgrid.no_legacy_api = true;
 
       var book_list = $("#book-list"), lastSel, lastFavorite, lastRead, filterCategories
 
@@ -21,7 +21,6 @@
         if (val === undefined) {
           val = v
         }
-        //console.log('cookie:',n,v);
         return val
       }
 
@@ -129,31 +128,18 @@
             editoptions: {
               custom_element: function (value, options) {
                 return '<input type="checkbox" ' + (value === 'yes' ? 'checked="checked"' : '') + '/>'
-              }
-              ,
+              },
               custom_value: function (element) {
                 return element.is(':checked') ? 'yes' : 'no'
               }
             }
           },
-          {
-            name: 'year', index: 'year', width: 50
-          },
-          {
-            name: 'title', index: 'title', width: 400, align: 'left'
-          },
-          {
-            name: 'isbn13', index: 'isbn13', width: 115
-          },
-          {
-            name: 'author', index: 'author', width: 150, align: 'left'
-          },
-          {
-            name: 'publisher', index: 'publisher', width: 150, align: 'left'
-          },
-          {
-            name: 'ext', index: 'ext', width: 80, align: 'center'
-          },
+          { name: 'year', index: 'year', width: 50 },
+          { name: 'title', index: 'title', width: 400, align: 'left' },
+          { name: 'isbn13', index: 'isbn13', width: 115 },
+          { name: 'author', index: 'author', width: 150, align: 'left'},
+          { name: 'publisher', index: 'publisher', width: 150, align: 'left' },
+          { name: 'ext', index: 'ext', width: 80, align: 'center' },
           {
             name: 'filename',
             index: 'filename',
@@ -176,30 +162,26 @@
             search: false,
             resize: false,
             formatter: 'actions',
-            formatoptions:
-              {
-                keys: true, editbutton:
-                  false
-              }
+            formatoptions: {
+              keys: true,
+              editbutton: false
+            }
           }
         ],
         cmTemplate: {
-          align: 'center', sortable:
-            true, editable:
-            true, hidden:
-            false
+          align: 'center',
+          sortable: true,
+          editable: true,
+          hidden: false
         },
         caption: '',
         rowNum: parseInt(getCookie('rowNum', 10)),
-        page:
-          parseInt(getCookie('page', 1)),
-        //TODO: currently store in cookies only page: <?php //echo \Yii::$app->session->get('jqgrid.page', 1); ?>,
+        page: parseInt(getCookie('page', 1)),
         rownumbers: true,
         autowidth: true,
         height: '100%',
-        rowList:
-          [10, 20, 30, 40, 50], pager:
-          jQuery('#book-pager'),
+        rowList: [10, 20, 30, 40, 50],
+        pager: jQuery('#book-pager'),
         sortname: 'created_date',
         viewrecords: true,
         sortorder: "desc",
@@ -209,7 +191,7 @@
         cellSubmit: 'remote',
         cellurl: 'api/book/manage', subGrid: true,
         subGridRowExpanded: function (subgrid_id, row_id) {
-          // If we wan to pass additinal parameters to the url we can use
+          // If we want to pass additional parameters to the url we can use
           // a method getRowData(row_id) - which returns associative array in type name-value
           const subgrid_table_id = subgrid_id + "_t"
           const jq_subgrid_table_id = '#' + subgrid_table_id
@@ -247,9 +229,7 @@
           })
 
           jQuery(jq_subgrid_table_id).jqGrid('navGrid', "#" + pager_id, {edit: true, add: true, del: true})
-        }
-
-        ,
+        },
         // subGridRowColapsed: function(subgrid_id, row_id) .. // this function is called before removing the data
         toolbar: [true, "bottom"],
         loadComplete: function () {
@@ -260,7 +240,6 @@
             $widget.append($('<input id="category_ALL" type="checkbox" value="false" /> <label for="category_ALL">[ALL]</label>'))
 
               {% for category in categories %}
-            console.log('{{ category.guid }}')
             $widget.append($('<input id="category_{{ category.guid }}" type="checkbox" value="{{ category.guid }}" /> <label for="category_{{ category.guid }}">{{ category.title }}</label>'))
               {% endfor %}
 
@@ -328,14 +307,11 @@
             afterClose: function (e) {
             }
           })
-        }
-
-        ,
+        },
         ondblClickRow: function (rowid, ri, ci) {
           var row_obj = book_list.jqGrid('getInd', rowid, true) // row_obj is just piece of html - TR
           lastFavorite = $(row_obj).find('div.book-favorite').attr('data-score')
           lastRead = $(row_obj).find('div.book-read-yes').attr('class') !== undefined ? 'yes' : 'no'
-          //console.log(row_obj);
 
           //.jqGrid('editRow', rowid, keys, oneditfunc, successfunc, url, extraparam, aftersavefunc,errorfunc, afterrestorefunc);
           book_list.jqGrid('editRow', rowid, {
@@ -347,9 +323,7 @@
               $('.book-favorite[data-guid="' + id + '"]').raty(ratyOptions)
             }
           })
-        }
-        ,
-
+        },
         onSelectRow: function (id) {
           if (id && id !== lastSel) {
             if (typeof lastSel !== "undefined") {
@@ -360,7 +334,13 @@
           }
         }
       })
-        .jqGrid('navGrid', '#book-pager', {edit: false, add: true, del: false, search: false})// navigation: default
+        .jqGrid('navGrid', '#book-pager', {
+          // navigation options
+          edit: false,
+          add: false,
+          del: false,
+          search: false
+        })
         .jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false})// inline filter
     </script>
 
@@ -430,9 +410,7 @@
             if (items[i].type.indexOf("image") !== -1) {
               // We need to represent the image as a file,
               var file = items[i].getAsFile()
-              console.log('on paste')
               $cover.trigger('save-file', file)
-              console.log(file)
             }
           }
         }// if cover is visible

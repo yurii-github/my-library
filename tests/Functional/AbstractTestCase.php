@@ -25,6 +25,7 @@ abstract class AbstractTestCase extends TestCase
     /** @var Manager */
     protected $db;
 
+    static $dbInit = false;
 
     /**
      * @inheritDoc
@@ -102,6 +103,7 @@ abstract class AbstractTestCase extends TestCase
     
     protected function useSqliteInMemory(\stdClass $config)
     {
+        $config->database->format = 'sqlite';
         $config->database->filename = ':memory:';
     }
     
@@ -109,11 +111,15 @@ abstract class AbstractTestCase extends TestCase
     {
         // SQLite does not support streams https://github.com/bovigo/vfsStream/issues/19
         $testDbFilename = dirname(__DIR__) . '/data/mytestdb.s3db';
-        $config->database->filename = $testDbFilename;
-        if (file_exists($testDbFilename)) {
-            unlink($testDbFilename);
+        if (!self::$dbInit) {
+            if (file_exists($testDbFilename)) {
+                unlink($testDbFilename);
+            }
+            touch($testDbFilename);
         }
-        touch($testDbFilename);
+
+        $config->database->format = 'sqlite';
+        $config->database->filename = $testDbFilename;
     }
 
     protected function useMySQL(\stdClass $config)
@@ -141,14 +147,16 @@ abstract class AbstractTestCase extends TestCase
         $config = json_decode(file_get_contents(dirname(__DIR__) . '/data/config_sqlite.json'));
         $dbType = $_ENV['DB_TYPE'] ?? 'sqlite';
 
-        if ($dbType === 'sqlite') {
+        if ($dbType === 'sqlite_memory') { // special case for local testing
             $this->useSqliteInMemory($config);
+        } elseif ($dbType === 'sqlite') {
+            $this->useSqliteInFile($config);
         } elseif ($dbType === 'mysql') {
             $this->useMySQL($config);
         } else {
             throw new \Exception('must setup env variable DB_TYPE. Supported values are \'mysql\' and \'sqlite\'');
         }
-        
+
         file_put_contents(vfsStream::url('base/data/config.json'), json_encode($config, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
     }
 

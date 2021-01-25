@@ -21,6 +21,7 @@
 namespace App;
 
 use App\Exception\BookFileNotFoundException;
+use App\Exception\CoverExtractionFailedException;
 use App\Exception\GhostscriptIsNotConfiguredException;
 use App\Exception\InvalidBookFormatException;
 use Illuminate\Support\Str;
@@ -53,29 +54,24 @@ class CoverExtractor
         }
         
         $coverData = null;
-        $outJpegFile = tempnam(sys_get_temp_dir(), 'MYL');
+        $tmpFilename = tempnam(sys_get_temp_dir(), 'MYL');
 
         try {
+            chmod($tmpFilename, 0777);
 
-            if (!file_exists($outJpegFile)) {
-                throw new \Exception("Failed to create temporary file '$outJpegFile'");
-            }
-            chmod($outJpegFile, 0777);
-
-            $command = $this->buildGhostscriptCommand($srcPdfFile, $outJpegFile);
+            $command = $this->buildGhostscriptCommand($srcPdfFile, $tmpFilename);
             $res = exec($command, $output);
-
-            if (filesize($outJpegFile) == 0) {
-                throw new \Exception("Failed to convert from <b>$srcPdfFile</b> to <b>$outJpegFile</b>. <br>ERROR: $res<br><br>" . print_r($output, true));
-            }
-
-            $coverData = file_get_contents($outJpegFile);
+            $coverData = file_get_contents($tmpFilename);
         } finally {
-            if (file_exists($outJpegFile)) {
-                unlink($outJpegFile);
+            if (file_exists($tmpFilename)) {
+                unlink($tmpFilename);
             }
         }
 
+        if (empty($coverData)) {
+            throw new CoverExtractionFailedException("Failed to convert from <b>$srcPdfFile</b> to <b>$tmpFilename</b>. <br>ERROR: $res<br><br>" . print_r($output, true));
+        }
+        
         return $coverData;
     }
 

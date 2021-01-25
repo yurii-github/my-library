@@ -24,7 +24,8 @@
 
     <div id="tabs" style="width: 800px; margin: auto; text-align: left;">
         <ul>
-            <li><a href="config#tabs-1">{{ t.trans('settings') }}</a><span style="display: inline-block;" class="status ui-icon ui-icon-wrench"></span></li><li><a href="config#tabs-3">{{ t.trans('syncronization') }}</a><span style="display: inline-block;" class="status ui-icon ui-icon-refresh"></span></li><li><a href="config/php-info">{{ t.trans('PHP info: ') ~ PHP_VERSION }}</a></li>
+            <li><a href="config#tabs-1">{{ t.trans('settings') }}</a><span style="display: inline-block;" class="status ui-icon ui-icon-wrench"></span></li>
+            <li><a href="config#tabs-3">{{ t.trans('syncronization') }}</a><span style="display: inline-block;" class="status ui-icon ui-icon-refresh"></span></li>
         </ul>
 
         <div id="tabs-1">
@@ -221,8 +222,8 @@
             return
           }
 
-          let state = (result === 1 ? 'highlight' : 'error')
-          let icon = (result === 1 ? 'info' : 'alert')
+          let state = (result === true ? 'highlight' : 'error')
+          let icon = (result === true ? 'info' : 'alert')
 
           this.html(
             '<div class="ui-state-' + state + ' ui-corner-all" style="padding: 10px; margin-top: 20px; margin-bottom: 20px;">' +
@@ -455,6 +456,5 @@
           }
         })
       })
-
     </script>
 {% endblock %}

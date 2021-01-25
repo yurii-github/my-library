@@ -35,7 +35,6 @@ class Routes
         $app->post('/api/category/manage', Actions\ManageBookCategoryAction::class);
         $app->get('/about', Actions\Pages\AboutPageAction::class);
         $app->get('/config', Actions\Pages\ConfigPageAction::class);
-        $app->get('/config/php-info', Actions\GetPhpInfoAction::class);
         $app->post('/config/save', Actions\UpdateConfigAction::class);
         $app->post('/config/compact-database', Actions\ConfigCompactDatabaseAction::class);
         $app->get('/config/check-files', Actions\ConfigCheckFilesAction::class);

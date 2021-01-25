@@ -29,14 +29,14 @@ class PhpCliServer
         return PHP_SAPI === 'cli-server';
     }
     
-    public static function handle(): bool 
+    public static function handle(string $webDir): bool 
     {
-        if (!self::isCliServer()) {
+        if (!static::isCliServer()) {
             return false;
         }
 
         $url = parse_url($_SERVER['REQUEST_URI']);
-        $filename = WEB_DIR . $url['path'];
+        $filename = $webDir . $url['path'];
 
         if (!preg_match('/\.(?:png|js|jpg|jpeg|gif|css|ico)$/', $filename)) {
             return false;
@@ -44,7 +44,7 @@ class PhpCliServer
 
         if (!file_exists($filename)) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
-            printf('"%s" does not exist', $_SERVER['REQUEST_URI']);
+            printf("'%s' does not exist", $_SERVER['REQUEST_URI']);
             return true;
         }
 

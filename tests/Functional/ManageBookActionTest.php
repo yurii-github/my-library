@@ -83,21 +83,60 @@ class ManageBookActionTest extends AbstractTestCase
 
     public function testDeleteBook_Successful()
     {
-        $this->setBookLibrarySync(false); //TODO: remove file if sync is ON
+        $this->setBookLibrarySync(false);
         $books = $this->populateBooks();
-        $book = $books[0];
+        $bookToDelete = $books[0];
 
         $request = $this->createJsonRequest('POST', '/api/book/manage', [
-            'id' => $book->book_guid,
+            'id' => $bookToDelete->book_guid,
             'oper' => 'del'
         ]);
         $response = $this->app->handle($request);
         $this->assertSame('', (string)$response->getBody());
 
         $this->assertDatabaseCount('books', 2);
-        $this->assertDatabaseMissing('books', ['book_guid' => $book->book_guid]);
+        $this->assertDatabaseMissing('books', ['book_guid' => $bookToDelete->book_guid]);
     }
 
+    public function testDeleteBook_SuccessfulWithSyncOnWhenFileExists()
+    {
+        $this->setBookLibrarySync(false);
+        $books = $this->populateBooks();
+        $this->setBookLibrarySync(true);
+        $bookToDelete = $books[0];
+
+        $request = $this->createJsonRequest('POST', '/api/book/manage', [
+            'id' => $bookToDelete->book_guid,
+            'oper' => 'del'
+        ]);
+        $response = $this->app->handle($request);
+        $content = (string)$response->getBody();
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('', $content);
+        $this->assertDatabaseCount('books', 2);
+    }
+    
+    public function testDeleteBook_SuccessfulWithSyncOnWhenFileWasRemoved()
+    {
+        $this->setBookLibrarySync(false);
+        $books = $this->populateBooks();
+        $this->setBookLibrarySync(true);
+        $bookToDelete = $books[0];
+        file_put_contents($bookToDelete->getFilepath(), 'some data');
+        $this->assertFileExists($bookToDelete->getFilepath());
+
+        $request = $this->createJsonRequest('POST', '/api/book/manage', [
+            'id' => $bookToDelete->book_guid,
+            'oper' => 'del'
+        ]);
+        $response = $this->app->handle($request);
+        $content = (string)$response->getBody();
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('', $content);
+        $this->assertDatabaseCount('books', 2);
+        $this->assertFileNotExists($bookToDelete->getFilepath());
+    }
+    
     public function testEditBook_ChangeFilenameIsSkipped()
     {
         $createdAt = Carbon::now();
@@ -146,7 +185,7 @@ class ManageBookActionTest extends AbstractTestCase
 
     public function testEditBook_CanChangeFilenameFromTitleWithoutFileWithoutSync()
     {
-        $this->setBookLibrarySync(false); // TODO: rename file if sync is ON
+        $this->setBookLibrarySync(false);
         $books = $this->populateBooks();
         $book = $books[0];
 
@@ -166,7 +205,44 @@ class ManageBookActionTest extends AbstractTestCase
             'filename' => ", ''new title X'',  []."
         ]);
     }
+    
+    // TODO: this test is failed because file is not getting locked!!!
+    public function testEditBook_CannotChangeWhileIsOpenWithSync()
+    {
+        $this->setBookLibrarySync(false);
+        $books = $this->populateBooks();
+        $this->setBookLibrarySync(true);
+        $bookToChange = $books[0];
+        $oldFilename = $bookToChange->getFilepath();
+        file_put_contents($oldFilename, 'some data');
+        $this->assertFileExists($oldFilename);
+        $this->assertSame('some data', file_get_contents($oldFilename));
+        
+        // see bug https://github.com/bovigo/vfsStream/issues/126
+        $stream = fopen($oldFilename, 'rb');
+        flock($stream, LOCK_EX);
+        
+        $request = $this->createJsonRequest('POST', '/api/book/manage', [
+            'id' => $bookToChange->book_guid,
+            'title' => 'new title X',
+            'oper' => 'edit'
+        ]);
 
+        $response = $this->app->handle($request);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('', (string)$response->getBody());
+        $this->assertDatabaseHas('books', [
+            'book_guid' => $bookToChange->book_guid,
+            'title' => 'new title X',
+            'filename' => ", ''new title X'',  []."
+        ]);
+        $this->assertFileNotExists($oldFilename);
+        $bookToChange->refresh();
+        $this->assertFileExists($bookToChange->getFilepath());
+        $this->assertSame('some data', file_get_contents($bookToChange->getFilepath()));
+    }
+    
 
     public function testEditBook_CannotChangeFilenameFromTitleWithoutFileWithSync()
     {

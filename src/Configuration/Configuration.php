@@ -25,6 +25,10 @@ use App\Exception\ConfigurationDirectoryIsNotWritableException;
 use App\Exception\ConfigurationFileIsNotWritableException;
 use App\Exception\ConfigurationFileIsNotReadableException;
 use App\Exception\ConfigurationPropertyDoesNotExistException;
+use \stdClass;
+use \DirectoryIterator;
+use \ReflectionObject;
+use \ReflectionProperty;
 
 /**
  * @property-read string $version TODO
@@ -82,6 +86,10 @@ final class Configuration
     /**
      * @param string $filename database version. Increase version if database changes after release
      * @param string $version current app configuration
+     * @throws ConfigurationDirectoryDoesNotExistException
+     * @throws ConfigurationDirectoryIsNotWritableException
+     * @throws ConfigurationFileIsNotReadableException
+     * @throws ConfigurationFileIsNotWritableException
      */
     public function __construct(string $filename, string $version)
     {
@@ -96,31 +104,28 @@ final class Configuration
         }
     }
 
-    public function __get($name)
+    /**
+     * @param string $name
+     * @throws ConfigurationPropertyDoesNotExistException
+     * @return mixed
+     */
+    public function __get(string $name)
     {
         if (in_array($name, $this->options)) {
             return $this->config->$name;
         }
 
-        if (!property_exists($this, $name)) {
-            throw new ConfigurationPropertyDoesNotExistException("Property '$name' does not exist");
-        }
-
-        return $this->$name;
+        throw new ConfigurationPropertyDoesNotExistException("Property '$name' does not exist");
     }
 
+    /**
+     * @param string $name
+     * @param mixed $value
+     * @throws ConfigurationPropertyDoesNotExistException
+     */
     public function __set(string $name, $value)
     {
-        if (in_array($name, $this->options)) {
-            $this->config->$name = $value;
-            return;
-        }
-
-        if (!property_exists($this, $name)) {
-            throw new ConfigurationPropertyDoesNotExistException("Property '$name' does not exist");
-        }
-
-        $this->$name = $value;
+        throw new ConfigurationPropertyDoesNotExistException("Property '$name' does not exist");
     }
 
     // for twig
@@ -150,7 +155,7 @@ final class Configuration
     public function getLibraryBookFilenames(): array
     {
         $files = [];
-        foreach (new \DirectoryIterator($this->getLibrary()->directory) as $file) {
+        foreach (new DirectoryIterator($this->getLibrary()->directory) as $file) {
             if ($file->isFile()) {
                 $files[] = $file->getFilename();
             }
@@ -190,24 +195,24 @@ final class Configuration
     /**
      * Silently injects newly introduced option into current config from default config
      *
-     * @param \stdClass $config config to populate new properties
+     * @param stdClass $config config to populate new properties
      */
-    protected function populateNewProperties(\stdClass $config)
+    protected function populateNewProperties(stdClass $config)
     {
-        $def_config = $this->getDefaultConfiguration();
-        $rf1 = new \ReflectionObject($def_config);
-        /* @var $p_base \ReflectionProperty */
+        $defaultConfig = $this->getDefaultConfiguration();
+        $rf1 = new ReflectionObject($defaultConfig);
+        /* @var $p_base ReflectionProperty */
         foreach ($rf1->getProperties() as $p_base) { // lvl-1: system, book ...
             $lvl1 = $p_base->name;
-            if (empty($this->config->$lvl1)) {
-                $this->config->$lvl1 = $def_config->$lvl1;
+            if (empty($config->$lvl1)) {
+                $config->$lvl1 = $defaultConfig->$lvl1;
                 continue;
             }
-            $rf2 = new \ReflectionObject($def_config->{$p_base->name});
+            $rf2 = new ReflectionObject($defaultConfig->{$p_base->name});
             foreach ($rf2->getProperties() as $p_option) { //lvl-2: system->theme ..
                 $lvl2 = $p_option->name;
-                if (empty($this->config->$lvl1->$lvl2)) {
-                    $this->config->$lvl1->$lvl2 = $def_config->$lvl1->$lvl2;
+                if (empty($config->$lvl1->$lvl2)) {
+                    $config->$lvl1->$lvl2 = $defaultConfig->$lvl1->$lvl2;
                     continue; //reserved. required for lvl-3 if introduced
                 }
             }
@@ -245,7 +250,11 @@ final class Configuration
         ];
     }
 
-
+    /**
+     * @throws ConfigurationDirectoryDoesNotExistException
+     * @throws ConfigurationDirectoryIsNotWritableException
+     * @throws ConfigurationFileIsNotWritableException
+     */
     public function save()
     {
         $filename = $this->config_file;

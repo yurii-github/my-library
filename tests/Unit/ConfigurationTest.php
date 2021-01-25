@@ -60,6 +60,32 @@ class ConfigurationTest extends TestCase
         $this->assertFalse($loaded->library->sync);
     }
     
+    public function testSetVirtualProperty()
+    {
+        $this->setupGenericCheck($configLoaded, $configDecoded);
+        $this->assertFalse($configLoaded->library->sync);
+
+        $configLoaded->library->sync = true;
+        $this->assertTrue($configLoaded->library->sync);
+    }
+
+    public function testSetNewVirtualGroupFromDefaults()
+    {
+        $configFilename = vfsStream::url('base/data/config.json');
+        $configDecoded = json_decode(file_get_contents(dirname(__DIR__) . '/data/config_sqlite.json'));
+        $this->assertTrue(property_exists($configDecoded, 'library'));
+        
+        unset($configDecoded->library);
+        $this->assertFalse(property_exists($configDecoded, 'library'));
+
+        file_put_contents($configFilename, json_encode($configDecoded));
+
+        $config = new Configuration($configFilename, '1.3');
+
+        $this->assertInstanceOf(\stdClass::class, $config->library);
+        $this->assertFalse( $config->library->sync);
+    }
+    
     
     public function testConfigurationSetupFromDefaults()
     {

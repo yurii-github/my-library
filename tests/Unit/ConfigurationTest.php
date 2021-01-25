@@ -12,28 +12,36 @@ use \App\Exception\ConfigurationPropertyDoesNotExistException;
 
 class ConfigurationTest extends TestCase
 {
-    /**  @var Configuration loaded from default config file */
-    private $configLoaded; // config
-    /** @var \stdClass not real configuration, just json decode of default configuration file */
-    private $configDecoded; // def_cfg
-
     protected function setUp(): void
     {
-        $this->initVirtualFileSystem();
+        vfsStream::setup('base/data');
         defined('DATA_DIR') || define('DATA_DIR', vfsStream::url('base/data'));
+    }
+
+    /**
+     * @param Configuration $configLoaded loaded from default config file
+     * @param \stdClass $configDecoded not real configuration, just json decode of default configuration file
+     * @return array
+     */
+    protected function setupGenericCheck(&$configLoaded, &$configDecoded)
+    {
         $vfsConfigFile = vfsStream::url('base/data/config.json');
         $configData = file_get_contents(dirname(__DIR__) . '/data/config_sqlite.json');
         file_put_contents($vfsConfigFile, $configData);
-        $this->configLoaded = new Configuration($vfsConfigFile, '1.3');
-        $this->configDecoded = json_decode($configData);
+        $configLoaded = new Configuration($vfsConfigFile, '1.3');
+        $configDecoded = json_decode($configData);
+        
+        return [$configLoaded, $configDecoded];
     }
 
     public function testPopulateNewProperties()
     {
-        $this->assertTrue(property_exists($this->configDecoded->library, 'sync'));
-        unset($this->configDecoded->library->sync);
-        file_put_contents(vfsStream::url('base/data/config.json'), json_encode($this->configDecoded));
-        $this->assertFalse(property_exists($this->configDecoded->library, 'sync'));
+        $this->setupGenericCheck($configLoaded, $configDecoded);
+        
+        $this->assertTrue(property_exists($configDecoded->library, 'sync'));
+        unset($configDecoded->library->sync);
+        file_put_contents(vfsStream::url('base/data/config.json'), json_encode($configDecoded));
+        $this->assertFalse(property_exists($configDecoded->library, 'sync'));
         $config = new Configuration(vfsStream::url('base/data/config.json'), '1.3');
 
         $this->assertTrue(property_exists($config->library, 'sync'));
@@ -89,37 +97,42 @@ class ConfigurationTest extends TestCase
 
     function testCannotGetNotExistedProperty()
     {
+        $this->setupGenericCheck($configLoaded, $configDecoded);
         $this->expectException(ConfigurationPropertyDoesNotExistException::class);
         $this->expectExceptionMessage("Property 'not_exist' does not exist");
-        $this->configLoaded->not_exist;
+        $configLoaded->not_exist;
     }
 
 
     function testCannotSetNotExistedProperty()
     {
+        $this->setupGenericCheck($configLoaded, $configDecoded);
         $this->expectException(ConfigurationPropertyDoesNotExistException::class);
-        $this->configLoaded->not_exist = 'value';
+        $configLoaded->not_exist = 'value';
     }
 
     function testCannotSetNotExistedPropertyForNotExistedPropertyOfSecondLevel()
     {
+        $this->setupGenericCheck($configLoaded, $configDecoded);
         $this->expectException(ConfigurationPropertyDoesNotExistException::class);
-        $this->configLoaded->not_exist->asd = 'value';
+        $configLoaded->not_exist->asd = 'value';
     }
 
 
     function testCanSetNotExistedPropertyForExistedPropertyOfSecondLevel()
     {
-        $this->configLoaded->system->asd = 'value';
-        $this->assertEquals('value', $this->configLoaded->system->asd);
+        $this->setupGenericCheck($configLoaded, $configDecoded);
+        $configLoaded->system->asd = 'value';
+        $this->assertEquals('value', $configLoaded->system->asd);
     }
 
 
     public function testGetters()
     {
-        $this->assertIsString($this->configLoaded->getVersion());
-        $this->assertEquals($this->configDecoded->library->directory, $this->configLoaded->library->directory);
-        $this->assertEquals($this->configDecoded->database->filename, $this->configLoaded->database->filename);
+        $this->setupGenericCheck($configLoaded, $configDecoded);
+        $this->assertIsString($configLoaded->getVersion());
+        $this->assertEquals($configDecoded->library->directory, $configLoaded->library->directory);
+        $this->assertEquals($configDecoded->database->filename, $configLoaded->database->filename);
     }
 
 
@@ -127,39 +140,33 @@ class ConfigurationTest extends TestCase
     {
         $this->expectException(ConfigurationDirectoryIsNotWritableException::class);
         $this->expectExceptionMessage("Directory 'vfs://base/data' is not writable");
-        unlink($this->configLoaded->config_file);
-        chmod(dirname($this->configLoaded->config_file), 0444);
-        $this->configLoaded->save();
+
+        $this->setupGenericCheck($configLoaded, $configDecoded);
+        unlink($configLoaded->config_file);
+        chmod(dirname($configLoaded->config_file), 0444);
+        $configLoaded->save();
     }
 
 
     public function testSaveCorrectJson()
     {
-        $this->configLoaded->save();
-        $saved = json_decode(file_get_contents($this->configLoaded->config_file));
-        $this->assertEquals($this->configDecoded, $saved, 'saved config file doesnt match default one');
+        $this->setupGenericCheck($configLoaded, $configDecoded);
+        $configLoaded->save();
+        $saved = json_decode(file_get_contents($configLoaded->config_file));
+        $this->assertEquals($configDecoded, $saved, 'saved config file doesnt match default one');
     }
 
 
     public function testSaveChanges()
     {
-        $this->configLoaded->save();
-        $this->configLoaded->system->language = 'yo-yo';
-        $this->assertEquals($this->configLoaded->system->language, 'yo-yo', 'config object was not changed');
-        $this->configLoaded->save();
+        $this->setupGenericCheck($configLoaded, $configDecoded);
+        $configLoaded->save();
+        $configLoaded->system->language = 'yo-yo';
+        $this->assertEquals($configLoaded->system->language, 'yo-yo', 'config object was not changed');
+        $configLoaded->save();
 
-        $saved = json_decode(file_get_contents($this->configLoaded->config_file));
-        $this->assertEquals($this->configLoaded->system->language, $saved->system->language, 'config change was not saved to file');
+        $saved = json_decode(file_get_contents($configLoaded->config_file));
+        $this->assertEquals($configLoaded->system->language, $saved->system->language, 'config change was not saved to file');
     }
 
-
-    protected function initVirtualFileSystem()
-    {
-        vfsStream::setup('base', null, [
-            'data' => [
-                'books' => [],
-                'logs' => [],
-            ],
-        ]);
-    }
 }

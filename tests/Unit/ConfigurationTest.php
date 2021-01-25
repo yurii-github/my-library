@@ -34,9 +34,10 @@ class ConfigurationTest extends TestCase
         return [$configLoaded, $configDecoded];
     }
 
+    
     public function testPopulateNewProperties()
     {
-        $this->setupGenericCheck($configLoaded, $configDecoded);
+        $configDecoded = json_decode(file_get_contents(dirname(__DIR__) . '/data/config_sqlite.json'));
         
         $this->assertTrue(property_exists($configDecoded->library, 'sync'));
         unset($configDecoded->library->sync);
@@ -53,6 +54,7 @@ class ConfigurationTest extends TestCase
 
         $config->save();
         $loaded = json_decode(file_get_contents(vfsStream::url('base/data/config.json')), false);
+        
         $this->assertTrue(property_exists($loaded->library, 'sync'));
         $this->assertIsBool($loaded->library->sync);
         $this->assertFalse($loaded->library->sync);

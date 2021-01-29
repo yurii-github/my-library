@@ -20,19 +20,23 @@
 
 namespace App\Actions;
 
-use App\Models\Book;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
-class ConfigCountBooksWithoutFilesAction extends AbstractApiAction
+abstract class AbstractApiAction
 {
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    /**
+     * @param ResponseInterface $response
+     * @param mixed|null $data
+     * @return ResponseInterface
+     */
+    protected function asJSON(ResponseInterface $response, $data = null)
     {
-        $count = Book::query()->select(['book_guid', 'filename'])->get()->filter(function (Book $book) {
-            return !$book->file_exists;
-        })->count();
+        if ($data) {
+            $response->getBody()->write(json_encode($data, JSON_UNESCAPED_UNICODE));
+        }
 
-        return $this->asJSON($response, $count);
+        $response = $response->withHeader('Content-Type', 'application/json');
+
+        return $response;
     }
-
 }

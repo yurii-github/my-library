@@ -26,7 +26,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Translation\Translator;
 use Twig\Environment;
 
-
 abstract class AbstractPageAction
 {
     /** @var Configuration */
@@ -35,7 +34,6 @@ abstract class AbstractPageAction
     protected $twig;
     protected $translator;
 
-
     public function __construct(ContainerInterface $container)
     {
         $this->config = $container->get(Configuration::class);
@@ -43,7 +41,6 @@ abstract class AbstractPageAction
         $this->translator = $container->get(Translator::class);
     }
 
-    
     protected function render(ServerRequestInterface $request, string $view, array $data)
     {
         $uri = $request->getUri();

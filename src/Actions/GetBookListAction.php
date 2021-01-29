@@ -26,7 +26,7 @@ use \App\Models\Book;
 use \App\JGridRequestQuery;
 use \Illuminate\Database\Eloquent\Builder;
 
-class GetBookListAction
+class GetBookListAction extends AbstractApiAction
 {
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
@@ -43,9 +43,7 @@ class GetBookListAction
 
         $gridQuery = new JGridRequestQuery($query, $request);
         $gridQuery->withFilters()->withSorting('created_date', 'desc');
-        $data = $gridQuery->paginate($columns);
-        $response->getBody()->write(json_encode($data));
-        
-        return $response->withHeader('Content-Type', 'application/json');
+
+        return $this->asJSON($response, $gridQuery->paginate($columns));
     }
 }

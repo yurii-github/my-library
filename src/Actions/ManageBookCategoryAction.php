@@ -33,7 +33,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use \App\Models\Category;
 
-class ManageBookCategoryAction
+class ManageBookCategoryAction extends AbstractApiAction
 {
     /** @var Translator */
     protected $translator;
@@ -49,6 +49,7 @@ class ManageBookCategoryAction
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
+        $response = $this->asJSON($response);
         $post = $request->getParsedBody();
         $operation = Arr::get($post, 'oper');
 

@@ -33,7 +33,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use \Illuminate\Translation\Translator;
 
-class ManageBookAction
+class ManageBookAction extends AbstractApiAction
 {
     /** @var Translator */
     protected $translator;
@@ -49,6 +49,7 @@ class ManageBookAction
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
+        $response = $this->asJSON($response);
         $post = $request->getParsedBody();
         $operation = Arr::get($post, 'oper');
 

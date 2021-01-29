@@ -25,8 +25,9 @@ use Illuminate\Support\Arr;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class ConfigClearBooksWithoutFilesAction
+class ConfigClearBooksWithoutFilesAction extends AbstractApiAction
 {
+    
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $post = $request->getParsedBody();
@@ -39,9 +40,7 @@ class ConfigClearBooksWithoutFilesAction
                 $book->delete();
             })->modelKeys();
 
-        $response->getBody()->write(json_encode($deletedBooks, JSON_UNESCAPED_UNICODE));
-
-        return $response;
+        return $this->asJSON($response, $deletedBooks);
     }
 
 }

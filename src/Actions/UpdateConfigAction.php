@@ -26,7 +26,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class UpdateConfigAction
+class UpdateConfigAction extends AbstractApiAction
 {
     /** @var Configuration */
     protected $config;
@@ -59,9 +59,6 @@ class UpdateConfigAction
             $resp->result = false;
         }
 
-        $response->getBody()->write(json_encode($resp));
-        $response = $response->withHeader('Content-Type', 'application/json');
-        
-        return $response;
+        return $this->asJSON($response, $resp);
     }
 }

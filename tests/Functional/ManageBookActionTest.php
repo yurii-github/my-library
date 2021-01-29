@@ -206,21 +206,20 @@ class ManageBookActionTest extends AbstractTestCase
         ]);
     }
     
-    // TODO: this test is failed because file is not getting locked!!!
     public function testEditBook_CannotChangeWhileIsOpenWithSync()
     {
         $this->setBookLibrarySync(false);
         $books = $this->populateBooks();
         $this->setBookLibrarySync(true);
         $bookToChange = $books[0];
-        $oldFilename = $bookToChange->getFilepath();
-        file_put_contents($oldFilename, 'some data');
-        $this->assertFileExists($oldFilename);
-        $this->assertSame('some data', file_get_contents($oldFilename));
+        $filenameOld = $bookToChange->getFilepath();
+        file_put_contents($filenameOld, 'some data');
+        $this->assertFileExists($filenameOld);
+        $this->assertSame('some data', file_get_contents($filenameOld));
         
-        // see bug https://github.com/bovigo/vfsStream/issues/126
-        $stream = fopen($oldFilename, 'rb');
-        flock($stream, LOCK_EX);
+        // make readonly library directory, assume user set incorrect permissions at some point later
+        $config = $this->getLibraryConfig();
+        chmod($config->getLibrary()->directory, 0444); //readonly
         
         $request = $this->createJsonRequest('POST', '/api/book/manage', [
             'id' => $bookToChange->book_guid,
@@ -229,18 +228,21 @@ class ManageBookActionTest extends AbstractTestCase
         ]);
 
         $response = $this->app->handle($request);
+        $content = (string)$response->getBody();
 
-        $this->assertSame(200, $response->getStatusCode());
-        $this->assertSame('', (string)$response->getBody());
+        $this->assertSame(400, $response->getStatusCode());
+        $this->assertJsonData([
+            'error' => "Failed to rename file 'vfs://base/data/books/filename-1 to vfs://base/data/books/, ''new title X'',  [].. Permission denied",
+        ], $response);
         $this->assertDatabaseHas('books', [
             'book_guid' => $bookToChange->book_guid,
-            'title' => 'new title X',
-            'filename' => ", ''new title X'',  []."
+            'title' => $bookToChange->title,
+            'filename' => $bookToChange->filename,
         ]);
-        $this->assertFileNotExists($oldFilename);
+        $this->assertFileExists($filenameOld);
+        $this->assertSame('some data', file_get_contents($filenameOld));
         $bookToChange->refresh();
-        $this->assertFileExists($bookToChange->getFilepath());
-        $this->assertSame('some data', file_get_contents($bookToChange->getFilepath()));
+        $this->assertSame($filenameOld, $bookToChange->getFilepath());
     }
     
 

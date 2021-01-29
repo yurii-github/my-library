@@ -25,16 +25,10 @@ use App\Exception\InvalidImageException;
 class Tools
 {
     /**
-     * resamples image to match boundary limits by width. Height is not checked and will resampled according to width's change percentage
-     *
+     * Resamples image to match boundary limits by width. Height is not checked and will resampled according to width's change percentage.
+     * 
      * @param string $img_blob image source as blob string
      * @param int $max_width max allowed width for picture in pixels
-     *
-     * @return string image as string BLOB
-     */
-    /**
-     * @param $img_blob
-     * @param int $max_width
      * @throws InvalidImageException
      * @return false|string
      */

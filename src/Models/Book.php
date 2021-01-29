@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Configuration\Configuration;
+use App\Exception\BookFileException;
 use App\Exception\BookFileNotFoundException;
 use App\Helpers\Tools;
 use Illuminate\Container\Container;
@@ -102,9 +103,9 @@ class Book extends Model
                         if (!file_exists($filepathOld)) {
                             throw new BookFileNotFoundException("Sync for file failed. Source file '{$filepathOld}' does not exist", 2);
                         }
-                        // PHP 7: throw error if file is open
-                        if (!rename($filepathOld, $filepathNew)) {
-                            throw new \Exception("Failed to rename file. \n\n OLD: $filepathOld \n\n NEW: $filepathNew ");
+                        if (!@rename($filepathOld, $filepathNew)) {
+                            $err = error_get_last()['message'] ?? '';
+                            throw new BookFileException("Failed to rename file '{$filepathOld} to {$filepathNew}. {$err}");
                         }
                     }
                 }

@@ -36,7 +36,6 @@ class Routes
         $app->get('/about', Actions\Pages\AboutPageAction::class);
         $app->get('/config', Actions\Pages\ConfigPageAction::class);
         $app->post('/config/save', Actions\UpdateConfigAction::class);
-        $app->post('/config/compact-database', Actions\ConfigCompactDatabaseAction::class);
         $app->get('/config/check-files', Actions\ConfigCheckFilesAction::class);
         $app->get('/config/count-books-without-files', Actions\ConfigCountBooksWithoutFilesAction::class);
         $app->post('/config/clear-books-without-files', Actions\ConfigClearBooksWithoutFilesAction::class);

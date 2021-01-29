@@ -39,6 +39,16 @@ class ManageBookCategoryActionTest extends AbstractTestCase
         $this->assertDatabaseHas('categories', ['title' => $category->title]);
         $this->assertDatabaseHas('categories', ['title' => 'new category 2']);
         $this->assertDatabaseHas('categories', ['title' => 'new category 3']);
+
+        $categories = Category::all();
+
+        foreach ($categories as $category) {
+            $this->assertTrue(
+                (bool)preg_match('/[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{12}/', $category->guid),
+                "'{ $category->guid}' is in wrong format"
+            );
+
+        }
     }
 
     public function testAddCategory_TitleIsRequired()

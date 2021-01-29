@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use App\Helpers\Tools;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Ramsey\Uuid\Uuid;
 
 /**
  * @property-read string $guid primary key
@@ -25,7 +25,7 @@ class Category extends Model
         parent::boot();
 
         static::creating(function (self $book) {
-            $book->guid = Tools::com_create_guid();
+            $book->guid = strtoupper(Uuid::uuid4());
         });
     }
     

@@ -28,7 +28,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class ConfigDoImportNewCoverFromPdfAction
+class ConfigDoImportNewCoverFromPdfAction extends AbstractApiAction
 {
     /**
      * @var CoverExtractor
@@ -60,10 +60,7 @@ class ConfigDoImportNewCoverFromPdfAction
             }
         }
 
-        $message = ['data' => $addedBooks, 'result' => true, 'error' => null];
-        $response->getBody()->write(json_encode($message, JSON_UNESCAPED_UNICODE));
-
-        return $response;
+        return $this->asJSON($response, ['data' => $addedBooks, 'result' => true, 'error' => null]);
     }
 
 }

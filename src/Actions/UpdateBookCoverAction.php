@@ -28,7 +28,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class UpdateBookCoverAction
+class UpdateBookCoverAction extends AbstractApiAction
 {
     /** @var Configuration */
     protected $config;
@@ -48,10 +48,10 @@ class UpdateBookCoverAction
             $book->book_cover = $bookCover;
             $book->save();
         } catch (InvalidImageException $e) {
-            $response->getBody()->write(json_encode(['cover' => 'invalid image'])); // TODO: better format
+            $response = $this->asJSON($response, ['cover' => 'invalid image']); // TODO: better format
             return $response->withStatus(422);
         }
 
-        return $response;
+        return $this->asJSON($response);
     }
 }

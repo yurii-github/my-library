@@ -33,7 +33,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use \App\Models\Category;
 
-class ManageBookCategoryAction
+class ManageBookCategoryAction extends AbstractApiAction
 {
     /** @var Translator */
     protected $translator;
@@ -49,6 +49,7 @@ class ManageBookCategoryAction
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
+        $response = $this->asJSON($response);
         $post = $request->getParsedBody();
         $operation = Arr::get($post, 'oper');
 
@@ -66,12 +67,14 @@ class ManageBookCategoryAction
                 $this->editCategory($post);
                 return $response;
             }
+            throw new \Exception('Unsupported operation!');
         } catch (ValidationException $e) {
             $response->getBody()->write(json_encode($e->errors()));
             return $response->withStatus(422);
+        } catch (\Throwable $e) {
+            $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
+            return $response->withStatus(400);
         }
-
-        throw new \Exception('Unsupported operation!');
     }
 
     protected function editCategory(array $post): ?Category

@@ -28,7 +28,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use \App\Models\Category;
 
-class GetBookCategoryListAction
+class GetBookCategoryListAction extends AbstractApiAction
 {
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
@@ -48,8 +48,7 @@ class GetBookCategoryListAction
 
         $gridQuery = new JGridRequestQuery($query, $request);
         $gridQuery->withFilters()->withSorting('title', 'asc');;
-        $response->getBody()->write(json_encode($gridQuery->paginate(['guid', 'title', 'marker'])));
 
-        return $response->withHeader('Content-Type', 'application/json');
+        return $this->asJSON($response, $gridQuery->paginate(['guid', 'title', 'marker']));
     }
 }

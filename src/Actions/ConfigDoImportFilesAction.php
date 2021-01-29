@@ -26,8 +26,9 @@ use Illuminate\Support\Arr;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class ConfigDoImportFilesAction
+class ConfigDoImportFilesAction extends AbstractApiAction
 {
+    
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $addFilenames = Arr::get($request->getParsedBody(), 'post', []);
@@ -47,11 +48,9 @@ class ConfigDoImportFilesAction
             $message = ['data' => $arr_added, 'result' => true, 'error' => ''];
         } catch (\Throwable $e) {
             $message = ['data' => $arr_added, 'result' => false, 'error' => $e->getMessage()];
-        } finally {
-            $response->getBody()->write(json_encode($message, JSON_UNESCAPED_UNICODE));
         }
 
-        return $response;
+        return $this->asJSON($response, $message);
     }
 
 }

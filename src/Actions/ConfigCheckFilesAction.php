@@ -26,7 +26,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class ConfigCheckFilesAction
+class ConfigCheckFilesAction extends AbstractApiAction
 {
     /**
      * @var Configuration
@@ -39,10 +39,9 @@ class ConfigCheckFilesAction
         $this->config = $container->get(Configuration::class);
     }
 
-
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $files_db = Book::query()->select(['filename'])->get()->transform(function(Book $book) {
+        $files_db = Book::query()->select(['filename'])->get()->transform(function (Book $book) {
             return $book->filename;
         })->all();
 
@@ -50,13 +49,12 @@ class ConfigCheckFilesAction
         $arr_db_only = array_diff($files_db, $files);
         $arr_fs_only = array_diff($files, $files_db);
 
-        $response->getBody()->write(json_encode([
+        $data = [
             'db' => array_values($arr_db_only),
             'fs' => array_values($arr_fs_only)
-        ], JSON_UNESCAPED_UNICODE));
+        ];
 
-        return $response;
+        return $this->asJSON($response, $data);
     }
-
 
 }

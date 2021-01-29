@@ -26,19 +26,17 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class ConfigGetImportFilesAction
+class ConfigGetImportFilesAction extends AbstractApiAction
 {
     /**
      * @var Configuration
      */
     protected $config;
 
-
     public function __construct(ContainerInterface $container)
     {
         $this->config = $container->get(Configuration::class);
     }
-
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
@@ -49,9 +47,7 @@ class ConfigGetImportFilesAction
         $files = $this->config->getLibraryBookFilenames();
         $arr_fs_only = array_values(array_diff($files, $files_db));
 
-        $response->getBody()->write(json_encode($arr_fs_only, JSON_UNESCAPED_UNICODE));
-
-        return $response;
+        return $this->asJSON($response, $arr_fs_only);
     }
 
 }

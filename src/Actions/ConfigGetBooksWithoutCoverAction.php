@@ -24,20 +24,17 @@ use App\Models\Book;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class ConfigGetBooksWithoutCoverAction
+class ConfigGetBooksWithoutCoverAction extends AbstractApiAction
 {
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $type = 'pdf'; // TODO: throw errors
-        
+        $type = 'pdf';
         $books = Book::query()->select(['filename', 'book_guid'])
             ->whereRaw('book_cover IS NULL')
             ->where('filename', 'like', '%'.$type)
             ->get()
             ->toArray();
 
-        $response->getBody()->write(json_encode($books, JSON_UNESCAPED_UNICODE));
-
-        return $response;
+        return $this->asJSON($response, $books);
     }
 }

@@ -401,7 +401,6 @@
       $(document).on('paste', function (e) {
         var cover = $('.book-cover-drop:visible')[0]
         if (cover !== undefined) {
-          //TODO: copy from filesystem clipboard
           e = e.originalEvent
           e.preventDefault()
           $cover = $(cover)

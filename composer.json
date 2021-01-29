@@ -21,7 +21,8 @@
 		"ext-fileinfo": "*",
 		"illuminate/validation": "^7.30",
       	"ext-intl": "*",
-		"illuminate/events": "^7.30"
+		"illuminate/events": "^7.30",
+		"ramsey/uuid": "^4.1"
     },
 	"autoload": {
 		"psr-4": {

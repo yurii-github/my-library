@@ -5,12 +5,12 @@ namespace App\Models;
 use App\Configuration\Configuration;
 use App\Exception\BookFileException;
 use App\Exception\BookFileNotFoundException;
-use App\Helpers\Tools;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Ramsey\Uuid\Uuid;
 
 /**
  * @property string $book_guid
@@ -74,7 +74,7 @@ class Book extends Model
         });
 
         static::creating(function (self $book) use ($config) {
-            $book->book_guid = Tools::com_create_guid();
+            $book->book_guid = strtoupper(Uuid::uuid4());
             $book->favorite = $book->favorite == null ? 0 : $book->favorite;
             if (empty($book->filename)) {
                 $book->filename = self::buildFilename($book, $config->book->nameformat);

@@ -25,7 +25,6 @@
         <div id="mylibrary-menu" class="no-selection">
             {% include '_menu_item.html.twig' with {'id': 'home', 'link': '/', 'title': t.trans('Library'), 'path': path } only %}
             {% include '_menu_item.html.twig' with {'id': 'config', 'link': '/config', 'title': t.trans('Configuration'), 'path': path } only %}
-            {% include '_menu_item.html.twig' with {'id': 'vacuum-link', 'link': '/config/compact-database', 'title': t.trans('Compact'), 'path': path } only %}
             {% include '_menu_item.html.twig' with {'id': 'about', 'link': '/about', 'title': t.trans('About') ~ ' ' ~ APP_VERSION, 'path': path } only %}
         </div>
     </form>

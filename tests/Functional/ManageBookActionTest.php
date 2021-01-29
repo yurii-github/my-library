@@ -14,9 +14,8 @@ class ManageBookActionTest extends AbstractTestCase
         $request = $this->createJsonRequest('POST', '/api/book/manage');
         $response = $this->app->handle($request);
 
-        $content = (string)$response->getBody();
-        $this->assertSame(500, $response->getStatusCode());
-        $this->assertStringContainsString('Unsupported operation!', $content);
+        $this->assertSame(400, $response->getStatusCode());
+        $this->assertJsonData(['error' => 'Unsupported operation!'], $response);
     }
     
     public function testAddBook_CannotAddBookWithoutFileWithSync()

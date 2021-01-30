@@ -20,7 +20,6 @@
 
 namespace App\Actions;
 
-use App\Exception\BookFileNotFoundException;
 use App\Models\Book;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Support\Arr;
@@ -68,10 +67,10 @@ class ManageBookAction extends AbstractApiAction
             }
             throw new \Exception('Unsupported operation!');
         } catch (ValidationException $e) {
-            $response->getBody()->write(json_encode($e->errors()));
+            $response = $this->asJSON($response,$e->errors());
             return $response->withStatus(422);
         } catch (\Throwable $e) {
-            $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
+            $response = $this->asJSON($response, ['error' => $e->getMessage()]);
             return $response->withStatus(400);
         }
     }

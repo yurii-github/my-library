@@ -1,11 +1,7 @@
-# My Book Library
-
 [![Build Status](https://travis-ci.com/yurii-github/my-library.svg?branch=master)](https://travis-ci.com/yurii-github/my-library) [![Maintainability](https://api.codeclimate.com/v1/badges/24ed64181b13e21cd2ec/maintainability)](https://codeclimate.com/github/yurii-github/my-library/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/24ed64181b13e21cd2ec/test_coverage)](https://codeclimate.com/github/yurii-github/my-library/test_coverage)
 
-## About
-
-This is book library manager, written in PHP and based on JqueryUI.  
-The main purpose of it is to manage own book library as excel table with ratings and other stuff like filename syncronizations of your books and more.  
+This is book library manager, written in PHP and based on Slim4 and JqueryUI.  
+The main purpose of it is to manage own book library as excel table with ratings and other stuff like filename synchronizations of your books and more.  
 It supports all JQuery UI themes.  
 
 ![library page](public/library.png)
@@ -39,12 +35,16 @@ It supports all JQuery UI themes.
 ```
 git clone git@github.com:yurii-github/yii2-mylib.git
 cd yii2-mylib
-cp .env.example .env
 composer update
 ./serve
 ```
-Application will be available at [http://localhost:8080](http://localhost:8080)
 
+To have debug mode ON also do next
+```
+cp .env.example .env
+```
+
+Application will be available at [http://localhost:8080](http://localhost:8080)
 
 ## Structure
 Here's the list of most interesting places: 
@@ -59,10 +59,7 @@ Here's the list of most interesting places:
 │   ├── assets      -  -  -  -  -  -  -  - our assets
 ├── └── index.php   -  -  -  -  -  -  -  - entry point of the application  
 └── serve           -  -  -  -  -  -  -  - run webapp locally
-
---------
-│   ├── config
-│   │   └── config.local.php -  -  -  -  - your custom app configuration (that cannot be set via settings)
+├── .env            -  -  -  -  -  -  -  - environment variables, used for dev mode only (optional)
 ------
 </pre>
 

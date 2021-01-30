@@ -31,8 +31,6 @@ use \ReflectionObject;
 use \ReflectionProperty;
 
 /**
- * @property-read string $version TODO
- * @property-read string $config_file TODO
  * @property System $system
  * @property Library $library
  * @property Database $database
@@ -78,8 +76,8 @@ final class Configuration
 
     ];
 
-    public $version;
-    public $config_file;
+    public $version; // TODO: read only
+    public $config_file; // TODO: read only
     protected $config;
     protected $options = ['system', 'database', 'library', 'book'];
 

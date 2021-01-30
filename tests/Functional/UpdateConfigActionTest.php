@@ -8,8 +8,8 @@ class UpdateConfigActionTest extends AbstractTestCase
     {
         $config = $this->getLibraryConfig();
         $this->assertSame('en-US', $config->getSystem()->language);
-        $this->assertStringContainsString('"language": "en-US",', file_get_contents($config->config_file));
-        $this->assertStringNotContainsString('"language": "uk-UA",', file_get_contents($config->config_file));
+        $this->assertStringContainsString('"language": "en-US",', file_get_contents($config->getConfigFile()));
+        $this->assertStringNotContainsString('"language": "uk-UA",', file_get_contents($config->getConfigFile()));
 
         $request = $this->createJsonRequest('POST', '/config/save');
         $request = $request->withParsedBody([
@@ -25,8 +25,8 @@ class UpdateConfigActionTest extends AbstractTestCase
             'title' => 'system'
         ], $response);
 
-        $this->assertStringContainsString('"language": "uk-UA",', file_get_contents($config->config_file));
-        $this->assertStringNotContainsString('"language": "en-US",', file_get_contents($config->config_file));
+        $this->assertStringContainsString('"language": "uk-UA",', file_get_contents($config->getConfigFile()));
+        $this->assertStringNotContainsString('"language": "en-US",', file_get_contents($config->getConfigFile()));
     }
 
 
@@ -34,10 +34,10 @@ class UpdateConfigActionTest extends AbstractTestCase
     {
         $config = $this->getLibraryConfig();
         $this->assertSame('en-US', $config->getSystem()->language);
-        $this->assertStringContainsString('"language": "en-US",', file_get_contents($config->config_file));
-        $this->assertStringNotContainsString('"language": "uk-UA",', file_get_contents($config->config_file));
+        $this->assertStringContainsString('"language": "en-US",', file_get_contents($config->getConfigFile()));
+        $this->assertStringNotContainsString('"language": "uk-UA",', file_get_contents($config->getConfigFile()));
 
-        chmod($config->config_file, 0444);
+        chmod($config->getConfigFile(), 0444);
 
         $request = $this->createJsonRequest('POST', '/config/save');
         $request = $request->withParsedBody([

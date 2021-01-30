@@ -49,13 +49,14 @@ class ManageBookCategoryAction extends AbstractApiAction
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $response = $this->asJSON($response);
+        //TODO: why asJSON fails? some format?
         $post = $request->getParsedBody();
         $operation = Arr::get($post, 'oper');
 
         try {
             if ($operation === 'add') {
                 $this->addCategory($post);
+                $response = $this->asJSON($response);
                 return $response;
             } elseif ($operation === 'del') {
                 $this->deleteCategory($post);
@@ -69,10 +70,10 @@ class ManageBookCategoryAction extends AbstractApiAction
             }
             throw new \Exception('Unsupported operation!');
         } catch (ValidationException $e) {
-            $response->getBody()->write(json_encode($e->errors()));
+            $response = $this->asJSON($response, $e->errors());
             return $response->withStatus(422);
         } catch (\Throwable $e) {
-            $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
+            $response = $this->asJSON($response, ['error' => $e->getMessage()]);
             return $response->withStatus(400);
         }
     }

@@ -45,6 +45,7 @@ class ManageBookAction extends AbstractApiAction
         $this->db = $container->get('db');
         assert($this->db instanceof Manager);
         $this->translator = $container->get(Translator::class);
+        assert($this->translator instanceof Translator);
     }
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
@@ -91,8 +92,7 @@ class ManageBookAction extends AbstractApiAction
         $validator = new Validator($this->translator, $post, $rules);
         $validator->setPresenceVerifier(new DatabasePresenceVerifier($this->db->getDatabaseManager()));
         $input = $validator->validate();
-        // TODO: do not select book cover, add book cover class
-        $book = Book::find($input['id']);
+        $book = Book::findOrFail($input['id']);
         assert($book instanceof Book);
         $book->fill($input);
         $book->save();

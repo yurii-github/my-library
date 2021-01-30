@@ -49,7 +49,6 @@ class ManageBookAction extends AbstractApiAction
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $response = $this->asJSON($response);
         $post = $request->getParsedBody();
         $operation = Arr::get($post, 'oper');
 

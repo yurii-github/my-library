@@ -49,6 +49,7 @@ class ManageBookAction extends AbstractApiAction
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
+        //TODO: why asJSON fails? some format?
         $post = $request->getParsedBody();
         $operation = Arr::get($post, 'oper');
 

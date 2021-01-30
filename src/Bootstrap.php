@@ -21,7 +21,6 @@
 namespace App;
 
 use App\Configuration\Configuration;
-use App\ErrorRenderers\JsonErrorRenderer;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Events\Dispatcher;

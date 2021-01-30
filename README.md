@@ -30,7 +30,7 @@ It supports all JQuery UI themes.
 
 ## Requirements
 
-- PHP 7.2+
+- PHP 7.4 or higher
 - SQLite or MySQL database
 
 

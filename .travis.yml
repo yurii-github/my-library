@@ -5,7 +5,8 @@ dist: xenial
 os: linux
 language: php
 php:
-  - 7.2
+  - 7.4
+  - 8.0
 env:
   - DB_TYPE=sqlite
   - DB_TYPE=mysql
@@ -14,13 +15,13 @@ install:
   - cp .env.example .env
   - composer install
 before_script:
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" && "$TRAVIS_PULL_REQUEST" == "false" ]]; then wget -O cc-test-reporter https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64; fi;
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" && "$TRAVIS_PULL_REQUEST" == "false" ]]; then chmod +x cc-test-reporter; fi;
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" && "$TRAVIS_PULL_REQUEST" == "false" ]]; then ./cc-test-reporter before-build; fi;
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.4" && "$TRAVIS_PULL_REQUEST" == "false" ]]; then wget -O cc-test-reporter https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64; fi;
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.4" && "$TRAVIS_PULL_REQUEST" == "false" ]]; then chmod +x cc-test-reporter; fi;
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.4" && "$TRAVIS_PULL_REQUEST" == "false" ]]; then ./cc-test-reporter before-build; fi;
 script:
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" && "$TRAVIS_PULL_REQUEST" == "false" ]]; then ./vendor/bin/phpunit --coverage-clover build/logs/clover.xml; else ./vendor/bin/phpunit; fi; 
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.4" && "$TRAVIS_PULL_REQUEST" == "false" ]]; then ./vendor/bin/phpunit --coverage-clover build/logs/clover.xml; else ./vendor/bin/phpunit; fi; 
 after_script:
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" && "$TRAVIS_PULL_REQUEST" == "false" ]]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi;
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.4" && "$TRAVIS_PULL_REQUEST" == "false" ]]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi;
 services:
   - mysql
 addons:

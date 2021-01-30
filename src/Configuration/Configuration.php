@@ -76,10 +76,10 @@ final class Configuration
 
     ];
 
-    public $version; // TODO: read only
-    public $config_file; // TODO: read only
-    protected $config;
-    protected $options = ['system', 'database', 'library', 'book'];
+    protected string $version;
+    protected string $config_file;
+    protected stdClass $config;
+    protected array $options = ['system', 'database', 'library', 'book'];
 
     /**
      * @param string $filename database version. Increase version if database changes after release
@@ -172,6 +172,10 @@ final class Configuration
         return $this->version;
     }
 
+    public function getConfigFile(): string
+    {
+        return $this->config_file;
+    }
 
     /**
      * Loads configuration from JSON file.
@@ -222,7 +226,7 @@ final class Configuration
     {
         return (object)[
             'system' => (object)[
-                'version' => $this->version,
+                'version' => $this->getVersion(),
                 'theme' => 'smoothness',
                 'timezone' => 'Europe\/Kiev',
                 'language' => 'en-US'

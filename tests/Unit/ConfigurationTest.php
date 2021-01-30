@@ -21,9 +21,13 @@ class ConfigurationTest extends TestCase
     /**
      * @param Configuration $configLoaded loaded from default config file
      * @param \stdClass $configDecoded not real configuration, just json decode of default configuration file
+     * @throws ConfigurationDirectoryDoesNotExistException
+     * @throws ConfigurationDirectoryIsNotWritableException
+     * @throws ConfigurationFileIsNotReadableException
+     * @throws \App\Exception\ConfigurationFileIsNotWritableException
      * @return array
      */
-    protected function setupGenericCheck(&$configLoaded, &$configDecoded)
+    protected function setupGenericCheck(&$configLoaded, &$configDecoded): array
     {
         $vfsConfigFile = vfsStream::url('base/data/config.json');
         $configData = file_get_contents(dirname(__DIR__) . '/data/config_sqlite.json');
@@ -170,8 +174,9 @@ class ConfigurationTest extends TestCase
         $this->expectExceptionMessage("Directory 'vfs://base/data' is not writable");
 
         $this->setupGenericCheck($configLoaded, $configDecoded);
-        unlink($configLoaded->config_file);
-        chmod(dirname($configLoaded->config_file), 0444);
+        assert($configLoaded instanceof Configuration);
+        unlink($configLoaded->getConfigFile());
+        chmod(dirname($configLoaded->getConfigFile()), 0444);
         $configLoaded->save();
     }
 
@@ -179,8 +184,9 @@ class ConfigurationTest extends TestCase
     public function testSaveCorrectJson()
     {
         $this->setupGenericCheck($configLoaded, $configDecoded);
+        assert($configLoaded instanceof Configuration);
         $configLoaded->save();
-        $saved = json_decode(file_get_contents($configLoaded->config_file));
+        $saved = json_decode(file_get_contents($configLoaded->getConfigFile()));
         $this->assertEquals($configDecoded, $saved, 'saved config file doesnt match default one');
     }
 
@@ -188,12 +194,13 @@ class ConfigurationTest extends TestCase
     public function testSaveChanges()
     {
         $this->setupGenericCheck($configLoaded, $configDecoded);
+        assert($configLoaded instanceof Configuration);
         $configLoaded->save();
         $configLoaded->system->language = 'yo-yo';
         $this->assertEquals($configLoaded->system->language, 'yo-yo', 'config object was not changed');
         $configLoaded->save();
 
-        $saved = json_decode(file_get_contents($configLoaded->config_file));
+        $saved = json_decode(file_get_contents($configLoaded->getConfigFile()));
         $this->assertEquals($configLoaded->system->language, $saved->system->language, 'config change was not saved to file');
     }
 

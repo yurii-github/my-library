@@ -47,7 +47,7 @@ class ConfigGetImportFilesAction extends AbstractApiAction
         $files = $this->config->getLibraryBookFilenames();
         $arr_fs_only = array_values(array_diff($files, $files_db));
 
-        return $this->asJSON($response, $arr_fs_only);
+        return $this->asJSON($arr_fs_only);
     }
 
 }

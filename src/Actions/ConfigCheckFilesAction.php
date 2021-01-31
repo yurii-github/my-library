@@ -54,7 +54,7 @@ class ConfigCheckFilesAction extends AbstractApiAction
             'fs' => array_values($arr_fs_only)
         ];
 
-        return $this->asJSON($response, $data);
+        return $this->asJSON($data);
     }
 
 }

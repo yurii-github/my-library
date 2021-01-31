@@ -40,7 +40,7 @@ class ConfigClearBooksWithoutFilesAction extends AbstractApiAction
                 $book->delete();
             })->modelKeys();
 
-        return $this->asJSON($response, $deletedBooks);
+        return $this->asJSON($deletedBooks);
     }
 
 }

@@ -35,6 +35,6 @@ class ConfigGetBooksWithoutCoverAction extends AbstractApiAction
             ->get()
             ->toArray();
 
-        return $this->asJSON($response, $books);
+        return $this->asJSON($books);
     }
 }

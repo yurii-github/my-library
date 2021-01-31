@@ -54,13 +54,11 @@ class ConfigDoImportNewCoverFromPdfAction extends AbstractApiAction
                 $book->saveOrFail();
                 $addedBooks[] = $book->filename;
             } catch (\Throwable $t) {
-                $message = ['data' => $addedBooks, 'result' => false, 'error' => $t->getMessage()];
-                $response->getBody()->write(json_encode($message, JSON_UNESCAPED_UNICODE));
-                return $response;
+                return $this->asJSON(['data' => $addedBooks, 'result' => false, 'error' => $t->getMessage()]);
             }
         }
 
-        return $this->asJSON($response, ['data' => $addedBooks, 'result' => true, 'error' => null]);
+        return $this->asJSON(['data' => $addedBooks, 'result' => true, 'error' => null]);
     }
 
 }

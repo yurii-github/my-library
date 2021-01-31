@@ -49,6 +49,6 @@ class GetBookCategoryListAction extends AbstractApiAction
         $gridQuery = new JGridRequestQuery($query, $request);
         $gridQuery->withFilters()->withSorting('title', 'asc');;
 
-        return $this->asJSON($response, $gridQuery->paginate(['guid', 'title', 'marker']));
+        return $this->asJSON($gridQuery->paginate(['guid', 'title', 'marker']));
     }
 }

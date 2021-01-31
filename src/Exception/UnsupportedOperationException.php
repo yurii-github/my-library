@@ -18,24 +18,12 @@
  * along with this program.  If not, see http://www.gnu.org/licenses
  */
 
-namespace App\Actions;
+namespace App\Exception;
 
-use App\Models\Book;
-use GuzzleHttp\Psr7\Response;
-use Illuminate\Contracts\Support\Arrayable;
-use Psr\Http\Message\ResponseInterface;
-
-abstract class AbstractApiAction
+class UnsupportedOperationException extends \Exception
 {
-    protected function asJSON($data = null): ResponseInterface
+    public function __construct($operation)
     {
-        if ($data instanceof Book) {
-            $data = $data->toArray();
-            unset($data['book_cover']);
-        } elseif ($data instanceof Arrayable) {
-            $data = $data->toArray();
-        }
-        $body = json_encode($data, JSON_UNESCAPED_UNICODE);
-        return new Response(200, ['Content-Type' => ['application/json']], $body);
+        parent::__construct("Operation '$operation' is not supported!", 0, null);
     }
 }

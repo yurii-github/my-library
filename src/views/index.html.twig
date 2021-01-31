@@ -46,6 +46,7 @@
         half: true,
         path: '3rd/raty-2.8.0/lib/images/'
       }
+      
       book_list.jqGrid({
         url: 'api/book',
         editurl: 'api/book/manage',
@@ -190,6 +191,20 @@
         cellEdit: false,
         cellSubmit: 'remote',
         cellurl: 'api/book/manage', subGrid: true,
+        // https://stackoverflow.com/a/34654952
+        ajaxRowOptions: {
+          beforeSend: function (jqXHR, settings) {
+            jqXHR.setRequestHeader('Accept', "application/json")
+            jqXHR.setRequestHeader('Content-Type', "application/json")
+          }
+        },
+        serializeRowData: function (postData) {
+          return JSON.stringify(postData);
+        },
+        // TODO: better error message and unified
+        errorTextFormat: function (response) {
+          return response.responseText;
+        },
         subGridRowExpanded: function (subgrid_id, row_id) {
           // If we want to pass additional parameters to the url we can use
           // a method getRowData(row_id) - which returns associative array in type name-value
@@ -366,7 +381,7 @@
               e.preventDefault()
             })
             .on('save-file', function (e, file) {
-              if ($.inArray(file.type, ['image/png', 'image/jpeg', 'image/gif']) == -1) {
+              if ($.inArray(file.type, ['image/png', 'image/jpeg', 'image/gif']) === -1) {
                 alert('Sorry, you can use only GIF, JPEG and PNG images')
                 return
               }

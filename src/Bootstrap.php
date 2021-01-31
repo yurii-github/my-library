@@ -23,6 +23,7 @@ namespace App;
 use App\Configuration\Configuration;
 use App\Handlers\ErrorHandler;
 use App\Handlers\ShutdownHandler;
+use App\Renderers\JsonErrorRenderer;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Events\Dispatcher;
@@ -50,6 +51,9 @@ use \Illuminate\Translation\Translator as IlluminateTranslator;
 class Bootstrap
 {
     const CURRENT_APP_VERSION = '1.3';
+
+    // TODO: remove env $_ENV['APP_DEBUG'] package, always use debug mode
+    const DEBUG_MODE = true;
 
     protected static function initCapsule(Configuration $config, Container $container, Dispatcher $eventDispatcher): Manager
     {
@@ -167,7 +171,9 @@ class Bootstrap
         $container->get('db');
 
         $app = AppFactory::create(null, $container);
+        $app->addBodyParsingMiddleware();
         self::initExceptionHandling($app);
+        $app->addRoutingMiddleware();
         Routes::register($app);
 
         return $app;
@@ -177,8 +183,9 @@ class Bootstrap
     {
         $logger = self::initAppLogger();
         
-        $errorMiddleware = $app->addErrorMiddleware($_ENV['APP_DEBUG'] ?? false, true, true, $logger);
+        $errorMiddleware = $app->addErrorMiddleware(self::DEBUG_MODE, true, true, $logger);
         $errorHandler = new ErrorHandler($app->getCallableResolver(), $app->getResponseFactory(), $logger);
+        $errorHandler->registerErrorRenderer('application/json', JsonErrorRenderer::class);
         $errorMiddleware->setDefaultErrorHandler($errorHandler);
 
         $shutdownHandler = new ShutdownHandler($errorHandler);

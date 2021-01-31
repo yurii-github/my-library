@@ -20,12 +20,12 @@
 
 namespace App\Actions;
 
+use App\Exception\UnsupportedOperationException;
 use App\Models\Book;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\DatabasePresenceVerifier;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -49,30 +49,22 @@ class ManageBookAction extends AbstractApiAction
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        //TODO: why asJSON fails? some format?
         $post = $request->getParsedBody();
         $operation = Arr::get($post, 'oper');
 
-        try {
-            if ($operation === 'add') {
-                $book = $this->addBook($post);
-                $response->getBody()->write(json_encode($book->toArray(), JSON_UNESCAPED_UNICODE));
-                return $response;
-            } elseif ($operation === 'del') {
-                $this->deleteBook($post);
-                return $response;
-            } elseif ($operation === 'edit') {
-                $book = $this->editBook($post);
-                return $response;
-            }
-            throw new \Exception('Unsupported operation!');
-        } catch (ValidationException $e) {
-            $response = $this->asJSON($response,$e->errors());
-            return $response->withStatus(422);
-        } catch (\Throwable $e) {
-            $response = $this->asJSON($response, ['error' => $e->getMessage()]);
-            return $response->withStatus(400);
+        if ($operation === 'add') {
+            $book = $this->addBook($post);
+            $response->getBody()->write(json_encode($book->toArray(), JSON_UNESCAPED_UNICODE));
+            return $this->asJSON();
+        } elseif ($operation === 'del') {
+            $this->deleteBook($post);
+            return $this->asJSON();
+        } elseif ($operation === 'edit') {
+            $book = $this->editBook($post);
+            return $this->asJSON($book);
         }
+
+        throw new UnsupportedOperationException($operation);
     }
 
     protected function editBook(array $post): ?Book

@@ -194,7 +194,7 @@ class Bootstrap
 
     protected static function initAppLogger(): Logger
     {
-        $logHandler = new RotatingFileHandler('/var/www/my-library/data/logs/app.log',5,Logger::DEBUG);
+        $logHandler = new RotatingFileHandler(DATA_DIR.'/logs/app.log',5,Logger::DEBUG);
         $logHandler->setFormatter(new LineFormatter(null, null, true, true));
         return new Logger('app', [$logHandler]);
     }

@@ -21,10 +21,16 @@
 namespace App;
 
 use App\Configuration\Configuration;
+use App\Handlers\ErrorHandler;
+use App\Handlers\ShutdownHandler;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Translation\ArrayLoader;
+use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\RotatingFileHandler;
+use Monolog\Logger;
+use Slim\App;
 use Slim\Factory\AppFactory;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\Translation\Loader\PhpFileLoader;
@@ -65,7 +71,7 @@ class Bootstrap
 
         $pdo = $capsule->getConnection()->getPdo();
         if ($pdo->getAttribute(\PDO::ATTR_DRIVER_NAME) === 'sqlite') {
-            // not documented feature of SQLite !
+            // not documented feature of SQLite - add case insensitive search
             $pdo->sqliteCreateFunction('like', function ($x, $y) {
                 // Example: $x = '%ч'; $y = 'Чasd';
                 $x = str_replace('%', '', $x);
@@ -161,13 +167,30 @@ class Bootstrap
         $container->get('db');
 
         $app = AppFactory::create(null, $container);
-        $app->addErrorMiddleware($_ENV['APP_DEBUG'] ?? false, true, false); // TODO: logErrorDetails = false for now
-
+        self::initExceptionHandling($app);
         Routes::register($app);
 
         return $app;
     }
 
+    protected static function initExceptionHandling(App $app)
+    {
+        $logger = self::initAppLogger();
+        
+        $errorMiddleware = $app->addErrorMiddleware($_ENV['APP_DEBUG'] ?? false, true, true, $logger);
+        $errorHandler = new ErrorHandler($app->getCallableResolver(), $app->getResponseFactory(), $logger);
+        $errorMiddleware->setDefaultErrorHandler($errorHandler);
+
+        $shutdownHandler = new ShutdownHandler($errorHandler);
+        register_shutdown_function($shutdownHandler);
+    }
+
+    protected static function initAppLogger(): Logger
+    {
+        $logHandler = new RotatingFileHandler('/var/www/my-library/data/logs/app.log',5,Logger::DEBUG);
+        $logHandler->setFormatter(new LineFormatter(null, null, true, true));
+        return new Logger('app', [$logHandler]);
+    }
 
     protected static function initTranslator()
     {

@@ -32,7 +32,7 @@ class ConfigCountBooksWithoutFilesAction extends AbstractApiAction
             return !$book->file_exists;
         })->count();
 
-        return $this->asJSON($response, $count);
+        return $this->asJSON($count);
     }
 
 }

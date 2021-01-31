@@ -20,13 +20,13 @@
 
 namespace App\Actions;
 
+use App\Exception\UnsupportedOperationException;
 use App\Models\Book;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Support\Arr;
 use Illuminate\Translation\Translator;
 use Illuminate\Validation\DatabasePresenceVerifier;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -49,33 +49,24 @@ class ManageBookCategoryAction extends AbstractApiAction
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        //TODO: why asJSON fails? some format?
         $post = $request->getParsedBody();
         $operation = Arr::get($post, 'oper');
 
-        try {
-            if ($operation === 'add') {
-                $this->addCategory($post);
-                $response = $this->asJSON($response);
-                return $response;
-            } elseif ($operation === 'del') {
-                $this->deleteCategory($post);
-                return $response;
-            } elseif ($operation === 'edit') {
-                if ($nodeid = Arr::get($request->getQueryParams(), 'nodeid')) {
-                    $post = Arr::add($post, 'nodeid', $nodeid);
-                }
-                $this->editCategory($post);
-                return $response;
+        if ($operation === 'add') {
+            $this->addCategory($post);
+            return $this->asJSON();
+        } elseif ($operation === 'del') {
+            $this->deleteCategory($post);
+            return $response;
+        } elseif ($operation === 'edit') {
+            if ($nodeid = Arr::get($request->getQueryParams(), 'nodeid')) {
+                $post = Arr::add($post, 'nodeid', $nodeid);
             }
-            throw new \Exception('Unsupported operation!');
-        } catch (ValidationException $e) {
-            $response = $this->asJSON($response, $e->errors());
-            return $response->withStatus(422);
-        } catch (\Throwable $e) {
-            $response = $this->asJSON($response, ['error' => $e->getMessage()]);
-            return $response->withStatus(400);
+            $category = $this->editCategory($post);
+            return $this->asJSON($category);
         }
+
+        throw new UnsupportedOperationException($operation);
     }
 
     protected function editCategory(array $post): ?Category

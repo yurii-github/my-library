@@ -21,7 +21,6 @@
 namespace App\Actions;
 
 use App\Configuration\Configuration;
-use App\Exception\InvalidImageException;
 use App\Helpers\Tools;
 use App\Models\Book;
 use Psr\Container\ContainerInterface;
@@ -41,17 +40,12 @@ class UpdateBookCoverAction extends AbstractApiAction
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $params = $request->getQueryParams();
-        
-        try {
-            $book = Book::where(['book_guid' => $params['book_guid'] ?? null])->firstOrFail();
-            $bookCover = Tools::getResampledImageByWidthAsBlob($request->getBody()->getContents(), $this->config->book->covermaxwidth);
-            $book->book_cover = $bookCover;
-            $book->save();
-        } catch (InvalidImageException $e) {
-            $response = $this->asJSON($response, ['cover' => 'invalid image']); // TODO: better format
-            return $response->withStatus(422);
-        }
 
-        return $this->asJSON($response);
+        $book = Book::where(['book_guid' => $params['book_guid'] ?? null])->firstOrFail();
+        $bookCover = Tools::getResampledImageByWidthAsBlob($request->getBody()->getContents(), $this->config->book->covermaxwidth);
+        $book->book_cover = $bookCover;
+        $book->save();
+
+        return $this->asJSON();
     }
 }

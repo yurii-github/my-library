@@ -50,7 +50,7 @@ class ConfigDoImportFilesAction extends AbstractApiAction
             $message = ['data' => $arr_added, 'result' => false, 'error' => $e->getMessage()];
         }
 
-        return $this->asJSON($response, $message);
+        return $this->asJSON($message);
     }
 
 }

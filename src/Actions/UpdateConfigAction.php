@@ -59,6 +59,6 @@ class UpdateConfigAction extends AbstractApiAction
             $resp->result = false;
         }
 
-        return $this->asJSON($response, $resp);
+        return $this->asJSON($resp);
     }
 }

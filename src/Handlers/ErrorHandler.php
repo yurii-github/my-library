@@ -20,6 +20,7 @@
 
 namespace App\Handlers;
 
+use App\Exception\InvalidImageException;
 use App\Exception\UnsupportedOperationException;
 use Illuminate\Validation\ValidationException;
 use Psr\Http\Message\ServerRequestInterface;
@@ -42,7 +43,9 @@ class ErrorHandler extends SlimErrorHandler
         if ($this->exception instanceof ValidationException) {
             return $this->exception->status;
         }
-        
+        if ($this->exception instanceof InvalidImageException) {
+            return 422;
+        }
         if ($this->exception instanceof UnsupportedOperationException) {
             return 400;
         }

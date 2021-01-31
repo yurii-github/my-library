@@ -44,6 +44,6 @@ class GetBookListAction extends AbstractApiAction
         $gridQuery = new JGridRequestQuery($query, $request);
         $gridQuery->withFilters()->withSorting('created_date', 'desc');
 
-        return $this->asJSON($response, $gridQuery->paginate($columns));
+        return $this->asJSON($gridQuery->paginate($columns));
     }
 }

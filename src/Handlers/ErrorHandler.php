@@ -20,10 +20,12 @@
 
 namespace App\Handlers;
 
-use Psr\Http\Message\ResponseInterface;
+use App\Exception\UnsupportedOperationException;
+use Illuminate\Validation\ValidationException;
 use Psr\Http\Message\ServerRequestInterface;
+use \Slim\Handlers\ErrorHandler as SlimErrorHandler;
 
-class ErrorHandler extends \Slim\Handlers\ErrorHandler
+class ErrorHandler extends SlimErrorHandler
 {
     public function getDisplayErrorDetails(): bool
     {
@@ -35,9 +37,16 @@ class ErrorHandler extends \Slim\Handlers\ErrorHandler
         return $this->request;
     }
 
-    protected function respond(): ResponseInterface
+    protected function determineStatusCode(): int
     {
-        return parent::respond();
+        if ($this->exception instanceof ValidationException) {
+            return $this->exception->status;
+        }
+        
+        if ($this->exception instanceof UnsupportedOperationException) {
+            return 400;
+        }
 
+        return parent::determineStatusCode();
     }
 }

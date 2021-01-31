@@ -22,7 +22,8 @@
 		"illuminate/validation": "^7.30",
       	"ext-intl": "*",
 		"illuminate/events": "^7.30",
-		"ramsey/uuid": "^4.1"
+		"ramsey/uuid": "^4.1",
+		"monolog/monolog": "^2.2"
     },
 	"autoload": {
 		"psr-4": {

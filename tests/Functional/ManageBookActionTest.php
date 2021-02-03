@@ -15,9 +15,9 @@ class ManageBookActionTest extends AbstractTestCase
         $response = $this->app->handle($request);
 
         $this->assertSame(400, $response->getStatusCode());
-        $this->assertJsonData(['error' => 'Unsupported operation!'], $response);
+        $this->assertJsonError("Operation '' is not supported!", 0, "App\\Exception\\UnsupportedOperationException", $response);
     }
-    
+
     public function testAddBook_CannotAddBookWithoutFileWithSync()
     {
         $this->setBookLibrarySync(true);
@@ -31,14 +31,12 @@ class ManageBookActionTest extends AbstractTestCase
 
         $response = $this->app->handle($request);
 
-        $this->assertSame(400, $response->getStatusCode());
-        $this->assertJsonData([
-            'error' => "Book 'vfs://base/data/books/, ''title book #1'',  [].' does not exist."
-        ], $response);
+        $this->assertSame(500, $response->getStatusCode());
+        $this->assertJsonError("Book 'vfs://base/data/books/, ''title book #1'',  [].' does not exist.", 0, "App\\Exception\\BookFileNotFoundException", $response);
         $this->assertDatabaseCount('books', 0);
     }
-    
-    
+
+
     public function testAddBook_Successful()
     {
         $this->setBookLibrarySync(false);
@@ -114,7 +112,7 @@ class ManageBookActionTest extends AbstractTestCase
         $this->assertSame('', $content);
         $this->assertDatabaseCount('books', 2);
     }
-    
+
     public function testDeleteBook_SuccessfulWithSyncOnWhenFileWasRemoved()
     {
         $this->setBookLibrarySync(false);
@@ -135,7 +133,7 @@ class ManageBookActionTest extends AbstractTestCase
         $this->assertDatabaseCount('books', 2);
         $this->assertFileNotExists($bookToDelete->getFilepath());
     }
-    
+
     public function testEditBook_ChangeFilenameIsSkipped()
     {
         $createdAt = Carbon::now();
@@ -155,7 +153,9 @@ class ManageBookActionTest extends AbstractTestCase
 
         $content = (string)$response->getBody();
         $this->assertSame(200, $response->getStatusCode());
-        $this->assertSame('', $content);
+        $this->assertJson('{"book_guid":"68778F27-CF74-4113-99ED-BE481C96C678","title":"title book #1","created_date":"2021-02-03T13:58:20.000000Z","updated_date":"2021-02-03T13:58:20.000000Z","favorite":0,"read":"no","year":null,"isbn13":null,"author":null,"publisher":null,"ext":null,"filename":"filename-1"}',
+            $content);
+
         $this->assertDatabaseHas('books', [
             'book_guid' => $book->book_guid,
             'title' => $book->title,
@@ -168,7 +168,7 @@ class ManageBookActionTest extends AbstractTestCase
     public function testEditBook_BookRecordMustExist()
     {
         $this->assertDatabaseCount('books', 0);
-        
+
         $request = $this->createJsonRequest('POST', '/api/book/manage', [
             'id' => 'unknown-id',
             'filename' => 'some-new-filename.pdf',
@@ -197,14 +197,18 @@ class ManageBookActionTest extends AbstractTestCase
         $response = $this->app->handle($request);
 
         $this->assertSame(200, $response->getStatusCode());
-        $this->assertSame('', (string)$response->getBody());
+        $content = (string)$response->getBody();
+        $this->assertJson(
+            '{"book_guid":"674406C1-D68C-44B5-8796-8D1A86DE540B","title":"new title X","created_date":"2021-02-04T14:00:01.000000Z","updated_date":"2021-02-04T14:00:01.000000Z","favorite":0,"read":"no","year":null,"isbn13":null,"author":null,"publisher":null,"ext":null,"filename":", \'\'new title X\'\',  []."}',
+            $content
+        );
         $this->assertDatabaseHas('books', [
             'book_guid' => $book->book_guid,
             'title' => 'new title X',
             'filename' => ", ''new title X'',  []."
         ]);
     }
-    
+
     public function testEditBook_CannotChangeWhileIsOpenWithSync()
     {
         $this->setBookLibrarySync(false);
@@ -215,11 +219,11 @@ class ManageBookActionTest extends AbstractTestCase
         file_put_contents($filenameOld, 'some data');
         $this->assertFileExists($filenameOld);
         $this->assertSame('some data', file_get_contents($filenameOld));
-        
+
         // make readonly library directory, assume user set incorrect permissions at some point later
         $config = $this->getLibraryConfig();
         chmod($config->getLibrary()->directory, 0444); //readonly
-        
+
         $request = $this->createJsonRequest('POST', '/api/book/manage', [
             'id' => $bookToChange->book_guid,
             'title' => 'new title X',
@@ -227,12 +231,16 @@ class ManageBookActionTest extends AbstractTestCase
         ]);
 
         $response = $this->app->handle($request);
+        
+        $this->assertSame(500, $response->getStatusCode());
         $content = (string)$response->getBody();
+        $this->assertJsonError(
+            "Failed to rename file 'vfs://base/data/books/filename-1 to vfs://base/data/books/, ''new title X'',  [].. Permission denied",
+            0,
+            'App\Exception\BookFileException',
+            $response
+        );
 
-        $this->assertSame(400, $response->getStatusCode());
-        $this->assertJsonData([
-            'error' => "Failed to rename file 'vfs://base/data/books/filename-1 to vfs://base/data/books/, ''new title X'',  [].. Permission denied",
-        ], $response);
         $this->assertDatabaseHas('books', [
             'book_guid' => $bookToChange->book_guid,
             'title' => $bookToChange->title,
@@ -243,7 +251,6 @@ class ManageBookActionTest extends AbstractTestCase
         $bookToChange->refresh();
         $this->assertSame($filenameOld, $bookToChange->getFilepath());
     }
-    
 
     public function testEditBook_CannotChangeFilenameFromTitleWithoutFileWithSync()
     {
@@ -259,10 +266,14 @@ class ManageBookActionTest extends AbstractTestCase
         ]);
 
         $response = $this->app->handle($request);
-        $this->assertSame(400, $response->getStatusCode());
-        $this->assertJsonData([
-            'error' => "Sync for file failed. Source file 'vfs://base/data/books/filename-1' does not exist"
-        ], $response);
+
+        $this->assertSame(500, $response->getStatusCode());
+        $this->assertJsonError(
+            "Sync for file failed. Source file 'vfs://base/data/books/filename-1' does not exist",
+            2,
+            'App\Exception\BookFileNotFoundException',
+            $response
+        );
         $this->assertDatabaseHas('books', [
             'book_guid' => $book->book_guid,
             'title' => $book->title,
@@ -271,7 +282,7 @@ class ManageBookActionTest extends AbstractTestCase
     }
 
 
-    public function testEditBook_CannotChangeFilenameFromTitleWithFileWithSync()
+    public function testEditBook_CanChangeFilenameFromTitleWithFileWithSync()
     {
         $this->setBookLibrarySync(false);
         $books = $this->populateBooks();
@@ -284,23 +295,32 @@ class ManageBookActionTest extends AbstractTestCase
 
         $this->setBookLibrarySync(true);
 
+        $oldFilename = $book->filename;
+        $newTitle = 'new title X';
+        $newFilename = ", ''new title X'',  [].";
+        
         $request = $this->createJsonRequest('POST', '/api/book/manage', [
             'id' => $book->book_guid,
-            'title' => 'new title X',
+            'title' => $newTitle,
             'oper' => 'edit'
         ]);
 
         $response = $this->app->handle($request);
-        $newFilename = ", ''new title X'',  [].";
+
         $this->assertSame(200, $response->getStatusCode());
-        $this->assertSame('', (string)$response->getBody());
         $this->assertDatabaseHas('books', [
             'book_guid' => $book->book_guid,
-            'title' => 'new title X',
+            'title' => $newTitle,
             'filename' => $newFilename
         ]);
+        $book->refresh();
+        $this->assertSame(
+            '{"book_guid":"'.$book->book_guid.'","title":"'.$book->title.'","created_date":"'.$book->created_date->toIso8601ZuluString('microsecond').'","updated_date":"'.$book->updated_date->toIso8601ZuluString('microsecond').'","favorite":0,"read":"no","year":null,"isbn13":null,"author":null,"publisher":null,"ext":null,"filename":", \'\'new title X\'\',  []."}',
+            (string)$response->getBody()
+        );
+
         // book file was moved
-        $this->assertFileNotExists($config->getFilepath($book->filename));
+        $this->assertFileNotExists($config->getFilepath($oldFilename));
         $this->assertFileExists($config->getFilepath($newFilename));
         $this->assertStringEqualsFile($config->getFilepath($newFilename), 'sample-data');
     }

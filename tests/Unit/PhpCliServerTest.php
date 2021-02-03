@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests;
+namespace Tests\Unit;
 
 use App\PhpCliServer;
 use org\bovigo\vfs\vfsStream;
@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @runTestsInSeparateProcesses
- * TODO: test headers
  */
 class PhpCliServerTest extends TestCase
 {

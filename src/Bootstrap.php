@@ -165,7 +165,7 @@ class Bootstrap
             return $translator;
         });
         $container->bind(IlluminateTranslator::class, function (ContainerInterface $container, $args) {
-            // TODO: correct it
+            // TODO: correct validation message
             return new IlluminateTranslator((new ArrayLoader())
                 ->addMessages('en-Us', '', [
                     'validation.required' => 'ssssssss'

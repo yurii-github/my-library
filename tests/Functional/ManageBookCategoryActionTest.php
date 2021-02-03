@@ -63,7 +63,7 @@ class ManageBookCategoryActionTest extends AbstractTestCase
         $response = $this->app->handle($request);
         $content = (string)$response->getBody();
         $this->assertSame(422, $response->getStatusCode());
-        $this->assertJsonData(['title' => ['validation.required']], $response); // TODO: fix validation text
+        $this->assertJsonData(['title' => ['validation.required']], $response);
         $this->assertDatabaseCount('categories', 2);
         $this->assertDatabaseHas('categories', ['guid' => $category->guid, 'title' => $category->title]);
         $this->assertDatabaseHas('categories', ['guid' => $category2->guid, 'title' => $category2->title]);

@@ -209,6 +209,9 @@ class ManageBookActionTest extends AbstractTestCase
         ]);
     }
 
+    /**
+     * @runInSeparateProcess 
+     */
     public function testEditBook_CannotChangeWhileIsOpenWithSync()
     {
         $this->setBookLibrarySync(false);

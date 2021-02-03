@@ -25,8 +25,6 @@ class GetBookCoverActionTest extends AbstractTestCase
         $this->assertEquals($cover, $content);
     }
 
-// TODO: invalid cover is not saved/returned!
-
     function testBookCoverIsReturned()
     {
         $books = $this->populateBooks();

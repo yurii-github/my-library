@@ -100,11 +100,19 @@ class Bootstrap
         }
     }
 
-    public static function initApplication()
+    public static function initApplication(): App
     {
         Container::setInstance(null);
-
         $container = Container::getInstance();
+
+        self::registerServices($container);
+        self::bootServices($container);
+        
+        return self::buildApplication($container);
+    }
+
+    protected static function registerServices(Container $container)
+    {
         $container->singleton(Filesystem::class, function (ContainerInterface $container, $args) {
             return new Filesystem();
         });
@@ -166,10 +174,16 @@ class Bootstrap
         $container->bind(CoverExtractor::class, function(ContainerInterface $container, $args){
             return new CoverExtractor($container->get(Configuration::class));
         });
-
-        //boot services
+    }
+    
+    
+    protected static function bootServices(Container $container)
+    {
         $container->get('db');
-
+    }
+    
+    protected static function buildApplication(Container $container): App
+    {
         $app = AppFactory::create(null, $container);
         $app->addBodyParsingMiddleware();
         self::initExceptionHandling($app);

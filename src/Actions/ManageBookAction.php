@@ -54,8 +54,7 @@ class ManageBookAction extends AbstractApiAction
 
         if ($operation === 'add') {
             $book = $this->addBook($post);
-            $response->getBody()->write(json_encode($book->toArray(), JSON_UNESCAPED_UNICODE));
-            return $this->asJSON();
+            return $this->asJSON($book);
         } elseif ($operation === 'del') {
             $this->deleteBook($post);
             return $this->asJSON();

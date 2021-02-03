@@ -85,7 +85,9 @@ abstract class AbstractTestCase extends TestCase
         if ($data !== null) {
             $request = $request->withParsedBody($data);
         }
-        return $request->withHeader('Content-Type', 'application/json');
+        return $request
+            ->withHeader('Content-Type', 'application/json')
+            ->withHeader('Accept', 'application/json');
     }
 
     /**
@@ -170,5 +172,19 @@ abstract class AbstractTestCase extends TestCase
     protected function setBookLibrarySync(bool $mode): void
     {
         $this->getLibraryConfig()->getLibrary()->sync = $mode;
+    }
+    
+    
+    public function assertJsonError($message, $code, $type, ResponseInterface $response)
+    {
+        $data  = (string)$response->getBody();
+        $data = json_decode($data, true);
+        $this->assertIsArray($data);
+        $this->assertCount(1, $data);
+        $this->assertArrayHasKey(0, $data);
+        $data = $data[0];
+        $this->assertEquals($code, $data['code']);
+        $this->assertEquals($message, $data['message']);
+        $this->assertEquals($type, $data['type']);
     }
 }

@@ -52,15 +52,15 @@ class CoverExtractor
         if (!file_exists($srcPdfFile)) {
             throw new BookFileNotFoundException("Book file '{$srcPdfFile}' does not exist!");
         }
-        
-        $coverData = null;
-        $tmpFilename = tempnam(sys_get_temp_dir(), 'MYL');
 
+        $tmpFilename = tempnam(sys_get_temp_dir(), 'MYL');
+        $coverData = $output = null;
+        
         try {
             chmod($tmpFilename, 0777);
-
             $command = $this->buildGhostscriptCommand($srcPdfFile, $tmpFilename);
-            $res = exec($command, $output);
+            $output = shell_exec($command);
+            $output = str_replace("\n", '<br>', $output);
             $coverData = file_get_contents($tmpFilename);
         } finally {
             if (file_exists($tmpFilename)) {
@@ -69,7 +69,11 @@ class CoverExtractor
         }
 
         if (empty($coverData)) {
-            throw new CoverExtractionFailedException("Failed to convert from <b>$srcPdfFile</b> to <b>$tmpFilename</b>. <br>ERROR: $res<br><br>" . print_r($output, true));
+            throw new CoverExtractionFailedException(
+                "Failed to convert from <b>$srcPdfFile</b> to <b>$tmpFilename</b>.<br>" .
+                "---------<br>".
+                $output
+            );
         }
         
         return $coverData;
@@ -78,6 +82,7 @@ class CoverExtractor
     protected function buildGhostscriptCommand($srcPdfFile, $outJpegFile)
     {
         $ghostScriptEXE = $this->config->getBook()->ghostscript;
+        $err2out = strtolower(PHP_OS_FAMILY) === 'linux' ? '2>&1' : '';
         
         if (!$ghostScriptEXE) {
             throw new GhostscriptIsNotConfiguredException('Ghostscript is not configured');
@@ -86,7 +91,7 @@ class CoverExtractor
         return <<<CMD
 "$ghostScriptEXE" -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -dSAFER -dNOPAUSE \
 -dBATCH -dFirstPage=1 -sPageList=1 -dLastPage=1 -sDEVICE=jpeg -dJPEGQ=100 -r96 \
--sOutputFile="$outJpegFile" "$srcPdfFile"
+-sOutputFile="$outJpegFile" "$srcPdfFile" $err2out
 CMD;
     }
 }

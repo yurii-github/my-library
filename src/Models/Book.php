@@ -82,7 +82,7 @@ class Book extends Model
             if ($config->library->sync) {
                 $filepath = $config->getFilepath($book->filename);
                 if (!file_exists($filepath)) {
-                    throw new BookFileNotFoundException("Book '{$filepath}' does not exist.", 1);
+                    throw new BookFileNotFoundException("Book '{$filepath}' does not exist.");
                 }
             }
         });

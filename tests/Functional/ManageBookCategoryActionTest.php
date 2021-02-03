@@ -17,7 +17,7 @@ class ManageBookCategoryActionTest extends AbstractTestCase
         $response = $this->app->handle($request);
 
         $this->assertSame(400, $response->getStatusCode());
-        $this->assertJsonData(['error' => 'Unsupported operation!'], $response);
+        $this->assertJsonError("Operation '' is not supported!", 0, 'App\Exception\UnsupportedOperationException', $response);
     }
 
     public function testAddCategory()
@@ -144,9 +144,11 @@ class ManageBookCategoryActionTest extends AbstractTestCase
 
         $response = $this->app->handle($request);
 
-        $content = (string)$response->getBody();
         $this->assertSame(200, $response->getStatusCode());
-        $this->assertSame('', $content);
+        $this->assertJsonData([
+            'guid'=>$category->guid,
+            'title' => $category->title
+        ], $response);
         $this->assertDatabaseCount('categories', 2);
         $this->assertDatabaseHas('categories', ['guid' => $category->guid, 'title' => $category->title]);
         $this->assertDatabaseHas('categories', ['guid' => $category2->guid, 'title' => $category2->title]);
@@ -159,19 +161,23 @@ class ManageBookCategoryActionTest extends AbstractTestCase
         $this->assertDatabaseHas('categories', ['guid' => $category->guid, 'title' => $category->title]);
         $this->assertDatabaseHas('categories', ['guid' => $category2->guid, 'title' => $category2->title]);
 
+        $newTitle = 'updated title';
         $request = $this->createJsonRequest('POST', '/api/category/manage', [
             'oper' => 'edit',
             'id' => $category->guid,
-            'title' => 'updated title'
+            'title' => $newTitle
         ]);
 
         $response = $this->app->handle($request);
 
         $content = (string)$response->getBody();
         $this->assertSame(200, $response->getStatusCode());
-        $this->assertSame('', $content);
+        $this->assertJsonData([
+            'guid' =>$category->guid,
+            'title' =>$newTitle
+        ], $response);
         $this->assertDatabaseCount('categories', 2);
-        $this->assertDatabaseHas('categories', ['guid' => $category->guid, 'title' => 'updated title']);
+        $this->assertDatabaseHas('categories', ['guid' => $category->guid, 'title' => $newTitle]);
         $this->assertDatabaseHas('categories', ['guid' => $category2->guid, 'title' => $category2->title]);
     }
 
@@ -217,21 +223,24 @@ class ManageBookCategoryActionTest extends AbstractTestCase
         $this->assertDatabaseCount('books_categories', 0);
         $this->assertCount(0, $bookWithMarker->categories);
 
+        $newTitle = 'updated title';
         $request = $this->createJsonRequest('POST', '/api/category/manage', [
             'oper' => 'edit',
             'id' => $category->guid,
-            'title' => 'updated title',
+            'title' => $newTitle,
             'marker' => true
         ]);
         $request = $request->withQueryParams(['nodeid' => $bookWithMarker->book_guid]);
 
         $response = $this->app->handle($request);
 
-        $content = (string)$response->getBody();
         $this->assertSame(200, $response->getStatusCode());
-        $this->assertSame('', $content);
+        $this->assertJsonData([
+            'guid'=>$category->guid,
+            'title' => $newTitle
+        ], $response);
         $this->assertDatabaseCount('categories', 2);
-        $this->assertDatabaseHas('categories', ['guid' => $category->guid, 'title' => 'updated title']);
+        $this->assertDatabaseHas('categories', ['guid' => $category->guid, 'title' => $newTitle]);
         $this->assertDatabaseHas('categories', ['guid' => $category2->guid, 'title' => $category2->title]);
         $this->assertDatabaseCount('books_categories', 1);
         $bookWithMarker->refresh();
@@ -254,10 +263,11 @@ class ManageBookCategoryActionTest extends AbstractTestCase
         $this->assertDatabaseCount('books_categories', 1);
         $this->assertCount(1, $bookWithMarker->categories);
 
+        $newTitle = 'updated title';
         $request = $this->createJsonRequest('POST', '/api/category/manage', [
             'oper' => 'edit',
             'id' => $category->guid,
-            'title' => 'updated title',
+            'title' => $newTitle,
             'marker' => false
         ]);
         $request = $request->withQueryParams(['nodeid' => $bookWithMarker->book_guid]);
@@ -266,9 +276,12 @@ class ManageBookCategoryActionTest extends AbstractTestCase
 
         $content = (string)$response->getBody();
         $this->assertSame(200, $response->getStatusCode());
-        $this->assertSame('', $content);
+        $this->assertJsonData([
+            'guid'=>$category->guid,
+            'title' => $newTitle
+        ], $response);
         $this->assertDatabaseCount('categories', 2);
-        $this->assertDatabaseHas('categories', ['guid' => $category->guid, 'title' => 'updated title']);
+        $this->assertDatabaseHas('categories', ['guid' => $category->guid, 'title' => $newTitle]);
         $this->assertDatabaseHas('categories', ['guid' => $category2->guid, 'title' => $category2->title]);
         $this->assertDatabaseCount('books_categories', 0);
         $bookWithMarker->refresh();

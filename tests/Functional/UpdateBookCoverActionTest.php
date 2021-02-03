@@ -22,7 +22,6 @@ class UpdateBookCoverActionTest extends AbstractTestCase
         ]);
         $stream = new Stream(fopen('php://temp', 'r+'));
         $stream->write($cover);
-        $stream->rewind();
         $request = $request->withBody($stream);
         $response = $this->app->handle($request);
         $this->assertSame(200, $response->getStatusCode());
@@ -54,8 +53,7 @@ class UpdateBookCoverActionTest extends AbstractTestCase
         $content = $response->getBody()->getContents();
         
         $this->assertSame(422, $response->getStatusCode());
-        $content = json_decode($content, true);
-        $this->assertEquals(['cover' => 'invalid image'], $content);
+        $this->assertJsonError("",0,'App\Exception\InvalidImageException', $response);
     }
 
 }

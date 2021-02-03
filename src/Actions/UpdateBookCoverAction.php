@@ -42,7 +42,7 @@ class UpdateBookCoverAction extends AbstractApiAction
         $params = $request->getQueryParams();
 
         $book = Book::where(['book_guid' => $params['book_guid'] ?? null])->firstOrFail();
-        $bookCover = Tools::getResampledImageByWidthAsBlob($request->getBody()->getContents(), $this->config->book->covermaxwidth);
+        $bookCover = Tools::getResampledImageByWidthAsBlob((string)$request->getBody(), $this->config->book->covermaxwidth);
         $book->book_cover = $bookCover;
         $book->save();
 

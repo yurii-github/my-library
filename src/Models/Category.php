@@ -19,6 +19,7 @@ class Category extends Model
     protected $table='categories';
     protected $primaryKey = 'guid';
     protected $keyType = 'string';
+    protected $fillable = ['title'];
 
     protected static function boot()
     {

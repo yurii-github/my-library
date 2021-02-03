@@ -29,7 +29,7 @@ class GetBookCoverAction
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $book_guid = $request->getQueryParams()['book_guid'];
-        $cover = Book::query()->where('book_guid', $book_guid)->first('book_cover')->book_cover;
+        $cover = Book::select('book_cover')->where('book_guid', $book_guid)->first('book_cover')->book_cover;
         $response = $response
             ->withHeader('Cache-Control', 'no-cache')
             ->withHeader('Content-Type', 'image/jpeg');

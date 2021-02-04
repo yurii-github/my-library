@@ -5,6 +5,7 @@
     <div id="book-pager"></div>
 
     <script type="text/javascript">
+      
       //INSPIRATION: http://stackoverflow.com/a/4842450/2032121
       //SOLUTION: http://stackoverflow.com/a/4073967/2032121
       //SOLUTION: http://www.trirand.com/blog/?page_id=393/help/to-get-the-rowid-of-the-nth-row-of-the-grid/
@@ -12,12 +13,15 @@
       //API: http://www.w3.org/TR/FileAPI/
       //identifying which image is currently open in fancybox
       //https://github.com/fancyapps/fancyBox/issues/40
+      //JSON instead of FORM
+      //https://stackoverflow.com/a/34654952
+      
       $.jgrid.no_legacy_api = true;
 
-      var book_list = $("#book-list"), lastSel, lastFavorite, lastRead, filterCategories
+      let book_list = $("#book-list"), lastSel, lastFavorite, lastRead, filterCategories
 
       function getCookie(n, v) {
-        var val = Cookies.get(n)
+        let val = Cookies.get(n)
         if (val === undefined) {
           val = v
         }
@@ -85,7 +89,7 @@
             search: false,
             sortable: false,
             formatter: function (cellvalue, options, rowObject) {
-              let link = 'api/book/cover?book_guid=' + options.rowId
+              let link = `api/book/cover?book_guid=${options.rowId}&t=${Date.now()}`
               return '<a class="book-cover-link" data-guid="' + options.rowId + '" data-fancybox-group="book-covers" href="' + link + '" title="' + rowObject[4] + ' : ' + rowObject[5] + '"' + '><img class="book-cover" src="' + link + '" /></a>'
             }
           },
@@ -191,7 +195,7 @@
         cellEdit: false,
         cellSubmit: 'remote',
         cellurl: 'api/book/manage', subGrid: true,
-        // https://stackoverflow.com/a/34654952
+        
         ajaxRowOptions: {
           beforeSend: function (jqXHR, settings) {
             jqXHR.setRequestHeader('Accept', "application/json")
@@ -356,7 +360,11 @@
           del: false,
           search: false
         })
-        .jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false})// inline filter
+        // inline filter
+        .jqGrid('filterToolbar', {
+          stringResult: true,
+          searchOnEnter: false
+        })
     </script>
 
 
@@ -385,16 +393,19 @@
                 alert('Sorry, you can use only GIF, JPEG and PNG images')
                 return
               }
-              var xhr = new XMLHttpRequest()
+              let xhr = new XMLHttpRequest()
               xhr.open('POST', 'api/book/cover-save?book_guid=' + book_guid, true)
               xhr.send(file)
               xhr.onreadystatechange = function (e) {
-                if (this.readyState !== 4 || this.status !== 200) return
+                if (this.readyState !== 4 || this.status !== 200) {
+                  return
+                }
                 //refresh view
-                var r = new FileReader()
+                let r = new FileReader()
                 r.readAsDataURL(file)
                 r.onload = function (e) {
                   $('.book-cover-holder > img').attr('src', e.target.result)
+                  $(book_list).jqGrid('setRowData', book_guid, {book_guid: book_guid});
                 }
                 r.onprogress = function (e) {
                   if (e.lengthComputable) {

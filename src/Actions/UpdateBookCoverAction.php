@@ -21,7 +21,7 @@
 namespace App\Actions;
 
 use App\Configuration\Configuration;
-use App\Helpers\Tools;
+use App\Exception\InvalidImageException;
 use App\Models\Book;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -42,10 +42,39 @@ class UpdateBookCoverAction extends AbstractApiAction
         $params = $request->getQueryParams();
 
         $book = Book::where(['book_guid' => $params['book_guid'] ?? null])->firstOrFail();
-        $bookCover = Tools::getResampledImageByWidthAsBlob((string)$request->getBody(), $this->config->book->covermaxwidth);
+        $bookCover = self::getResampledImageByWidthAsBlob((string)$request->getBody(), $this->config->book->covermaxwidth);
         $book->book_cover = $bookCover;
         $book->save();
 
         return $this->asJSON();
+    }
+
+    /**
+     * Resamples image to match boundary limits by width. Height is not checked and will resampled according to width's change percentage.
+     *
+     * @param string $img_blob image source as blob string
+     * @param int $max_width max allowed width for picture in pixels
+     * @throws InvalidImageException
+     * @return false|string
+     */
+    protected static function getResampledImageByWidthAsBlob(string $img_blob, $max_width = 800)
+    {
+        $size = getimagesizefromstring($img_blob);
+
+        if ($size === false) {
+            throw new InvalidImageException();
+        }
+
+        list($src_w, $src_h) = getimagesizefromstring($img_blob);
+
+        $src_image = imagecreatefromstring($img_blob);
+        $dst_w = $src_w > $max_width ? $max_width : $src_w;
+        $dst_h = $src_w > $max_width ? ($max_width / $src_w * $src_h) : $src_h; //minimize height in percent to width
+        $dst_image = imagecreatetruecolor($dst_w, $dst_h);
+        imagecopyresized($dst_image, $src_image, 0, 0, 0, 0, $dst_w, $dst_h, $src_w, $src_h);
+        ob_start();
+        imagejpeg($dst_image);
+
+        return ob_get_clean();
     }
 }

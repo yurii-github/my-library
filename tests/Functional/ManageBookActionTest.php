@@ -95,12 +95,13 @@ class ManageBookActionTest extends AbstractTestCase
         $this->assertDatabaseMissing('books', ['book_guid' => $bookToDelete->book_guid]);
     }
 
-    public function testDeleteBook_SuccessfulWithSyncOnWhenFileExists()
+    public function testDeleteBook_SuccessfulWithSyncOnWhenFileWasRemoved()
     {
         $this->setBookLibrarySync(false);
         $books = $this->populateBooks();
         $this->setBookLibrarySync(true);
         $bookToDelete = $books[0];
+        $this->assertFileNotExists($bookToDelete->file->getFilepath());
 
         $request = $this->createJsonRequest('POST', '/api/book/manage', [
             'id' => $bookToDelete->book_guid,
@@ -113,14 +114,14 @@ class ManageBookActionTest extends AbstractTestCase
         $this->assertDatabaseCount('books', 2);
     }
 
-    public function testDeleteBook_SuccessfulWithSyncOnWhenFileWasRemoved()
+    public function testDeleteBook_SuccessfulWithSyncOnWhenFileExists()
     {
         $this->setBookLibrarySync(false);
         $books = $this->populateBooks();
         $this->setBookLibrarySync(true);
         $bookToDelete = $books[0];
-        file_put_contents($bookToDelete->getFilepath(), 'some data');
-        $this->assertFileExists($bookToDelete->getFilepath());
+        file_put_contents($bookToDelete->file->getFilepath(), 'some data');
+        $this->assertFileExists($bookToDelete->file->getFilepath());
 
         $request = $this->createJsonRequest('POST', '/api/book/manage', [
             'id' => $bookToDelete->book_guid,
@@ -131,7 +132,7 @@ class ManageBookActionTest extends AbstractTestCase
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('', $content);
         $this->assertDatabaseCount('books', 2);
-        $this->assertFileNotExists($bookToDelete->getFilepath());
+        $this->assertFileNotExists($bookToDelete->file->getFilepath());
     }
 
     public function testEditBook_ChangeFilenameIsSkipped()
@@ -159,7 +160,7 @@ class ManageBookActionTest extends AbstractTestCase
         $this->assertDatabaseHas('books', [
             'book_guid' => $book->book_guid,
             'title' => $book->title,
-            'filename' => $book->filename,
+            'filename' => $book->file->filename,
             'created_date' => $createdAt->toDateTimeString(),
             'updated_date' => $createdAt->toDateTimeString()
         ]);
@@ -218,7 +219,7 @@ class ManageBookActionTest extends AbstractTestCase
         $books = $this->populateBooks();
         $this->setBookLibrarySync(true);
         $bookToChange = $books[0];
-        $filenameOld = $bookToChange->getFilepath();
+        $filenameOld = $bookToChange->file->getFilepath();
         file_put_contents($filenameOld, 'some data');
         $this->assertFileExists($filenameOld);
         $this->assertSame('some data', file_get_contents($filenameOld));
@@ -247,12 +248,12 @@ class ManageBookActionTest extends AbstractTestCase
         $this->assertDatabaseHas('books', [
             'book_guid' => $bookToChange->book_guid,
             'title' => $bookToChange->title,
-            'filename' => $bookToChange->filename,
+            'filename' => $bookToChange->file->filename,
         ]);
         $this->assertFileExists($filenameOld);
         $this->assertSame('some data', file_get_contents($filenameOld));
         $bookToChange->refresh();
-        $this->assertSame($filenameOld, $bookToChange->getFilepath());
+        $this->assertSame($filenameOld, $bookToChange->file->getFilepath());
     }
 
     public function testEditBook_CannotChangeFilenameFromTitleWithoutFileWithSync()
@@ -280,7 +281,7 @@ class ManageBookActionTest extends AbstractTestCase
         $this->assertDatabaseHas('books', [
             'book_guid' => $book->book_guid,
             'title' => $book->title,
-            'filename' => $book->filename
+            'filename' => $book->file->filename
         ]);
     }
 
@@ -292,13 +293,13 @@ class ManageBookActionTest extends AbstractTestCase
         $book = $books[0];
         $config = $this->getLibraryConfig();
 
-        file_put_contents($config->getFilepath($book->filename), 'sample-data');
-        $this->assertFileExists($config->getFilepath($book->filename));
-        $this->assertStringEqualsFile($config->getFilepath($book->filename), 'sample-data');
+        file_put_contents($config->getFilepath($book->file->filename), 'sample-data');
+        $this->assertFileExists($config->getFilepath($book->file->filename));
+        $this->assertStringEqualsFile($config->getFilepath($book->file->filename), 'sample-data');
 
         $this->setBookLibrarySync(true);
 
-        $oldFilename = $book->filename;
+        $oldFilename = $book->file->filename;
         $newTitle = 'new title X';
         $newFilename = ", ''new title X'',  [].";
         

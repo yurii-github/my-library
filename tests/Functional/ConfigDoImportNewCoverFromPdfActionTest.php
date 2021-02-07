@@ -3,6 +3,7 @@
 namespace Tests\Functional;
 
 use App\CoverExtractor;
+use App\Models\BookFile;
 use Illuminate\Container\Container;
 use Tests\PopulateBooksTrait;
 
@@ -22,10 +23,10 @@ class ConfigDoImportNewCoverFromPdfActionTest extends AbstractTestCase
         $books = $this->populateBooks();
 
         $bookWithCover = $books[0];
-        $bookWithCover->filename = 'test.pdf';
+        $bookWithCover->file = new BookFile('test.pdf');
         $bookWithCover->book_cover = 'some-data';
         $bookWithCover->save();
-        copy(dirname(__DIR__) . '/data/test.pdf', $bookWithCover->getFilepath());
+        copy(dirname(__DIR__) . '/data/test.pdf', $bookWithCover->file->getFilepath());
 
         $request = $this->createJsonRequest('POST', '/config/import-new-cover-from-pdf', [
             'post' => [
@@ -39,7 +40,7 @@ class ConfigDoImportNewCoverFromPdfActionTest extends AbstractTestCase
         $this->assertDatabaseHas('books', [
             'book_guid' => $bookWithCover->book_guid,
             'book_cover' => $bookWithCover->book_cover,
-            'filename' => $bookWithCover->filename,
+            'filename' => $bookWithCover->file->filename,
         ]);
 
         $this->assertSame(200, $response->getStatusCode());
@@ -72,10 +73,10 @@ class ConfigDoImportNewCoverFromPdfActionTest extends AbstractTestCase
         $books = $this->populateBooks();
 
         $bookWithCover = $books[0];
-        $bookWithCover->filename = 'test.pdf';
+        $bookWithCover->file = new BookFile('test.pdf');
         $bookWithCover->book_cover = 'some-data';
         $bookWithCover->save();
-        copy(dirname(__DIR__) . '/data/test.pdf', $bookWithCover->getFilepath());
+        copy(dirname(__DIR__) . '/data/test.pdf', $bookWithCover->file->getFilepath());
 
         $request = $this->createJsonRequest('POST', '/config/import-new-cover-from-pdf', [
             'post' => [
@@ -89,13 +90,13 @@ class ConfigDoImportNewCoverFromPdfActionTest extends AbstractTestCase
         $this->assertDatabaseHas('books', [
             'book_guid' => $bookWithCover->book_guid,
             'book_cover' => file_get_contents(dirname(__DIR__) . '/data/cover_from_test_pdf.jpg'),
-            'filename' => $bookWithCover->filename,
+            'filename' => $bookWithCover->file->filename,
         ]);
 
         $this->assertSame(200, $response->getStatusCode());
         $this->assertJsonData([
             'data' => [
-                $bookWithCover->filename,
+                $bookWithCover->file->filename,
             ],
             'result' => true,
             'error' => null
@@ -106,10 +107,10 @@ class ConfigDoImportNewCoverFromPdfActionTest extends AbstractTestCase
     {
         $books = $this->populateBooks();
         $bookWithCover = $books[0];
-        $bookWithCover->filename .= '.txt';
+        $bookWithCover->file = new BookFile($bookWithCover->file->filename.'.txt');
         $bookWithCover->book_cover = 'some-data';
         $bookWithCover->save();
-        file_put_contents($bookWithCover->getFilepath(), 'some data');
+        file_put_contents($bookWithCover->file->getFilepath(), 'some data');
 
         $this->assertDatabaseHas('books', [
             'book_guid' => $bookWithCover->book_guid,
@@ -128,14 +129,14 @@ class ConfigDoImportNewCoverFromPdfActionTest extends AbstractTestCase
         $this->assertDatabaseHas('books', [
             'book_guid' => $bookWithCover->book_guid,
             'book_cover' => $bookWithCover->book_cover,
-            'filename' => $bookWithCover->filename,
+            'filename' => $bookWithCover->file->filename,
         ]);
 
         $this->assertSame(200, $response->getStatusCode());
         $this->assertJsonData([
             'data' => [],
             'result' => false,
-            'error' => "Unsupported book format for '{$bookWithCover->getFilepath()}'"
+            'error' => "Unsupported book format for '{$bookWithCover->file->getFilepath()}'"
         ], $response);
     }
 
@@ -145,10 +146,10 @@ class ConfigDoImportNewCoverFromPdfActionTest extends AbstractTestCase
         
         $books = $this->populateBooks();
         $bookWithCover = $books[0];
-        $bookWithCover->filename .= '.pdf';
+        $bookWithCover->file = new BookFile($bookWithCover->file->filename.'.pdf');
         $bookWithCover->book_cover = 'some-data';
         $bookWithCover->save();
-        file_put_contents($bookWithCover->getFilepath(), 'some invalid data');
+        file_put_contents($bookWithCover->file->getFilepath(), 'some invalid data');
 
         $this->assertDatabaseHas('books', [
             'book_guid' => $bookWithCover->book_guid,
@@ -167,7 +168,7 @@ class ConfigDoImportNewCoverFromPdfActionTest extends AbstractTestCase
         $this->assertDatabaseHas('books', [
             'book_guid' => $bookWithCover->book_guid,
             'book_cover' => $bookWithCover->book_cover,
-            'filename' => $bookWithCover->filename,
+            'filename' => $bookWithCover->file->filename,
         ]);
 
         $this->assertSame(200, $response->getStatusCode());
@@ -182,7 +183,7 @@ class ConfigDoImportNewCoverFromPdfActionTest extends AbstractTestCase
     {
         $books = $this->populateBooks();
         $bookWithCover = $books[0];
-        $bookWithCover->filename .= '.pdf';
+        $bookWithCover->file = new BookFile($bookWithCover->file->filename.'.pdf');
         $bookWithCover->book_cover = 'some-data';
         $bookWithCover->save();
 
@@ -203,14 +204,14 @@ class ConfigDoImportNewCoverFromPdfActionTest extends AbstractTestCase
         $this->assertDatabaseHas('books', [
             'book_guid' => $bookWithCover->book_guid,
             'book_cover' => $bookWithCover->book_cover,
-            'filename' => $bookWithCover->filename,
+            'filename' => $bookWithCover->file->filename,
         ]);
 
         $this->assertSame(200, $response->getStatusCode());
         $this->assertJsonData([
             'data' => [],
             'result' => false,
-            'error' => "Book file '{$bookWithCover->getFilepath()}' does not exist!"
+            'error' => "Book file '{$bookWithCover->file->getFilepath()}' does not exist!"
         ], $response);
     }
 

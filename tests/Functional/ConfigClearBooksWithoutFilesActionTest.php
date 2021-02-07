@@ -14,7 +14,7 @@ class ConfigClearBooksWithoutFilesActionTest extends AbstractTestCase
         $this->setBookLibrarySync(false);
         $books = $this->populateBooks();
         $book = $books[0];
-        file_put_contents($this->getLibraryConfig()->getFilepath($book->filename), 'test data');
+        file_put_contents($this->getLibraryConfig()->getFilepath($book->file->filename), 'test data');
 
         $this->assertDatabaseCount('books', 3);
         

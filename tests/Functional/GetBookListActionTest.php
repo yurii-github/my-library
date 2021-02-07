@@ -141,7 +141,7 @@ class GetBookListActionTest extends AbstractTestCase
             'author' => $bookWithCategory->author,
             'publisher' => $bookWithCategory->publisher,
             'ext' => $bookWithCategory->ext,
-            'filename' => $bookWithCategory->filename,
+            'filename' => $bookWithCategory->file->filename,
         ], $data['rows'][0]['cell']);
     }
 

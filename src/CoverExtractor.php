@@ -27,12 +27,12 @@ use App\Exception\InvalidBookFormatException;
 use Illuminate\Support\Str;
 
 /**
- * Imports book cover from book if it is PDF
- * Basically, get image from its 1st page
+ * Imports book cover from 1st page of the book.
+ * Currently, it supports only PDF files.
  */
 class CoverExtractor
 {
-    protected $config;
+    protected Configuration\Configuration $config;
 
     public function __construct(Configuration\Configuration $config)
     {
@@ -79,7 +79,13 @@ class CoverExtractor
         return $coverData;
     }
 
-    protected function buildGhostscriptCommand($srcPdfFile, $outJpegFile)
+    /**
+     * @param string $srcPdfFile
+     * @param string $outJpegFile
+     * @throws GhostscriptIsNotConfiguredException
+     * @return string
+     */
+    protected function buildGhostscriptCommand(string $srcPdfFile, string $outJpegFile)
     {
         $ghostScriptEXE = $this->config->getBook()->ghostscript;
         $err2out = strtolower(PHP_OS_FAMILY) === 'linux' ? '2>&1' : '';

@@ -50,7 +50,7 @@ use \Illuminate\Translation\Translator as IlluminateTranslator;
 
 class Bootstrap
 {
-    const CURRENT_APP_VERSION = '1.3';
+    const CURRENT_APP_VERSION = '1.3'; //TODO: change
 
     // TODO: remove env $_ENV['APP_DEBUG'] package, always use debug mode
     const DEBUG_MODE = true;

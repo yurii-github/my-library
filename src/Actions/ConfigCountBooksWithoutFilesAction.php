@@ -29,7 +29,7 @@ class ConfigCountBooksWithoutFilesAction extends AbstractApiAction
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $count = Book::query()->select(['book_guid', 'filename'])->get()->filter(function (Book $book) {
-            return !$book->file->file_exists;
+            return !$book->file->exists;
         })->count();
 
         return $this->asJSON($count);

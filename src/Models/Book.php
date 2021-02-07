@@ -97,7 +97,7 @@ class Book extends Model
                 $book->file = BookFile::createForBook($book);
             }
             if ($config->library->sync) {
-                if (!$book->file->file_exists) {
+                if (!$book->file->exists) {
                     throw new BookFileNotFoundException("Book '{$book->file->filepath}' does not exist.");
                 }
             }

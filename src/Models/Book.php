@@ -1,4 +1,22 @@
 <?php
+/*
+ * My Book Library
+ *
+ * Copyright (C) 2014-2021 Yurii K.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses
+ */
 
 namespace App\Models;
 
@@ -26,9 +44,9 @@ use Ramsey\Uuid\Uuid;
  * @property string $author
  * @property string $publisher
  * @property string $ext
- * @property string $filename
+ *
  * @property-read Collection|Category[] $categories
- * @property-read bool $file_exists
+ * @property BookFile $file
  *
  * @mixin Builder
  */
@@ -56,6 +74,8 @@ class Book extends Model
         'favorite' => 'float'
     ];
 
+    protected ?BookFile $attrFile;
+
 
     protected static function boot()
     {
@@ -65,25 +85,20 @@ class Book extends Model
         assert($config instanceof Configuration);
 
         static::deleted(function (self $book) use ($config) {
-            if ($config->library->sync) {
-                $filepath = $config->getFilepath($book->filename);
-                // TODO: write warning into log // "File '{$filepath}' was removed before record deletion with sync enabled"
-                if (file_exists($filepath)) {
-                    unlink($filepath);
-                }
+            if ($config->library->sync && $book->file) {
+                $book->file->delete();
             }
         });
 
         static::creating(function (self $book) use ($config) {
             $book->book_guid = strtoupper(Uuid::uuid4());
             $book->favorite = $book->favorite == null ? 0 : $book->favorite;
-            if (empty($book->filename)) {
-                $book->filename = self::buildFilename($book, $config->book->nameformat);
+            if (!$book->file) {
+                $book->file = BookFile::createForBook($book);
             }
             if ($config->library->sync) {
-                $filepath = $config->getFilepath($book->filename);
-                if (!file_exists($filepath)) {
-                    throw new BookFileNotFoundException("Book '{$filepath}' does not exist.");
+                if (!$book->file->exists) {
+                    throw new BookFileNotFoundException("Book '{$book->file->filepath}' does not exist.");
                 }
             }
         });
@@ -94,13 +109,13 @@ class Book extends Model
         static::updating(function (self $book) use ($config) {
             if (self::filenameAttrsChanged($book)) {
                 $oldFilename = $book->getOriginal('filename');
-                $book->filename = self::buildFilename($book, $config->book->nameformat);
+                $book->file = BookFile::createForBook($book);
                 // sync with filesystem is enabled. update filename and rename physical file
                 if ($config->library->sync) {
                     $filepathOld = $config->getFilepath($oldFilename);
-                    $filepathNew = $config->getFilepath($book->filename);
+                    $filepathNew = $book->file->filepath;
                     // update file in filesystem
-                    if ($filepathOld != $filepathNew) {
+                    if ($filepathOld !== $filepathNew) {
                         if (!file_exists($filepathOld)) {
                             throw new BookFileNotFoundException("Sync for file failed. Source file '{$filepathOld}' does not exist", 2);
                         }
@@ -135,27 +150,6 @@ class Book extends Model
         return $isChanged;
     }
 
-
-    public static function buildFilename(self $book, $format)
-    {
-        return str_replace(array(
-            '{year}',
-            '{title}',
-            '{publisher}',
-            '{author}',
-            '{isbn13}',
-            '{ext}'
-        ), array(
-            $book->year,
-            $book->title,
-            $book->publisher,
-            $book->author,
-            $book->isbn13,
-            $book->ext
-        ), $format);
-    }
-
-
     /**
      * @return BelongsToMany
      */
@@ -164,19 +158,25 @@ class Book extends Model
         return $this->belongsToMany(Category::class, 'books_categories', 'book_guid', 'category_guid', 'book_guid', 'guid');
     }
 
-    public function getFileExistsAttribute(): bool
-    {
-        $config = Container::getInstance()->get(Configuration::class);
-        assert($config instanceof Configuration);
 
-        return file_exists($config->getFilepath($this->filename));
-    }
-    
-    public function getFilepath(): string 
+    public function setFileAttribute(BookFile $file)
     {
-        $config = Container::getInstance()->get(Configuration::class);
-        assert($config instanceof Configuration);
-
-        return $config->getFilepath($this->filename);
+        $this->attrFile = $file;
+        $this->setAttribute('filename', $file->filename);
+        return $this;
     }
+
+    public function getFileAttribute(): ?BookFile
+    {
+        if (!isset($this->attrFile)) { // fix for ORM
+            $this->attrFile = null;
+        }
+
+        if (!$this->attrFile && $filename = $this->getAttribute('filename')) {
+            $this->attrFile = new BookFile($this->getAttribute('filename'));
+        }
+
+        return $this->attrFile;
+    }
+
 }

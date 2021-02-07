@@ -42,7 +42,7 @@ class ConfigCheckFilesAction extends AbstractApiAction
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $files_db = Book::query()->select(['filename'])->get()->transform(function (Book $book) {
-            return $book->filename;
+            return $book->file->filename;
         })->all();
 
         $files = $this->config->getLibraryBookFilenames();

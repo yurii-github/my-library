@@ -12,7 +12,7 @@ class ConfigCountBooksWithoutFilesActionTest extends AbstractTestCase
     {
         $this->setBookLibrarySync(false);
         $books = $this->populateBooks();
-        file_put_contents($this->getLibraryConfig()->getFilepath($books[0]->filename), 'test data');
+        file_put_contents($this->getLibraryConfig()->getFilepath($books[0]->file->filename), 'test data');
 
         $request = $this->createRequest('GET', '/config/count-books-without-files');
         $response = $this->app->handle($request);

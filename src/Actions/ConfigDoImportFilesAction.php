@@ -22,6 +22,7 @@ namespace App\Actions;
 
 use App\Exception\BookFileNotFoundException;
 use App\Models\Book;
+use App\Models\BookFile;
 use Illuminate\Support\Arr;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -38,12 +39,12 @@ class ConfigDoImportFilesAction extends AbstractApiAction
             foreach ($addFilenames as $filename) {
                 $book = new Book();
                 $book->title = $filename;
-                $book->filename = $filename;
-                if(!$book->file_exists) {
+                $book->file = new BookFile($filename);
+                if(!$book->file->exists) {
                     throw new BookFileNotFoundException('Book file does not exist!');
                 }
                 $book->saveOrFail();
-                $arr_added[] = $book->filename;
+                $arr_added[] = $book->file->filename;
             }
             $message = ['data' => $arr_added, 'result' => true, 'error' => ''];
         } catch (\Throwable $e) {

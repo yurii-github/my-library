@@ -66,7 +66,7 @@ class GetBookListActionTest extends AbstractTestCase
         $this->assertSame(200, $response->getStatusCode());
         $data = json_decode($content, true);
         $this->assertSame(1, $data['page']);
-        $this->assertSame(3, $data['total']);
+        $this->assertSame(1, $data['total']);
         $this->assertSame(3, $data['records']);
         $this->assertIsArray($data['rows']);
         $this->assertCount(3, $data['rows']);
@@ -161,7 +161,7 @@ class GetBookListActionTest extends AbstractTestCase
         $data = json_decode($content, true);
 
         $this->assertSame(2, $data['page']);
-        $this->assertSame(1, $data['total']);
+        $this->assertSame(3, $data['total']);
         $this->assertSame(3, $data['records']);
         $this->assertIsArray($data['rows']);
         $this->assertCount(1, $data['rows']);
@@ -178,7 +178,7 @@ class GetBookListActionTest extends AbstractTestCase
         $data = json_decode((string)$response->getBody(), true);
 
         $this->assertSame(1, $data['page']);
-        $this->assertSame(3, $data['total']);
+        $this->assertSame(1, $data['total']);
         $this->assertSame(3, $data['records']);
         $this->assertIsArray($data['rows']);
         $this->assertCount(3, $data['rows']);

@@ -40,8 +40,8 @@ class JGridRequestQuery
             'sort_column' => $params['sidx'] ?? null,
             'sort_order' => $params['sord'] ?? null,
         ];
-        $data['limit'] = empty($data['limit']) || $data['limit'] <= 0 || $data['limit'] > 30 ? 10 : $data['limit'];
-        $data['page'] = empty($data['page']) || $data['page'] <= 0 ? 1 : $data['page'];
+        $data['limit'] = (int)((empty($data['limit']) || $data['limit'] <= 0 || $data['limit'] > 50) ? 50 : $data['limit']);
+        $data['page'] = (int)((empty($data['page']) || $data['page'] <= 0) ? 1 : $data['page']);
 
         $this->data = $data;
         $this->query = $query;
@@ -93,13 +93,12 @@ class JGridRequestQuery
             return ['id' => $item->$pk, 'cell' => array_intersect_key($item->toArray(), array_flip($columns))];
         })->all();
 
-        $response = new \stdClass();
-        $response->page = $this->data['page'];
-        $response->total = count($rows);
-        $response->records = $total;
-        $response->rows = $rows;
-
-        return $response;
+        return [
+            'page' => $this->data['page'],
+            'rows' => $rows,
+            'total' => ceil($total/$this->data['limit']),
+            'records' => $total
+        ];
     }
 
 }

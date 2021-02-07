@@ -8,6 +8,7 @@ use App\Exception\BookFileNotFoundException;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Ramsey\Uuid\Uuid;
@@ -119,7 +120,7 @@ class Book extends Model
      * @param Book $book
      * @return bool
      */
-    protected static function filenameAttrsChanged(self $book)
+    protected static function filenameAttrsChanged(self $book): bool
     {
         $isChanged = false;
         $keys = ['year', 'title', 'isbn13', 'author', 'publisher', 'ext'];
@@ -156,9 +157,9 @@ class Book extends Model
 
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
-    public function categories()
+    public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class, 'books_categories', 'book_guid', 'category_guid', 'book_guid', 'guid');
     }

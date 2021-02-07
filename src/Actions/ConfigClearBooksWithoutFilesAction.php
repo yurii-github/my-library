@@ -35,7 +35,7 @@ class ConfigClearBooksWithoutFilesAction extends AbstractApiAction
 
         $deletedBooks = Book::query()->select(['book_guid', 'filename'])->limit($stepping)->get()
             ->filter(function (Book $book) {
-                return !$book->file_exists;
+                return !$book->file->exists;
             })->each(function (Book $book) {
                 $book->delete();
             })->modelKeys();

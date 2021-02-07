@@ -16,7 +16,7 @@ class ConfigCheckFilesActionTest extends AbstractTestCase
 
         $bookWithFile = $books[0];
         $config = $this->getLibraryConfig();
-        file_put_contents($config->getFilepath($bookWithFile->filename), 'some data');
+        file_put_contents($config->getFilepath($bookWithFile->file->filename), 'some data');
 
         $fsOnlyFilename = 'fs-only.pdf';
         file_put_contents($config->getFilepath($fsOnlyFilename), 'some data 2');
@@ -27,6 +27,7 @@ class ConfigCheckFilesActionTest extends AbstractTestCase
         ]);
 
         $response = $this->app->handle($request);
+        $c = (string)$response->getBody();
         $this->assertSame(200, $response->getStatusCode());
         $resp = json_decode((string)$response->getBody());
 

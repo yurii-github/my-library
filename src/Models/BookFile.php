@@ -24,7 +24,6 @@ use App\Configuration\Configuration;
 use Illuminate\Container\Container;
 
 /**
- * @property-read $exists
  * @property-read $filename
  * @property-read $filepath
  */
@@ -43,7 +42,7 @@ class BookFile
     public function __get($name)
     {
         if ($name === 'exists') {
-            return $this->getFileExists();
+            return $this->exists();
         } elseif ($name === 'filename') {
             return $this->filename;
         } elseif ($name === 'filepath') {
@@ -60,7 +59,7 @@ class BookFile
     
     public function delete(): bool
     {
-        if (!$this->exists) {
+        if (!$this->exists()) {
             // TODO: write warning into log if file does not exist
             return false;
         }
@@ -68,7 +67,7 @@ class BookFile
         return unlink($this->filepath);
     }
     
-    protected function getFileExists(): bool
+    public function exists(): bool
     {
         if (!$this->filename) {
             return false;

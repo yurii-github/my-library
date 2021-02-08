@@ -160,7 +160,7 @@ class ManageBookActionTest extends AbstractTestCase
         $this->assertDatabaseHas('books', [
             'book_guid' => $book->book_guid,
             'title' => $book->title,
-            'filename' => $book->file->filename,
+            'filename' => $book->file->getFilename(),
             'created_date' => $createdAt->toDateTimeString(),
             'updated_date' => $createdAt->toDateTimeString()
         ]);
@@ -248,7 +248,7 @@ class ManageBookActionTest extends AbstractTestCase
         $this->assertDatabaseHas('books', [
             'book_guid' => $bookToChange->book_guid,
             'title' => $bookToChange->title,
-            'filename' => $bookToChange->file->filename,
+            'filename' => $bookToChange->file->getFilename(),
         ]);
         $this->assertFileExists($filenameOld);
         $this->assertSame('some data', file_get_contents($filenameOld));
@@ -281,7 +281,7 @@ class ManageBookActionTest extends AbstractTestCase
         $this->assertDatabaseHas('books', [
             'book_guid' => $book->book_guid,
             'title' => $book->title,
-            'filename' => $book->file->filename
+            'filename' => $book->file->getFilename()
         ]);
     }
 
@@ -293,13 +293,13 @@ class ManageBookActionTest extends AbstractTestCase
         $book = $books[0];
         $config = $this->getLibraryConfig();
 
-        file_put_contents($config->getFilepath($book->file->filename), 'sample-data');
-        $this->assertFileExists($config->getFilepath($book->file->filename));
-        $this->assertStringEqualsFile($config->getFilepath($book->file->filename), 'sample-data');
+        file_put_contents($config->getFilepath($book->file->getFilename()), 'sample-data');
+        $this->assertFileExists($config->getFilepath($book->file->getFilename()));
+        $this->assertStringEqualsFile($config->getFilepath($book->file->getFilename()), 'sample-data');
 
         $this->setBookLibrarySync(true);
 
-        $oldFilename = $book->file->filename;
+        $oldFilename = $book->file->getFilename();
         $newTitle = 'new title X';
         $newFilename = ", ''new title X'',  [].";
         

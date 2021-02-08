@@ -97,8 +97,8 @@ class Book extends Model
                 $book->file = BookFile::createForBook($book);
             }
             if ($config->library->sync) {
-                if (!$book->file->exists) {
-                    throw new BookFileNotFoundException("Book '{$book->file->filepath}' does not exist.");
+                if (!$book->file->exists()) {
+                    throw new BookFileNotFoundException("Book '{$book->file->getFilepath()}' does not exist.");
                 }
             }
         });
@@ -113,7 +113,7 @@ class Book extends Model
                 // sync with filesystem is enabled. update filename and rename physical file
                 if ($config->library->sync) {
                     $filepathOld = $config->getFilepath($oldFilename);
-                    $filepathNew = $book->file->filepath;
+                    $filepathNew = $book->file->getFilepath();
                     // update file in filesystem
                     if ($filepathOld !== $filepathNew) {
                         if (!file_exists($filepathOld)) {
@@ -162,7 +162,7 @@ class Book extends Model
     public function setFileAttribute(BookFile $file)
     {
         $this->attrFile = $file;
-        $this->setAttribute('filename', $file->filename);
+        $this->setAttribute('filename', $file->getFilename());
         return $this;
     }
 

@@ -52,7 +52,7 @@ class ConfigDoImportNewCoverFromPdfAction extends AbstractApiAction
                 $cover = $this->extractor->extract($book->file->getFilepath());
                 $book->book_cover = $cover;
                 $book->saveOrFail();
-                $addedBooks[] = $book->file->filename;
+                $addedBooks[] = $book->file->getFilename();
             } catch (\Throwable $t) {
                 return $this->asJSON(['data' => $addedBooks, 'result' => false, 'error' => $t->getMessage()]);
             }

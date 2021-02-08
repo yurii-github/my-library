@@ -42,7 +42,7 @@ class ConfigGetBooksWithoutCoverActionTest extends AbstractTestCase
     {
         $books = $this->populateBooks();
         foreach ($books as $book) {
-            $book->file = new BookFile($book->file->filename .'.pdf');
+            $book->file = new BookFile($book->file->getFilename() .'.pdf');
             $book->book_cover = 'some-data';
             $book->save();
         }
@@ -59,12 +59,12 @@ class ConfigGetBooksWithoutCoverActionTest extends AbstractTestCase
     {
         $books = $this->populateBooks();
         foreach ($books as $book) {
-            $book->file = new BookFile($book->file->filename .'.pdf');
+            $book->file = new BookFile($book->file->getFilename() .'.pdf');
             $book->book_cover = null;
             $book->save();
         }
         $arrayBooks = Collection::make($books)->map(function (Book $book) {
-            return ['filename' => $book->file->filename, 'book_guid' => $book->book_guid];
+            return ['filename' => $book->file->getFilename(), 'book_guid' => $book->book_guid];
         })->toArray();
 
         $request = $this->createRequest('GET', '/config/books-without-cover');
@@ -79,7 +79,7 @@ class ConfigGetBooksWithoutCoverActionTest extends AbstractTestCase
     {
         $books = $this->populateBooks();
         foreach ($books as $book) {
-            $book->file = new BookFile($book->file->filename .'.pdf');
+            $book->file = new BookFile($book->file->getFilename() .'.pdf');
             $book->book_cover = null;
             $book->save();
         }
@@ -90,7 +90,7 @@ class ConfigGetBooksWithoutCoverActionTest extends AbstractTestCase
         $arrayBooks = Collection::make($books)->filter(function (Book $book) use ($bookWithCover) {
             return $book->book_guid !== $bookWithCover->book_guid;
         })->map(function (Book $book) {
-            return ['filename' => $book->file->filename, 'book_guid' => $book->book_guid];
+            return ['filename' => $book->file->getFilename(), 'book_guid' => $book->book_guid];
         })->toArray();
 
         $request = $this->createRequest('GET', '/config/books-without-cover');

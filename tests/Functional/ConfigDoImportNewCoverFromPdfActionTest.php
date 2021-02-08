@@ -40,7 +40,7 @@ class ConfigDoImportNewCoverFromPdfActionTest extends AbstractTestCase
         $this->assertDatabaseHas('books', [
             'book_guid' => $bookWithCover->book_guid,
             'book_cover' => $bookWithCover->book_cover,
-            'filename' => $bookWithCover->file->filename,
+            'filename' => $bookWithCover->file->getFilename(),
         ]);
 
         $this->assertSame(200, $response->getStatusCode());
@@ -90,13 +90,13 @@ class ConfigDoImportNewCoverFromPdfActionTest extends AbstractTestCase
         $this->assertDatabaseHas('books', [
             'book_guid' => $bookWithCover->book_guid,
             'book_cover' => file_get_contents(dirname(__DIR__) . '/data/cover_from_test_pdf.jpg'),
-            'filename' => $bookWithCover->file->filename,
+            'filename' => $bookWithCover->file->getFilename(),
         ]);
 
         $this->assertSame(200, $response->getStatusCode());
         $this->assertJsonData([
             'data' => [
-                $bookWithCover->file->filename,
+                $bookWithCover->file->getFilename(),
             ],
             'result' => true,
             'error' => null
@@ -107,7 +107,7 @@ class ConfigDoImportNewCoverFromPdfActionTest extends AbstractTestCase
     {
         $books = $this->populateBooks();
         $bookWithCover = $books[0];
-        $bookWithCover->file = new BookFile($bookWithCover->file->filename.'.txt');
+        $bookWithCover->file = new BookFile($bookWithCover->file->getFilename().'.txt');
         $bookWithCover->book_cover = 'some-data';
         $bookWithCover->save();
         file_put_contents($bookWithCover->file->getFilepath(), 'some data');
@@ -129,7 +129,7 @@ class ConfigDoImportNewCoverFromPdfActionTest extends AbstractTestCase
         $this->assertDatabaseHas('books', [
             'book_guid' => $bookWithCover->book_guid,
             'book_cover' => $bookWithCover->book_cover,
-            'filename' => $bookWithCover->file->filename,
+            'filename' => $bookWithCover->file->getFilename(),
         ]);
 
         $this->assertSame(200, $response->getStatusCode());
@@ -146,7 +146,7 @@ class ConfigDoImportNewCoverFromPdfActionTest extends AbstractTestCase
         
         $books = $this->populateBooks();
         $bookWithCover = $books[0];
-        $bookWithCover->file = new BookFile($bookWithCover->file->filename.'.pdf');
+        $bookWithCover->file = new BookFile($bookWithCover->file->getFilename().'.pdf');
         $bookWithCover->book_cover = 'some-data';
         $bookWithCover->save();
         file_put_contents($bookWithCover->file->getFilepath(), 'some invalid data');
@@ -168,7 +168,7 @@ class ConfigDoImportNewCoverFromPdfActionTest extends AbstractTestCase
         $this->assertDatabaseHas('books', [
             'book_guid' => $bookWithCover->book_guid,
             'book_cover' => $bookWithCover->book_cover,
-            'filename' => $bookWithCover->file->filename,
+            'filename' => $bookWithCover->file->getFilename(),
         ]);
 
         $this->assertSame(200, $response->getStatusCode());
@@ -183,7 +183,7 @@ class ConfigDoImportNewCoverFromPdfActionTest extends AbstractTestCase
     {
         $books = $this->populateBooks();
         $bookWithCover = $books[0];
-        $bookWithCover->file = new BookFile($bookWithCover->file->filename.'.pdf');
+        $bookWithCover->file = new BookFile($bookWithCover->file->getFilename().'.pdf');
         $bookWithCover->book_cover = 'some-data';
         $bookWithCover->save();
 
@@ -204,7 +204,7 @@ class ConfigDoImportNewCoverFromPdfActionTest extends AbstractTestCase
         $this->assertDatabaseHas('books', [
             'book_guid' => $bookWithCover->book_guid,
             'book_cover' => $bookWithCover->book_cover,
-            'filename' => $bookWithCover->file->filename,
+            'filename' => $bookWithCover->file->getFilename(),
         ]);
 
         $this->assertSame(200, $response->getStatusCode());

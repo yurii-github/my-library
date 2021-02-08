@@ -23,11 +23,6 @@ namespace App\Models;
 use App\Configuration\Configuration;
 use Illuminate\Container\Container;
 
-/**
- * @property-read $exists
- * @property-read $filename
- * @property-read $filepath
- */
 class BookFile
 {
     protected string $filename;
@@ -40,17 +35,9 @@ class BookFile
         $this->config = Container::getInstance()->get(Configuration::class);
     }
     
-    public function __get($name)
+    public function getFilename(): string
     {
-        if ($name === 'exists') {
-            return $this->getFileExists();
-        } elseif ($name === 'filename') {
-            return $this->filename;
-        } elseif ($name === 'filepath') {
-            return $this->getFilepath();
-        }
-        
-        throw new \Exception("Unknown '$name' property!");
+        return $this->filename;
     }
 
     public function getFilepath(): string
@@ -60,21 +47,17 @@ class BookFile
     
     public function delete(): bool
     {
-        if (!$this->exists) {
+        if (!$this->exists()) {
             // TODO: write warning into log if file does not exist
             return false;
         }
         
-        return unlink($this->filepath);
+        return unlink($this->getFilepath());
     }
     
-    protected function getFileExists(): bool
+    public function exists(): bool
     {
-        if (!$this->filename) {
-            return false;
-        }
-        
-        return file_exists($this->config->getFilepath($this->filename));
+        return file_exists($this->getFilepath());
     }
 
     public static function createForBook(Book $book): BookFile

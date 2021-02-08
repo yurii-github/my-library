@@ -162,7 +162,7 @@ class Book extends Model
     public function setFileAttribute(BookFile $file)
     {
         $this->attrFile = $file;
-        $this->setAttribute('filename', $file->filename);
+        $this->setAttribute('filename', $file->getFilename());
         return $this;
     }
 

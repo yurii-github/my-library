@@ -44,7 +44,7 @@ class ConfigDoImportFilesAction extends AbstractApiAction
                     throw new BookFileNotFoundException('Book file does not exist!');
                 }
                 $book->saveOrFail();
-                $arr_added[] = $book->file->filename;
+                $arr_added[] = $book->file->getFilename();
             }
             $message = ['data' => $arr_added, 'result' => true, 'error' => ''];
         } catch (\Throwable $e) {

@@ -16,7 +16,7 @@ class ConfigCheckFilesActionTest extends AbstractTestCase
 
         $bookWithFile = $books[0];
         $config = $this->getLibraryConfig();
-        file_put_contents($config->getFilepath($bookWithFile->file->filename), 'some data');
+        file_put_contents($config->getFilepath($bookWithFile->file->getFilename()), 'some data');
 
         $fsOnlyFilename = 'fs-only.pdf';
         file_put_contents($config->getFilepath($fsOnlyFilename), 'some data 2');

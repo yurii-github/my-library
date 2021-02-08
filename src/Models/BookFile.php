@@ -25,7 +25,6 @@ use Illuminate\Container\Container;
 
 /**
  * @property-read $filename
- * @property-read $filepath
  */
 class BookFile
 {
@@ -64,7 +63,7 @@ class BookFile
             return false;
         }
         
-        return unlink($this->filepath);
+        return unlink($this->getFilepath());
     }
     
     public function exists(): bool

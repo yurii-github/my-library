@@ -35,7 +35,7 @@ abstract class AbstractApiAction
         } elseif ($data instanceof Arrayable) {
             $data = $data->toArray();
         }
-        $body = $data === null ? '' : json_encode($data, JSON_UNESCAPED_UNICODE);
+        $body = $data === null ? null : json_encode($data, JSON_UNESCAPED_UNICODE);
         return new Response(200, ['Content-Type' => ['application/json']], $body);
     }
 }

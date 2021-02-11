@@ -167,6 +167,15 @@
     <script>
       $(document).tooltip()
 
+      // JQuery fix for empty body on JSON response
+      $.ajaxSetup({
+        converters: {
+          'text json' : function(response) {
+            return (response === '') ? null : JSON.parse(response);
+          },
+        },
+      });
+      
       // CONFIGURATION PARAMS
       //
       // radio buttons
@@ -217,7 +226,7 @@
       }
 
       $.fn.extend({
-        setMsg: function (message, title, result) {
+        setMsg: function (message, field, result = true) {
           if (message === '') {
             return
           }
@@ -228,27 +237,10 @@
           this.html(
             '<div class="ui-state-' + state + ' ui-corner-all" style="padding: 10px; margin-top: 20px; margin-bottom: 20px;">' +
             '<p><span class="ui-icon ui-icon-' + icon + '" style="float: left; margin-right: .3em;"></span> ' +
-            '<b>' + title + '</b>&nbsp;&nbsp; ' + message + '</p>' +
+            '<b>' + field + '</b>&nbsp;&nbsp; ' + message + '</p>' +
             '</div>')
         }
       })
-
-      // status error - 0 | info - 1
-      function setResultMsg(message, title, result) {
-        if (message === '') {
-          return
-        }
-
-        let state = (result === 1 ? 'highlight' : 'error')
-        let icon = (result === 1 ? 'info' : 'alert')
-        let msg = $('#result-message')
-
-        msg.html(
-          '<div class="ui-state-' + state + ' ui-corner-all" style="padding: 10px; margin-top: 20px; margin-bottom: 20px;">' +
-          '<p><span class="ui-icon ui-icon-' + icon + '" style="float: left; margin-right: .3em;"></span> ' +
-          '<b>' + title + '</b>&nbsp;&nbsp; ' + message + '</p>' +
-          '</div>')
-      }
 
 
       function saveParameter(e) {
@@ -256,13 +248,21 @@
         let field = $(e).attr('name')
         let value = $(e).val()
 
-        $.post(action_url, {field: field, value: value}, function (data) {
-          $('#result-message').setMsg(data.msg, data.title, data.result)
-          if (data.result && (field === 'system_theme' || field === 'system_language')) {
-            console.log('RELOAD')
-            location.reload()
-          }
-        }, 'json')
+        $.post(action_url, {field: field, value: value}, function (response) {
+            $('#result-message').setMsg('Field was successfully updated', field)
+            if (field === 'system_theme' || field === 'system_language') {
+              location.reload()
+            }
+          },
+          'json')
+          .fail(function (response) {
+            if (response.status === 500) {
+              let exception = response.responseJSON[0]
+              $('#result-message').setMsg(exception.message, field, false)
+            } else {
+              console.error('failed', response)
+            }
+          })
       }
 
 

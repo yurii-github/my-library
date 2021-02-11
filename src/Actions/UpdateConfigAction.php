@@ -38,27 +38,14 @@ class UpdateConfigAction extends AbstractApiAction
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $resp = new \stdClass();
-        $resp->msg = '';
-        $resp->result = false;
-        $resp->title = '';
-
         $post = $request->getParsedBody();
         $field = Arr::get($post, 'field');
         $value = Arr::get($post, 'value');
 
-        try {
-            list($group, $attr) = explode('_', $field);
-            $this->config->$group->$attr = $value;
-            $this->config->save();
-            $resp->title = $group;
-            $resp->msg = "<b>$attr</b> was successfully updated";
-            $resp->result = true;
-        } catch (\Exception $e) {
-            $resp->msg = $e->getMessage();
-            $resp->result = false;
-        }
-
-        return $this->asJSON($resp);
+        list($group, $attr) = explode('_', $field);
+        $this->config->$group->$attr = $value;
+        $this->config->save();
+        
+        return $this->asJSON();
     }
 }

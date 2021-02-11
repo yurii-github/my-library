@@ -119,7 +119,7 @@ class Book extends Model
                         if (!file_exists($filepathOld)) {
                             throw new BookFileNotFoundException("Sync for file failed. Source file '{$filepathOld}' does not exist", 2);
                         }
-                        if (!@rename($filepathOld, $filepathNew)) {
+                        if (!@rename($filepathOld, $filepathNew)) { // TODO: find way to test properly in PHPUnit
                             $err = error_get_last()['message'] ?? '';
                             throw new BookFileException("Failed to rename file '{$filepathOld} to {$filepathNew}. {$err}");
                         }

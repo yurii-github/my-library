@@ -17,14 +17,8 @@ class UpdateConfigActionTest extends AbstractTestCase
             'value' => 'uk-UA'
         ]);
         $response = $this->app->handle($request);
-        $c = (string)$response->getBody();
         $this->assertSame(200, $response->getStatusCode());
-        $this->assertJsonData([
-            'msg' => '<b>language</b> was successfully updated',
-            'result' => true,
-            'title' => 'system'
-        ], $response);
-
+        $this->assertSame('', (string)$response->getBody());
         $this->assertStringContainsString('"language": "uk-UA",', file_get_contents($config->getConfigFile()));
         $this->assertStringNotContainsString('"language": "en-US",', file_get_contents($config->getConfigFile()));
     }
@@ -46,11 +40,7 @@ class UpdateConfigActionTest extends AbstractTestCase
         ]);
         $response = $this->app->handle($request);
 
-        $this->assertSame(200, $response->getStatusCode());
-        $this->assertJsonData([
-            'msg' => "File 'vfs://base/data/config.json' is not writable",
-            'result' => false,
-            'title' => ''
-        ], $response);
+        $this->assertSame(500, $response->getStatusCode());
+        $this->assertJsonError("File 'vfs://base/data/config.json' is not writable", 0, 'App\Exception\ConfigurationFileIsNotWritableException', $response);
     }
 }

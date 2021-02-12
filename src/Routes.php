@@ -26,22 +26,22 @@ class Routes
 {
     static public function register(App $app)
     {
-        $app->get('/', Actions\Pages\IndexPageAction::class);
-        $app->get('/api/book/cover', Actions\GetBookCoverAction::class);
-        $app->get('/api/book', Actions\GetBookListAction::class);
-        $app->post('/api/book/manage', Actions\ManageBookAction::class);
-        $app->post('/api/book/cover-save', Actions\UpdateBookCoverAction::class);
-        $app->get('/api/category', Actions\GetBookCategoryListAction::class);
-        $app->post('/api/category/manage', Actions\ManageBookCategoryAction::class);
-        $app->get('/about', Actions\Pages\AboutPageAction::class);
-        $app->get('/config', Actions\Pages\ConfigPageAction::class);
-        $app->post('/config/save', Actions\UpdateConfigAction::class);
-        $app->get('/config/check-files', Actions\ConfigCheckFilesAction::class);
-        $app->get('/config/count-books-without-files', Actions\ConfigCountBooksWithoutFilesAction::class);
-        $app->post('/config/clear-books-without-files', Actions\ConfigClearBooksWithoutFilesAction::class);
-        $app->get('/config/import-files', Actions\ConfigGetImportFilesAction::class);
-        $app->post('/config/import-files', Actions\ConfigDoImportFilesAction::class);
-        $app->get('/config/books-without-cover', Actions\ConfigGetBooksWithoutCoverAction::class);
-        $app->post('/config/import-new-cover-from-pdf', Actions\ConfigDoImportNewCoverFromPdfAction::class);
+        $app->get('/', Actions\IndexPageAction::class);
+        $app->get('/api/book/cover', Actions\Api\Cover\GetAction::class);
+        $app->get('/api/book', Actions\Api\Book\ListAction::class);
+        $app->post('/api/book/manage', Actions\Api\Book\ManageAction::class);
+        $app->post('/api/book/cover-save', Actions\Api\Cover\UpdateAction::class);
+        $app->get('/api/category', Actions\Api\Category\ListAction::class);
+        $app->post('/api/category/manage', Actions\Api\Category\ManageAction::class);
+        $app->get('/about', Actions\AboutPageAction::class);
+        $app->get('/config', Actions\ConfigPageAction::class);
+        $app->post('/config/save', Actions\Api\Config\UpdateAction::class);
+        $app->get('/config/check-files', Actions\Api\Config\CheckFilesAction::class);
+        $app->get('/config/count-books-without-files', Actions\Api\Config\CountBooksWithoutFilesAction::class);
+        $app->post('/config/clear-books-without-files', Actions\Api\Config\ClearBooksWithoutFilesAction::class);
+        $app->get('/config/import-files', Actions\Api\Config\GetImportFilesAction::class);
+        $app->post('/config/import-files', Actions\Api\Config\DoImportFilesAction::class);
+        $app->get('/config/books-without-cover', Actions\Api\Config\GetBooksWithoutCoverAction::class);
+        $app->post('/config/import-new-cover-from-pdf', Actions\Api\Config\DoImportNewCoverFromPdfAction::class);
     }
 }

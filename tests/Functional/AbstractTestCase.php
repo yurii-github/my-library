@@ -187,4 +187,9 @@ abstract class AbstractTestCase extends TestCase
         $this->assertEquals($message, $data['message']);
         $this->assertEquals($type, $data['type']);
     }
+
+    public static function getTestFilepath(string $filename): string
+    {
+        return dirname(__DIR__) . '/data/' . $filename;
+    }
 }

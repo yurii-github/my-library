@@ -40,7 +40,7 @@ class UpdateAction extends AbstractApiAction
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $book = Book::findOrFail($args['book_guid']);
+        $book = Book::findOrFail($args['book_id']);
         $bookCover = self::getResampledImageByWidthAsBlob((string)$request->getBody(), $this->config->book->covermaxwidth);
         $book->book_cover = $bookCover;
         $book->save();

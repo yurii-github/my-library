@@ -26,15 +26,17 @@ class Routes
 {
     static public function register(App $app)
     {
+        // pages
         $app->get('/', Actions\IndexPageAction::class);
+        $app->get('/about', Actions\AboutPageAction::class);
+        $app->get('/config', Actions\ConfigPageAction::class);
+        // api
         $app->get('/api/book/cover', Actions\Api\Cover\GetAction::class);
         $app->get('/api/book', Actions\Api\Book\ListAction::class);
         $app->post('/api/book/manage', Actions\Api\Book\ManageAction::class);
         $app->post('/api/book/cover-save', Actions\Api\Cover\UpdateAction::class);
         $app->get('/api/category', Actions\Api\Category\ListAction::class);
         $app->post('/api/category/manage', Actions\Api\Category\ManageAction::class);
-        $app->get('/about', Actions\AboutPageAction::class);
-        $app->get('/config', Actions\ConfigPageAction::class);
         $app->post('/config/save', Actions\Api\Config\UpdateAction::class);
         $app->get('/config/check-files', Actions\Api\Config\CheckFilesAction::class);
         $app->get('/config/count-books-without-files', Actions\Api\Config\CountBooksWithoutFilesAction::class);

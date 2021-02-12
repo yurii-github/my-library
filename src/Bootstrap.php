@@ -51,6 +51,7 @@ use \Illuminate\Translation\Translator as IlluminateTranslator;
 class Bootstrap
 {
     const CURRENT_APP_VERSION = '2.0';
+    public const DEBUG_MODE = true;
 
     protected static function initCapsule(Configuration $config, Container $container, Dispatcher $eventDispatcher): Manager
     {

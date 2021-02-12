@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Functional\Api\Book;
+namespace Tests\Functional\Api\Cover;
 
 use App\Models\Book;
 use GuzzleHttp\Psr7\Stream;

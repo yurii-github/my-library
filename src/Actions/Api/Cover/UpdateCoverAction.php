@@ -18,7 +18,7 @@
  * along with this program.  If not, see http://www.gnu.org/licenses
  */
 
-namespace App\Actions\Api\Book;
+namespace App\Actions\Api\Cover;
 
 use App\Actions\AbstractApiAction;
 use App\Configuration\Configuration;

@@ -59,11 +59,11 @@ abstract class AbstractPageAction
         $baseData = [
             't' => $this->translator,
             'path' => $uri->getPath(),
-            'baseUrl' => $uri->getScheme() . '://' . $uri->getAuthority(),
+            'baseUrl' => $baseUrl = $uri->getScheme() . '://' . $uri->getAuthority(),
             'appTheme' => $this->config->getSystem()->theme,
             'gridLocale' => $gridLocale[$this->translator->getLocale()],
             'config' => $this->config,
-            'currentUrl' => $uri->getScheme() . '://' . $uri->getAuthority() . $uri->getPath(),
+            'currentUrl' => $baseUrl . $uri->getPath(),
             'APP_VERSION' => 'v.'.$this->config->getVersion(),
             'APP_LANGUAGE' => $this->config->getSystem()->language,
         ];

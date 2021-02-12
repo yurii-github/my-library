@@ -16,7 +16,7 @@ class GetBooksWithoutCoverActionTest extends AbstractTestCase
     {
         $this->populateBooks();
 
-        $request = $this->createRequest('GET', '/config/books-without-cover');
+        $request = $this->createRequest('GET', '/api/config/books-without-cover');
         $response = $this->app->handle($request);
 
         $this->assertSame(200, $response->getStatusCode());
@@ -31,7 +31,7 @@ class GetBooksWithoutCoverActionTest extends AbstractTestCase
             $book->save();
         }
 
-        $request = $this->createRequest('GET', '/config/books-without-cover');
+        $request = $this->createRequest('GET', '/api/config/books-without-cover');
         $response = $this->app->handle($request);
         $content = (string)$response->getBody();
 
@@ -48,7 +48,7 @@ class GetBooksWithoutCoverActionTest extends AbstractTestCase
             $book->save();
         }
 
-        $request = $this->createRequest('GET', '/config/books-without-cover');
+        $request = $this->createRequest('GET', '/api/config/books-without-cover');
         $response = $this->app->handle($request);
         $content = (string)$response->getBody();
 
@@ -68,7 +68,7 @@ class GetBooksWithoutCoverActionTest extends AbstractTestCase
             return ['filename' => $book->file->getFilename(), 'book_guid' => $book->book_guid];
         })->toArray();
 
-        $request = $this->createRequest('GET', '/config/books-without-cover');
+        $request = $this->createRequest('GET', '/api/config/books-without-cover');
         $response = $this->app->handle($request);
         $content = (string)$response->getBody();
 
@@ -94,7 +94,7 @@ class GetBooksWithoutCoverActionTest extends AbstractTestCase
             return ['filename' => $book->file->getFilename(), 'book_guid' => $book->book_guid];
         })->toArray();
 
-        $request = $this->createRequest('GET', '/config/books-without-cover');
+        $request = $this->createRequest('GET', '/api/config/books-without-cover');
         $response = $this->app->handle($request);
         $content = (string)$response->getBody();
 

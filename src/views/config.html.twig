@@ -271,7 +271,7 @@
         let res = $('#sync-check-files-result')
 
         // get number of unmatched records for progress bar
-        $.get('config/count-books-without-files', function (data) {
+        $.get('api/config/count-books-without-files', function (data) {
           res.empty()
           let records_to_remove = parseInt(data)
           let records_removed = 0
@@ -292,7 +292,7 @@
           let stepping = Math.ceil(width / records_to_remove)
 
           let batcher = function (stepping) {
-            $.post('config/clear-books-without-files', { stepping: stepping }, function (data) {
+            $.post('api/config/clear-books-without-files', { stepping: stepping }, function (data) {
               if (data.length > 0 && bar.val() < bar.attr('max')) {
                 bar.attr('value', bar.val() + data.length)
                 records_removed += data.length
@@ -313,7 +313,7 @@
       //---------------------
       $('#sync-import-fs-files').click(function () {
         // get fs files only filenames
-        $.get('config/import-files', function (data) {
+        $.get('api/config/import-files', function (data) {
           //console.table(data);
           var records_total = data.length
           var records_done = 0
@@ -340,7 +340,7 @@
               span_message.text(' Action was successful')
               return
             }
-            $.post('config/import-files',
+            $.post('api/config/import-files',
               {post: post}, function (response) {
                 //console.log(response);
                 if (response.result) { //continue adding
@@ -367,7 +367,7 @@
       $('#sync-import-new-cover-from-pdf').click(function () {
         var res = $('#sync-check-files-result')
 
-        $.get('config/books-without-cover', function (data) {
+        $.get('api/config/books-without-cover', function (data) {
 
           var records_total = data.length
           var records_done = 0
@@ -394,7 +394,7 @@
               span_message.text(' Action was successful')
               return
             }
-            $.post('config/import-new-cover-from-pdf',
+            $.post('api/config/import-new-cover-from-pdf',
               {post: post}, function (response) {
                 //console.log(response);
                 if (response.result) { //continue adding
@@ -423,7 +423,7 @@
       $('#sync-check-files').click(function () {
         var res = $('#sync-check-files-result')
 
-        $.get('config/check-files', function (data) {
+        $.get('api/config/check-files', function (data) {
             res.empty()
 
             if (data.fs.length === 0 && data.db.length === 0) {

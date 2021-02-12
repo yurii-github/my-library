@@ -19,7 +19,7 @@ class ClearBooksWithoutFilesActionTest extends AbstractTestCase
 
         $this->assertDatabaseCount('books', 3);
         
-        $request = $this->createRequest('POST', '/config/clear-books-without-files');
+        $request = $this->createRequest('POST', '/api/config/clear-books-without-files');
         $response = $this->app->handle($request);
 
         $this->assertSame(200, $response->getStatusCode());

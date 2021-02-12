@@ -22,7 +22,7 @@ class CheckFilesActionTest extends AbstractTestCase
         $fsOnlyFilename = 'fs-only.pdf';
         file_put_contents($config->getFilepath($fsOnlyFilename), 'some data 2');
 
-        $request = $this->createRequest('GET', '/config/check-files');
+        $request = $this->createRequest('GET', '/api/config/check-files');
         $request = $request->withQueryParams([
             'book_guid' => $books[0]->book_guid
         ]);

@@ -15,7 +15,7 @@ class DoImportFilesActionTest extends AbstractTestCase
         $this->setBookLibrarySync(false);
         $books = $this->populateBooks();
 
-        $request = $this->createRequest('POST', '/config/import-files');
+        $request = $this->createRequest('POST', '/api/config/import-files');
         $response = $this->app->handle($request);
         $content = (string)$response->getBody();
 
@@ -35,7 +35,7 @@ class DoImportFilesActionTest extends AbstractTestCase
         file_put_contents($this->getLibraryConfig()->getFilepath('fs-only.pdf'), ' some data');
         $this->assertDatabaseCount('books', 3);
 
-        $request = $this->createRequest('POST', '/config/import-files');
+        $request = $this->createRequest('POST', '/api/config/import-files');
         $request = $request->withParsedBody([
             'post' => ['fs-only.pdf']
         ]);
@@ -56,7 +56,7 @@ class DoImportFilesActionTest extends AbstractTestCase
         
         $this->assertDatabaseCount('books', 3);
 
-        $request = $this->createRequest('POST', '/config/import-files');
+        $request = $this->createRequest('POST', '/api/config/import-files');
         $request = $request->withParsedBody([
             'post' => [$filename]
         ]);

@@ -11,6 +11,8 @@ use Tests\PopulateBooksTrait;
 class DoImportNewCoverFromPdfActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;
+    
+    protected string $actionUrl = '/api/config/import-new-cover-from-pdf';
 
     protected function withGhostscript()
     {
@@ -29,7 +31,7 @@ class DoImportNewCoverFromPdfActionTest extends AbstractTestCase
         $bookWithCover->save();
         copy(self::getTestFilepath('test.pdf'), $bookWithCover->file->getFilepath());
 
-        $request = $this->createJsonRequest('POST', '/config/import-new-cover-from-pdf', [
+        $request = $this->createJsonRequest('POST', $this->actionUrl, [
             'post' => [
                 ['book_guid' => $bookWithCover->book_guid]
             ]
@@ -79,7 +81,7 @@ class DoImportNewCoverFromPdfActionTest extends AbstractTestCase
         $bookWithCover->save();
         copy(self::getTestFilepath('test.pdf'), $bookWithCover->file->getFilepath());
 
-        $request = $this->createJsonRequest('POST', '/config/import-new-cover-from-pdf', [
+        $request = $this->createJsonRequest('POST', $this->actionUrl, [
             'post' => [
                 ['book_guid' => $bookWithCover->book_guid]
             ]
@@ -118,7 +120,7 @@ class DoImportNewCoverFromPdfActionTest extends AbstractTestCase
             'book_cover' => $bookWithCover->book_cover,
         ]);
 
-        $request = $this->createJsonRequest('POST', '/config/import-new-cover-from-pdf', [
+        $request = $this->createJsonRequest('POST', $this->actionUrl, [
             'post' => [
                 ['book_guid' => $bookWithCover->book_guid]
             ]
@@ -157,7 +159,7 @@ class DoImportNewCoverFromPdfActionTest extends AbstractTestCase
             'book_cover' => $bookWithCover->book_cover,
         ]);
 
-        $request = $this->createJsonRequest('POST', '/config/import-new-cover-from-pdf', [
+        $request = $this->createJsonRequest('POST', $this->actionUrl, [
             'post' => [
                 ['book_guid' => $bookWithCover->book_guid]
             ]
@@ -193,7 +195,7 @@ class DoImportNewCoverFromPdfActionTest extends AbstractTestCase
             'book_cover' => $bookWithCover->book_cover,
         ]);
 
-        $request = $this->createJsonRequest('POST', '/config/import-new-cover-from-pdf', [
+        $request = $this->createJsonRequest('POST', $this->actionUrl, [
             'post' => [
                 ['book_guid' => $bookWithCover->book_guid]
             ]
@@ -220,7 +222,7 @@ class DoImportNewCoverFromPdfActionTest extends AbstractTestCase
     {
         $this->populateBooks();
 
-        $request = $this->createJsonRequest('POST', '/config/import-new-cover-from-pdf');
+        $request = $this->createJsonRequest('POST', $this->actionUrl);
 
         $response = $this->app->handle($request);
         $content = (string)$response->getBody();

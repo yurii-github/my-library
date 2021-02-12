@@ -40,14 +40,13 @@ class Routes
             $group->get('/category', Actions\Api\Category\ListAction::class);
             $group->post('/category/manage', Actions\Api\Category\ManageAction::class);
             $group->post('/config', Actions\Api\Config\UpdateAction::class);
+            $group->get('/config/check-files', Actions\Api\Config\CheckFilesAction::class);
+            $group->get('/config/count-books-without-files', Actions\Api\Config\CountBooksWithoutFilesAction::class);
+            $group->post('/config/clear-books-without-files', Actions\Api\Config\ClearBooksWithoutFilesAction::class);
+            $group->get('/config/import-files', Actions\Api\Config\GetImportFilesAction::class);
+            $group->post('/config/import-files', Actions\Api\Config\DoImportFilesAction::class);
+            $group->get('/config/books-without-cover', Actions\Api\Config\GetBooksWithoutCoverAction::class);
+            $group->post('/config/import-new-cover-from-pdf', Actions\Api\Config\DoImportNewCoverFromPdfAction::class);
         });
-
-        $app->get('/config/check-files', Actions\Api\Config\CheckFilesAction::class);
-        $app->get('/config/count-books-without-files', Actions\Api\Config\CountBooksWithoutFilesAction::class);
-        $app->post('/config/clear-books-without-files', Actions\Api\Config\ClearBooksWithoutFilesAction::class);
-        $app->get('/config/import-files', Actions\Api\Config\GetImportFilesAction::class);
-        $app->post('/config/import-files', Actions\Api\Config\DoImportFilesAction::class);
-        $app->get('/config/books-without-cover', Actions\Api\Config\GetBooksWithoutCoverAction::class);
-        $app->post('/config/import-new-cover-from-pdf', Actions\Api\Config\DoImportNewCoverFromPdfAction::class);
     }
 }

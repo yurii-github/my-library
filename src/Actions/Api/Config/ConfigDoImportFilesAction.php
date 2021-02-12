@@ -18,8 +18,9 @@
  * along with this program.  If not, see http://www.gnu.org/licenses
  */
 
-namespace App\Actions;
+namespace App\Actions\Api\Config;
 
+use App\Actions\AbstractApiAction;
 use App\Exception\BookFileNotFoundException;
 use App\Models\Book;
 use App\Models\BookFile;

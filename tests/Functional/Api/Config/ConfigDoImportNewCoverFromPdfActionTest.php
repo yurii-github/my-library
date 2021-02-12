@@ -1,10 +1,11 @@
 <?php
 
-namespace Tests\Functional;
+namespace Tests\Functional\Api\Config;
 
 use App\CoverExtractor;
 use App\Models\BookFile;
 use Illuminate\Container\Container;
+use Tests\Functional\AbstractTestCase;
 use Tests\PopulateBooksTrait;
 
 class ConfigDoImportNewCoverFromPdfActionTest extends AbstractTestCase
@@ -26,7 +27,7 @@ class ConfigDoImportNewCoverFromPdfActionTest extends AbstractTestCase
         $bookWithCover->file = new BookFile('test.pdf');
         $bookWithCover->book_cover = 'some-data';
         $bookWithCover->save();
-        copy(dirname(__DIR__) . '/data/test.pdf', $bookWithCover->file->getFilepath());
+        copy(self::getTestFilepath('test.pdf'), $bookWithCover->file->getFilepath());
 
         $request = $this->createJsonRequest('POST', '/config/import-new-cover-from-pdf', [
             'post' => [
@@ -61,7 +62,7 @@ class ConfigDoImportNewCoverFromPdfActionTest extends AbstractTestCase
                 if ($srcPdfFile !== 'vfs://base/data/books/test.pdf') {
                     throw new \Exception('Unknown file system in test suite! Please fix your tests!');
                 }
-                $srcPdfFile = dirname(__DIR__) . '/data/test.pdf';
+                $srcPdfFile = AbstractTestCase::getTestFilepath('test.pdf');
                 return parent::buildGhostscriptCommand($srcPdfFile, $outJpegFile);
             }
         };
@@ -76,7 +77,7 @@ class ConfigDoImportNewCoverFromPdfActionTest extends AbstractTestCase
         $bookWithCover->file = new BookFile('test.pdf');
         $bookWithCover->book_cover = 'some-data';
         $bookWithCover->save();
-        copy(dirname(__DIR__) . '/data/test.pdf', $bookWithCover->file->getFilepath());
+        copy(self::getTestFilepath('test.pdf'), $bookWithCover->file->getFilepath());
 
         $request = $this->createJsonRequest('POST', '/config/import-new-cover-from-pdf', [
             'post' => [
@@ -89,7 +90,7 @@ class ConfigDoImportNewCoverFromPdfActionTest extends AbstractTestCase
 
         $this->assertDatabaseHas('books', [
             'book_guid' => $bookWithCover->book_guid,
-            'book_cover' => file_get_contents(dirname(__DIR__) . '/data/cover_from_test_pdf.jpg'),
+            'book_cover' => file_get_contents(self::getTestFilepath('cover_from_test_pdf.jpg')),
             'filename' => $bookWithCover->file->getFilename(),
         ]);
 

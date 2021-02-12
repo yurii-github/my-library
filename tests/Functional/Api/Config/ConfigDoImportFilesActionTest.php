@@ -1,7 +1,8 @@
 <?php
 
-namespace Tests\Functional;
+namespace Tests\Functional\Api\Config;
 
+use Tests\Functional\AbstractTestCase;
 use Tests\PopulateBooksTrait;
 
 class ConfigDoImportFilesActionTest extends AbstractTestCase

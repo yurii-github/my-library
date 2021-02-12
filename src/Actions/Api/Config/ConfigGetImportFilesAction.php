@@ -18,21 +18,37 @@
  * along with this program.  If not, see http://www.gnu.org/licenses
  */
 
-namespace App\Actions;
+namespace App\Actions\Api\Config;
 
+use App\Actions\AbstractApiAction;
+use App\Configuration\Configuration;
 use App\Models\Book;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class ConfigCountBooksWithoutFilesAction extends AbstractApiAction
+class ConfigGetImportFilesAction extends AbstractApiAction
 {
+    /**
+     * @var Configuration
+     */
+    protected $config;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->config = $container->get(Configuration::class);
+    }
+
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $count = Book::query()->select(['book_guid', 'filename'])->get()->filter(function (Book $book) {
-            return !$book->file->exists();
-        })->count();
+        $files_db = Book::query()->select(['filename'])->get()->map(function (Book $book) {
+            return $book->file->getFilename();
+        })->toArray();
 
-        return $this->asJSON($count);
+        $files = $this->config->getLibraryBookFilenames();
+        $arr_fs_only = array_values(array_diff($files, $files_db));
+
+        return $this->asJSON($arr_fs_only);
     }
 
 }

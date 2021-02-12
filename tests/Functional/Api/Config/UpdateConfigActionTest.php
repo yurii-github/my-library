@@ -1,6 +1,8 @@
 <?php
 
-namespace Tests\Functional;
+namespace Tests\Functional\Api\Config;
+
+use Tests\Functional\AbstractTestCase;
 
 class UpdateConfigActionTest extends AbstractTestCase
 {

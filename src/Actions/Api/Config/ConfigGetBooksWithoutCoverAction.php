@@ -18,43 +18,24 @@
  * along with this program.  If not, see http://www.gnu.org/licenses
  */
 
-namespace App\Actions;
+namespace App\Actions\Api\Config;
 
-use App\Configuration\Configuration;
+use App\Actions\AbstractApiAction;
 use App\Models\Book;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class ConfigCheckFilesAction extends AbstractApiAction
+class ConfigGetBooksWithoutCoverAction extends AbstractApiAction
 {
-    /**
-     * @var Configuration
-     */
-    protected $config;
-
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->config = $container->get(Configuration::class);
-    }
-
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $files_db = Book::query()->select(['filename'])->get()->transform(function (Book $book) {
-            return $book->file->getFilename();
-        })->all();
+        $type = 'pdf';
+        $books = Book::query()->select(['filename', 'book_guid'])
+            ->whereRaw('book_cover IS NULL')
+            ->where('filename', 'like', '%'.$type)
+            ->get()
+            ->toArray();
 
-        $files = $this->config->getLibraryBookFilenames();
-        $arr_db_only = array_diff($files_db, $files);
-        $arr_fs_only = array_diff($files, $files_db);
-
-        $data = [
-            'db' => array_values($arr_db_only),
-            'fs' => array_values($arr_fs_only)
-        ];
-
-        return $this->asJSON($data);
+        return $this->asJSON($books);
     }
-
 }

@@ -1,10 +1,11 @@
 <?php
 
-namespace Tests\Functional;
+namespace Tests\Functional\Api\Config;
 
 use App\Models\Book;
 use App\Models\BookFile;
 use Illuminate\Support\Collection;
+use Tests\Functional\AbstractTestCase;
 use Tests\PopulateBooksTrait;
 
 class ConfigGetBooksWithoutCoverActionTest extends AbstractTestCase

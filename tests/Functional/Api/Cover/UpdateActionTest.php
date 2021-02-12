@@ -17,7 +17,7 @@ class UpdateActionTest extends AbstractTestCase
         $books = $this->populateBooks();
         
         $cover = file_get_contents(self::getTestFilepath('cover.jpg'));
-        $request = $this->createJsonRequest('POST', '/api/book/cover-save');
+        $request = $this->createJsonRequest('POST', '/api/book/cover');
         $request = $request->withQueryParams([
             'book_guid' => $books[0]->book_guid
         ]);
@@ -41,7 +41,7 @@ class UpdateActionTest extends AbstractTestCase
     public function testInvalidCover()
     {
         $books = $this->populateBooks();
-        $request = $this->createJsonRequest('POST', '/api/book/cover-save');
+        $request = $this->createJsonRequest('POST', '/api/book/cover');
         $request = $request->withQueryParams([
             'book_guid' => $books[0]->book_guid
         ]);

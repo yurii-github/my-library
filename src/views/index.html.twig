@@ -394,7 +394,7 @@
                 return
               }
               let xhr = new XMLHttpRequest()
-              xhr.open('POST', 'api/book/cover-save?book_guid=' + book_guid, true)
+              xhr.open('POST', 'api/book/cover?book_guid=' + book_guid, true)
               xhr.send(file)
               xhr.onreadystatechange = function (e) {
                 if (this.readyState !== 4 || this.status !== 200) {

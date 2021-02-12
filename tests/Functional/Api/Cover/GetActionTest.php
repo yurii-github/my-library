@@ -5,7 +5,7 @@ namespace Tests\Functional\Api\Cover;
 use Tests\Functional\AbstractTestCase;
 use Tests\PopulateBooksTrait;
 
-class GetCoverActionTest extends AbstractTestCase
+class GetActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;
 

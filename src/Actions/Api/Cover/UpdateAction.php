@@ -28,7 +28,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class UpdateCoverAction extends AbstractApiAction
+class UpdateAction extends AbstractApiAction
 {
     /** @var Configuration */
     protected $config;

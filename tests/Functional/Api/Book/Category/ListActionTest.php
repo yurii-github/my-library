@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Functional\Api\Category;
+namespace Tests\Functional\Api\Book\Category;
 
 use Tests\Functional\AbstractTestCase;
 use Tests\PopulateBooksTrait;
@@ -11,11 +11,13 @@ class ListActionTest extends AbstractTestCase
     use PopulateBooksTrait;
     use PopulateCategoriesTrait;
 
+    protected string $actionUrl = '/api/book/category';
+    
     function testNoFilters()
     {
         $categories = $this->populateCategories();
 
-        $request = $this->createJsonRequest('GET', '/api/category');
+        $request = $this->createJsonRequest('GET', $this->actionUrl);
         $response = $this->app->handle($request);
         $this->assertSame(200, $response->getStatusCode());
         $data = json_decode((string)$response->getBody(), true);
@@ -58,7 +60,7 @@ class ListActionTest extends AbstractTestCase
         
         $this->assertDatabaseCount('books_categories', 1);
         
-        $request = $this->createJsonRequest('GET', '/api/category');
+        $request = $this->createJsonRequest('GET', $this->actionUrl);
         $request = $request->withQueryParams(['nodeid' => $bookWithMarker->book_guid]);
         $response = $this->app->handle($request);
         $this->assertSame(200, $response->getStatusCode());

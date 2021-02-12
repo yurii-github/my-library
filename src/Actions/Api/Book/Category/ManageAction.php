@@ -18,7 +18,7 @@
  * along with this program.  If not, see http://www.gnu.org/licenses
  */
 
-namespace App\Actions\Api\Category;
+namespace App\Actions\Api\Book\Category;
 
 use App\Actions\AbstractApiAction;
 use App\Exception\UnsupportedOperationException;

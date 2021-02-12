@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Functional\Api\Category;
+namespace Tests\Functional\Api\Book\Category;
 
 use App\Models\Category;
 use Tests\Functional\AbstractTestCase;
@@ -12,9 +12,11 @@ class ManageActionTest extends AbstractTestCase
     use PopulateBooksTrait;
     use PopulateCategoriesTrait;
 
+    protected string $actionUrl = '/api/book/category/manage';
+
     public function testUnsupportedOperationThrowsException()
     {
-        $request = $this->createJsonRequest('POST', '/api/category/manage');
+        $request = $this->createJsonRequest('POST', $this->actionUrl);
         $response = $this->app->handle($request);
 
         $this->assertSame(400, $response->getStatusCode());
@@ -26,7 +28,7 @@ class ManageActionTest extends AbstractTestCase
         list($category, $category2) = $this->populateCategories();
         $this->assertDatabaseCount('categories', 2);
 
-        $request = $this->createJsonRequest('POST', '/api/category/manage', [
+        $request = $this->createJsonRequest('POST', $this->actionUrl, [
             'oper' => 'add',
             'title' => 'new category 3'
         ]);
@@ -57,7 +59,7 @@ class ManageActionTest extends AbstractTestCase
         list($category, $category2) = $this->populateCategories();
         $this->assertDatabaseCount('categories', 2);
 
-        $request = $this->createJsonRequest('POST', '/api/category/manage', [
+        $request = $this->createJsonRequest('POST', $this->actionUrl, [
             'oper' => 'add',
         ]);
 
@@ -75,7 +77,7 @@ class ManageActionTest extends AbstractTestCase
         list($category, $category2) = $this->populateCategories();
         $this->assertDatabaseCount('categories', 2);
 
-        $request = $this->createJsonRequest('POST', '/api/category/manage', [
+        $request = $this->createJsonRequest('POST', $this->actionUrl, [
             'oper' => 'del',
             'title' => 'new category 2'
         ]);
@@ -95,7 +97,7 @@ class ManageActionTest extends AbstractTestCase
         list($category, $category2) = $this->populateCategories();
         $this->assertDatabaseCount('categories', 2);
 
-        $request = $this->createJsonRequest('POST', '/api/category/manage', [
+        $request = $this->createJsonRequest('POST', $this->actionUrl, [
             'oper' => 'del',
             'id' => 'unknown-id'
         ]);
@@ -117,7 +119,7 @@ class ManageActionTest extends AbstractTestCase
         $this->assertDatabaseHas('categories', ['guid' => $category->guid, 'title' => $category->title]);
         $this->assertDatabaseHas('categories', ['guid' => $category2->guid, 'title' => $category2->title]);
 
-        $request = $this->createJsonRequest('POST', '/api/category/manage', [
+        $request = $this->createJsonRequest('POST', $this->actionUrl, [
             'oper' => 'del',
             'id' => $category->guid
         ]);
@@ -138,7 +140,7 @@ class ManageActionTest extends AbstractTestCase
         $this->assertDatabaseHas('categories', ['guid' => $category->guid, 'title' => $category->title]);
         $this->assertDatabaseHas('categories', ['guid' => $category2->guid, 'title' => $category2->title]);
 
-        $request = $this->createJsonRequest('POST', '/api/category/manage', [
+        $request = $this->createJsonRequest('POST', $this->actionUrl, [
             'oper' => 'edit',
             'id' => $category->guid
         ]);
@@ -147,7 +149,7 @@ class ManageActionTest extends AbstractTestCase
 
         $this->assertSame(200, $response->getStatusCode());
         $this->assertJsonData([
-            'guid'=>$category->guid,
+            'guid' => $category->guid,
             'title' => $category->title
         ], $response);
         $this->assertDatabaseCount('categories', 2);
@@ -163,7 +165,7 @@ class ManageActionTest extends AbstractTestCase
         $this->assertDatabaseHas('categories', ['guid' => $category2->guid, 'title' => $category2->title]);
 
         $newTitle = 'updated title';
-        $request = $this->createJsonRequest('POST', '/api/category/manage', [
+        $request = $this->createJsonRequest('POST', $this->actionUrl, [
             'oper' => 'edit',
             'id' => $category->guid,
             'title' => $newTitle
@@ -174,8 +176,8 @@ class ManageActionTest extends AbstractTestCase
         $content = (string)$response->getBody();
         $this->assertSame(200, $response->getStatusCode());
         $this->assertJsonData([
-            'guid' =>$category->guid,
-            'title' =>$newTitle
+            'guid' => $category->guid,
+            'title' => $newTitle
         ], $response);
         $this->assertDatabaseCount('categories', 2);
         $this->assertDatabaseHas('categories', ['guid' => $category->guid, 'title' => $newTitle]);
@@ -194,7 +196,7 @@ class ManageActionTest extends AbstractTestCase
         $this->assertDatabaseCount('books_categories', 0);
         $this->assertCount(0, $bookWithMarker->categories);
 
-        $request = $this->createJsonRequest('POST', '/api/category/manage', [
+        $request = $this->createJsonRequest('POST', $this->actionUrl, [
             'oper' => 'edit',
             'id' => $category->guid,
             'marker' => 'true'
@@ -225,7 +227,7 @@ class ManageActionTest extends AbstractTestCase
         $this->assertCount(0, $bookWithMarker->categories);
 
         $newTitle = 'updated title';
-        $request = $this->createJsonRequest('POST', '/api/category/manage', [
+        $request = $this->createJsonRequest('POST', $this->actionUrl, [
             'oper' => 'edit',
             'id' => $category->guid,
             'title' => $newTitle,
@@ -237,7 +239,7 @@ class ManageActionTest extends AbstractTestCase
 
         $this->assertSame(200, $response->getStatusCode());
         $this->assertJsonData([
-            'guid'=>$category->guid,
+            'guid' => $category->guid,
             'title' => $newTitle
         ], $response);
         $this->assertDatabaseCount('categories', 2);
@@ -265,7 +267,7 @@ class ManageActionTest extends AbstractTestCase
         $this->assertCount(1, $bookWithMarker->categories);
 
         $newTitle = 'updated title';
-        $request = $this->createJsonRequest('POST', '/api/category/manage', [
+        $request = $this->createJsonRequest('POST', $this->actionUrl, [
             'oper' => 'edit',
             'id' => $category->guid,
             'title' => $newTitle,
@@ -278,7 +280,7 @@ class ManageActionTest extends AbstractTestCase
         $content = (string)$response->getBody();
         $this->assertSame(200, $response->getStatusCode());
         $this->assertJsonData([
-            'guid'=>$category->guid,
+            'guid' => $category->guid,
             'title' => $newTitle
         ], $response);
         $this->assertDatabaseCount('categories', 2);
@@ -301,7 +303,7 @@ class ManageActionTest extends AbstractTestCase
         $this->assertDatabaseCount('books_categories', 0);
         $this->assertCount(0, $bookWithMarker->categories);
 
-        $request = $this->createJsonRequest('POST', '/api/category/manage', [
+        $request = $this->createJsonRequest('POST', $this->actionUrl, [
             'oper' => 'edit',
             'id' => $category->guid,
             'title' => 'updated title',

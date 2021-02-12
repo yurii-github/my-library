@@ -7,7 +7,7 @@ use GuzzleHttp\Psr7\Stream;
 use Tests\Functional\AbstractTestCase;
 use Tests\PopulateBooksTrait;
 
-class UpdateBookCoverActionTest extends AbstractTestCase
+class UpdateCoverActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;
 

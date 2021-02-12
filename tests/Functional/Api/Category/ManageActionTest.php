@@ -7,7 +7,7 @@ use Tests\Functional\AbstractTestCase;
 use Tests\PopulateBooksTrait;
 use Tests\PopulateCategoriesTrait;
 
-class ManageBookCategoryActionTest extends AbstractTestCase
+class ManageActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;
     use PopulateCategoriesTrait;

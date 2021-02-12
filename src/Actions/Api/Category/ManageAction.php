@@ -18,22 +18,23 @@
  * along with this program.  If not, see http://www.gnu.org/licenses
  */
 
-namespace App\Actions\Api\Book;
+namespace App\Actions\Api\Category;
 
 use App\Actions\AbstractApiAction;
 use App\Exception\UnsupportedOperationException;
 use App\Models\Book;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Support\Arr;
+use Illuminate\Translation\Translator;
 use Illuminate\Validation\DatabasePresenceVerifier;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use \Illuminate\Translation\Translator;
+use \App\Models\Category;
 
-class ManageBookAction extends AbstractApiAction
+class ManageAction extends AbstractApiAction
 {
     /** @var Translator */
     protected $translator;
@@ -45,7 +46,6 @@ class ManageBookAction extends AbstractApiAction
         $this->db = $container->get('db');
         assert($this->db instanceof Manager);
         $this->translator = $container->get(Translator::class);
-        assert($this->translator instanceof Translator);
     }
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
@@ -54,77 +54,87 @@ class ManageBookAction extends AbstractApiAction
         $operation = Arr::get($post, 'oper');
 
         if ($operation === 'add') {
-            $book = $this->addBook($post);
-            return $this->asJSON($book);
-        } elseif ($operation === 'del') {
-            $this->deleteBook($post);
+            $this->addCategory($post);
             return $this->asJSON();
+        } elseif ($operation === 'del') {
+            $this->deleteCategory($post);
+            return $response;
         } elseif ($operation === 'edit') {
-            $book = $this->editBook($post);
-            return $this->asJSON($book);
+            if ($nodeid = Arr::get($request->getQueryParams(), 'nodeid')) {
+                $post = Arr::add($post, 'nodeid', $nodeid);
+            }
+            $category = $this->editCategory($post);
+            return $this->asJSON($category);
         }
 
         throw new UnsupportedOperationException($operation);
     }
 
-    protected function editBook(array $post): ?Book
+    protected function editCategory(array $post): ?Category
     {
         $rules = [
-            'year' => ['sometimes'],
-            'favorite' => ['sometimes', 'required'],
-            'read' => ['sometimes', 'required', Rule::in(['yes', 'no'])],
-            'title' => ['sometimes', 'required'],
-            'isbn13' => ['sometimes', 'sometimes'],
-            'author' => ['sometimes', 'string'],
-            'publisher' => ['sometimes', 'string'],
-            'ext' => ['sometimes'],
-            'id' => ['required', 'exists:books,book_guid']
+            'id' => ['required', 'string', 'max:255', Rule::exists('categories', 'guid')],
+            'title' => ['sometimes', 'string', 'max:255'],
+            'nodeid' => ['sometimes', 'string', 'max:255', Rule::exists('books', 'book_guid')],
+            'marker' => ['required_with:nodeid', 'bool']
         ];
+
         $validator = new Validator($this->translator, $post, $rules);
         $validator->setPresenceVerifier(new DatabasePresenceVerifier($this->db->getDatabaseManager()));
         $input = $validator->validate();
-        $book = Book::findOrFail($input['id']);
-        assert($book instanceof Book);
-        $book->fill($input);
-        $book->save();
 
-        return $book;
-    }
+        $category = Category::find($input['id']);
+        assert($category instanceof Category);
 
-    protected function deleteBook(array $post): ?Book
-    {
-        $rules = [
-            'id' => ['required', 'string']
-        ];
-        $input = (new Validator($this->translator, $post, $rules))->validate();
-        $book = Book::find($input['id']);
-        assert($book instanceof Book || $book === null);
-        if ($book) {
-            $book->delete();
+        if (Arr::has($input, 'title')) {
+            $category->title = $input['title'];
+            $category->saveOrFail();
         }
 
-        return $book;
+        if (Arr::has($input, 'nodeid')) {
+            $book = Book::find($input['nodeid']);
+            assert($book instanceof Book);
+            if ($input['marker']) {
+                $book->categories()->attach($category);
+            } else {
+                $book->categories()->detach($category);
+            }
+        }
+
+        return $category;
     }
 
-    protected function addBook(array $post): Book
+
+    protected function deleteCategory(array $post): ?Category
     {
         $rules = [
-            'year' => ['sometimes'],
-            'favorite' => ['required'],
-            'read' => ['required', Rule::in(['yes', 'no'])],
-            'title' => ['required'],
-            'isbn13' => ['sometimes'],
-            'author' => ['sometimes'],
-            'publisher' => ['sometimes'],
-            'ext' => ['sometimes'],
+            'id' => ['required', 'string', 'max:255'],
         ];
-        $validator = new Validator($this->translator, $post, $rules);
-        $input = $validator->validate();
-        $book = new Book();
-        $book->fill($input);
-        $book->save();
 
-        return $book;
+        $input = (new Validator($this->translator, $post, $rules))->validate();
+
+        $category = Category::find($input['id']);
+        assert($category instanceof Category || $category === null);
+
+        if ($category) {
+            $category->delete();
+        }
+
+        return $category;
     }
 
+    protected function addCategory(array $post): Category
+    {
+        $rules = [
+            'title' => ['required'],
+        ];
+
+        $input = (new Validator($this->translator, $post, $rules))->validate();
+
+        $category = new Category();
+        $category->title = $input['title'];
+        $category->saveOrFail();
+
+        return $category;
+    }
 }

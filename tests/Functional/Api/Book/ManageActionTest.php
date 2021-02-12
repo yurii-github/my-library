@@ -6,7 +6,7 @@ use Illuminate\Support\Carbon;
 use Tests\Functional\AbstractTestCase;
 use Tests\PopulateBooksTrait;
 
-class ManageBookActionTest extends AbstractTestCase
+class ManageActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;
 

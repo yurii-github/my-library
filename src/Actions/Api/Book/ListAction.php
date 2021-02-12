@@ -18,38 +18,33 @@
  * along with this program.  If not, see http://www.gnu.org/licenses
  */
 
-namespace App\Actions\Api\Category;
+namespace App\Actions\Api\Book;
 
 use App\Actions\AbstractApiAction;
-use App\JGridRequestQuery;
-use Illuminate\Database\Query\Builder;
-use Illuminate\Database\Query\Expression;
-use Illuminate\Support\Arr;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use \App\Models\Category;
+use \App\Models\Book;
+use \App\JGridRequestQuery;
+use \Illuminate\Database\Eloquent\Builder;
 
-class GetListAction extends AbstractApiAction
+class ListAction extends AbstractApiAction
 {
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $bookId = Arr::get($request->getQueryParams(), 'nodeid');
-        $bookId = $bookId ? (string)$bookId : null;
-        $query = Category::query()
-            ->select([
-                'guid',
-                'title',
-                new Expression('CASE WHEN bc.category_guid IS NOT NULL THEN 1 ELSE 0 END AS marker')
-            ])
-            ->leftJoin('books_categories AS bc', function (Builder $query) use ($bookId) {
-                return $query
-                    ->whereRaw('bc.category_guid = categories.guid')
-                    ->where('bc.book_guid', '=', $bookId);
+        $params = $request->getQueryParams();
+        $filterCategories = $params['filterCategories'] ?? null;
+        $columns = ['created_date', 'book_guid', 'favorite', 'read', 'year', 'title', 'isbn13', 'author', 'publisher', 'ext', 'filename'];
+        $query = Book::query()->select($columns);
+
+        if (!empty($filterCategories)) {
+            $query->whereHas('categories', function (Builder $query) use ($filterCategories) {
+                $query->whereIn('guid', explode(',', $filterCategories));
             });
+        }
 
         $gridQuery = new JGridRequestQuery($query, $request);
-        $gridQuery->withFilters()->withSorting('title', 'asc');;
+        $gridQuery->withFilters()->withSorting('created_date', 'desc');
 
-        return $this->asJSON($gridQuery->paginate(['guid', 'title', 'marker']));
+        return $this->asJSON($gridQuery->paginate($columns));
     }
 }

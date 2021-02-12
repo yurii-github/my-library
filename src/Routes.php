@@ -28,10 +28,10 @@ class Routes
     {
         $app->get('/', Actions\Pages\IndexPageAction::class);
         $app->get('/api/book/cover', Actions\Api\Cover\GetAction::class);
-        $app->get('/api/book', Actions\Api\Book\GetListAction::class);
+        $app->get('/api/book', Actions\Api\Book\ListAction::class);
         $app->post('/api/book/manage', Actions\Api\Book\ManageAction::class);
         $app->post('/api/book/cover-save', Actions\Api\Cover\UpdateAction::class);
-        $app->get('/api/category', Actions\Api\Category\GetListAction::class);
+        $app->get('/api/category', Actions\Api\Category\ListAction::class);
         $app->post('/api/category/manage', Actions\Api\Category\ManageAction::class);
         $app->get('/about', Actions\Pages\AboutPageAction::class);
         $app->get('/config', Actions\Pages\ConfigPageAction::class);

@@ -1,8 +1,9 @@
 <?php
 
-namespace Tests\Functional;
+namespace Tests\Functional\Api\Book;
 
 use Illuminate\Support\Carbon;
+use Tests\Functional\AbstractTestCase;
 use Tests\PopulateBooksTrait;
 
 class ManageBookActionTest extends AbstractTestCase

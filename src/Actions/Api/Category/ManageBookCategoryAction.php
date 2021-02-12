@@ -18,8 +18,9 @@
  * along with this program.  If not, see http://www.gnu.org/licenses
  */
 
-namespace App\Actions;
+namespace App\Actions\Api\Category;
 
+use App\Actions\AbstractApiAction;
 use App\Exception\UnsupportedOperationException;
 use App\Models\Book;
 use Illuminate\Database\Capsule\Manager;

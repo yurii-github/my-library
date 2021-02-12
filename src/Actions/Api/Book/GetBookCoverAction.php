@@ -18,32 +18,22 @@
  * along with this program.  If not, see http://www.gnu.org/licenses
  */
 
-namespace App\Actions;
+namespace App\Actions\Api\Book;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use \App\Models\Book;
-use \App\JGridRequestQuery;
-use \Illuminate\Database\Eloquent\Builder;
 
-class GetBookListAction extends AbstractApiAction
+class GetBookCoverAction
 {
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $params = $request->getQueryParams();
-        $filterCategories = $params['filterCategories'] ?? null;
-        $columns = ['created_date', 'book_guid', 'favorite', 'read', 'year', 'title', 'isbn13', 'author', 'publisher', 'ext', 'filename'];
-        $query = Book::query()->select($columns);
-
-        if (!empty($filterCategories)) {
-            $query->whereHas('categories', function (Builder $query) use ($filterCategories) {
-                $query->whereIn('guid', explode(',', $filterCategories));
-            });
-        }
-
-        $gridQuery = new JGridRequestQuery($query, $request);
-        $gridQuery->withFilters()->withSorting('created_date', 'desc');
-
-        return $this->asJSON($gridQuery->paginate($columns));
+        $book_guid = $request->getQueryParams()['book_guid'];
+        $cover = Book::select('book_cover')->where('book_guid', $book_guid)->first('book_cover')->book_cover;
+        $response = $response
+            ->withHeader('Cache-Control', 'no-store')
+            ->withHeader('Content-Type', 'image/jpeg');
+        $response->getBody()->write(!is_null($cover) ? $cover : file_get_contents(WEB_DIR.'/assets/app/book-cover-empty.jpg'));
+        return $response;
     }
 }

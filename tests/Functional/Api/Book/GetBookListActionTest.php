@@ -1,9 +1,10 @@
 <?php
 
-namespace Tests\Functional;
+namespace Tests\Functional\Api\Book;
 
 use App\Models\Category;
 use Illuminate\Support\Collection;
+use Tests\Functional\AbstractTestCase;
 use Tests\PopulateBooksTrait;
 use Tests\PopulateCategoriesTrait;
 

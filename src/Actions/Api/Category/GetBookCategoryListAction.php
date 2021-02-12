@@ -18,8 +18,9 @@
  * along with this program.  If not, see http://www.gnu.org/licenses
  */
 
-namespace App\Actions;
+namespace App\Actions\Api\Category;
 
+use App\Actions\AbstractApiAction;
 use App\JGridRequestQuery;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Expression;

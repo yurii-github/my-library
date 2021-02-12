@@ -27,12 +27,12 @@ class Routes
     static public function register(App $app)
     {
         $app->get('/', Actions\Pages\IndexPageAction::class);
-        $app->get('/api/book/cover', Actions\GetBookCoverAction::class);
-        $app->get('/api/book', Actions\GetBookListAction::class);
-        $app->post('/api/book/manage', Actions\ManageBookAction::class);
-        $app->post('/api/book/cover-save', Actions\UpdateBookCoverAction::class);
-        $app->get('/api/category', Actions\GetBookCategoryListAction::class);
-        $app->post('/api/category/manage', Actions\ManageBookCategoryAction::class);
+        $app->get('/api/book/cover', Actions\Api\Book\GetBookCoverAction::class);
+        $app->get('/api/book', Actions\Api\Book\GetBookListAction::class);
+        $app->post('/api/book/manage', Actions\Api\Book\ManageBookAction::class);
+        $app->post('/api/book/cover-save', Actions\Api\Book\UpdateBookCoverAction::class);
+        $app->get('/api/category', Actions\Api\Category\GetBookCategoryListAction::class);
+        $app->post('/api/category/manage', Actions\Api\Category\ManageBookCategoryAction::class);
         $app->get('/about', Actions\Pages\AboutPageAction::class);
         $app->get('/config', Actions\Pages\ConfigPageAction::class);
         $app->post('/config/save', Actions\Api\Config\UpdateAction::class);

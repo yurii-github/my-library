@@ -1,9 +1,10 @@
 <?php
 
-namespace Tests\Functional;
+namespace Tests\Functional\Api\Book;
 
 use App\Models\Book;
 use GuzzleHttp\Psr7\Stream;
+use Tests\Functional\AbstractTestCase;
 use Tests\PopulateBooksTrait;
 
 class UpdateBookCoverActionTest extends AbstractTestCase
@@ -15,7 +16,7 @@ class UpdateBookCoverActionTest extends AbstractTestCase
     {
         $books = $this->populateBooks();
         
-        $cover = file_get_contents(dirname(__DIR__).'/data/cover.jpg');
+        $cover = file_get_contents(self::getTestFilepath('cover.jpg'));
         $request = $this->createJsonRequest('POST', '/api/book/cover-save');
         $request = $request->withQueryParams([
             'book_guid' => $books[0]->book_guid

@@ -18,8 +18,9 @@
  * along with this program.  If not, see http://www.gnu.org/licenses
  */
 
-namespace App\Actions;
+namespace App\Actions\Api\Book;
 
+use App\Actions\AbstractApiAction;
 use App\Configuration\Configuration;
 use App\Exception\InvalidImageException;
 use App\Models\Book;

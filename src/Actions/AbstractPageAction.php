@@ -46,7 +46,7 @@ abstract class AbstractPageAction
     protected function asPage(ServerRequestInterface $request, string $view, array $data): Response
     {
         $body = $this->render($request, $view, $data);
-        return new Response(200, ['Content-Type' => ['application/html']], $body);
+        return new Response(200, ['Content-Type' => ['text/html']], $body);
     }
 
     protected function render(ServerRequestInterface $request, string $view, array $data): string

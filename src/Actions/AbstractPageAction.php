@@ -18,7 +18,7 @@
  * along with this program.  If not, see http://www.gnu.org/licenses
  */
 
-namespace App\Actions\Pages;
+namespace App\Actions;
 
 use App\Configuration\Configuration;
 use Psr\Container\ContainerInterface;

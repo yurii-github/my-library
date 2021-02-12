@@ -18,26 +18,28 @@
  * along with this program.  If not, see http://www.gnu.org/licenses
  */
 
-namespace App\Actions\Pages;
+namespace App\Actions;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use \App\Models\Category;
 
-class ConfigPageAction extends AbstractPageAction
+class AboutPageAction extends AbstractPageAction
 {
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $data = [
-            'PHP_VERSION' => PHP_VERSION,
-            'SUPPORTED_VALUES' => $this->config::SUPPORTED_VALUES,
-            'SUPPORTED_DATABASES' => ['sqlite' => 'SQLite', 'mysql' => 'MySQL'],
-            'INTL_ICU_VERSION' => INTL_ICU_VERSION,
-            'timeZones' => \DateTimeZone::listIdentifiers(),
-            'categories' => Category::all(),
+            'projects' => [
+                'Slim 4' => 'https://www.slimframework.com/',
+                'jQuery' => 'https://jquery.com',
+                'jQuery UI' => 'https://jqueryui.com',
+                'jQuery Grid' => 'http://www.trirand.com/blog',
+                'jQuery Raty' => 'http://wbotelhos.com/raty',
+                'jQuery FancyBox' => 'http://fancybox.net',
+                'JS-Cookie' => 'https://github.com/js-cookie/js-cookie',
+                'Ghostscript' => 'https://www.ghostscript.com/'
+            ]
         ];
-
-        $response->getBody()->write($this->render($request, 'config.html.twig', $data));
+        $response->getBody()->write($this->render($request, 'about.html.twig', $data));
 
         return $response;
     }

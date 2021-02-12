@@ -18,35 +18,26 @@
  * along with this program.  If not, see http://www.gnu.org/licenses
  */
 
-namespace App\Actions\Pages;
+namespace App\Actions;
 
-use App\AppMigrator;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use \App\Models\Category;
 
-class IndexPageAction extends AbstractPageAction
+class ConfigPageAction extends AbstractPageAction
 {
-    /** @var AppMigrator */
-    protected $migrator;
-
-    public function __construct(ContainerInterface $container)
-    {
-        parent::__construct($container);
-        $this->migrator = $container->get(AppMigrator::class);
-        assert($this->migrator instanceof AppMigrator);
-    }
-    
-    
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $this->migrator->migrate();
-        
         $data = [
+            'PHP_VERSION' => PHP_VERSION,
+            'SUPPORTED_VALUES' => $this->config::SUPPORTED_VALUES,
+            'SUPPORTED_DATABASES' => ['sqlite' => 'SQLite', 'mysql' => 'MySQL'],
+            'INTL_ICU_VERSION' => INTL_ICU_VERSION,
+            'timeZones' => \DateTimeZone::listIdentifiers(),
             'categories' => Category::all(),
         ];
-        $response->getBody()->write($this->render($request, 'index.html.twig', $data));
+
+        $response->getBody()->write($this->render($request, 'config.html.twig', $data));
 
         return $response;
     }

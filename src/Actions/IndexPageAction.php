@@ -18,28 +18,35 @@
  * along with this program.  If not, see http://www.gnu.org/licenses
  */
 
-namespace App\Actions\Pages;
+namespace App\Actions;
 
+use App\AppMigrator;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use \App\Models\Category;
 
-class AboutPageAction extends AbstractPageAction
+class IndexPageAction extends AbstractPageAction
 {
+    /** @var AppMigrator */
+    protected $migrator;
+
+    public function __construct(ContainerInterface $container)
+    {
+        parent::__construct($container);
+        $this->migrator = $container->get(AppMigrator::class);
+        assert($this->migrator instanceof AppMigrator);
+    }
+    
+    
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
+        $this->migrator->migrate();
+        
         $data = [
-            'projects' => [
-                'Slim 4' => 'https://www.slimframework.com/',
-                'jQuery' => 'https://jquery.com',
-                'jQuery UI' => 'https://jqueryui.com',
-                'jQuery Grid' => 'http://www.trirand.com/blog',
-                'jQuery Raty' => 'http://wbotelhos.com/raty',
-                'jQuery FancyBox' => 'http://fancybox.net',
-                'JS-Cookie' => 'https://github.com/js-cookie/js-cookie',
-                'Ghostscript' => 'https://www.ghostscript.com/'
-            ]
+            'categories' => Category::all(),
         ];
-        $response->getBody()->write($this->render($request, 'about.html.twig', $data));
+        $response->getBody()->write($this->render($request, 'index.html.twig', $data));
 
         return $response;
     }

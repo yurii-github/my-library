@@ -27,7 +27,7 @@ class AboutPageAction extends AbstractPageAction
 {
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $data = [
+        return $this->asPage($request, 'about.html.twig', [
             'projects' => [
                 'Slim 4' => 'https://www.slimframework.com/',
                 'jQuery' => 'https://jquery.com',
@@ -38,9 +38,6 @@ class AboutPageAction extends AbstractPageAction
                 'JS-Cookie' => 'https://github.com/js-cookie/js-cookie',
                 'Ghostscript' => 'https://www.ghostscript.com/'
             ]
-        ];
-        $response->getBody()->write($this->render($request, 'about.html.twig', $data));
-
-        return $response;
+        ]);
     }
 }

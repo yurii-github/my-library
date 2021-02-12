@@ -37,17 +37,13 @@ class IndexPageAction extends AbstractPageAction
         $this->migrator = $container->get(AppMigrator::class);
         assert($this->migrator instanceof AppMigrator);
     }
-    
-    
+
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $this->migrator->migrate();
-        
-        $data = [
-            'categories' => Category::all(),
-        ];
-        $response->getBody()->write($this->render($request, 'index.html.twig', $data));
 
-        return $response;
+        return $this->asPage($request, 'index.html.twig', [
+            'categories' => Category::all(),
+        ]);
     }
 }

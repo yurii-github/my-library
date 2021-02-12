@@ -18,7 +18,7 @@
  * along with this program.  If not, see http://www.gnu.org/licenses
  */
 
-namespace App\Actions\Api\Cover;
+namespace App\Actions\Api\Book\Cover;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -28,12 +28,12 @@ class GetAction
 {
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $book_guid = $request->getQueryParams()['book_guid'];
-        $cover = Book::select('book_cover')->where('book_guid', $book_guid)->first('book_cover')->book_cover;
+        $cover = Book::find($args['book_id'], ['book_cover']);
+        $coverData = !empty($cover->book_cover) ? $cover->book_cover : file_get_contents(WEB_DIR.'/assets/app/book-cover-empty.jpg');
         $response = $response
             ->withHeader('Cache-Control', 'no-store')
             ->withHeader('Content-Type', 'image/jpeg');
-        $response->getBody()->write(!is_null($cover) ? $cover : file_get_contents(WEB_DIR.'/assets/app/book-cover-empty.jpg'));
+        $response->getBody()->write($coverData);
         return $response;
     }
 }

@@ -15,7 +15,7 @@ class CountBooksWithoutFilesActionTest extends AbstractTestCase
         $books = $this->populateBooks();
         file_put_contents($this->getLibraryConfig()->getFilepath($books[0]->file->getFilename()), 'test data');
 
-        $request = $this->createRequest('GET', '/config/count-books-without-files');
+        $request = $this->createRequest('GET', '/api/config/count-books-without-files');
         $response = $this->app->handle($request);
 
         $this->assertSame(200, $response->getStatusCode());

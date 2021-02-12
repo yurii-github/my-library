@@ -89,7 +89,7 @@
             search: false,
             sortable: false,
             formatter: function (cellvalue, options, rowObject) {
-              let link = `api/book/cover?book_guid=${options.rowId}&t=${Date.now()}`
+              let link = `api/book/cover/${options.rowId}?t=${Date.now()}`
               return '<a class="book-cover-link" data-guid="' + options.rowId + '" data-fancybox-group="book-covers" href="' + link + '" title="' + rowObject[4] + ' : ' + rowObject[5] + '"' + '><img class="book-cover" src="' + link + '" /></a>'
             }
           },
@@ -221,8 +221,8 @@
           jQuery(jq_subgrid_table_id).jqGrid({
             caption: 'Categories',
             rownumbers: true,
-            url: 'api/category?nodeid=' + row_id,
-            editurl: 'api/category/manage',
+            url: `api/book/category/${row_id}`,
+            editurl: 'api/book/category/manage',
             datatype: "json",
             colNames: ['title', 'marker'],
             colModel:
@@ -239,7 +239,7 @@
               ],
             cellEdit: true,
             cellSubmit: 'remote',
-            cellurl: 'api/category/manage?nodeid=' + row_id,
+            cellurl: `api/book/category/manage/${row_id}`,
             rowNum: 20,
             pager: pager_id,
             height: '100%',
@@ -394,7 +394,7 @@
                 return
               }
               let xhr = new XMLHttpRequest()
-              xhr.open('POST', 'api/book/cover-save?book_guid=' + book_guid, true)
+              xhr.open('POST', `api/book/cover/${book_guid}`, true)
               xhr.send(file)
               xhr.onreadystatechange = function (e) {
                 if (this.readyState !== 4 || this.status !== 200) {

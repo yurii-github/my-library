@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Functional\Api\Cover;
+namespace Tests\Functional\Api\Book\Cover;
 
 use Tests\Functional\AbstractTestCase;
 use Tests\PopulateBooksTrait;
@@ -13,10 +13,7 @@ class GetActionTest extends AbstractTestCase
     function testEmptyCoverHasDefaultImage()
     {
         $books = $this->populateBooks();
-        $request = $this->createRequest('GET', '/api/book/cover');
-        $request = $request->withQueryParams([
-            'book_guid' => $books[0]->book_guid
-        ]);
+        $request = $this->createRequest('GET', "/api/book/cover/{$books[0]->book_guid}");
         $response = $this->app->handle($request);
         $response->getBody()->rewind();
         $content = $response->getBody()->getContents();
@@ -32,10 +29,7 @@ class GetActionTest extends AbstractTestCase
         $book = $books[0];
         $book->book_cover = 'new-cover-data';
         $book->saveOrFail();
-        $request = $this->createRequest('GET', '/api/book/cover');
-        $request = $request->withQueryParams([
-            'book_guid' => $book->book_guid
-        ]);
+        $request = $this->createRequest('GET', "/api/book/cover/{$book->book_guid}");
         $response = $this->app->handle($request);
         $response->getBody()->rewind();
         $content = $response->getBody()->getContents();

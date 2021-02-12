@@ -21,27 +21,38 @@
 namespace App;
 
 use Slim\App;
+use Slim\Interfaces\RouteCollectorProxyInterface;
 
 class Routes
 {
     static public function register(App $app)
     {
         $app->get('/', Actions\IndexPageAction::class);
-        $app->get('/api/book/cover', Actions\Api\Cover\GetAction::class);
-        $app->get('/api/book', Actions\Api\Book\ListAction::class);
-        $app->post('/api/book/manage', Actions\Api\Book\ManageAction::class);
-        $app->post('/api/book/cover-save', Actions\Api\Cover\UpdateAction::class);
-        $app->get('/api/category', Actions\Api\Category\ListAction::class);
-        $app->post('/api/category/manage', Actions\Api\Category\ManageAction::class);
         $app->get('/about', Actions\AboutPageAction::class);
         $app->get('/config', Actions\ConfigPageAction::class);
-        $app->post('/config/save', Actions\Api\Config\UpdateAction::class);
-        $app->get('/config/check-files', Actions\Api\Config\CheckFilesAction::class);
-        $app->get('/config/count-books-without-files', Actions\Api\Config\CountBooksWithoutFilesAction::class);
-        $app->post('/config/clear-books-without-files', Actions\Api\Config\ClearBooksWithoutFilesAction::class);
-        $app->get('/config/import-files', Actions\Api\Config\GetImportFilesAction::class);
-        $app->post('/config/import-files', Actions\Api\Config\DoImportFilesAction::class);
-        $app->get('/config/books-without-cover', Actions\Api\Config\GetBooksWithoutCoverAction::class);
-        $app->post('/config/import-new-cover-from-pdf', Actions\Api\Config\DoImportNewCoverFromPdfAction::class);
+        $app->group('/api', function (RouteCollectorProxyInterface $group) {
+            $group->group('/book', function (RouteCollectorProxyInterface $group) {
+                $group->get('', Actions\Api\Book\ListAction::class);
+                $group->post('/manage', Actions\Api\Book\ManageAction::class);
+                $group->group('/category', function (RouteCollectorProxyInterface $group) {
+                    $group->get('[/{book_id}]', Actions\Api\Book\Category\ListAction::class);
+                    $group->post('/manage[/{book_id}]', Actions\Api\Book\Category\ManageAction::class);
+                });
+                $group->group('/cover',  function (RouteCollectorProxyInterface $group) {
+                    $group->get('/{book_id}', Actions\Api\Book\Cover\GetAction::class);
+                    $group->post('/{book_id}', Actions\Api\Book\Cover\UpdateAction::class);
+                });
+            });
+            $group->group('/config', function (RouteCollectorProxyInterface $group) {
+                $group->post('', Actions\Api\Config\UpdateAction::class);
+                $group->get('/check-files', Actions\Api\Config\CheckFilesAction::class);
+                $group->get('/count-books-without-files', Actions\Api\Config\CountBooksWithoutFilesAction::class);
+                $group->post('/clear-books-without-files', Actions\Api\Config\ClearBooksWithoutFilesAction::class);
+                $group->get('/import-files', Actions\Api\Config\GetImportFilesAction::class);
+                $group->post('/import-files', Actions\Api\Config\DoImportFilesAction::class);
+                $group->get('/books-without-cover', Actions\Api\Config\GetBooksWithoutCoverAction::class);
+                $group->post('/import-new-cover-from-pdf', Actions\Api\Config\DoImportNewCoverFromPdfAction::class);
+            });
+        });
     }
 }

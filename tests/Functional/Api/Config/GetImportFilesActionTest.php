@@ -16,7 +16,7 @@ class GetImportFilesActionTest extends AbstractTestCase
         $this->populateBooks();
         file_put_contents($this->getLibraryConfig()->getFilepath('fs-only.pdf'), ' some data');
 
-        $request = $this->createJsonRequest('GET', '/config/import-files');
+        $request = $this->createJsonRequest('GET', '/api/config/import-files');
         $response = $this->app->handle($request);
         $this->assertJsonData(['fs-only.pdf'], $response);
     }

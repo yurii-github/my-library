@@ -13,7 +13,7 @@ class UpdateActionTest extends AbstractTestCase
         $this->assertStringContainsString('"language": "en-US",', file_get_contents($config->getConfigFile()));
         $this->assertStringNotContainsString('"language": "uk-UA",', file_get_contents($config->getConfigFile()));
 
-        $request = $this->createJsonRequest('POST', '/config/save');
+        $request = $this->createJsonRequest('POST', '/api/config');
         $request = $request->withParsedBody([
             'field' => 'system_language',
             'value' => 'uk-UA'
@@ -35,7 +35,7 @@ class UpdateActionTest extends AbstractTestCase
 
         chmod($config->getConfigFile(), 0444);
 
-        $request = $this->createJsonRequest('POST', '/config/save');
+        $request = $this->createJsonRequest('POST', '/api/config');
         $request = $request->withParsedBody([
             'field' => 'system_language',
             'value' => 'uk-UA'

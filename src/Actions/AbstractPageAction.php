@@ -21,6 +21,7 @@
 namespace App\Actions;
 
 use App\Configuration\Configuration;
+use GuzzleHttp\Psr7\Response;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Translation\Translator;
@@ -32,6 +33,7 @@ abstract class AbstractPageAction
     protected $config;
     /** @var Environment */
     protected $twig;
+    /** @var Translator */
     protected $translator;
 
     public function __construct(ContainerInterface $container)
@@ -41,7 +43,13 @@ abstract class AbstractPageAction
         $this->translator = $container->get(Translator::class);
     }
 
-    protected function render(ServerRequestInterface $request, string $view, array $data)
+    protected function asPage(ServerRequestInterface $request, string $view, array $data): Response
+    {
+        $body = $this->render($request, $view, $data);
+        return new Response(200, ['Content-Type' => ['application/html']], $body);
+    }
+
+    protected function render(ServerRequestInterface $request, string $view, array $data): string
     {
         $uri = $request->getUri();
         $gridLocale = [
@@ -51,11 +59,11 @@ abstract class AbstractPageAction
         $baseData = [
             't' => $this->translator,
             'path' => $uri->getPath(),
-            'baseUrl' => $uri->getScheme() . '://' . $uri->getAuthority(),
+            'baseUrl' => $baseUrl = $uri->getScheme() . '://' . $uri->getAuthority(),
             'appTheme' => $this->config->getSystem()->theme,
             'gridLocale' => $gridLocale[$this->translator->getLocale()],
             'config' => $this->config,
-            'currentUrl' => $uri->getScheme() . '://' . $uri->getAuthority() . $uri->getPath(),
+            'currentUrl' => $baseUrl . $uri->getPath(),
             'APP_VERSION' => 'v.'.$this->config->getVersion(),
             'APP_LANGUAGE' => $this->config->getSystem()->language,
         ];

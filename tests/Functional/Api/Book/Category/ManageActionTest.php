@@ -196,12 +196,11 @@ class ManageActionTest extends AbstractTestCase
         $this->assertDatabaseCount('books_categories', 0);
         $this->assertCount(0, $bookWithMarker->categories);
 
-        $request = $this->createJsonRequest('POST', $this->actionUrl, [
+        $request = $this->createJsonRequest('POST', $this->actionUrl."/$bookWithMarker->book_guid", [
             'oper' => 'edit',
             'id' => $category->guid,
             'marker' => 'true'
         ]);
-        $request = $request->withQueryParams(['nodeid' => $bookWithMarker->book_guid]);
 
         $response = $this->app->handle($request);
 
@@ -227,13 +226,12 @@ class ManageActionTest extends AbstractTestCase
         $this->assertCount(0, $bookWithMarker->categories);
 
         $newTitle = 'updated title';
-        $request = $this->createJsonRequest('POST', $this->actionUrl, [
+        $request = $this->createJsonRequest('POST', $this->actionUrl."/$bookWithMarker->book_guid", [
             'oper' => 'edit',
             'id' => $category->guid,
             'title' => $newTitle,
             'marker' => true
         ]);
-        $request = $request->withQueryParams(['nodeid' => $bookWithMarker->book_guid]);
 
         $response = $this->app->handle($request);
 
@@ -267,14 +265,12 @@ class ManageActionTest extends AbstractTestCase
         $this->assertCount(1, $bookWithMarker->categories);
 
         $newTitle = 'updated title';
-        $request = $this->createJsonRequest('POST', $this->actionUrl, [
+        $request = $this->createJsonRequest('POST', $this->actionUrl."/$bookWithMarker->book_guid", [
             'oper' => 'edit',
             'id' => $category->guid,
             'title' => $newTitle,
             'marker' => false
         ]);
-        $request = $request->withQueryParams(['nodeid' => $bookWithMarker->book_guid]);
-
         $response = $this->app->handle($request);
 
         $content = (string)$response->getBody();
@@ -303,13 +299,11 @@ class ManageActionTest extends AbstractTestCase
         $this->assertDatabaseCount('books_categories', 0);
         $this->assertCount(0, $bookWithMarker->categories);
 
-        $request = $this->createJsonRequest('POST', $this->actionUrl, [
+        $request = $this->createJsonRequest('POST', $this->actionUrl."/$bookWithMarker->book_guid", [
             'oper' => 'edit',
             'id' => $category->guid,
             'title' => 'updated title',
         ]);
-        $request = $request->withQueryParams(['nodeid' => $bookWithMarker->book_guid]);
-
         $response = $this->app->handle($request);
 
         $content = (string)$response->getBody();

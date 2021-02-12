@@ -50,6 +50,7 @@ class ManageAction extends AbstractApiAction
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
+        $bookId = Arr::get($args, 'book_id');
         $post = $request->getParsedBody();
         $operation = Arr::get($post, 'oper');
 
@@ -60,8 +61,8 @@ class ManageAction extends AbstractApiAction
             $this->deleteCategory($post);
             return $response;
         } elseif ($operation === 'edit') {
-            if ($nodeid = Arr::get($request->getQueryParams(), 'nodeid')) {
-                $post = Arr::add($post, 'nodeid', $nodeid);
+            if ($bookId) {
+                $post = Arr::add($post, 'book_id', $bookId);
             }
             $category = $this->editCategory($post);
             return $this->asJSON($category);
@@ -75,8 +76,8 @@ class ManageAction extends AbstractApiAction
         $rules = [
             'id' => ['required', 'string', 'max:255', Rule::exists('categories', 'guid')],
             'title' => ['sometimes', 'string', 'max:255'],
-            'nodeid' => ['sometimes', 'string', 'max:255', Rule::exists('books', 'book_guid')],
-            'marker' => ['required_with:nodeid', 'bool']
+            'book_id' => ['sometimes', 'string', 'max:255', Rule::exists('books', 'book_guid')],
+            'marker' => ['required_with:book_id', 'bool']
         ];
 
         $validator = new Validator($this->translator, $post, $rules);
@@ -91,8 +92,8 @@ class ManageAction extends AbstractApiAction
             $category->saveOrFail();
         }
 
-        if (Arr::has($input, 'nodeid')) {
-            $book = Book::find($input['nodeid']);
+        if (Arr::has($input, 'book_id')) {
+            $book = Book::find($input['book_id']);
             assert($book instanceof Book);
             if ($input['marker']) {
                 $book->categories()->attach($category);

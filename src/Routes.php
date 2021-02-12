@@ -35,8 +35,8 @@ class Routes
                 $group->get('', Actions\Api\Book\ListAction::class);
                 $group->post('/manage', Actions\Api\Book\ManageAction::class);
                 $group->group('/category', function (RouteCollectorProxyInterface $group) {
-                    $group->get('', Actions\Api\Book\Category\ListAction::class);
-                    $group->post('/manage', Actions\Api\Book\Category\ManageAction::class);
+                    $group->get('[/{book_id}]', Actions\Api\Book\Category\ListAction::class);
+                    $group->post('/manage[/{book_id}]', Actions\Api\Book\Category\ManageAction::class);
                 });
                 $group->group('/cover',  function (RouteCollectorProxyInterface $group) {
                     $group->get('/{book_guid}', Actions\Api\Book\Cover\GetAction::class);

@@ -33,8 +33,7 @@ class ListAction extends AbstractApiAction
 {
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $bookId = Arr::get($request->getQueryParams(), 'nodeid');
-        $bookId = $bookId ? (string)$bookId : null;
+        $bookId = Arr::get($args, 'book_id');
         $query = Category::query()
             ->select([
                 'guid',
@@ -46,9 +45,7 @@ class ListAction extends AbstractApiAction
                     ->whereRaw('bc.category_guid = categories.guid')
                     ->where('bc.book_guid', '=', $bookId);
             });
-
-        $gridQuery = new JGridRequestQuery($query, $request);
-        $gridQuery->withFilters()->withSorting('title', 'asc');;
+        $gridQuery = (new JGridRequestQuery($query, $request))->withFilters()->withSorting('title');
 
         return $this->asJSON($gridQuery->paginate(['guid', 'title', 'marker']));
     }

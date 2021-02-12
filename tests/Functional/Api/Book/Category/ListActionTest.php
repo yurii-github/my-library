@@ -60,8 +60,7 @@ class ListActionTest extends AbstractTestCase
         
         $this->assertDatabaseCount('books_categories', 1);
         
-        $request = $this->createJsonRequest('GET', $this->actionUrl);
-        $request = $request->withQueryParams(['nodeid' => $bookWithMarker->book_guid]);
+        $request = $this->createJsonRequest('GET', $this->actionUrl."/{$bookWithMarker->book_guid}");
         $response = $this->app->handle($request);
         $this->assertSame(200, $response->getStatusCode());
         $data = json_decode((string)$response->getBody(), true);

@@ -221,7 +221,7 @@
           jQuery(jq_subgrid_table_id).jqGrid({
             caption: 'Categories',
             rownumbers: true,
-            url: 'api/book/category?nodeid=' + row_id,
+            url: `api/book/category/${row_id}`,
             editurl: 'api/book/category/manage',
             datatype: "json",
             colNames: ['title', 'marker'],
@@ -239,7 +239,7 @@
               ],
             cellEdit: true,
             cellSubmit: 'remote',
-            cellurl: 'api/book/category/manage?nodeid=' + row_id,
+            cellurl: `api/book/category/manage/${row_id}`,
             rowNum: 20,
             pager: pager_id,
             height: '100%',

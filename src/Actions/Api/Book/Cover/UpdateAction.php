@@ -18,7 +18,7 @@
  * along with this program.  If not, see http://www.gnu.org/licenses
  */
 
-namespace App\Actions\Api\Cover;
+namespace App\Actions\Api\Book\Cover;
 
 use App\Actions\AbstractApiAction;
 use App\Configuration\Configuration;
@@ -40,9 +40,7 @@ class UpdateAction extends AbstractApiAction
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $params = $request->getQueryParams();
-
-        $book = Book::where(['book_guid' => $params['book_guid'] ?? null])->firstOrFail();
+        $book = Book::findOrFail($args['book_guid']);
         $bookCover = self::getResampledImageByWidthAsBlob((string)$request->getBody(), $this->config->book->covermaxwidth);
         $book->book_cover = $bookCover;
         $book->save();

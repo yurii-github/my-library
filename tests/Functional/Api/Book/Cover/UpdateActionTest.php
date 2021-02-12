@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Functional\Api\Cover;
+namespace Tests\Functional\Api\Book\Cover;
 
 use App\Models\Book;
 use GuzzleHttp\Psr7\Stream;
@@ -17,10 +17,7 @@ class UpdateActionTest extends AbstractTestCase
         $books = $this->populateBooks();
         
         $cover = file_get_contents(self::getTestFilepath('cover.jpg'));
-        $request = $this->createJsonRequest('POST', '/api/book/cover');
-        $request = $request->withQueryParams([
-            'book_guid' => $books[0]->book_guid
-        ]);
+        $request = $this->createJsonRequest('POST', "/api/book/cover/{$books[0]->book_guid}");
         $stream = new Stream(fopen('php://temp', 'r+'));
         $stream->write($cover);
         $request = $request->withBody($stream);
@@ -41,10 +38,7 @@ class UpdateActionTest extends AbstractTestCase
     public function testInvalidCover()
     {
         $books = $this->populateBooks();
-        $request = $this->createJsonRequest('POST', '/api/book/cover');
-        $request = $request->withQueryParams([
-            'book_guid' => $books[0]->book_guid
-        ]);
+        $request = $this->createJsonRequest('POST', "/api/book/cover/{$books[0]->book_guid}");
         $stream = new Stream(fopen('php://temp', 'r+'));
         $stream->write('invalid-cover-fomatted-data');
         $stream->rewind();

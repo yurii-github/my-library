@@ -82,8 +82,8 @@ final class Configuration
     protected array $options = ['system', 'database', 'library', 'book'];
 
     /**
-     * @param string $filename database version. Increase version if database changes after release
-     * @param string $version current app configuration
+     * @param string $filename configuration filename (filepath, in fact)
+     * @param string $version current app version.
      * @throws ConfigurationDirectoryDoesNotExistException
      * @throws ConfigurationDirectoryIsNotWritableException
      * @throws ConfigurationFileIsNotReadableException
@@ -167,6 +167,10 @@ final class Configuration
         return $this->getLibrary()->directory . $filename;
     }
 
+    /**
+     * @deprecated use constant from bootstrap instead
+     * @return string
+     */
     public function getVersion(): string
     {
         return $this->version;

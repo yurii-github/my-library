@@ -50,10 +50,7 @@ use \Illuminate\Translation\Translator as IlluminateTranslator;
 
 class Bootstrap
 {
-    const CURRENT_APP_VERSION = '1.3'; //TODO: change
-
-    // TODO: remove env $_ENV['APP_DEBUG'] package, always use debug mode
-    const DEBUG_MODE = true;
+    const CURRENT_APP_VERSION = '2.0';
 
     protected static function initCapsule(Configuration $config, Container $container, Dispatcher $eventDispatcher): Manager
     {
@@ -227,8 +224,7 @@ class Bootstrap
     {
         $loader = new FilesystemLoader(SRC_DIR . '/views');
         $twig = new Environment($loader, [
-            // 'cache' => DATA_DIR . '/cache',
-            'debug' => $_ENV['APP_DEBUG'] ?? false,
+            'debug' => self::DEBUG_MODE,
         ]);
         $twig->addFunction(new TwigFunction('copy_book_dir', function () use ($config) {
             return str_replace("\\", "\\\\", $config->library->directory);

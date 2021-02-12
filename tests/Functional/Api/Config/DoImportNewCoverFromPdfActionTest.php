@@ -8,7 +8,7 @@ use Illuminate\Container\Container;
 use Tests\Functional\AbstractTestCase;
 use Tests\PopulateBooksTrait;
 
-class ConfigDoImportNewCoverFromPdfActionTest extends AbstractTestCase
+class DoImportNewCoverFromPdfActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;
 

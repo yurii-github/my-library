@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 use Tests\Functional\AbstractTestCase;
 use Tests\PopulateBooksTrait;
 
-class ConfigGetBooksWithoutCoverActionTest extends AbstractTestCase
+class GetBooksWithoutCoverActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;
 

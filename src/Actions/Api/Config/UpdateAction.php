@@ -21,27 +21,32 @@
 namespace App\Actions\Api\Config;
 
 use App\Actions\AbstractApiAction;
-use App\Models\Book;
+use App\Configuration\Configuration;
 use Illuminate\Support\Arr;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class ConfigClearBooksWithoutFilesAction extends AbstractApiAction
+class UpdateAction extends AbstractApiAction
 {
-    
+    /** @var Configuration */
+    protected $config;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->config = $container->get(Configuration::class);
+    }
+
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $post = $request->getParsedBody();
-        $stepping = Arr::get($post, 'stepping', 5);
+        $field = Arr::get($post, 'field');
+        $value = Arr::get($post, 'value');
 
-        $deletedBooks = Book::query()->select(['book_guid', 'filename'])->limit($stepping)->get()
-            ->filter(function (Book $book) {
-                return !$book->file->exists();
-            })->each(function (Book $book) {
-                $book->delete();
-            })->modelKeys();
-
-        return $this->asJSON($deletedBooks);
+        list($group, $attr) = explode('_', $field);
+        $this->config->$group->$attr = $value;
+        $this->config->save();
+        
+        return $this->asJSON();
     }
-
 }

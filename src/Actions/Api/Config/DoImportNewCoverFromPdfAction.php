@@ -29,7 +29,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class ConfigDoImportNewCoverFromPdfAction extends AbstractApiAction
+class DoImportNewCoverFromPdfAction extends AbstractApiAction
 {
     /**
      * @var CoverExtractor

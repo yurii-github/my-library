@@ -5,7 +5,7 @@ namespace Tests\Functional\Api\Config;
 use Tests\Functional\AbstractTestCase;
 use Tests\PopulateBooksTrait;
 
-class ConfigClearBooksWithoutFilesActionTest extends AbstractTestCase
+class ClearBooksWithoutFilesActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;
 

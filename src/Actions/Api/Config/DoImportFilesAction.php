@@ -28,7 +28,7 @@ use Illuminate\Support\Arr;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class ConfigDoImportFilesAction extends AbstractApiAction
+class DoImportFilesAction extends AbstractApiAction
 {
     
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface

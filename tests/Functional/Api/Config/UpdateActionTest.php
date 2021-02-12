@@ -4,7 +4,7 @@ namespace Tests\Functional\Api\Config;
 
 use Tests\Functional\AbstractTestCase;
 
-class UpdateConfigActionTest extends AbstractTestCase
+class UpdateActionTest extends AbstractTestCase
 {
     public function testSave()
     {

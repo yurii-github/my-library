@@ -25,17 +25,15 @@ use App\Models\Book;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class ConfigGetBooksWithoutCoverAction extends AbstractApiAction
+class CountBooksWithoutFilesAction extends AbstractApiAction
 {
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $type = 'pdf';
-        $books = Book::query()->select(['filename', 'book_guid'])
-            ->whereRaw('book_cover IS NULL')
-            ->where('filename', 'like', '%'.$type)
-            ->get()
-            ->toArray();
+        $count = Book::query()->select(['book_guid', 'filename'])->get()->filter(function (Book $book) {
+            return !$book->file->exists();
+        })->count();
 
-        return $this->asJSON($books);
+        return $this->asJSON($count);
     }
+
 }

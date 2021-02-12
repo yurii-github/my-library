@@ -21,34 +21,21 @@
 namespace App\Actions\Api\Config;
 
 use App\Actions\AbstractApiAction;
-use App\Configuration\Configuration;
 use App\Models\Book;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class ConfigGetImportFilesAction extends AbstractApiAction
+class GetBooksWithoutCoverAction extends AbstractApiAction
 {
-    /**
-     * @var Configuration
-     */
-    protected $config;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->config = $container->get(Configuration::class);
-    }
-
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $files_db = Book::query()->select(['filename'])->get()->map(function (Book $book) {
-            return $book->file->getFilename();
-        })->toArray();
+        $type = 'pdf';
+        $books = Book::query()->select(['filename', 'book_guid'])
+            ->whereRaw('book_cover IS NULL')
+            ->where('filename', 'like', '%'.$type)
+            ->get()
+            ->toArray();
 
-        $files = $this->config->getLibraryBookFilenames();
-        $arr_fs_only = array_values(array_diff($files, $files_db));
-
-        return $this->asJSON($arr_fs_only);
+        return $this->asJSON($books);
     }
-
 }

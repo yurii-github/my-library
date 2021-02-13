@@ -1,12 +1,12 @@
 {
-	"name" : "yurii-github/yii2-mylib",
-	"type" : "yii2-application",
-	"description" : "my book library",
-	"license" : "GPL-3.0",
+	"name": "yurii-github/my-library",
+	"type": "project",
+	"description": "My book library",
+	"license": "GPL-3.0-only",
 	"minimum-stability" : "stable",
-	"version": "0.0.1",
-	"require" : {
-		"php" : ">=7.4",
+	"version": "2.0.0",
+	"require": {
+		"php": ">=7.4",
 		"ext-json": "*",
 		"ext-pdo": "*",
 		"ext-gd": "*",

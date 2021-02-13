@@ -14,14 +14,14 @@
 		"guzzlehttp/psr7": "*",
 		"http-interop/http-factory-guzzle": "*",
 		"twig/twig": "^3.1",
-		"illuminate/database": "^7.29",
+		"illuminate/database": "^8.0",
 		"symfony/dotenv": "^5.1",
 		"symfony/translation": "^5.1",
 		"slim/slim": "^4.6",
 		"ext-fileinfo": "*",
-		"illuminate/validation": "^7.30",
+		"illuminate/validation": "^8.0",
       	"ext-intl": "*",
-		"illuminate/events": "^7.30",
+		"illuminate/events": "^8.0",
 		"ramsey/uuid": "^4.1",
 		"monolog/monolog": "^2.2"
     },
@@ -38,5 +38,8 @@
 	"require-dev": {
 		"mikey179/vfsstream": "^1.6",
 		"phpunit/phpunit": "^8.5"
+	},
+	"config": {
+		"sort-packages": true
 	}
 }

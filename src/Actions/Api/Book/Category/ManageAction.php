@@ -93,7 +93,7 @@ class ManageAction extends AbstractApiAction
         }
 
         if (Arr::has($input, 'book_id')) {
-            $book = Book::find($input['book_id']);
+            $book = Book::whereKey($input['book_id'])->sole();
             assert($book instanceof Book);
             if ($input['marker']) {
                 $book->categories()->attach($category);

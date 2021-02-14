@@ -167,7 +167,7 @@ class Edit_ManageActionTest extends AbstractTestCase
         );
 
         // book file was moved
-        $this->assertFileNotExists($config->getFilepath($oldFilename));
+        $this->assertFileDoesNotExist($config->getFilepath($oldFilename));
         $this->assertFileExists($config->getFilepath($newFilename));
         $this->assertStringEqualsFile($config->getFilepath($newFilename), 'sample-data');
     }

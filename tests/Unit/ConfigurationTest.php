@@ -107,7 +107,7 @@ class ConfigurationTest extends TestCase
     public function testCannotSaveConfigurationToNonExistingDirectory()
     {
         vfsStream::setup('base');
-        $this->assertDirectoryNotExists(vfsStream::url('base/data'));
+        $this->assertDirectoryDoesNotExist(vfsStream::url('base/data'));
 
         $this->expectException(ConfigurationDirectoryDoesNotExistException::class);
         $this->expectExceptionMessage("Directory 'vfs://base/data' does not exist");

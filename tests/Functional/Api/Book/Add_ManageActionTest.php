@@ -10,7 +10,7 @@ class Add_ManageActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;
 
-    public function testAddBook_CannotAddBookWithoutFileWithSync()
+    public function testCannotAddBookWithoutFileWithSync()
     {
         $this->setBookLibrarySync(true);
         Carbon::setTestNow(Carbon::now());
@@ -29,7 +29,7 @@ class Add_ManageActionTest extends AbstractTestCase
     }
 
 
-    public function testAddBook_Successful()
+    public function testSuccessful()
     {
         $this->setBookLibrarySync(false);
         Carbon::setTestNow(Carbon::now());

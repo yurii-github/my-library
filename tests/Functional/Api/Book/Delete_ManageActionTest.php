@@ -9,7 +9,7 @@ class Delete_ManageActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;
 
-    public function testDeleteBook_Successful()
+    public function testSuccessful()
     {
         $this->setBookLibrarySync(false);
         $books = $this->populateBooks();
@@ -26,7 +26,7 @@ class Delete_ManageActionTest extends AbstractTestCase
         $this->assertDatabaseMissing('books', ['book_guid' => $bookToDelete->book_guid]);
     }
 
-    public function testDeleteBook_SuccessfulWithSyncOnWhenFileWasRemoved()
+    public function testSuccessfulWithSyncOnWhenFileWasRemoved()
     {
         $this->setBookLibrarySync(false);
         $books = $this->populateBooks();
@@ -45,7 +45,7 @@ class Delete_ManageActionTest extends AbstractTestCase
         $this->assertDatabaseCount('books', 2);
     }
 
-    public function testDeleteBook_SuccessfulWithSyncOnWhenFileExists()
+    public function testSuccessfulWithSyncOnWhenFileExists()
     {
         $this->setBookLibrarySync(false);
         $books = $this->populateBooks();

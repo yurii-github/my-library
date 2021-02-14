@@ -10,7 +10,7 @@ class Edit_ManageActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;
 
-    public function testEditBook_BookRecordMustExist()
+    public function testBookRecordMustExist()
     {
         $this->assertDatabaseCount('books', 0);
 
@@ -27,7 +27,7 @@ class Edit_ManageActionTest extends AbstractTestCase
         $this->assertDatabaseCount('books', 0);
     }
 
-    public function testEditBook_CanChangeFilenameFromTitleWithoutFileWithoutSync()
+    public function testCanChangeFilenameFromTitleWithoutFileWithoutSync()
     {
         $this->setBookLibrarySync(false);
         $books = $this->populateBooks();
@@ -57,7 +57,7 @@ class Edit_ManageActionTest extends AbstractTestCase
     /**
      * @runInSeparateProcess
      */
-    public function testEditBook_CannotChangeWhileIsOpenWithSync()
+    public function testCannotChangeWhileIsOpenWithSync()
     {
         $this->setBookLibrarySync(false);
         $books = $this->populateBooks();
@@ -100,7 +100,7 @@ class Edit_ManageActionTest extends AbstractTestCase
         $this->assertSame($filenameOld, $bookToChange->file->getFilepath());
     }
 
-    public function testEditBook_CannotChangeFilenameFromTitleWithoutFileWithSync()
+    public function testCannotChangeFilenameFromTitleWithoutFileWithSync()
     {
         $this->setBookLibrarySync(false);
         $books = $this->populateBooks();
@@ -129,7 +129,7 @@ class Edit_ManageActionTest extends AbstractTestCase
         ]);
     }
 
-    public function testEditBook_CanChangeFilenameFromTitleWithFileWithSync()
+    public function testCanChangeFilenameFromTitleWithFileWithSync()
     {
         $this->setBookLibrarySync(false);
         $books = $this->populateBooks();
@@ -172,7 +172,7 @@ class Edit_ManageActionTest extends AbstractTestCase
         $this->assertStringEqualsFile($config->getFilepath($newFilename), 'sample-data');
     }
 
-    public function testEditBook_ChangeFilenameIsSkipped()
+    public function testChangeFilenameIsSkipped()
     {
         $createdAt = Carbon::now();
         $updatedAt = Carbon::now()->copy()->addDay();

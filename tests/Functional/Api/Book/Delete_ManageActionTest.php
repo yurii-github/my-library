@@ -32,7 +32,7 @@ class Delete_ManageActionTest extends AbstractTestCase
         $books = $this->populateBooks();
         $this->setBookLibrarySync(true);
         $bookToDelete = $books[0];
-        $this->assertFileNotExists($bookToDelete->file->getFilepath());
+        $this->assertFileDoesNotExist($bookToDelete->file->getFilepath());
 
         $request = $this->createJsonRequest('POST', '/api/book/manage', [
             'id' => $bookToDelete->book_guid,
@@ -63,6 +63,6 @@ class Delete_ManageActionTest extends AbstractTestCase
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('', $content);
         $this->assertDatabaseCount('books', 2);
-        $this->assertFileNotExists($bookToDelete->file->getFilepath());
+        $this->assertFileDoesNotExist($bookToDelete->file->getFilepath());
     }
 }

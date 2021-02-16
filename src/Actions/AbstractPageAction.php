@@ -23,6 +23,7 @@ namespace App\Actions;
 use App\Configuration\Configuration;
 use GuzzleHttp\Psr7\Response;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Translation\Translator;
 use Twig\Environment;
@@ -35,6 +36,8 @@ abstract class AbstractPageAction
     protected $twig;
     /** @var Translator */
     protected $translator;
+
+    abstract public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface;
 
     public function __construct(ContainerInterface $container)
     {
@@ -64,11 +67,11 @@ abstract class AbstractPageAction
             'gridLocale' => $gridLocale[$this->translator->getLocale()],
             'config' => $this->config,
             'currentUrl' => $baseUrl . $uri->getPath(),
-            'APP_VERSION' => 'v.'.$this->config->getVersion(),
+            'APP_VERSION' => 'v.' . $this->config->getVersion(),
             'APP_LANGUAGE' => $this->config->getSystem()->language,
         ];
         $data = array_merge($baseData, $data);
-        
+
         return $this->twig->render($view, $data);
     }
 

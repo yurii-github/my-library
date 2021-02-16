@@ -23,9 +23,9 @@
 <header style="margin: auto !important; text-align: center; position: relative;">
     <form style="margin: 30px;">
         <div id="mylibrary-menu" class="no-selection">
-            {% include '_menu_item.html.twig' with {'id': 'home', 'link': '/', 'title': t.trans('Library'), 'path': path } only %}
-            {% include '_menu_item.html.twig' with {'id': 'config', 'link': '/config', 'title': t.trans('Configuration'), 'path': path } only %}
-            {% include '_menu_item.html.twig' with {'id': 'about', 'link': '/about', 'title': t.trans('About') ~ ' ' ~ APP_VERSION, 'path': path } only %}
+            {% include '_menu_item.html.twig' with {'id': 'home', 'link': '/', 'title': t.get('Library'), 'path': path } only %}
+            {% include '_menu_item.html.twig' with {'id': 'config', 'link': '/config', 'title': t.get('Configuration'), 'path': path } only %}
+            {% include '_menu_item.html.twig' with {'id': 'about', 'link': '/about', 'title': t.get('About') ~ ' ' ~ APP_VERSION, 'path': path } only %}
         </div>
     </form>
 </header>
@@ -52,7 +52,7 @@
       return false
     }
     $menuItem.prop('disabled', true)
-    $('span', $menuItem).text('{{ t.trans('doing...') }}')
+    $('span', $menuItem).text('{{ t.get('doing...') }}')
     
     console.log('compacting...')
     let xhr = $.post(link, function (data) {

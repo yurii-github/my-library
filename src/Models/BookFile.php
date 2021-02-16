@@ -48,7 +48,6 @@ class BookFile
     public function delete(): bool
     {
         if (!$this->exists()) {
-            // TODO: write warning into log if file does not exist
             return false;
         }
         

@@ -21,9 +21,10 @@ class Edit_ManageActionTest extends AbstractTestCase
         ]);
         $response = $this->app->handle($request);
 
-        $content = (string)$response->getBody();
         $this->assertSame(422, $response->getStatusCode());
-        $this->assertJsonData(['id' => ['validation.exists']], $response);
+        $this->assertJsonData([
+            'id' => ['The selected id is invalid.']
+        ], $response);
         $this->assertDatabaseCount('books', 0);
     }
 

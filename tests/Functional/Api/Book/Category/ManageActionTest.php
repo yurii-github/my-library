@@ -62,11 +62,12 @@ class ManageActionTest extends AbstractTestCase
         $request = $this->createJsonRequest('POST', $this->actionUrl, [
             'oper' => 'add',
         ]);
-
         $response = $this->app->handle($request);
-        $content = (string)$response->getBody();
+
         $this->assertSame(422, $response->getStatusCode());
-        $this->assertJsonData(['title' => ['validation.required']], $response);
+        $this->assertJsonData([
+            'title' => ['The title field is required.']
+        ], $response);
         $this->assertDatabaseCount('categories', 2);
         $this->assertDatabaseHas('categories', ['guid' => $category->guid, 'title' => $category->title]);
         $this->assertDatabaseHas('categories', ['guid' => $category2->guid, 'title' => $category2->title]);
@@ -81,12 +82,12 @@ class ManageActionTest extends AbstractTestCase
             'oper' => 'del',
             'title' => 'new category 2'
         ]);
-
         $response = $this->app->handle($request);
 
-        $content = (string)$response->getBody();
         $this->assertSame(422, $response->getStatusCode());
-        $this->assertJsonData(['id' => ['validation.required']], $response);
+        $this->assertJsonData([
+            'id' => ['The id field is required.']
+        ], $response);
         $this->assertDatabaseCount('categories', 2);
         $this->assertDatabaseHas('categories', ['guid' => $category->guid, 'title' => $category->title]);
         $this->assertDatabaseHas('categories', ['guid' => $category2->guid, 'title' => $category2->title]);
@@ -201,12 +202,12 @@ class ManageActionTest extends AbstractTestCase
             'id' => $category->guid,
             'marker' => 'true'
         ]);
-
         $response = $this->app->handle($request);
 
-        $content = (string)$response->getBody();
         $this->assertSame(422, $response->getStatusCode());
-        $this->assertJsonData(['marker' => ['validation.boolean']], $response);
+        $this->assertJsonData([
+            'marker' => ['The marker field must be true or false.']
+        ], $response);
         $this->assertDatabaseCount('categories', 2);
         $this->assertDatabaseHas('categories', ['guid' => $category->guid, 'title' => $category->title]);
         $this->assertDatabaseHas('categories', ['guid' => $category2->guid, 'title' => $category2->title]);
@@ -306,9 +307,10 @@ class ManageActionTest extends AbstractTestCase
         ]);
         $response = $this->app->handle($request);
 
-        $content = (string)$response->getBody();
         $this->assertSame(422, $response->getStatusCode());
-        $this->assertJsonData(['marker' => ['validation.required_with']], $response);
+        $this->assertJsonData([
+            'marker' => ['The marker field is required when book id is present.']
+        ], $response);
         $this->assertDatabaseCount('categories', 2);
         $this->assertDatabaseHas('categories', ['guid' => $category->guid, 'title' => $category->title]);
         $this->assertDatabaseHas('categories', ['guid' => $category2->guid, 'title' => $category2->title]);

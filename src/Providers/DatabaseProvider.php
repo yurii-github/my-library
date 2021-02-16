@@ -35,7 +35,7 @@ class DatabaseProvider
     {
         $container->get('db');
     }
-    
+
     public static function register(Container $container)
     {
         $container->singleton(Manager::class, function (Container $container, $args) {
@@ -48,14 +48,14 @@ class DatabaseProvider
         });
         $container->alias(Manager::class, 'db');
     }
-    
+
     protected static function initCapsule(Container $container): Manager
     {
         $eventDispatcher = $container->get(EventDispatcherInterface::class);
         assert($eventDispatcher instanceof EventDispatcherInterface);
         $config = $container->get(Configuration::class);
         assert($config instanceof Configuration);
-        
+
         $capsule = new Manager($container);
         $capsule->addConnection([
             'driver' => $config->database->format,
@@ -71,7 +71,13 @@ class DatabaseProvider
         Model::clearBootedModels();
         Model::setConnectionResolver($capsule->getDatabaseManager());
         Model::setEventDispatcher($eventDispatcher);
+        self::searchFixForSQLite($capsule);
 
+        return $capsule;
+    }
+
+    protected static function searchFixForSQLite(Manager $capsule)
+    {
         $pdo = $capsule->getConnection()->getPdo();
         if ($pdo->getAttribute(\PDO::ATTR_DRIVER_NAME) === 'sqlite') {
             // not documented feature of SQLite - add case insensitive search
@@ -83,7 +89,5 @@ class DatabaseProvider
                 return (bool)$matched;
             });
         }
-
-        return $capsule;
     }
 }

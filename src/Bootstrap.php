@@ -32,7 +32,6 @@ use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
 use Slim\App;
 use Slim\Factory\AppFactory;
-use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\Translation\Loader\PhpFileLoader;
 use Symfony\Component\Translation\Translator;
 use Twig\Environment;
@@ -92,10 +91,6 @@ class Bootstrap
         defined('DATA_DIR') || define('DATA_DIR', $dataDir);
         defined('SRC_DIR') || define('SRC_DIR', BASE_DIR . '/src');
         defined('WEB_DIR') || define('WEB_DIR', BASE_DIR . '/public');
-        
-        if(file_exists(BASE_DIR . '/.env')) {
-            (new Dotenv())->load(BASE_DIR . '/.env');
-        }
     }
 
     public static function initApplication(): App

@@ -10,7 +10,7 @@ use Illuminate\Database\Capsule\Manager;
 use Illuminate\Testing\InteractsWithDatabase;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
-use \App\Bootstrap;
+use \App\Application;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
@@ -33,9 +33,8 @@ abstract class AbstractTestCase extends TestCase
     protected function setUp(): void
     {
         $this->initVirtualFileSystem();
-        defined('DATA_DIR') || define('DATA_DIR', vfsStream::url('base/data'));
         $this->initConfig();
-        $this->app = Bootstrap::initApplication();
+        $this->app = new Application();
         $migrator = Container::getInstance()->get(AppMigrator::class);
         $output = $migrator->migrate();
 
@@ -152,6 +151,7 @@ abstract class AbstractTestCase extends TestCase
                 'logs' => [],
             ],
         ]);
+        defined('DATA_DIR') || define('DATA_DIR', vfsStream::url('base/data'));
     }
 
     protected function initConfig()

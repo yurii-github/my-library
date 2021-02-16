@@ -20,7 +20,7 @@
 
 namespace App\Providers;
 
-use App\Bootstrap;
+use App\Application;
 use App\Configuration\Configuration;
 use Illuminate\Contracts\Container\Container as ContainerInterface;
 
@@ -29,7 +29,7 @@ class ConfigurationProvider
     public static function register(ContainerInterface $container)
     {
         $container->singleton(Configuration::class, function (ContainerInterface $container, $args) {
-            $config = new Configuration(DATA_DIR . '/config.json', Bootstrap::CURRENT_APP_VERSION);
+            $config = new Configuration(DATA_DIR . '/config.json', Application::CURRENT_APP_VERSION);
             date_default_timezone_set($config->system->timezone);
             $config->getSystem()->theme = $config->getSystem()->theme ?? 'smoothness';
             return $config;

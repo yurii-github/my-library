@@ -20,7 +20,7 @@
 
 namespace App\Providers;
 
-use App\Bootstrap;
+use App\Application;
 use App\Configuration\Configuration;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Container\Container as ContainerInterface;
@@ -38,7 +38,15 @@ class EnvironmentProvider
         $container->bind(Environment::class, function (ContainerInterface $container, $args) {
             $config = $container->get(Configuration::class);
             assert($config instanceof Configuration);
-            return self::initTwig($config);
+            $loader = new FilesystemLoader(BASE_DIR . '/src/views');
+            $twig = new Environment($loader, [
+                'debug' => Application::DEBUG_MODE,
+            ]);
+            $twig->addFunction(new TwigFunction('copy_book_dir', function () use ($config) {
+                return str_replace("\\", "\\\\", $config->library->directory);
+            }));
+
+            return $twig;
         });
 
         $container->bind(Translator::class, function (ContainerInterface $container, $args) {
@@ -49,16 +57,4 @@ class EnvironmentProvider
         });
     }
 
-    protected static function initTwig(Configuration $config): Environment
-    {
-        $loader = new FilesystemLoader(BASE_DIR . '/src/views');
-        $twig = new Environment($loader, [
-            'debug' => Bootstrap::DEBUG_MODE,
-        ]);
-        $twig->addFunction(new TwigFunction('copy_book_dir', function () use ($config) {
-            return str_replace("\\", "\\\\", $config->library->directory);
-        }));
-
-        return $twig;
-    }
 }

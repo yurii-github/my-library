@@ -35,60 +35,62 @@ use Slim\App;
 use Slim\Factory\AppFactory;
 use \Illuminate\Container\Container;
 
-class Bootstrap
+class Application extends App
 {
     public const CURRENT_APP_VERSION = '2.0';
     public const DEBUG_MODE = true;
     public const DISPLAY_ERRORS = self::DEBUG_MODE;
 
-    public static function initApplication(): App
+    public function __construct()
     {
         ini_set('display_errors', '1');
         error_reporting(E_ALL);
-
+        $responseFactory = AppFactory::determineResponseFactory();
+        $callableResolver = $routeCollector = $routeResolver = $middlewareDispatcher = null;
         Container::setInstance(null);
         $container = Container::getInstance();
+        parent::__construct($responseFactory, $container, $callableResolver, $routeCollector, $routeResolver, $middlewareDispatcher);
 
-        self::registerServices($container);
-        self::bootServices($container);
-
-        $app = AppFactory::create(null, $container);
-        self::initExceptionHandling($app);
-        $app->addBodyParsingMiddleware();
-        $app->addRoutingMiddleware();
-        Routes::register($app);
-
-        return $app;
+        $this->registerServices();
+        $this->initExceptionHandling();
+        $this->addBodyParsingMiddleware();
+        $this->addRoutingMiddleware();
+        Routes::register($this);
+        $this->bootServices();
     }
 
-    protected static function registerServices(Container $container)
+    public function getContainer(): ?Container
     {
-        ApplicationProvider::register($container);
-        ConfigurationProvider::register($container);
-        DatabaseProvider::register($container);
-        MigratorProvider::register($container);
-        EnvironmentProvider::register($container);
-        CoverExtractorProvider::register($container);
-    }
-    
-    protected static function bootServices(Container $container)
-    {
-        DatabaseProvider::boot($container);
+        return parent::getContainer();
     }
 
-    protected static function initExceptionHandling(App $app)
+    protected function registerServices()
     {
-        $logger = self::initAppLogger();
-        
-        $errorMiddleware = $app->addErrorMiddleware(self::DISPLAY_ERRORS, true, self::DEBUG_MODE, $logger);
-        $errorHandler = new ErrorHandler($app->getCallableResolver(), $app->getResponseFactory(), $logger);
+        ApplicationProvider::register($this->getContainer());
+        ConfigurationProvider::register($this->getContainer());
+        DatabaseProvider::register($this->getContainer());
+        MigratorProvider::register($this->getContainer());
+        EnvironmentProvider::register($this->getContainer());
+        CoverExtractorProvider::register($this->getContainer());
+    }
+
+    protected function bootServices()
+    {
+        DatabaseProvider::boot($this->getContainer());
+    }
+
+    protected function initExceptionHandling()
+    {
+        $logger = $this->initLogger();
+        $errorMiddleware = $this->addErrorMiddleware(self::DISPLAY_ERRORS, true, self::DEBUG_MODE, $logger);
+        $errorHandler = new ErrorHandler($this->getCallableResolver(), $this->getResponseFactory(), $logger);
         $errorHandler->registerErrorRenderer('application/json', JsonErrorRenderer::class);
         $errorMiddleware->setDefaultErrorHandler($errorHandler);
     }
 
-    protected static function initAppLogger(): Logger
+    protected function initLogger(): Logger
     {
-        $logHandler = new RotatingFileHandler(DATA_DIR.'/logs/app.log',5,Logger::DEBUG);
+        $logHandler = new RotatingFileHandler(DATA_DIR . '/logs/app.log', 5, Logger::DEBUG);
         $logHandler->setFormatter(new LineFormatter(null, null, true, true));
         return new Logger('app', [$logHandler]);
     }

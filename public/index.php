@@ -1,6 +1,6 @@
 <?php
 
-use App\Bootstrap;
+use App\Application;
 use \App\PhpCliServer;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
@@ -13,5 +13,4 @@ if (PhpCliServer::handle(WEB_DIR)) {
     exit;
 }
 
-$app = Bootstrap::initApplication();
-$app->run();
+(new Application())->run();

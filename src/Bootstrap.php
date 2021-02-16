@@ -22,7 +22,6 @@ namespace App;
 
 use App\Configuration\Configuration;
 use App\Handlers\ErrorHandler;
-use App\Handlers\ShutdownHandler;
 use App\Renderers\JsonErrorRenderer;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\Eloquent\Model;
@@ -101,7 +100,7 @@ class Bootstrap
 
     public static function initApplication(): App
     {
-        ini_set('display_errors', '0');
+        ini_set('display_errors', '1');
         error_reporting(E_ALL);
 
         Container::setInstance(null);
@@ -187,11 +186,11 @@ class Bootstrap
     protected static function buildApplication(Container $container): App
     {
         $app = AppFactory::create(null, $container);
-        $app->addBodyParsingMiddleware();
         self::initExceptionHandling($app);
-        $app->addRoutingMiddleware();
+        $app->addBodyParsingMiddleware();
+        $routingMiddleware = $app->addRoutingMiddleware();
         Routes::register($app);
-
+        
         return $app;
     }
 
@@ -203,9 +202,6 @@ class Bootstrap
         $errorHandler = new ErrorHandler($app->getCallableResolver(), $app->getResponseFactory(), $logger);
         $errorHandler->registerErrorRenderer('application/json', JsonErrorRenderer::class);
         $errorMiddleware->setDefaultErrorHandler($errorHandler);
-
-        $shutdownHandler = new ShutdownHandler($errorHandler);
-        register_shutdown_function($shutdownHandler);
     }
 
     protected static function initAppLogger(): Logger

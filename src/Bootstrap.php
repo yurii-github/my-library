@@ -20,68 +20,26 @@
 
 namespace App;
 
-use App\Configuration\Configuration;
 use App\Handlers\ErrorHandler;
+use App\Providers\ApplicationProvider;
+use App\Providers\ConfigurationProvider;
+use App\Providers\CoverExtractorProvider;
+use App\Providers\DatabaseProvider;
+use App\Providers\EnvironmentProvider;
+use App\Providers\MigratorProvider;
 use App\Renderers\JsonErrorRenderer;
-use Illuminate\Database\Capsule\Manager;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Events\Dispatcher;
-use Illuminate\Translation\FileLoader;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
 use Slim\App;
 use Slim\Factory\AppFactory;
-use Twig\Environment;
-use Twig\Loader\FilesystemLoader;
-use Twig\TwigFunction;
-use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use \Illuminate\Container\Container;
-use \Illuminate\Contracts\Container\Container as ContainerInterface;
-use Illuminate\Contracts\Events\Dispatcher as EventDispatcherInterface;
-use \Illuminate\Database\Migrations\DatabaseMigrationRepository;
-use \Illuminate\Database\Migrations\Migrator;
-use \Illuminate\Filesystem\Filesystem;
-use \Illuminate\Translation\Translator;
 
 class Bootstrap
 {
     public const CURRENT_APP_VERSION = '2.0';
     public const DEBUG_MODE = true;
     public const DISPLAY_ERRORS = self::DEBUG_MODE;
-
-    protected static function initCapsule(Configuration $config, Container $container, Dispatcher $eventDispatcher): Manager
-    {
-        $capsule = new Manager($container);
-        $capsule->addConnection([
-            'driver' => $config->database->format,
-            'host' => $config->database->host,
-            'database' => $config->database->format === 'sqlite' ? $config->database->filename : $config->database->dbname,
-            'username' => $config->database->login,
-            'password' => $config->database->password,
-            'charset' => 'utf8',
-            'collation' => 'utf8_unicode_ci',
-            'prefix' => '',
-        ]);
-
-        Model::clearBootedModels();
-        Model::setConnectionResolver($capsule->getDatabaseManager());
-        Model::setEventDispatcher($eventDispatcher);
-
-        $pdo = $capsule->getConnection()->getPdo();
-        if ($pdo->getAttribute(\PDO::ATTR_DRIVER_NAME) === 'sqlite') {
-            // not documented feature of SQLite - add case insensitive search
-            $pdo->sqliteCreateFunction('like', function ($x, $y) {
-                // Example: $x = '%ч'; $y = 'Чasd';
-                $x = str_replace('%', '', $x);
-                $x = preg_quote($x);
-                $matched = preg_match('/' . $x . '/iu', $y);
-                return (bool)$matched;
-            });
-        }
-
-        return $capsule;
-    }
 
     public static function initApplication(): App
     {
@@ -105,66 +63,17 @@ class Bootstrap
 
     protected static function registerServices(Container $container)
     {
-        $container->bind(Filesystem::class, function (ContainerInterface $container, $args) {
-            return new Filesystem();
-        });
-        $container->singleton(EventDispatcherInterface::class, function (ContainerInterface $container, $args) {
-            return new Dispatcher($container);
-        });
-        $container->singleton(Configuration::class, function (ContainerInterface $container, $args) {
-            $config = new Configuration(DATA_DIR . '/config.json', self::CURRENT_APP_VERSION);
-            date_default_timezone_set($config->system->timezone);
-            $config->getSystem()->theme = $config->getSystem()->theme ?? 'smoothness';
-            return $config;
-        });
-        $container->singleton(Manager::class, function (ContainerInterface $container, $args) {
-            $eventDispatcher = $container->get(EventDispatcherInterface::class);
-            assert($eventDispatcher instanceof EventDispatcherInterface);
-            $config = $container->get(Configuration::class);
-            assert($config instanceof Configuration);
-            return Bootstrap::initCapsule($config, $container, $eventDispatcher);
-        });
-        $container->alias(Manager::class, 'db');
-        $container->bind(MigrationRepositoryInterface::class, function (ContainerInterface $container, $args) {
-            $manager = $container->get('db');
-            assert($manager instanceof Manager);
-            return new DatabaseMigrationRepository($manager->getDatabaseManager(), 'migrations');
-        });
-        $container->bind(Migrator::class, function (ContainerInterface $container, $args) {
-            $eventDispatcher = $container->get(EventDispatcherInterface::class);
-            assert($eventDispatcher instanceof EventDispatcherInterface);
-            $manager = $container->get('db');
-            assert($manager instanceof Manager);
-            $fs = $container->get(Filesystem::class);
-            assert($fs instanceof Filesystem);
-            $repository = $container->get(MigrationRepositoryInterface::class);
-            assert($repository instanceof MigrationRepositoryInterface);
-            return new Migrator($repository, $manager->getDatabaseManager(), $fs, $eventDispatcher);
-        });
-        $container->bind(AppMigrator::class, function (ContainerInterface $container, $args) {
-            return new AppMigrator($container->get(Migrator::class));
-        });
-        $container->bind(Environment::class, function (ContainerInterface $container, $args) {
-            $config = $container->get(Configuration::class);
-            assert($config instanceof Configuration);
-            return Bootstrap::initTwig($config);
-        });
-
-        $container->bind(Translator::class, function (ContainerInterface $container, $args) {
-            $config = Container::getInstance()->get(Configuration::class);
-            assert($config instanceof Configuration);
-            $locale = $config->system->language;
-            return new Translator(new FileLoader($container->get(Filesystem::class), BASE_DIR .'/src/i18n'), $locale);
-        });
-
-        $container->bind(CoverExtractor::class, function(ContainerInterface $container, $args){
-            return new CoverExtractor($container->get(Configuration::class));
-        });
+        ApplicationProvider::register($container);
+        ConfigurationProvider::register($container);
+        DatabaseProvider::register($container);
+        MigratorProvider::register($container);
+        EnvironmentProvider::register($container);
+        CoverExtractorProvider::register($container);
     }
     
     protected static function bootServices(Container $container)
     {
-        $container->get('db');
+        DatabaseProvider::boot($container);
     }
 
     protected static function initExceptionHandling(App $app)
@@ -184,16 +93,4 @@ class Bootstrap
         return new Logger('app', [$logHandler]);
     }
 
-    protected static function initTwig(Configuration $config): Environment
-    {
-        $loader = new FilesystemLoader(BASE_DIR . '/src/views');
-        $twig = new Environment($loader, [
-            'debug' => self::DEBUG_MODE,
-        ]);
-        $twig->addFunction(new TwigFunction('copy_book_dir', function () use ($config) {
-            return str_replace("\\", "\\\\", $config->library->directory);
-        }));
-
-        return $twig;
-    }
 }

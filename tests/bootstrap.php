@@ -11,6 +11,9 @@ $autoload->addClassMap([
     \Illuminate\Testing\Constraints\SoftDeletedInDatabase::class => __DIR__ . '/Constraints/SoftDeletedInDatabase.php',
 ]);
 
+defined('BASE_DIR') || define('BASE_DIR', dirname(__DIR__));
+defined('WEB_DIR') || define('WEB_DIR', BASE_DIR . '/public');
+
 if (file_exists(__DIR__ . '/local_test_env.php')) {
     require __DIR__ . '/local_test_env.php';
 } else {

@@ -47,27 +47,45 @@ class JGridRequestQuery
         $this->query = $query;
     }
 
-
     public function withFilters(): self
     {
         $filters = json_decode($this->data['filters']);
-        $conditions = ['bw' => 'like', 'eq' => '='];
+        if (!$this->validateFilters($filters)) {
+            return $this;
+        }
 
-        if ($filters instanceof \stdClass && is_array($filters->rules)) {
-            foreach ($filters->rules as $rule) {
-                if (empty($conditions[$rule->op])) {
-                    continue; // unknown condition, skip
-                }
-                $like = $conditions[$rule->op] === 'like' ? '%' : '';
-                if (!empty($filters->groupOp) && $filters->groupOp == 'AND') {
-                    $this->query->where($rule->field, $conditions[$rule->op], $like . $rule->data . $like);
-                } else {
-                    $this->query->orWhere($rule->field, $conditions[$rule->op], $like . $rule->data . $like);
-                }
+        $conditions = ['bw' => 'like', 'eq' => '='];
+        foreach ($filters->rules as $rule) {
+            if (empty($conditions[$rule->op])) {
+                continue; // unknown condition, skip
+            }
+            $like = $this->likeModifier($conditions[$rule->op]);
+            if (!empty($filters->groupOp) && $filters->groupOp == 'AND') {
+                $this->query->where($rule->field, $conditions[$rule->op], $like . $rule->data . $like);
+            } else {
+                $this->query->orWhere($rule->field, $conditions[$rule->op], $like . $rule->data . $like);
             }
         }
 
         return $this;
+    }
+
+    protected function likeModifier(?string $operator): string
+    {
+        return $operator === 'like' ? '%' : '';
+    }
+
+    /**
+     * @param mixed $filters
+     * @return bool
+     */
+    protected function validateFilters($filters): bool
+    {
+        if (empty($filters)) {
+            return false;
+        }
+
+        return $filters instanceof \stdClass && is_array($filters->rules);
     }
 
 
@@ -82,7 +100,7 @@ class JGridRequestQuery
     }
 
 
-    public function paginate(array $columns = ['*'])
+    public function paginate(array $columns = ['*']): array
     {
         $total = $this->query->count();
         $this->query
@@ -96,7 +114,7 @@ class JGridRequestQuery
         return [
             'page' => $this->data['page'],
             'rows' => $rows,
-            'total' => ceil($total/$this->data['limit']),
+            'total' => ceil($total / $this->data['limit']),
             'records' => $total
         ];
     }

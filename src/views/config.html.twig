@@ -1,5 +1,5 @@
 {% extends "_layout.html.twig" %}
-{% set title = t.trans('Configuration') %}
+{% set title = t.get('Configuration') %}
 {% block content %}
 
     <style type="text/css">
@@ -24,18 +24,18 @@
 
     <div id="tabs" style="width: 800px; margin: auto; text-align: left;">
         <ul>
-            <li><a href="config#tabs-1">{{ t.trans('settings') }}</a><span style="display: inline-block;" class="status ui-icon ui-icon-wrench"></span></li>
-            <li><a href="config#tabs-3">{{ t.trans('syncronization') }}</a><span style="display: inline-block;" class="status ui-icon ui-icon-refresh"></span></li>
+            <li><a href="config#tabs-1">{{ t.get('settings') }}</a><span style="display: inline-block;" class="status ui-icon ui-icon-wrench"></span></li>
+            <li><a href="config#tabs-3">{{ t.get('syncronization') }}</a><span style="display: inline-block;" class="status ui-icon ui-icon-refresh"></span></li>
         </ul>
 
         <div id="tabs-1">
             <form action="api/config" method="post" class="configuration-form">
 
                 <fieldset>
-                    <legend>&nbsp;{{ t.trans('system') }}&nbsp;</legend>
+                    <legend>&nbsp;{{ t.get('system') }}&nbsp;</legend>
 
                     <label class="cfg" title="interface language"
-                           for="system_language">{{ t.trans('language') }}</label>
+                           for="system_language">{{ t.get('language') }}</label>
                     <select name="system_language" id="system_language">
                         {% for v,txt in SUPPORTED_VALUES.system_language %}
                             {% set selected = (config.system.language == v) ? 'selected="selected"' : '' %}
@@ -44,7 +44,7 @@
                     </select> (ICU support: <a href="http://site.icu-project.org/">v.{{ INTL_ICU_VERSION }}</a>)
                     <br/><br/>
 
-                    <label class="cfg" title="library theme" for="system_theme">{{ t.trans('theme') }}</label>
+                    <label class="cfg" title="library theme" for="system_theme">{{ t.get('theme') }}</label>
                     <select name="system_theme" id="system_theme">
                         {% for v in SUPPORTED_VALUES.system_theme %}
                             {% set selected = config.system.theme == v ? 'selected="selected"' : '' %}
@@ -53,7 +53,7 @@
                     </select>
                     <br/><br/>
 
-                    <label class="cfg">{{ t.trans('time zone') }}</label>
+                    <label class="cfg">{{ t.get('time zone') }}</label>
                     <select name="system_timezone" id="system_timezone"
                             title="PHP timezone used to show and store data">
                         {% for v in timeZones %}
@@ -66,22 +66,22 @@
 
 
                 <fieldset>
-                    <legend>&nbsp;{{ t.trans('library') }}&nbsp;</legend>
+                    <legend>&nbsp;{{ t.get('library') }}&nbsp;</legend>
 
-                    <label class="cfg">{{ t.trans('directory') }}</label>
+                    <label class="cfg">{{ t.get('directory') }}</label>
                     <input name="library_directory" id="library_directory" type="text"
                            title="Location of your books. Must end with '\' or '/' "
                            value="{{ config.library.directory }}"/>
                     <br/><br/>
 
-                    <label class="cfg">{{ t.trans('syncronization') }}</label>
+                    <label class="cfg">{{ t.get('syncronization') }}</label>
                     <div style="display: inline-block;" id="library_sync">
                         <input type="radio" id="library_sync1" name="library_sync"
                                value="1" {{ config.library.sync == true ? 'checked="checked"' : '' }} />
-                        <label for="library_sync1">{{ t.trans('yes') }}</label>
+                        <label for="library_sync1">{{ t.get('yes') }}</label>
                         <input type="radio" id="library_sync2" name="library_sync"
                                value="0" {{ config.library.sync == false ? 'checked="checked"' : '' }} />
-                        <label for="library_sync2">{{ t.trans('no') }}</label>
+                        <label for="library_sync2">{{ t.get('no') }}</label>
                     </div>
                     <br/><br/>
 
@@ -89,9 +89,9 @@
 
 
                 <fieldset>
-                    <legend>&nbsp;{{ t.trans('database') }}&nbsp;</legend>
+                    <legend>&nbsp;{{ t.get('database') }}&nbsp;</legend>
 
-                    <label class="cfg" for="database_format">{{ t.trans('DB format') }}</label>
+                    <label class="cfg" for="database_format">{{ t.get('DB format') }}</label>
                     <select id="database_format" name="database_format">
                         {% for v, txt in SUPPORTED_DATABASES %}
                             {% set selected = (config.database.format == v ? 'selected="selected"' : '') %}
@@ -101,21 +101,21 @@
                     <br/><br/>
 
                     <fieldset id="database_format_sqlite">
-                        <label class="cfg" for="database_filename">{{ t.trans('file') }}</label>
+                        <label class="cfg" for="database_filename">{{ t.get('file') }}</label>
                         <input name="database_filename" id="database_filename" type="text"
                                value="{{ config.database.filename }}"/>
                     </fieldset>
 
                     <fieldset id="database_format_mysql">
-                        <label class="cfg" for="database_dbname">{{ t.trans('dbname') }}</label>
+                        <label class="cfg" for="database_dbname">{{ t.get('dbname') }}</label>
                         <input name="database_dbname" id="database_dbname" type="text"
                                value="{{ config.database.dbname }}"/>
-                        <label class="cfg" for="database_host">{{ t.trans('host') }}</label>
+                        <label class="cfg" for="database_host">{{ t.get('host') }}</label>
                         <input name="database_host" id="database_host" type="text" value="{{ config.database.host }}"/>
-                        <label class="cfg" for="database_login">{{ t.trans('login') }}</label>
+                        <label class="cfg" for="database_login">{{ t.get('login') }}</label>
                         <input name="database_login" id="database_login" type="text"
                                value="{{ config.database.login }}"/>
-                        <label class="cfg" for="database_password">{{ t.trans('password') }}</label>
+                        <label class="cfg" for="database_password">{{ t.get('password') }}</label>
                         <input name="database_password" id="database_password" type="text"
                                value="{{ config.database.password }}"/>
                     </fieldset>
@@ -124,23 +124,23 @@
                 </fieldset>
 
                 <fieldset>
-                    <legend>{{ t.trans('book') }}</legend>
+                    <legend>{{ t.get('book') }}</legend>
 
-                    <label class="cfg">{{ t.trans('name format') }}</label>
+                    <label class="cfg">{{ t.get('name format') }}</label>
                     <input name="book_nameformat" id="book_nameformat" type="text" value="{{ config.book.nameformat }}"
                            title="tags are limited to {year}, {title}, {publisher}, {author}, {isbn13}, {ext}"/>
                     <br/><br/>
-                    <label class="cfg">{{ t.trans('cover type') }}</label>
+                    <label class="cfg">{{ t.get('cover type') }}</label>
                     <select name="book_covertype" id="book_covertype"
                             title="All images will be saved as JPEG to database">
                         <option>{{ config.book.covertype }}</option>
                     </select>
                     <br/><br/>
-                    <label class="cfg" for="book_covermaxwidth">{{ t.trans('cover max width, px') }}</label>
+                    <label class="cfg" for="book_covermaxwidth">{{ t.get('cover max width, px') }}</label>
                     <input id="book_covermaxwidth" name="book_covermaxwidth" type="text"
                            value="{{ config.book.covermaxwidth }}"/>
                     <br/><br/>
-                    <label class="cfg">{{ t.trans('GhostScript EXE') }}</label>
+                    <label class="cfg">{{ t.get('GhostScript EXE') }}</label>
                     <input id="book_ghostscript" name="book_ghostscript" type="text"
                            value="{{ config.book.ghostscript }}"
                            title="Provide to get option to extract book cover from PDF file"/>

@@ -26,14 +26,12 @@ use App\Renderers\JsonErrorRenderer;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Events\Dispatcher;
-use Illuminate\Translation\ArrayLoader;
+use Illuminate\Translation\FileLoader;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
 use Slim\App;
 use Slim\Factory\AppFactory;
-use Symfony\Component\Translation\Loader\PhpFileLoader;
-use Symfony\Component\Translation\Translator;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 use Twig\TwigFunction;
@@ -44,7 +42,11 @@ use Illuminate\Contracts\Events\Dispatcher as EventDispatcherInterface;
 use \Illuminate\Database\Migrations\DatabaseMigrationRepository;
 use \Illuminate\Database\Migrations\Migrator;
 use \Illuminate\Filesystem\Filesystem;
-use \Illuminate\Translation\Translator as IlluminateTranslator;
+use \Illuminate\Translation\Translator;
+
+defined('BASE_DIR') || define('BASE_DIR', dirname(__DIR__));
+defined('SRC_DIR') || define('SRC_DIR', BASE_DIR . '/src');
+defined('WEB_DIR') || define('WEB_DIR', BASE_DIR . '/public');
 
 class Bootstrap
 {
@@ -87,10 +89,7 @@ class Bootstrap
 
     public static function initEnvironment(string $dataDir)
     {
-        defined('BASE_DIR') || define('BASE_DIR', dirname(__DIR__));
         defined('DATA_DIR') || define('DATA_DIR', $dataDir);
-        defined('SRC_DIR') || define('SRC_DIR', BASE_DIR . '/src');
-        defined('WEB_DIR') || define('WEB_DIR', BASE_DIR . '/public');
     }
 
     public static function initApplication(): App
@@ -153,25 +152,18 @@ class Bootstrap
             assert($config instanceof Configuration);
             return Bootstrap::initTwig($config);
         });
-        $container->singleton(Translator::class, function (ContainerInterface $container, $args) {
-            $translator = Bootstrap::initTranslator();
+
+        $container->bind(Translator::class, function (ContainerInterface $container, $args) {
             $config = Container::getInstance()->get(Configuration::class);
-            $locale = str_replace('-', '_', $config->system->language);
-            $translator->setLocale($locale);
-            return $translator;
+            assert($config instanceof Configuration);
+            $locale = $config->system->language;
+            return new Translator(new FileLoader(new Filesystem(), SRC_DIR .'/i18n'), $locale);
         });
-        $container->bind(IlluminateTranslator::class, function (ContainerInterface $container, $args) {
-            // TODO: correct validation message
-            return new IlluminateTranslator((new ArrayLoader())
-                ->addMessages('en-Us', '', [
-                    'validation.required' => 'ssssssss'
-                ]), 'en-US');
-        });
+
         $container->bind(CoverExtractor::class, function(ContainerInterface $container, $args){
             return new CoverExtractor($container->get(Configuration::class));
         });
     }
-    
     
     protected static function bootServices(Container $container)
     {
@@ -204,16 +196,6 @@ class Bootstrap
         $logHandler = new RotatingFileHandler(DATA_DIR.'/logs/app.log',5,Logger::DEBUG);
         $logHandler->setFormatter(new LineFormatter(null, null, true, true));
         return new Logger('app', [$logHandler]);
-    }
-
-    protected static function initTranslator()
-    {
-        $translator = new Translator('en_US');
-        $translator->setLocale('uk_UA');
-        $translator->addLoader('php', new PhpFileLoader());
-        $translator->addResource('php', SRC_DIR . '/i18n/uk_UA.php', 'uk_UA');
-        return $translator;
-
     }
 
     protected static function initTwig(Configuration $config)

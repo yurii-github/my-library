@@ -22,10 +22,10 @@ namespace App\Actions;
 
 use App\Configuration\Configuration;
 use GuzzleHttp\Psr7\Response;
+use Illuminate\Translation\Translator;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\Translation\Translator;
 use Twig\Environment;
 
 abstract class AbstractPageAction
@@ -56,8 +56,8 @@ abstract class AbstractPageAction
     {
         $uri = $request->getUri();
         $gridLocale = [
-            'en_US' => 'en',
-            'uk_UA' => 'ua',
+            'en-US' => 'en',
+            'uk-UA' => 'ua',
         ];
         $baseData = [
             't' => $this->translator,

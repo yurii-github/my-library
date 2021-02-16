@@ -1,5 +1,5 @@
 {% extends "_layout.html.twig" %}
-{% set title = t.trans('Books') %}
+{% set title = t.get('Books') %}
 {% block content %}
     <table id="book-list"></table>
     <div id="book-pager"></div>
@@ -56,16 +56,16 @@
         editurl: 'api/book/manage',
         datatype: "json",
         colNames: [
-          '{{ t.trans('Added') }}',
+          '{{ t.get('Added') }}',
           '',
-          '{{ t.trans('Favorite') }}',
-          '{{ t.trans('Read') }}',
-          '{{ t.trans('Year') }}',
-          '{{ t.trans('Title') }}',
-          '{{ t.trans('ISBN - 13') }}',
-          '{{ t.trans('Author') }}',
-          '{{ t.trans('Publisher') }}',
-          '{{ t.trans('Extension') }}',
+          '{{ t.get('Favorite') }}',
+          '{{ t.get('Read') }}',
+          '{{ t.get('Year') }}',
+          '{{ t.get('Title') }}',
+          '{{ t.get('ISBN - 13') }}',
+          '{{ t.get('Author') }}',
+          '{{ t.get('Publisher') }}',
+          '{{ t.get('Extension') }}',
           '',
           ''
         ],
@@ -120,7 +120,7 @@
             search: true,
             searchoptions: {
               sopt: ['eq'],
-              value: ':{{ t.trans('All') }};yes:{{ t.trans('Yes') }};no:{{ t.trans('No') }}'
+              value: ':{{ t.get('All') }};yes:{{ t.get('Yes') }};no:{{ t.get('No') }}'
             },
             formatter: function (cellvalue, options, rowObject) {
               lastRead = cellvalue

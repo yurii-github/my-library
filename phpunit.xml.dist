@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd" stopOnFailure="true" convertErrorsToExceptions="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true" colors="true" bootstrap="./tests/bootstrap.php" beStrictAboutTestsThatDoNotTestAnything="true" beStrictAboutOutputDuringTests="true" beStrictAboutTodoAnnotatedTests="true" beStrictAboutChangesToGlobalState="false" verbose="true">
+  
   <coverage>
     <include>
       <directory>src</directory>
@@ -12,6 +13,7 @@
       <html outputDirectory="reports"/>
     </report>
   </coverage>
+  
   <testsuites>
     <testsuite name="unit">
       <directory>tests/Unit</directory>

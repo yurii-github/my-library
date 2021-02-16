@@ -33,12 +33,7 @@ abstract class AbstractTestCase extends TestCase
     protected function setUp(): void
     {
         $this->initVirtualFileSystem();
-
         defined('DATA_DIR') || define('DATA_DIR', vfsStream::url('base/data'));
-        defined('BASE_DIR') || define('BASE_DIR', dirname(__DIR__));
-        defined('SRC_DIR') || define('SRC_DIR', BASE_DIR . '/src');
-        defined('WEB_DIR') || define('WEB_DIR', BASE_DIR . '/public');
-
         $this->initConfig();
         $this->app = Bootstrap::initApplication();
         $migrator = Container::getInstance()->get(AppMigrator::class);

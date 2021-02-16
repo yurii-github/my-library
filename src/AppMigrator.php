@@ -26,13 +26,12 @@ use \Illuminate\Database\Migrations\Migrator;
 class AppMigrator
 {
     protected $migrator;
-    
+
     public function __construct(Migrator $migrator)
     {
         $this->migrator = $migrator;
     }
-    
-    
+
     public function migrate()
     {
         if (!$this->migrator->repositoryExists()) {
@@ -41,12 +40,12 @@ class AppMigrator
 
         $output = new StreamOutput(fopen('php://temp', 'r+'));
         $this->migrator->setOutput($output);
-        $this->migrator->run(SRC_DIR.'/migrations', [
+        $this->migrator->run(BASE_DIR . '/src/migrations', [
             'pretend' => false,
             'step' => true,
         ]);
         rewind($output->getStream());
-        
+
         return stream_get_contents($output->getStream());
     }
 }

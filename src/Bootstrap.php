@@ -44,8 +44,6 @@ use \Illuminate\Database\Migrations\Migrator;
 use \Illuminate\Filesystem\Filesystem;
 use \Illuminate\Translation\Translator;
 
-
-
 class Bootstrap
 {
     public const CURRENT_APP_VERSION = '2.0';
@@ -156,7 +154,7 @@ class Bootstrap
             $config = Container::getInstance()->get(Configuration::class);
             assert($config instanceof Configuration);
             $locale = $config->system->language;
-            return new Translator(new FileLoader(new Filesystem(), SRC_DIR .'/i18n'), $locale);
+            return new Translator(new FileLoader(new Filesystem(), BASE_DIR .'/src/i18n'), $locale);
         });
 
         $container->bind(CoverExtractor::class, function(ContainerInterface $container, $args){
@@ -188,7 +186,7 @@ class Bootstrap
 
     protected static function initTwig(Configuration $config): Environment
     {
-        $loader = new FilesystemLoader(SRC_DIR . '/views');
+        $loader = new FilesystemLoader(BASE_DIR . '/src/views');
         $twig = new Environment($loader, [
             'debug' => self::DEBUG_MODE,
         ]);

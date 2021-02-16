@@ -12,11 +12,17 @@ use Slim\ResponseEmitter;
 class ShutdownHandler
 {
     private HttpErrorHandler $errorHandler;
+    private bool $displayErrorDetails;
+    private bool $logErrors;
+    private bool $logErrorDetails;
 
 
-    public function __construct(HttpErrorHandler $errorHandler)
+    public function __construct(HttpErrorHandler $errorHandler, bool $displayErrorDetails = false)
     {
         $this->errorHandler = $errorHandler;
+        $this->displayErrorDetails = $displayErrorDetails;
+        $this->logErrors = $displayErrorDetails;
+        $this->logErrorDetails = $displayErrorDetails;
     }
 
     public function __invoke()
@@ -32,7 +38,7 @@ class ShutdownHandler
         $errorType = $error['type'];
         $message = 'An error while processing your request. Please try again later.';
 
-        if ($this->errorHandler->getDisplayErrorDetails()) {
+        if ($this->displayErrorDetails) {
             switch ($errorType) {
                 case E_USER_ERROR:
                     $message = "FATAL ERROR: {$errorMessage}. ";
@@ -55,7 +61,7 @@ class ShutdownHandler
         }
 
         $exception = new HttpInternalServerErrorException($this->errorHandler->getRequest(), $message);
-        $response = $this->errorHandler->__invoke($this->errorHandler->getRequest(), $exception, $this->errorHandler->getDisplayErrorDetails(), true, true);
+        $response = $this->errorHandler->__invoke($this->errorHandler->getRequest(), $exception, $this->displayErrorDetails, $this->logErrors, $this->logErrorDetails);
 
         if (ob_get_length()) {
             ob_clean();

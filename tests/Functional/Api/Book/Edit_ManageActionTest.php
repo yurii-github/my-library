@@ -54,16 +54,8 @@ class Edit_ManageActionTest extends AbstractTestCase
         ]);
     }
 
-    /**
-     * @runInSeparateProcess
-     */
     public function testCannotChangeWhileIsOpenWithSync()
     {
-        /*
-         * https://github.com/sebastianbergmann/phpunit/issues/2675
-         * https://github.com/sebastianbergmann/phpunit/issues/3758
-         * TODO: find a way to test it properly in PHPUnit. 
-         */
         $this->setBookLibrarySync(false);
         $books = $this->populateBooks();
         $this->setBookLibrarySync(true);

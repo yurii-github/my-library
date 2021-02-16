@@ -12,7 +12,6 @@ env:
   - DB_TYPE=mysql
 install:
   - if [[ ${DB_TYPE} == "mysql" ]]; then mysql -e "CREATE DATABASE IF NOT EXISTS test_mylib" -utravis; fi;
-  - cp .env.example .env
   - composer install
 before_script:
   - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.4" && "$TRAVIS_PULL_REQUEST" == "false" ]]; then wget -O cc-test-reporter https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64; fi;

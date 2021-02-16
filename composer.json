@@ -7,22 +7,22 @@
 	"version": "2.0.0",
 	"require": {
 		"php": ">=7.4",
-		"ext-json": "*",
-		"ext-pdo": "*",
+		"ext-fileinfo": "*",
 		"ext-gd": "*",
+		"ext-intl": "*",
+		"ext-json": "*",
 		"ext-mbstring": "*",
+		"ext-pdo": "*",
 		"guzzlehttp/psr7": "*",
 		"http-interop/http-factory-guzzle": "*",
-		"twig/twig": "^3.1",
 		"illuminate/database": "^8.0",
-		"slim/slim": "^4.6",
-		"ext-fileinfo": "*",
-		"illuminate/validation": "^8.0",
-      	"ext-intl": "*",
 		"illuminate/events": "^8.0",
+		"illuminate/validation": "^8.0",
+		"monolog/monolog": "^2.2",
 		"ramsey/uuid": "^4.1",
-		"monolog/monolog": "^2.2"
-    },
+		"slim/slim": "^4.6",
+		"twig/twig": "^3.1"
+	},
 	"autoload": {
 		"psr-4": {
 			"App\\": "src/"

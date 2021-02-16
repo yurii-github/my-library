@@ -105,7 +105,7 @@ class Bootstrap
 
     protected static function registerServices(Container $container)
     {
-        $container->singleton(Filesystem::class, function (ContainerInterface $container, $args) {
+        $container->bind(Filesystem::class, function (ContainerInterface $container, $args) {
             return new Filesystem();
         });
         $container->singleton(EventDispatcherInterface::class, function (ContainerInterface $container, $args) {
@@ -125,12 +125,12 @@ class Bootstrap
             return Bootstrap::initCapsule($config, $container, $eventDispatcher);
         });
         $container->alias(Manager::class, 'db');
-        $container->singleton(MigrationRepositoryInterface::class, function (ContainerInterface $container, $args) {
+        $container->bind(MigrationRepositoryInterface::class, function (ContainerInterface $container, $args) {
             $manager = $container->get('db');
             assert($manager instanceof Manager);
             return new DatabaseMigrationRepository($manager->getDatabaseManager(), 'migrations');
         });
-        $container->singleton(Migrator::class, function (ContainerInterface $container, $args) {
+        $container->bind(Migrator::class, function (ContainerInterface $container, $args) {
             $eventDispatcher = $container->get(EventDispatcherInterface::class);
             assert($eventDispatcher instanceof EventDispatcherInterface);
             $manager = $container->get('db');
@@ -144,7 +144,7 @@ class Bootstrap
         $container->bind(AppMigrator::class, function (ContainerInterface $container, $args) {
             return new AppMigrator($container->get(Migrator::class));
         });
-        $container->singleton(Environment::class, function (ContainerInterface $container, $args) {
+        $container->bind(Environment::class, function (ContainerInterface $container, $args) {
             $config = $container->get(Configuration::class);
             assert($config instanceof Configuration);
             return Bootstrap::initTwig($config);
@@ -154,7 +154,7 @@ class Bootstrap
             $config = Container::getInstance()->get(Configuration::class);
             assert($config instanceof Configuration);
             $locale = $config->system->language;
-            return new Translator(new FileLoader(new Filesystem(), BASE_DIR .'/src/i18n'), $locale);
+            return new Translator(new FileLoader($container->get(Filesystem::class), BASE_DIR .'/src/i18n'), $locale);
         });
 
         $container->bind(CoverExtractor::class, function(ContainerInterface $container, $args){

@@ -44,13 +44,11 @@ use \Illuminate\Database\Migrations\Migrator;
 use \Illuminate\Filesystem\Filesystem;
 use \Illuminate\Translation\Translator;
 
-defined('BASE_DIR') || define('BASE_DIR', dirname(__DIR__));
-defined('SRC_DIR') || define('SRC_DIR', BASE_DIR . '/src');
-defined('WEB_DIR') || define('WEB_DIR', BASE_DIR . '/public');
+
 
 class Bootstrap
 {
-    const CURRENT_APP_VERSION = '2.0';
+    public const CURRENT_APP_VERSION = '2.0';
     public const DEBUG_MODE = true;
     public const DISPLAY_ERRORS = self::DEBUG_MODE;
 
@@ -87,11 +85,6 @@ class Bootstrap
         return $capsule;
     }
 
-    public static function initEnvironment(string $dataDir)
-    {
-        defined('DATA_DIR') || define('DATA_DIR', $dataDir);
-    }
-
     public static function initApplication(): App
     {
         ini_set('display_errors', '1');
@@ -103,7 +96,13 @@ class Bootstrap
         self::registerServices($container);
         self::bootServices($container);
 
-        return self::buildApplication($container);
+        $app = AppFactory::create(null, $container);
+        self::initExceptionHandling($app);
+        $app->addBodyParsingMiddleware();
+        $app->addRoutingMiddleware();
+        Routes::register($app);
+
+        return $app;
     }
 
     protected static function registerServices(Container $container)
@@ -169,17 +168,6 @@ class Bootstrap
     {
         $container->get('db');
     }
-    
-    protected static function buildApplication(Container $container): App
-    {
-        $app = AppFactory::create(null, $container);
-        self::initExceptionHandling($app);
-        $app->addBodyParsingMiddleware();
-        $routingMiddleware = $app->addRoutingMiddleware();
-        Routes::register($app);
-        
-        return $app;
-    }
 
     protected static function initExceptionHandling(App $app)
     {
@@ -198,7 +186,7 @@ class Bootstrap
         return new Logger('app', [$logHandler]);
     }
 
-    protected static function initTwig(Configuration $config)
+    protected static function initTwig(Configuration $config): Environment
     {
         $loader = new FilesystemLoader(SRC_DIR . '/views');
         $twig = new Environment($loader, [

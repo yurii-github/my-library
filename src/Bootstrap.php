@@ -22,7 +22,6 @@ namespace App;
 
 use App\Configuration\Configuration;
 use App\Handlers\ErrorHandler;
-use App\Handlers\ShutdownHandler;
 use App\Renderers\JsonErrorRenderer;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\Eloquent\Model;
@@ -33,7 +32,6 @@ use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
 use Slim\App;
 use Slim\Factory\AppFactory;
-use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\Translation\Loader\PhpFileLoader;
 use Symfony\Component\Translation\Translator;
 use Twig\Environment;
@@ -93,15 +91,11 @@ class Bootstrap
         defined('DATA_DIR') || define('DATA_DIR', $dataDir);
         defined('SRC_DIR') || define('SRC_DIR', BASE_DIR . '/src');
         defined('WEB_DIR') || define('WEB_DIR', BASE_DIR . '/public');
-        
-        if(file_exists(BASE_DIR . '/.env')) {
-            (new Dotenv())->load(BASE_DIR . '/.env');
-        }
     }
 
     public static function initApplication(): App
     {
-        ini_set('display_errors', '0');
+        ini_set('display_errors', '1');
         error_reporting(E_ALL);
 
         Container::setInstance(null);
@@ -187,11 +181,11 @@ class Bootstrap
     protected static function buildApplication(Container $container): App
     {
         $app = AppFactory::create(null, $container);
-        $app->addBodyParsingMiddleware();
         self::initExceptionHandling($app);
-        $app->addRoutingMiddleware();
+        $app->addBodyParsingMiddleware();
+        $routingMiddleware = $app->addRoutingMiddleware();
         Routes::register($app);
-
+        
         return $app;
     }
 
@@ -203,9 +197,6 @@ class Bootstrap
         $errorHandler = new ErrorHandler($app->getCallableResolver(), $app->getResponseFactory(), $logger);
         $errorHandler->registerErrorRenderer('application/json', JsonErrorRenderer::class);
         $errorMiddleware->setDefaultErrorHandler($errorHandler);
-
-        $shutdownHandler = new ShutdownHandler($errorHandler);
-        register_shutdown_function($shutdownHandler);
     }
 
     protected static function initAppLogger(): Logger

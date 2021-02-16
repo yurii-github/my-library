@@ -126,11 +126,23 @@ abstract class AbstractTestCase extends TestCase
 
     protected function useMySQL(\stdClass $config)
     {
+        $dbname = getenv('DB_DBNAME');
+        if (!$dbname) {
+            throw new \InvalidArgumentException("DB_DBNAME env MUST BE set for MySQL connection!");
+        }
+        $login = getenv('DB_LOGIN');
+        if (!$login) {
+            throw new \InvalidArgumentException("DB_LOGIN env MUST BE set for MySQL connection!");
+        }
+        $password = getenv('DB_PASSWORD');
+        if (!$password) {
+            throw new \InvalidArgumentException("DB_PASSWORD env MUST BE set for MySQL connection!");
+        }
         $config->database->format = 'mysql';
         $config->database->host = 'localhost';
-        $config->database->dbname = $_ENV['DB_DBNAME'] ?? 'test_mylib';
-        $config->database->login = $_ENV['DB_LOGIN'] ?? 'travis';
-        $config->database->password = $_ENV['DB_PASSWORD'] ?? null;
+        $config->database->dbname = $dbname;
+        $config->database->login = $login;
+        $config->database->password = $password;
     }
     
     
@@ -147,8 +159,13 @@ abstract class AbstractTestCase extends TestCase
     protected function initConfig()
     {
         $config = json_decode(file_get_contents(dirname(__DIR__) . '/data/config_sqlite.json'));
-        $dbType = $_ENV['DB_TYPE'] ?? 'sqlite';
-
+        $dbType = getenv('DB_TYPE');
+        if (!$dbType) {
+            $dbType  = $_ENV['DB_TYPE'] ?? false;
+            if (!$dbType) {
+                throw new \InvalidArgumentException("DB_TYPE env MUST BE set for MySQL connection!");
+            }
+        }
         if ($dbType === 'sqlite_memory') { // special case for local testing
             $this->useSqliteInMemory($config);
         } elseif ($dbType === 'sqlite') {

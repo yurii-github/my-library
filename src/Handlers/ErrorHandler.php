@@ -23,16 +23,10 @@ namespace App\Handlers;
 use App\Exception\InvalidImageException;
 use App\Exception\UnsupportedOperationException;
 use Illuminate\Validation\ValidationException;
-use Psr\Http\Message\ServerRequestInterface;
 use \Slim\Handlers\ErrorHandler as SlimErrorHandler;
 
 class ErrorHandler extends SlimErrorHandler
 {
-    public function getRequest(): ServerRequestInterface
-    {
-        return $this->request;
-    }
-
     protected function determineStatusCode(): int
     {
         if ($this->exception instanceof ValidationException) {

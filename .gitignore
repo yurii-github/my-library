@@ -3,7 +3,6 @@
 #
 /data/config.json
 /vendor
-/.env
 
 #
 # dev
@@ -13,3 +12,4 @@
 /reports/*
 /composer.lock
 /tests/data/mytestdb.s3db
+/tests/local_test_env.php

@@ -33,16 +33,12 @@ It supports all JQuery UI themes.
 ## Setup & Run
 
 ```
-git clone git@github.com:yurii-github/yii2-mylib.git
-cd yii2-mylib
+git clone git@github.com:yurii-github/my-library.git
+cd my-library
 composer update
 ./serve
 ```
 
-To have debug mode ON also do next
-```
-cp .env.example .env
-```
 
 Application will be available at [http://localhost:8080](http://localhost:8080)
 

@@ -28,11 +28,6 @@ use \Slim\Handlers\ErrorHandler as SlimErrorHandler;
 
 class ErrorHandler extends SlimErrorHandler
 {
-    public function getDisplayErrorDetails(): bool
-    {
-        return $this->displayErrorDetails;
-    }
-
     public function getRequest(): ServerRequestInterface
     {
         return $this->request;

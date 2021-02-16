@@ -52,6 +52,7 @@ class Bootstrap
 {
     const CURRENT_APP_VERSION = '2.0';
     public const DEBUG_MODE = true;
+    public const DISPLAY_ERRORS = self::DEBUG_MODE;
 
     protected static function initCapsule(Configuration $config, Container $container, Dispatcher $eventDispatcher): Manager
     {
@@ -100,12 +101,15 @@ class Bootstrap
 
     public static function initApplication(): App
     {
+        ini_set('display_errors', '0');
+        error_reporting(E_ALL);
+
         Container::setInstance(null);
         $container = Container::getInstance();
 
         self::registerServices($container);
         self::bootServices($container);
-        
+
         return self::buildApplication($container);
     }
 
@@ -195,7 +199,7 @@ class Bootstrap
     {
         $logger = self::initAppLogger();
         
-        $errorMiddleware = $app->addErrorMiddleware(self::DEBUG_MODE, true, true, $logger);
+        $errorMiddleware = $app->addErrorMiddleware(self::DISPLAY_ERRORS, true, self::DEBUG_MODE, $logger);
         $errorHandler = new ErrorHandler($app->getCallableResolver(), $app->getResponseFactory(), $logger);
         $errorHandler->registerErrorRenderer('application/json', JsonErrorRenderer::class);
         $errorMiddleware->setDefaultErrorHandler($errorHandler);

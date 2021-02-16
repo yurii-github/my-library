@@ -24,9 +24,12 @@ use App\Models\Book;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Contracts\Support\Arrayable;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 abstract class AbstractApiAction
 {
+    abstract public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface;
+
     protected function asJSON($data = null): ResponseInterface
     {
         if ($data instanceof Book) {

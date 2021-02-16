@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests;
+namespace Tests\Unit;
 
 use \App\Configuration\Configuration;
 use App\Exception\ConfigurationDirectoryDoesNotExistException;
@@ -94,7 +94,7 @@ class ConfigurationTest extends TestCase
     public function testConfigurationSetupFromDefaults()
     {
         $newFilename = vfsStream::url('base/data/config_new.json');
-        $this->assertFileNotExists($newFilename);
+        $this->assertFileDoesNotExist($newFilename);
 
         $config = new Configuration($newFilename, '1.3');
 
@@ -122,7 +122,7 @@ class ConfigurationTest extends TestCase
         $newFilename = vfsStream::url('base/data/config_new.json');
         file_put_contents($newFilename, '');
         chmod($newFilename, 0000);
-        $this->assertNotIsReadable($newFilename);
+        $this->assertIsNotReadable($newFilename);
 
         $config = new Configuration($newFilename, '1.3');
     }

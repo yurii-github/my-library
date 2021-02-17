@@ -59,15 +59,24 @@ class JGridRequestQuery
             if (empty($conditions[$rule->op])) {
                 continue; // unknown condition, skip
             }
-            $like = $this->likeModifier($conditions[$rule->op]);
-            if (!empty($filters->groupOp) && $filters->groupOp == 'AND') {
-                $this->query->where($rule->field, $conditions[$rule->op], $like . $rule->data . $like);
-            } else {
-                $this->query->orWhere($rule->field, $conditions[$rule->op], $like . $rule->data . $like);
-            }
+            $operator = $conditions[$rule->op];
+            $groupOperator = $filters->groupOp ?? 'OR';
+            $this->applyRuleClause($this->query, $groupOperator, $rule->field, $operator, $rule->data);
         }
 
         return $this;
+    }
+
+    protected function applyRuleClause(Builder $query, string $groupOperator, string $field, string $operator, $value)
+    {
+        $likeModifier = $this->likeModifier($operator);
+        $value = $likeModifier . $value . $likeModifier;
+
+        if ($groupOperator === 'AND') {
+            $query->where($field, $operator, $value);
+        } else {
+            $query->orWhere($field, $operator, $value);
+        }
     }
 
     protected function likeModifier(?string $operator): string

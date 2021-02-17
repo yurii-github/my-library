@@ -18,13 +18,13 @@
  * along with this program.  If not, see http://www.gnu.org/licenses
  */
 
-namespace App;
+namespace App\JGrid;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Psr\Http\Message\ServerRequestInterface;
 
-class JGridRequestQuery
+class RequestQuery
 {
     protected $data;
     protected $query;

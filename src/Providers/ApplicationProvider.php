@@ -27,7 +27,7 @@ use Illuminate\Filesystem\Filesystem;
 
 class ApplicationProvider implements ProviderInterface
 {
-    public static function register(ContainerInterface $container)
+    public function register(ContainerInterface $container)
     {
         $container->bind(Filesystem::class, function (ContainerInterface $container, $args) {
             return new Filesystem();
@@ -37,7 +37,7 @@ class ApplicationProvider implements ProviderInterface
         });
     }
 
-    public static function boot(ContainerInterface $container)
+    public function boot(ContainerInterface $container)
     {
     }
 }

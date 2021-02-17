@@ -30,7 +30,7 @@ use Illuminate\Filesystem\Filesystem;
 
 class MigratorProvider implements ProviderInterface
 {
-    public static function register(ContainerInterface $container)
+    public function register(ContainerInterface $container)
     {
         $container->bind(Migrator::class, function (ContainerInterface $container, $args) {
             $eventDispatcher = $container->get(EventDispatcherInterface::class);
@@ -48,7 +48,7 @@ class MigratorProvider implements ProviderInterface
         });
     }
     
-    public static function boot(ContainerInterface $container)
+    public function boot(ContainerInterface $container)
     {
     }
 }

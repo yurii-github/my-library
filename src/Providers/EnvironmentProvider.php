@@ -33,7 +33,7 @@ use Twig\TwigFunction;
 
 class EnvironmentProvider implements ProviderInterface
 {
-    public static function register(ContainerInterface $container)
+    public function register(ContainerInterface $container)
     {
         $container->bind(Environment::class, function (ContainerInterface $container, $args) {
             $config = $container->get(Configuration::class);
@@ -57,7 +57,7 @@ class EnvironmentProvider implements ProviderInterface
         });
     }
     
-    public static function boot(ContainerInterface $container)
+    public function boot(ContainerInterface $container)
     {
     }
 }

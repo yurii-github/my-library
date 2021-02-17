@@ -31,15 +31,15 @@ use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 
 class DatabaseProvider implements ProviderInterface
 {
-    public static function boot(ContainerInterface $container)
+    public function boot(ContainerInterface $container)
     {
         $container->get('db');
     }
 
-    public static function register(ContainerInterface $container)
+    public function register(ContainerInterface $container)
     {
         $container->singleton(Manager::class, function (Container $container, $args) {
-            return self::initCapsule($container);
+            return $this->initCapsule($container);
         });
         $container->bind(MigrationRepositoryInterface::class, function (ContainerInterface $container, $args) {
             $manager = $container->get(Manager::class);
@@ -49,7 +49,7 @@ class DatabaseProvider implements ProviderInterface
         $container->alias(Manager::class, 'db');
     }
 
-    protected static function initCapsule(Container $container): Manager
+    protected function initCapsule(Container $container): Manager
     {
         $eventDispatcher = $container->get(EventDispatcherInterface::class);
         assert($eventDispatcher instanceof EventDispatcherInterface);
@@ -71,12 +71,12 @@ class DatabaseProvider implements ProviderInterface
         Model::clearBootedModels();
         Model::setConnectionResolver($capsule->getDatabaseManager());
         Model::setEventDispatcher($eventDispatcher);
-        self::searchFixForSQLite($capsule);
+        $this->searchFixForSQLite($capsule);
 
         return $capsule;
     }
 
-    protected static function searchFixForSQLite(Manager $capsule)
+    protected function searchFixForSQLite(Manager $capsule)
     {
         $pdo = $capsule->getConnection()->getPdo();
         if ($pdo->getAttribute(\PDO::ATTR_DRIVER_NAME) === 'sqlite') {

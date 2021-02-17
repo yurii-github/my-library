@@ -60,7 +60,8 @@ class Application extends App
             EnvironmentProvider::class,
             CoverExtractorProvider::class,
         ];
-        
+
+        $services = $this->resolveServices($services);
         $this->registerServices($services);
         $this->initExceptionHandling();
         $this->addBodyParsingMiddleware();
@@ -74,19 +75,38 @@ class Application extends App
         return parent::getContainer();
     }
 
+    /**
+     * @param string[] $services
+     * @return ProviderInterface[]
+     */
+    protected function resolveServices(array $services): array
+    {
+        $resolvedServices = [];
+        foreach ($services as $service) {
+            $resolvedService = new $service();
+            assert($resolvedService instanceof ProviderInterface);
+            $resolvedServices[] = $resolvedService;
+        }
+        return $resolvedServices;
+    }
+
+    /**
+     * @param ProviderInterface[] $services
+     */
     protected function registerServices(array $services)
     {
         foreach ($services as $service) {
-            assert(in_array(ProviderInterface::class, class_implements($service)));
-            $service::register($this->getContainer());
+            $service->register($this->getContainer());
         }
     }
 
+    /**
+     * @param ProviderInterface[] $services
+     */
     protected function bootServices(array $services)
     {
         foreach ($services as $service) {
-            assert(in_array(ProviderInterface::class, class_implements($service)));
-            $service::boot($this->getContainer());
+            $service->boot($this->getContainer());
         }
     }
 

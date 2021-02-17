@@ -29,7 +29,6 @@ class RequestQuery
     protected $data;
     protected $query;
 
-
     public function __construct(Builder $query, ServerRequestInterface $request)
     {
         $params = $request->getQueryParams();
@@ -61,27 +60,24 @@ class RequestQuery
             }
             $operator = $conditions[$rule->op];
             $groupOperator = $filters->groupOp ?? 'OR';
-            $this->applyRuleClause($this->query, $groupOperator, $rule->field, $operator, $rule->data);
+            $this->applyRuleClause($this->query, $groupOperator, new RuleClause($rule->field, $operator, $rule->data));
         }
 
         return $this;
     }
 
-    protected function applyRuleClause(Builder $query, string $groupOperator, string $field, string $operator, $value)
+    protected function applyRuleClause(Builder $query, string $groupOperator, RuleClause $clause)
     {
-        $likeModifier = $this->likeModifier($operator);
-        $value = $likeModifier . $value . $likeModifier;
+        $value = $clause->getValue();
+        if ($clause->getOperator() === 'like') {
+            $value = '%' . $value . '%';
+        }
 
         if ($groupOperator === 'AND') {
-            $query->where($field, $operator, $value);
+            $query->where($clause->getColumn(), $clause->getOperator(), $value);
         } else {
-            $query->orWhere($field, $operator, $value);
+            $query->orWhere($clause->getColumn(), $clause->getOperator(), $value);
         }
-    }
-
-    protected function likeModifier(?string $operator): string
-    {
-        return $operator === 'like' ? '%' : '';
     }
 
     /**

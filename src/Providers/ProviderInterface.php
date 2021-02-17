@@ -24,6 +24,6 @@ use Illuminate\Contracts\Container\Container as ContainerInterface;
 
 interface ProviderInterface
 {
-    public static function register(ContainerInterface $container);
-    public static function boot(ContainerInterface $container);
+    public function register(ContainerInterface $container);
+    public function boot(ContainerInterface $container);
 }

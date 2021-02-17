@@ -27,6 +27,7 @@ use App\Providers\CoverExtractorProvider;
 use App\Providers\DatabaseProvider;
 use App\Providers\EnvironmentProvider;
 use App\Providers\MigratorProvider;
+use App\Providers\ProviderInterface;
 use App\Renderers\JsonErrorRenderer;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
@@ -51,12 +52,22 @@ class Application extends App
         $container = Container::getInstance();
         parent::__construct($responseFactory, $container, $callableResolver, $routeCollector, $routeResolver, $middlewareDispatcher);
 
-        $this->registerServices();
+        $services = [
+            ApplicationProvider::class,
+            ConfigurationProvider::class,
+            DatabaseProvider::class,
+            MigratorProvider::class,
+            EnvironmentProvider::class,
+            CoverExtractorProvider::class,
+        ];
+
+        $services = $this->resolveServices($services);
+        $this->registerServices($services);
         $this->initExceptionHandling();
         $this->addBodyParsingMiddleware();
         $this->addRoutingMiddleware();
         Routes::register($this);
-        $this->bootServices();
+        $this->bootServices($services);
     }
 
     public function getContainer(): ?Container
@@ -64,19 +75,39 @@ class Application extends App
         return parent::getContainer();
     }
 
-    protected function registerServices()
+    /**
+     * @param string[] $services
+     * @return ProviderInterface[]
+     */
+    protected function resolveServices(array $services): array
     {
-        ApplicationProvider::register($this->getContainer());
-        ConfigurationProvider::register($this->getContainer());
-        DatabaseProvider::register($this->getContainer());
-        MigratorProvider::register($this->getContainer());
-        EnvironmentProvider::register($this->getContainer());
-        CoverExtractorProvider::register($this->getContainer());
+        $resolvedServices = [];
+        foreach ($services as $service) {
+            $resolvedService = new $service();
+            assert($resolvedService instanceof ProviderInterface);
+            $resolvedServices[] = $resolvedService;
+        }
+        return $resolvedServices;
     }
 
-    protected function bootServices()
+    /**
+     * @param ProviderInterface[] $services
+     */
+    protected function registerServices(array $services)
     {
-        DatabaseProvider::boot($this->getContainer());
+        foreach ($services as $service) {
+            $service->register($this->getContainer());
+        }
+    }
+
+    /**
+     * @param ProviderInterface[] $services
+     */
+    protected function bootServices(array $services)
+    {
+        foreach ($services as $service) {
+            $service->boot($this->getContainer());
+        }
     }
 
     protected function initExceptionHandling()

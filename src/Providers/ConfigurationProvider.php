@@ -26,7 +26,7 @@ use Illuminate\Contracts\Container\Container as ContainerInterface;
 
 class ConfigurationProvider implements ProviderInterface
 {
-    public static function register(ContainerInterface $container)
+    public function register(ContainerInterface $container)
     {
         $container->singleton(Configuration::class, function (ContainerInterface $container, $args) {
             $config = new Configuration(DATA_DIR . '/config.json', Application::CURRENT_APP_VERSION);
@@ -36,7 +36,7 @@ class ConfigurationProvider implements ProviderInterface
         });
     }
 
-    public static function boot(ContainerInterface $container)
+    public function boot(ContainerInterface $container)
     {
     }
 }

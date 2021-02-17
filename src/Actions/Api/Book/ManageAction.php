@@ -21,13 +21,12 @@
 namespace App\Actions\Api\Book;
 
 use App\Actions\AbstractApiAction;
+use App\Actions\WithValidateTrait;
 use App\Exception\UnsupportedOperationException;
 use App\Models\Book;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Support\Arr;
-use Illuminate\Validation\DatabasePresenceVerifier;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Validator;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -35,6 +34,8 @@ use \Illuminate\Translation\Translator;
 
 class ManageAction extends AbstractApiAction
 {
+    use WithValidateTrait;
+
     /** @var Translator */
     protected $translator;
     /** @var Manager */
@@ -69,7 +70,7 @@ class ManageAction extends AbstractApiAction
 
     protected function editBook(array $post): ?Book
     {
-        $rules = [
+        $input = $this->validate($post, [
             'year' => ['sometimes'],
             'favorite' => ['sometimes', 'required'],
             'read' => ['sometimes', 'required', Rule::in(['yes', 'no'])],
@@ -79,10 +80,8 @@ class ManageAction extends AbstractApiAction
             'publisher' => ['sometimes', 'string'],
             'ext' => ['sometimes'],
             'id' => ['required', 'exists:books,book_guid']
-        ];
-        $validator = new Validator($this->translator, $post, $rules);
-        $validator->setPresenceVerifier(new DatabasePresenceVerifier($this->db->getDatabaseManager()));
-        $input = $validator->validate();
+        ]);
+
         $book = Book::findOrFail($input['id']);
         assert($book instanceof Book);
         $book->fill($input);
@@ -93,10 +92,10 @@ class ManageAction extends AbstractApiAction
 
     protected function deleteBook(array $post): ?Book
     {
-        $rules = [
+        $input = $this->validate($post, [
             'id' => ['required', 'string']
-        ];
-        $input = (new Validator($this->translator, $post, $rules))->validate();
+        ]);
+
         $book = Book::find($input['id']);
         assert($book instanceof Book || $book === null);
         if ($book) {
@@ -108,7 +107,7 @@ class ManageAction extends AbstractApiAction
 
     protected function addBook(array $post): Book
     {
-        $rules = [
+        $input = $this->validate($post, [
             'year' => ['sometimes'],
             'favorite' => ['required'],
             'read' => ['required', Rule::in(['yes', 'no'])],
@@ -117,9 +116,8 @@ class ManageAction extends AbstractApiAction
             'author' => ['sometimes'],
             'publisher' => ['sometimes'],
             'ext' => ['sometimes'],
-        ];
-        $validator = new Validator($this->translator, $post, $rules);
-        $input = $validator->validate();
+        ]);
+
         $book = new Book();
         $book->fill($input);
         $book->save();

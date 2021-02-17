@@ -21,14 +21,13 @@
 namespace App\Actions\Api\Book\Category;
 
 use App\Actions\AbstractApiAction;
+use App\Actions\WithValidateTrait;
 use App\Exception\UnsupportedOperationException;
 use App\Models\Book;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Support\Arr;
 use Illuminate\Translation\Translator;
-use Illuminate\Validation\DatabasePresenceVerifier;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Validator;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -36,6 +35,8 @@ use \App\Models\Category;
 
 class ManageAction extends AbstractApiAction
 {
+    use WithValidateTrait;
+    
     /** @var Translator */
     protected $translator;
     /** @var Manager */
@@ -73,16 +74,12 @@ class ManageAction extends AbstractApiAction
 
     protected function editCategory(array $post): ?Category
     {
-        $rules = [
+        $input = $this->validate($post, [
             'id' => ['required', 'string', 'max:255', Rule::exists('categories', 'guid')],
             'title' => ['sometimes', 'string', 'max:255'],
             'book_id' => ['sometimes', 'string', 'max:255', Rule::exists('books', 'book_guid')],
             'marker' => ['required_with:book_id', 'bool']
-        ];
-
-        $validator = new Validator($this->translator, $post, $rules);
-        $validator->setPresenceVerifier(new DatabasePresenceVerifier($this->db->getDatabaseManager()));
-        $input = $validator->validate();
+        ]);
 
         $category = Category::find($input['id']);
         assert($category instanceof Category);
@@ -108,11 +105,9 @@ class ManageAction extends AbstractApiAction
 
     protected function deleteCategory(array $post): ?Category
     {
-        $rules = [
+        $input = $this->validate($post, [
             'id' => ['required', 'string', 'max:255'],
-        ];
-
-        $input = (new Validator($this->translator, $post, $rules))->validate();
+        ]);
 
         $category = Category::find($input['id']);
         assert($category instanceof Category || $category === null);
@@ -126,11 +121,9 @@ class ManageAction extends AbstractApiAction
 
     protected function addCategory(array $post): Category
     {
-        $rules = [
+        $input = $this->validate($post, [
             'title' => ['required'],
-        ];
-
-        $input = (new Validator($this->translator, $post, $rules))->validate();
+        ]);
 
         $category = new Category();
         $category->title = $input['title'];

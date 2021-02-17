@@ -47,6 +47,7 @@ class ManageAction extends AbstractApiAction
         $this->db = $container->get('db');
         assert($this->db instanceof Manager);
         $this->translator = $container->get(Translator::class);
+        assert($this->translator instanceof Translator);
     }
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface

@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Psr\Http\Message\ServerRequestInterface;
 
-class JGridRequestQuery
+class RequestQuery
 {
     protected $data;
     protected $query;

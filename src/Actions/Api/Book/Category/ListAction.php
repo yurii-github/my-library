@@ -21,7 +21,7 @@
 namespace App\Actions\Api\Book\Category;
 
 use App\Actions\AbstractApiAction;
-use App\JGrid\JGridRequestQuery;
+use App\JGrid\RequestQuery;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Arr;
@@ -45,7 +45,7 @@ class ListAction extends AbstractApiAction
                     ->whereRaw('bc.category_guid = categories.guid')
                     ->where('bc.book_guid', '=', $bookId);
             });
-        $gridQuery = (new JGridRequestQuery($query, $request))->withFilters()->withSorting('title');
+        $gridQuery = (new RequestQuery($query, $request))->withFilters()->withSorting('title');
 
         return $this->asJSON($gridQuery->paginate(['guid', 'title', 'marker']));
     }

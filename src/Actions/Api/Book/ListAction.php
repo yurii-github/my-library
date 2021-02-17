@@ -24,7 +24,7 @@ use App\Actions\AbstractApiAction;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use \App\Models\Book;
-use App\JGrid\JGridRequestQuery;
+use App\JGrid\RequestQuery;
 use \Illuminate\Database\Eloquent\Builder;
 
 class ListAction extends AbstractApiAction
@@ -42,7 +42,7 @@ class ListAction extends AbstractApiAction
             });
         }
 
-        $gridQuery = new JGridRequestQuery($query, $request);
+        $gridQuery = new RequestQuery($query, $request);
         $gridQuery->withFilters()->withSorting('created_date', 'desc');
 
         return $this->asJSON($gridQuery->paginate($columns));

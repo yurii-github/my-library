@@ -29,14 +29,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Migrations\DatabaseMigrationRepository;
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 
-class DatabaseProvider
+class DatabaseProvider implements ProviderInterface
 {
-    public static function boot(Container $container)
+    public static function boot(ContainerInterface $container)
     {
         $container->get('db');
     }
 
-    public static function register(Container $container)
+    public static function register(ContainerInterface $container)
     {
         $container->singleton(Manager::class, function (Container $container, $args) {
             return self::initCapsule($container);

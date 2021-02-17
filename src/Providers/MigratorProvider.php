@@ -28,7 +28,7 @@ use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Database\Migrations\Migrator;
 use Illuminate\Filesystem\Filesystem;
 
-class MigratorProvider
+class MigratorProvider implements ProviderInterface
 {
     public static function register(ContainerInterface $container)
     {
@@ -48,4 +48,7 @@ class MigratorProvider
         });
     }
     
+    public static function boot(ContainerInterface $container)
+    {
+    }
 }

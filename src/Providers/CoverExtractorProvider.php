@@ -24,12 +24,16 @@ use App\Configuration\Configuration;
 use App\CoverExtractor;
 use Illuminate\Contracts\Container\Container as ContainerInterface;
 
-class CoverExtractorProvider
+class CoverExtractorProvider implements ProviderInterface
 {
     public static function register(ContainerInterface $container)
     {
         $container->bind(CoverExtractor::class, function(ContainerInterface $container, $args){
             return new CoverExtractor($container->get(Configuration::class));
         });
+    }
+
+    public static function boot(ContainerInterface $container)
+    {
     }
 }

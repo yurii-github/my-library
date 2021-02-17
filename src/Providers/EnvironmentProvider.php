@@ -31,7 +31,7 @@ use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 use Twig\TwigFunction;
 
-class EnvironmentProvider
+class EnvironmentProvider implements ProviderInterface
 {
     public static function register(ContainerInterface $container)
     {
@@ -56,5 +56,8 @@ class EnvironmentProvider
             return new Translator(new FileLoader($container->get(Filesystem::class), BASE_DIR .'/src/i18n'), $locale);
         });
     }
-
+    
+    public static function boot(ContainerInterface $container)
+    {
+    }
 }

@@ -24,7 +24,7 @@ use App\Application;
 use App\Configuration\Configuration;
 use Illuminate\Contracts\Container\Container as ContainerInterface;
 
-class ConfigurationProvider
+class ConfigurationProvider implements ProviderInterface
 {
     public static function register(ContainerInterface $container)
     {
@@ -34,5 +34,9 @@ class ConfigurationProvider
             $config->getSystem()->theme = $config->getSystem()->theme ?? 'smoothness';
             return $config;
         });
+    }
+
+    public static function boot(ContainerInterface $container)
+    {
     }
 }

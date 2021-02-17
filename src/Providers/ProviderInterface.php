@@ -21,23 +21,9 @@
 namespace App\Providers;
 
 use Illuminate\Contracts\Container\Container as ContainerInterface;
-use Illuminate\Contracts\Events\Dispatcher as EventDispatcherInterface;
-use Illuminate\Events\Dispatcher;
-use Illuminate\Filesystem\Filesystem;
 
-class ApplicationProvider implements ProviderInterface
+interface ProviderInterface
 {
-    public static function register(ContainerInterface $container)
-    {
-        $container->bind(Filesystem::class, function (ContainerInterface $container, $args) {
-            return new Filesystem();
-        });
-        $container->singleton(EventDispatcherInterface::class, function (ContainerInterface $container, $args) {
-            return new Dispatcher($container);
-        });
-    }
-
-    public static function boot(ContainerInterface $container)
-    {
-    }
+    public static function register(ContainerInterface $container);
+    public static function boot(ContainerInterface $container);
 }

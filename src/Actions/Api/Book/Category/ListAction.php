@@ -21,7 +21,7 @@
 namespace App\Actions\Api\Book\Category;
 
 use App\Actions\AbstractApiAction;
-use App\JGridRequestQuery;
+use App\JGrid\JGridRequestQuery;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Arr;

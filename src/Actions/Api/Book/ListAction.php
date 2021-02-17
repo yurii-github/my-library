@@ -24,7 +24,7 @@ use App\Actions\AbstractApiAction;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use \App\Models\Book;
-use \App\JGridRequestQuery;
+use App\JGrid\JGridRequestQuery;
 use \Illuminate\Database\Eloquent\Builder;
 
 class ListAction extends AbstractApiAction

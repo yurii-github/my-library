@@ -1,6 +1,4 @@
 
-$(document).tooltip()
-
 // JQuery fix for empty body on JSON response
 $.ajaxSetup({
   converters: {
@@ -13,6 +11,8 @@ $.ajaxSetup({
 
 $.fn.extend({
   setMsg: function (message, field, result = true) {
+    this.html('')
+    
     if (message === '') {
       return
     }
@@ -27,3 +27,29 @@ $.fn.extend({
       '</div>')
   }
 })
+
+
+let MyLibrary = {}
+MyLibrary.withTooltips = function () {
+  $(document).tooltip()
+}
+MyLibrary.import = {
+  actions: [],
+  addAction: function(button, action) {
+    this.actions.push({button: button, action: action})
+  },
+  render: function(element) {
+    let $result = $('<div>')
+    this.actions.forEach(function(action) {
+      let $button = $(`<button>${action.button.title}</button>`)
+      $button.attr('title', action.button.description)
+      $button.button()
+      $button.click(function(event) {
+          action.action(event, $result)
+        });
+      $(element).append($button)
+      $(element).append('<br>').append('<br>')
+    })
+    $(element).append($result)
+  }
+}

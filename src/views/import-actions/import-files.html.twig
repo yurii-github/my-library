@@ -1,0 +1,58 @@
+<script>
+  MyLibrary.import.addAction({
+    title: 'import new book files (possible duplicates)',
+    description: 'Import unmatched files into database. Filenames are stored into title and filename columns. Use \'Check Files\' before to see what will be imported'
+  }, function (e, $result) {
+    // get fs files only filenames
+    $.get('api/config/import-files', function (data) {
+      let records_total = data.length
+      let records_done = 0
+      
+      if (records_total === 0) {
+        $result.setMsg('Nothing to do.', 'Import FS', true)
+        return
+      }
+
+      $result.empty()
+      $result.append('<br/><br/><progress/><br/><br/><span id="counter"></span><span id="message"></span>')
+      var bar = $('progress', $result)
+      var span_counter = $('span#counter', $result)
+      var span_message = $('span#message', $result)
+      bar.css('width', $result.css('width'))
+      var width = parseInt(bar.css('width'))
+      bar.attr('max', records_total)
+      bar.attr('value', records_done)
+      var stepping = 1 // items on 1 request
+      span_counter.text(records_done + '/' + records_total)
+
+      var batcher = function (stepping) {
+        var post = data.slice(records_done, records_done + stepping)
+        if (post.length <= 0) {
+          span_message.text(' Action was successful')
+          return
+        }
+        $.post('api/config/import-files',
+          {post: post}, function (response) {
+            //console.log(response);
+            if (response.result) { //continue adding
+              records_done += post.length
+              bar.attr('value', records_done)
+              span_counter.text(records_done + '/' + records_total)
+              span_message.text('')
+              for (var i = 0; i < response.data.length; i++) {
+                span_message.append('<p>' + response.data[i] + '</p>')
+              }
+              batcher(stepping)
+            } else {
+              //error or success
+              span_message.text('<p>' + response.error + '</p>')
+              return
+            }
+          }, 'json')
+      }
+
+      batcher(stepping)
+    }, 'json')
+  })
+
+</script>

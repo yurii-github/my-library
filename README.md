@@ -23,7 +23,6 @@ It supports all JQuery UI themes.
 - MySQL and SQLite support
 - synchronization with filesystem (renames, deletes)
 - migrations
-- compact: optimizes DB via run vacuum for SQLite or table optimization for MySQL
 - configuration is done via web interface
 
 
@@ -58,7 +57,6 @@ Here's the list of most interesting places:
 │   ├── assets      -  -  -  -  -  -  -  - our assets
 ├── └── index.php   -  -  -  -  -  -  -  - entry point of the application  
 └── serve           -  -  -  -  -  -  -  - run webapp locally
-├── .env            -  -  -  -  -  -  -  - environment variables, used for dev mode only (optional)
 ------
 </pre>
 

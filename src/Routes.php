@@ -30,6 +30,7 @@ class Routes
         $app->get('/', Actions\IndexPageAction::class);
         $app->get('/about', Actions\AboutPageAction::class);
         $app->get('/config', Actions\ConfigPageAction::class);
+        $app->get('/import', Actions\ImportPageAction::class);
         $app->group('/api', function (RouteCollectorProxyInterface $group) {
             $group->group('/book', function (RouteCollectorProxyInterface $group) {
                 $group->get('', Actions\Api\Book\ListAction::class);

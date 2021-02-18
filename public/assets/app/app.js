@@ -1,18 +1,17 @@
-
 // JQuery fix for empty body on JSON response
 $.ajaxSetup({
   converters: {
-    'text json' : function(response) {
-      return (response === '') ? null : JSON.parse(response);
-    },
-  },
-});
+    'text json': function (response) {
+      return (response === '') ? null : JSON.parse(response)
+    }
+  }
+})
 
 
 $.fn.extend({
   setMsg: function (message, field, result = true) {
     this.html('')
-    
+
     if (message === '') {
       return
     }
@@ -30,8 +29,8 @@ $.fn.extend({
 
 
 let MyLibrary = {}
-MyLibrary.showApiFail = function(title, $result) {
-  return  function(response) {
+MyLibrary.showApiFail = function (title, $result) {
+  return function (response) {
     if (response.status === 500) {
       let exception = response.responseJSON[0]
       $result.setMsg(exception.message, title, false)
@@ -45,20 +44,19 @@ MyLibrary.withTooltips = function () {
 }
 MyLibrary.import = {
   actions: [],
-  addAction: function(button, action) {
+  addAction: function (button, action) {
     this.actions.push({button: button, action: action})
   },
-  render: function(element) {
+  render: function (element) {
     let $result = $('<div>')
-    this.actions.forEach(function(action) {
-      let $button = $(`<button>${action.button.title}</button>`)
-      $button.attr('title', action.button.description)
-      $button.button()
-      $button.click(function(event) {
-          action.action(event, $result, action.button)
-        });
-      $(element).append($button)
-      $(element).append('<br>').append('<br>')
+    this.actions.forEach(function (action) {
+      let $actionFieldset = $('<fieldset>')
+      $actionFieldset.append($('<legend>').html(`&nbsp;${action.button.title}&nbsp;`))
+      $actionFieldset.append(action.button.description)
+      $actionFieldset.click(function (event) {
+        action.action(event, $result, action.button)
+      })
+      $(element).append($actionFieldset)
     })
     $(element).append($result)
   }

@@ -1,7 +1,7 @@
 <script>
   MyLibrary.import.addAction({
-    title: 'Remove Books Without File',
-    description: '[UNSAFE] Remove books from database that don\'t have book file. Use \'Check Files\' before to see what will be removed.'
+    title: '{{ t.get('Delete Books Without File') }}',
+    description: '[UNSAFE] Delete books from database that don\'t have book file. Use \'Check Files\' before to see what will be removed.'
   }, function (e, $result, button) {
     $.get('api/config/count-books-without-files', function (data) {
       let records_to_remove = parseInt(data)

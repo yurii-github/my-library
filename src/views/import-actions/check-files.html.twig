@@ -1,25 +1,36 @@
 <script>
   MyLibrary.import.addAction({
-    title: 'Check Book Files',
-    description: 'Find records in database that don\'t have corresponding book file.'
+    title: '{{ t.get('Check Books') }}',
+    description: '{{ t.get("Checks database consistency for missing book files and files that do not have corresponding database records.") }}'
   }, function (e, $result, button) {
     $.get('api/config/check-files', function (data) {
-        if (data.fs.length === 0 && data.db.length === 0) {
-          $result.setMsg('Great news! Your library is synced already. Keep it up.', button.title, true)
-          return
+        let $details = $('<div>')
+        $details.append('<br>')
+        $details.append('<p><b>{{ t.get('Files without book record') }}</b></p>')
+        if (data.fs.length) {
+          $list = $('<ul>')
+          for (let i = 0; i < data.fs.length; i++) {
+            $list.append($('<li>').text(data.fs[i]))
+          }
+          $details.append($list)
+        } else {
+          $details.append('<p>-</p>')
         }
+        $details.append('<br>')
 
-        $result.append('<br /><p><b>FileSystem only records (files)</b></p>' + '<ul>')
-        for (let i = 0; i < data.fs.length; i++) {
-          $result.append('<li>' + data.fs[i] + '</li>')
+        $details.append('<p><b>{{ t.get('Book records without a file') }}</b></p>')
+        if (data.db.length) {
+          $list = $('<ul>')
+          for (let i = 0; i < data.db.length; i++) {
+            $list.append($('<li>').text(data.db[i]))
+          }
+          $details.append($list)
+        } else {
+          $details.append('<p>-</p>')
         }
-        $result.append('</ul><br />')
+        $details.append('<br>')
 
-        $result.append('<p><b>DB only records</b></p>' + '<ul>')
-        for (let i = 0; i < data.db.length; i++) {
-          $result.append('<li>' + data.db[i] + '</li>')
-        }
-        $result.append('</ul><br />')
+        $result.setMsg($details.prop('outerHTML'), button.title, true)
       },
       'json')
       .fail(MyLibrary.showApiFail(button.title, $result))

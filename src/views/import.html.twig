@@ -7,10 +7,12 @@
             margin: auto;
             text-align: left;
         }
+
         form.import-actions fieldset {
             margin-bottom: 10px;
             padding: 20px;
         }
+
         form.import-actions fieldset:hover {
             background-color: rgba(218, 223, 225, 0.5);
             cursor: pointer;
@@ -18,8 +20,10 @@
     </style>
 
     <form id="import-actions" class="import-actions"></form>
-    {{ include('import-actions/import-new-cover-from-pdf.html.twig') }}
     {{ include('import-actions/check-files.html.twig') }}
+    {% if config.book.ghostscript is not empty %}
+        {{ include('import-actions/import-new-cover-from-pdf.html.twig') }}
+    {% endif %}
     {{ include('import-actions/import-files.html.twig') }}
     {{ include('import-actions/clear-books-without-files.html.twig') }}
 

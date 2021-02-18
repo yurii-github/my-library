@@ -51,5 +51,16 @@
   "Import": "Імпорт",
   "doing...": "виконую...",
   "Used Sources &amp; Projects": "Використані Джерела та Проекти",
-  "is a software to manage your book library.": "- це програмне забезпечення, що дозволяє керувати вашою бібліотекою книжок."
+  "is a software to manage your book library.": "- це програмне забезпечення, що дозволяє керувати вашою бібліотекою книжок.",
+
+  "Check Books": "Перевірити книги",
+  "Checks database consistency for missing book files and files that do not have corresponding database records.": "Перевіряє базу данних на відсутність книг без файлів та файлів без записів в базі данних.",
+  "Files without book record": "Файли без книжкового запису",
+  "Book records without a file": "Книжкові записи без книги",
+  "Delete Books Without File": "Видалити книги без файла",
+  "Import Books": "Імпортувати книги",
+  "Import Covers": "Імпортувати обкладинки",
+  "Import new covers for books from its files. Existing cover will not be updated.": "Імпортує нові обкладинки для книжок із файлів. Існуючі обкладинки не будуть замінені."
+  
+  
 }

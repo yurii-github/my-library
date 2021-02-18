@@ -1,7 +1,7 @@
 <script>
   MyLibrary.import.addAction({
-    title: 'Import Book Covers',
-    description: 'Import new cover for book from its file. Existing cover will not be updated. Currently it supports only PDF files.'
+    title: '{{ t.get('Import Covers') }}',
+    description: '{{ t.get('Import new covers for books from its files. Existing cover will not be updated.') }}'
   }, function (e, $result, button) {
     $.get('api/config/books-without-cover', function (data) {
       var records_total = data.length
@@ -55,8 +55,4 @@
     }, 'json')
       .fail(MyLibrary.showApiFail(button.title, $result))
   })
-
-  // if ($('#book_ghostscript').val() === '') {
-  //   $('#sync-import-new-cover-from-pdf').button("option", "disabled", true)
-  // }
 </script>

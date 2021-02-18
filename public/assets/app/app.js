@@ -11,6 +11,8 @@ $.ajaxSetup({
 
 $.fn.extend({
   setMsg: function (message, field, result = true) {
+    this.html('')
+    
     if (message === '') {
       return
     }

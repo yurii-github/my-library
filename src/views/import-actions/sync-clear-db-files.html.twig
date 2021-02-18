@@ -5,12 +5,11 @@
   }, function (e, $result) {
     // get number of unmatched records for progress bar
     $.get('api/config/count-books-without-files', function (data) {
-      $result.empty()
       let records_to_remove = parseInt(data)
       let records_removed = 0
 
       if (records_to_remove === 0) {
-        $result.html('<p>nothing to clear from database</p>')
+        $result.setMsg('Nothing to clear from database', 'Clear unmatched files', true)
         return
       }
 

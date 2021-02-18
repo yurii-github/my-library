@@ -5,14 +5,15 @@
   }, function (e, $result) {
     // get fs files only filenames
     $.get('api/config/import-files', function (data) {
-      //console.table(data);
       let records_total = data.length
       let records_done = 0
-      $result.empty()
+      
       if (records_total === 0) {
         $result.setMsg('Nothing to do.', 'Import FS', true)
         return
       }
+
+      $result.empty()
       $result.append('<br/><br/><progress/><br/><br/><span id="counter"></span><span id="message"></span>')
       var bar = $('progress', $result)
       var span_counter = $('span#counter', $result)

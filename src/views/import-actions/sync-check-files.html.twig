@@ -4,8 +4,6 @@
     description: 'Find mismatched records in database and library directory'
   }, function (e, $result) {
     $.get('api/config/check-files', function (data) {
-        $result.empty()
-
         if (data.fs.length === 0 && data.db.length === 0) {
           $result.setMsg('Great news! Your library is synced already. Keep it up.', 'Check files', true)
           return

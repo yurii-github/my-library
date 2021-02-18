@@ -45,7 +45,7 @@ MyLibrary.import = {
       $button.attr('title', action.button.description)
       $button.button()
       $button.click(function(event) {
-          action.action(event, $result)
+          action.action(event, $result, action.button)
         });
       $(element).append($button)
       $(element).append('<br>').append('<br>')

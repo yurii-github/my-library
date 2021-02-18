@@ -1,14 +1,14 @@
 <script>
   MyLibrary.import.addAction({
-    title: 'Import new cover from pdf (safe)',
-    description: 'Import new cover for books from its pdf file'
-  }, function (e, $result) {
+    title: 'Import Book Covers',
+    description: 'Import new cover for book from its file. Existing cover will not be updated. Currently it supports only PDF files.'
+  }, function (e, $result, button) {
     $.get('api/config/books-without-cover', function (data) {
       var records_total = data.length
       var records_done = 0
       
       if (records_total === 0) {
-        $result.setMsg('Nothing to do.', 'Import Book Cover', true)
+        $result.setMsg('Nothing to do.', button.title, true)
         return
       }
 

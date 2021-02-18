@@ -1,15 +1,15 @@
 <script>
   MyLibrary.import.addAction({
-    title: 'import new book files (possible duplicates)',
-    description: 'Import unmatched files into database. Filenames are stored into title and filename columns. Use \'Check Files\' before to see what will be imported'
-  }, function (e, $result) {
+    title: 'Import New Books ',
+    description: '[POSSIBLE DUPLICATES] Import new book files into database as new books. Book\'s filename is stored into title and filename columns. Use \'Check Files\' before to see what will be imported.'
+  }, function (e, $result, button) {
     // get fs files only filenames
     $.get('api/config/import-files', function (data) {
       let records_total = data.length
       let records_done = 0
       
       if (records_total === 0) {
-        $result.setMsg('Nothing to do.', 'Import FS', true)
+        $result.setMsg('Nothing to do.', button.title, true)
         return
       }
 

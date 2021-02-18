@@ -2,19 +2,14 @@
 {% set title = t.get('Import') %}
 {% block content %}
 
-    <div style="width: 800px; margin: auto; text-align: left;">
-        {{ include('import/sync-import-new-cover-from-pdf.html.twig') }}
-        <br><br>
-        {{ include('import/sync-check-files.html.twig') }}
-        <br><br>
-        {{ include('import/sync-import-fs-files.html.twig') }}
-        <br><br>
-        {{ include('import/sync-clear-db-files.html.twig') }}
-        <br><br>
-        <div id="sync-check-files-result"></div>
-    </div>
-
+    <div id="import-actions" style="width: 800px; margin: auto; text-align: left;"></div>
+    {{ include('import/sync-import-new-cover-from-pdf.html.twig') }}
+    {{ include('import/sync-check-files.html.twig') }}
+    {{ include('import/sync-import-fs-files.html.twig') }}
+    {{ include('import/sync-clear-db-files.html.twig') }}
+    
     <script>
       MyLibrary.withTooltips()
+      MyLibrary.import.render('#import-actions')
     </script>
 {% endblock %}

@@ -1,13 +1,9 @@
-<span id="sync-import-new-cover-from-pdf" title="Import new cover for books from its pdf file">Import new cover from pdf (safe)</span>
 
 <script>
-  $("#sync-import-new-cover-from-pdf").button()
-
-  // if ($('#book_ghostscript').val() === '') {
-  //   $('#sync-import-new-cover-from-pdf').button("option", "disabled", true)
-  // }
-  
-  $('#sync-import-new-cover-from-pdf').click(function () {
+  MyLibrary.import.add({
+    title: 'Import new cover from pdf (safe)',
+    description: 'Import new cover for books from its pdf file'
+  }, function () {
     var res = $('#sync-check-files-result')
 
     $.get('api/config/books-without-cover', function (data) {
@@ -59,7 +55,11 @@
 
       batcher(stepping)
     }, 'json')
-
-
   })
+
+
+  // if ($('#book_ghostscript').val() === '') {
+  //   $('#sync-import-new-cover-from-pdf').button("option", "disabled", true)
+  // }
+
 </script>

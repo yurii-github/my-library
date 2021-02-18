@@ -1,10 +1,8 @@
-
-<span id="sync-clear-db-files" title="Removes records from databases that don't have matched real book files.">clear unmatched db files (unsafe!)</span>
-
 <script>
-  $("#sync-clear-db-files").button()
-  
-  $('#sync-clear-db-files').click(function () {
+  MyLibrary.import.add({
+    title: 'clear unmatched db files (unsafe!)',
+    description: 'Removes records from databases that don\'t have matched real book files.'
+  }, function () {
     let res = $('#sync-check-files-result')
 
     // get number of unmatched records for progress bar
@@ -29,7 +27,7 @@
       let stepping = Math.ceil(width / records_to_remove)
 
       let batcher = function (stepping) {
-        $.post('api/config/clear-books-without-files', { stepping: stepping }, function (data) {
+        $.post('api/config/clear-books-without-files', {stepping: stepping}, function (data) {
           if (data.length > 0 && bar.val() < bar.attr('max')) {
             bar.attr('value', bar.val() + data.length)
             records_removed += data.length
@@ -45,4 +43,5 @@
       batcher(stepping)
     }, 'json')
   })
+
 </script>

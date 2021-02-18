@@ -31,3 +31,22 @@ let MyLibrary = {}
 MyLibrary.withTooltips = function () {
   $(document).tooltip()
 }
+MyLibrary.import = {
+  actions: [],
+  add: function(button, action) {
+    this.actions.push({button: button, action: action})
+  },
+  render: function(element) {
+    this.actions.forEach(function(action) {
+      let $button = $(`<button>${action.button.title}</button>`)
+      $button.attr('title', action.button.description)
+      $button.button()
+      $button.click(function(event) {
+          action.action(event)
+        });
+      $(element).append($button)
+      $(element).append('<br>').append('<br>')
+    })
+    $(element).append('<div id="sync-check-files-result"></div>')
+  }
+}

@@ -1,10 +1,8 @@
-
-<span id="sync-import-fs-files" title="Import unmatched filenames to database. Filenames are stored into title and filename columns. Use Check Files to see what will be imported">import fs only (possible duplicates)</span>
-
 <script>
-  $("#sync-import-fs-files").button()
-
-  $('#sync-import-fs-files').click(function () {
+  MyLibrary.import.add({
+    title: 'import fs only (possible duplicates)',
+    description: 'Import unmatched filenames to database. Filenames are stored into title and filename columns. Use Check Files to see what will be imported'
+  }, function () {
     // get fs files only filenames
     $.get('api/config/import-files', function (data) {
       //console.table(data);
@@ -56,4 +54,5 @@
       batcher(stepping)
     }, 'json')
   })
+
 </script>

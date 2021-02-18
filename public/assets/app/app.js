@@ -33,7 +33,7 @@ MyLibrary.withTooltips = function () {
 }
 MyLibrary.import = {
   actions: [],
-  add: function(button, action) {
+  addAction: function(button, action) {
     this.actions.push({button: button, action: action})
   },
   render: function(element) {

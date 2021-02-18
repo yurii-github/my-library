@@ -28,18 +28,19 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class ClearBooksWithoutFilesAction extends AbstractApiAction
 {
-    
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $post = $request->getParsedBody();
         $stepping = Arr::get($post, 'stepping', 5);
 
-        $deletedBooks = Book::query()->select(['book_guid', 'filename'])->limit($stepping)->get()
+        //TODO: limit on DB level somehow
+        $deletedBooks = Book::query()->select(['book_guid', 'filename'])->get()
             ->filter(function (Book $book) {
                 return !$book->file->exists();
-            })->each(function (Book $book) {
+            })->take($stepping)->each(function (Book $book) {
                 $book->delete();
             })->modelKeys();
+        $deletedBooks = array_values($deletedBooks);
 
         return $this->asJSON($deletedBooks);
     }

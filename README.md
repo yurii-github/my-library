@@ -4,8 +4,11 @@ This is book library manager, written in PHP and based on Slim4 and JqueryUI.
 The main purpose of it is to manage own book library as excel table with ratings and other stuff like filename synchronizations of your books and more.  
 It supports all JQuery UI themes.  
 
-![library page](public/library.png)
+![library main](public/library_1.png)
 
+![library config](public/library_2.png)
+
+![library import ](public/library_3.png)  
 
 ## Functionality
 

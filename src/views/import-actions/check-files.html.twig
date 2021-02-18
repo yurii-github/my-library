@@ -1,11 +1,11 @@
 <script>
   MyLibrary.import.addAction({
-    title: 'check files (safe)',
-    description: 'Find mismatched records in database and library directory'
-  }, function (e, $result) {
+    title: 'Check Book Files',
+    description: 'Find records in database that don\'t have corresponding book file.'
+  }, function (e, $result, button) {
     $.get('api/config/check-files', function (data) {
         if (data.fs.length === 0 && data.db.length === 0) {
-          $result.setMsg('Great news! Your library is synced already. Keep it up.', 'Check files', true)
+          $result.setMsg('Great news! Your library is synced already. Keep it up.', button.title, true)
           return
         }
 

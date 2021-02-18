@@ -22,13 +22,7 @@
         }
     </style>
 
-    <div id="tabs" style="width: 800px; margin: auto; text-align: left;">
-        <ul>
-            <li><a href="config#tabs-1">{{ t.get('settings') }}</a><span style="display: inline-block;" class="status ui-icon ui-icon-wrench"></span></li>
-            <li><a href="config#tabs-3">{{ t.get('syncronization') }}</a><span style="display: inline-block;" class="status ui-icon ui-icon-refresh"></span></li>
-        </ul>
-
-        <div id="tabs-1">
+    <div style="width: 800px; margin: auto; text-align: left;">
             <form action="api/config" method="post" class="configuration-form">
 
                 <fieldset>
@@ -148,20 +142,6 @@
 
             </form>
             <div id="result-message"></div>
-        </div>
-
-        <div id="tabs-3">
-            <span id="sync-import-new-cover-from-pdf" title="Import new cover for books from its pdf file">Import new cover from pdf (safe)</span>
-            <br><br>
-            <span id="sync-check-files" title="Find mismatched records in database and library directory">check files (safe)</span>
-            <br><br>
-            <span id="sync-import-fs-files" title="Import unmatched filenames to database. Filenames are stored into title and filename columns. Use Check Files to see what will be imported">import fs only (possible duplicates)</span>
-            <br><br>
-            <span id="sync-clear-db-files" title="Removes records from databases that don't have matched real book files.">clear unmatched db files (unsafe!)</span>
-            <br><br>
-            <div id="sync-check-files-result"></div>
-        </div>
-
     </div>
 
     <script>
@@ -218,13 +198,6 @@
         $('#database_format_' + format).show()
       }
 
-
-      $("#sync-check-files, #sync-import-fs-files, #sync-clear-db-files, #sync-import-new-cover-from-pdf").button()
-
-      if ($('#book_ghostscript').val() === '') {
-        $('#sync-import-new-cover-from-pdf').button("option", "disabled", true)
-      }
-
       $.fn.extend({
         setMsg: function (message, field, result = true) {
           if (message === '') {
@@ -264,197 +237,5 @@
             }
           })
       }
-
-
-      //sync-clear-db-files
-      $('#sync-clear-db-files').click(function () {
-        let res = $('#sync-check-files-result')
-
-        // get number of unmatched records for progress bar
-        $.get('api/config/count-books-without-files', function (data) {
-          res.empty()
-          let records_to_remove = parseInt(data)
-          let records_removed = 0
-
-          if (records_to_remove === 0) {
-            res.html('<p>nothing to clear from database</p>')
-            return
-          }
-
-          res.append('<br/><br/><span></span><br/><br/><progress/>')
-          let bar = $('progress', res)
-          let span = $('span', res)
-          bar.css('width', res.css('width'))
-          let width = parseInt(bar.css('width'))
-          bar.attr('max', records_to_remove)
-          bar.attr('value', 0)
-          span.text(records_removed + '/' + records_to_remove)
-          let stepping = Math.ceil(width / records_to_remove)
-
-          let batcher = function (stepping) {
-            $.post('api/config/clear-books-without-files', { stepping: stepping }, function (data) {
-              if (data.length > 0 && bar.val() < bar.attr('max')) {
-                bar.attr('value', bar.val() + data.length)
-                records_removed += data.length
-                span.text(records_removed + '/' + records_to_remove)
-                batcher(stepping)
-              } else {
-                res.append('<br/><p><b>Database was cleared from unmatched records</b></p>' + '<ul>')
-              }
-              console.log(data)
-            }, 'json')
-          }
-
-          batcher(stepping)
-        }, 'json')
-      })
-
-
-      //---------------------
-      $('#sync-import-fs-files').click(function () {
-        // get fs files only filenames
-        $.get('api/config/import-files', function (data) {
-          //console.table(data);
-          var records_total = data.length
-          var records_done = 0
-          var res = $('#sync-check-files-result')
-          res.empty()
-          if (records_total === 0) {
-            res.setMsg('Nothing to do.', 'Import FS', true)
-            return
-          }
-          res.append('<br/><br/><progress/><br/><br/><span id="counter"></span><span id="message"></span>')
-          var bar = $('progress', res)
-          var span_counter = $('span#counter', res)
-          var span_message = $('span#message', res)
-          bar.css('width', res.css('width'))
-          var width = parseInt(bar.css('width'))
-          bar.attr('max', records_total)
-          bar.attr('value', records_done)
-          var stepping = 1 // items on 1 request
-          span_counter.text(records_done + '/' + records_total)
-
-          var batcher = function (stepping) {
-            var post = data.slice(records_done, records_done + stepping)
-            if (post.length <= 0) {
-              span_message.text(' Action was successful')
-              return
-            }
-            $.post('api/config/import-files',
-              {post: post}, function (response) {
-                //console.log(response);
-                if (response.result) { //continue adding
-                  records_done += post.length
-                  bar.attr('value', records_done)
-                  span_counter.text(records_done + '/' + records_total)
-                  span_message.text('')
-                  for (var i = 0; i < response.data.length; i++) {
-                    span_message.append('<p>' + response.data[i] + '</p>')
-                  }
-                  batcher(stepping)
-                } else {
-                  //error or success
-                  span_message.text('<p>' + response.error + '</p>')
-                  return
-                }
-              }, 'json')
-          }
-
-          batcher(stepping)
-        }, 'json')
-      })
-
-      $('#sync-import-new-cover-from-pdf').click(function () {
-        var res = $('#sync-check-files-result')
-
-        $.get('api/config/books-without-cover', function (data) {
-
-          var records_total = data.length
-          var records_done = 0
-          res.empty()
-          if (records_total === 0) {
-            res.setMsg('Nothing to do.', 'Import Book Cover', true)
-            return
-          }
-
-          res.append('<br/><br/><progress/><br/><br/><span id="counter"></span><span id="message"></span>')
-          var bar = $('progress', res)
-          var span_counter = $('span#counter', res)
-          var span_message = $('span#message', res)
-          bar.css('width', res.css('width'))
-          var width = parseInt(bar.css('width'))
-          bar.attr('max', records_total)
-          bar.attr('value', records_done)
-          var stepping = 1 // items on 1 request
-          span_counter.text(records_done + '/' + records_total)
-
-          var batcher = function (stepping) {
-            var post = data.slice(records_done, records_done + stepping)
-            if (post.length <= 0) {
-              span_message.text(' Action was successful')
-              return
-            }
-            $.post('api/config/import-new-cover-from-pdf',
-              {post: post}, function (response) {
-                //console.log(response);
-                if (response.result) { //continue adding
-                  records_done += post.length
-                  bar.attr('value', records_done)
-                  span_counter.text(records_done + '/' + records_total)
-                  span_message.html('')
-                  for (var i = 0; i < response.data.length; i++) {
-                    span_message.append('<p>' + response.data[i] + '</p>')
-                  }
-                  batcher(stepping)
-                } else {
-                  //error or success
-                  span_message.html('<p><pre>' + response.error + '</pre></p>')
-                  return
-                }
-              }, 'json')
-          }
-
-          batcher(stepping)
-        }, 'json')
-
-
-      })
-
-      $('#sync-check-files').click(function () {
-        var res = $('#sync-check-files-result')
-
-        $.get('api/config/check-files', function (data) {
-            res.empty()
-
-            if (data.fs.length === 0 && data.db.length === 0) {
-              res.setMsg('Great news! Your library is synced already. Keep it up.', 'Check files', true)
-              return
-            }
-
-            res.append('<br /><p><b>FileSystem only records (files)</b></p>' + '<ul>')
-            for (let i = 0; i < data.fs.length; i++) {
-              res.append('<li>' + data.fs[i] + '</li>')
-            }
-            res.append('</ul><br />')
-
-            res.append('<p><b>DB only records</b></p>' + '<ul>')
-            for (let i = 0; i < data.db.length; i++) {
-              res.append('<li>' + data.db[i] + '</li>')
-            }
-            res.append('</ul><br />')
-          },
-          'json')
-      })
-
-
-      $(function () {
-        $("#tabs").tabs({
-          beforeLoad: function (event, ui) {
-            ui.jqXHR.error(function () {
-              ui.panel.html("Couldn't load this tab. Please create a bug report")
-            })
-          }
-        })
-      })
     </script>
 {% endblock %}

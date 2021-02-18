@@ -29,9 +29,9 @@
 
       $("#sync-check-files, #sync-import-fs-files, #sync-clear-db-files, #sync-import-new-cover-from-pdf").button()
 
-      if ($('#book_ghostscript').val() === '') {
-        $('#sync-import-new-cover-from-pdf').button("option", "disabled", true)
-      }
+      // if ($('#book_ghostscript').val() === '') {
+      //   $('#sync-import-new-cover-from-pdf').button("option", "disabled", true)
+      // }
 
       $.fn.extend({
         setMsg: function (message, field, result = true) {

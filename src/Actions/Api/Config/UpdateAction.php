@@ -23,6 +23,7 @@ namespace App\Actions\Api\Config;
 use App\Actions\AbstractApiAction;
 use App\Configuration\Configuration;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -42,6 +43,19 @@ class UpdateAction extends AbstractApiAction
         $post = $request->getParsedBody();
         $field = Arr::get($post, 'field');
         $value = Arr::get($post, 'value');
+
+        // TODO: workaround, 1st step to better config update, do as validator later
+        if ($field === 'library_directory') {
+            if (!Str::endsWith($value, ['/','\\'])) {
+                throw new \InvalidArgumentException("Library directory must end with a slash!");
+            }
+            if (!is_dir($value)) {
+                throw new \InvalidArgumentException("Library directory must exist!");
+            }
+            if (!is_readable($value)) {
+                throw new \InvalidArgumentException("Library directory must be readable!");
+            }
+        }
 
         list($group, $attr) = explode('_', $field);
         $this->config->$group->$attr = $value;

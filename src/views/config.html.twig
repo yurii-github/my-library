@@ -202,14 +202,7 @@
             }
           },
           'json')
-          .fail(function (response) {
-            if (response.status === 500) {
-              let exception = response.responseJSON[0]
-              $('#result-message').setMsg(exception.message, field, false)
-            } else {
-              console.error('failed', response)
-            }
-          })
+          .fail(MyLibrary.showApiFail(field, $('#result-message')))
       }
     </script>
 {% endblock %}

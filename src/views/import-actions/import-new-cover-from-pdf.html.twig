@@ -6,7 +6,7 @@
     $.get('api/config/books-without-cover', function (data) {
       var records_total = data.length
       var records_done = 0
-      
+
       if (records_total === 0) {
         $result.setMsg('Nothing to do.', button.title, true)
         return
@@ -48,10 +48,12 @@
               return
             }
           }, 'json')
+          .fail(MyLibrary.showApiFail(button.title, $result))
       }
 
       batcher(stepping)
     }, 'json')
+      .fail(MyLibrary.showApiFail(button.title, $result))
   })
 
   // if ($('#book_ghostscript').val() === '') {

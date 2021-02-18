@@ -22,5 +22,6 @@
         $result.append('</ul><br />')
       },
       'json')
+      .fail(MyLibrary.showApiFail(button.title, $result))
   })
 </script>

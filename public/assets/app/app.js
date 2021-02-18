@@ -30,6 +30,16 @@ $.fn.extend({
 
 
 let MyLibrary = {}
+MyLibrary.showApiFail = function(title, $result) {
+  return  function(response) {
+    if (response.status === 500) {
+      let exception = response.responseJSON[0]
+      $result.setMsg(exception.message, title, false)
+    } else {
+      console.error('failed', response) // TODO: something better
+    }
+  }
+}
 MyLibrary.withTooltips = function () {
   $(document).tooltip()
 }

@@ -49,10 +49,12 @@
               return
             }
           }, 'json')
+          .fail(MyLibrary.showApiFail(button.title, $result))
       }
 
       batcher(stepping)
     }, 'json')
+      .fail(MyLibrary.showApiFail(button.title, $result))
   })
 
 </script>

@@ -74,5 +74,5 @@ If you have enabled synchronization application will sync changes to your filesy
 
 ## Importing new books
 
-To import books into the library you have to drop your books to library folder you've set in configuration and then on *Synchronization* tab press "import fs only". 
-It will import all file system books that are not in database yet.
+To import books into the library you have to drop your books to library folder you've set in configuration and then on *Import* tab press "Import Books". 
+It will import all books from file system that are not in database yet.

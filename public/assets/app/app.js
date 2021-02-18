@@ -1,6 +1,4 @@
 
-$(document).tooltip()
-
 // JQuery fix for empty body on JSON response
 $.ajaxSetup({
   converters: {
@@ -27,3 +25,9 @@ $.fn.extend({
       '</div>')
   }
 })
+
+
+let MyLibrary = {}
+MyLibrary.withTooltips = function () {
+  $(document).tooltip()
+}

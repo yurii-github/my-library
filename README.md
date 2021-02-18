@@ -23,7 +23,6 @@ It supports all JQuery UI themes.
 - MySQL and SQLite support
 - synchronization with filesystem (renames, deletes)
 - migrations
-- compact: optimizes DB via run vacuum for SQLite or table optimization for MySQL
 - configuration is done via web interface
 
 
@@ -58,7 +57,6 @@ Here's the list of most interesting places:
 │   ├── assets      -  -  -  -  -  -  -  - our assets
 ├── └── index.php   -  -  -  -  -  -  -  - entry point of the application  
 └── serve           -  -  -  -  -  -  -  - run webapp locally
-├── .env            -  -  -  -  -  -  -  - environment variables, used for dev mode only (optional)
 ------
 </pre>
 
@@ -76,5 +74,5 @@ If you have enabled synchronization application will sync changes to your filesy
 
 ## Importing new books
 
-To import books into the library you have to drop your books to library folder you've set in configuration and then on *Synchronization* tab press "import fs only". 
-It will import all file system books that are not in database yet.
+To import books into the library you have to drop your books to library folder you've set in configuration and then on *Import* tab press "Import Books". 
+It will import all books from file system that are not in database yet.

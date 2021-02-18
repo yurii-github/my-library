@@ -37,16 +37,17 @@ MyLibrary.import = {
     this.actions.push({button: button, action: action})
   },
   render: function(element) {
+    let $result = $('<div>')
     this.actions.forEach(function(action) {
       let $button = $(`<button>${action.button.title}</button>`)
       $button.attr('title', action.button.description)
       $button.button()
       $button.click(function(event) {
-          action.action(event)
+          action.action(event, $result)
         });
       $(element).append($button)
       $(element).append('<br>').append('<br>')
     })
-    $(element).append('<div id="sync-check-files-result"></div>')
+    $(element).append($result)
   }
 }

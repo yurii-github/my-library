@@ -2,24 +2,22 @@
   MyLibrary.import.add({
     title: 'clear unmatched db files (unsafe!)',
     description: 'Removes records from databases that don\'t have matched real book files.'
-  }, function () {
-    let res = $('#sync-check-files-result')
-
+  }, function (e, $result) {
     // get number of unmatched records for progress bar
     $.get('api/config/count-books-without-files', function (data) {
-      res.empty()
+      $result.empty()
       let records_to_remove = parseInt(data)
       let records_removed = 0
 
       if (records_to_remove === 0) {
-        res.html('<p>nothing to clear from database</p>')
+        $result.html('<p>nothing to clear from database</p>')
         return
       }
 
-      res.append('<br/><br/><span></span><br/><br/><progress/>')
-      let bar = $('progress', res)
-      let span = $('span', res)
-      bar.css('width', res.css('width'))
+      $result.append('<br/><br/><span></span><br/><br/><progress/>')
+      let bar = $('progress', $result)
+      let span = $('span', $result)
+      bar.css('width', $result.css('width'))
       let width = parseInt(bar.css('width'))
       bar.attr('max', records_to_remove)
       bar.attr('value', 0)
@@ -34,7 +32,7 @@
             span.text(records_removed + '/' + records_to_remove)
             batcher(stepping)
           } else {
-            res.append('<br/><p><b>Database was cleared from unmatched records</b></p>' + '<ul>')
+            $result.append('<br/><p><b>Database was cleared from unmatched records</b></p>' + '<ul>')
           }
           console.log(data)
         }, 'json')
@@ -43,5 +41,4 @@
       batcher(stepping)
     }, 'json')
   })
-
 </script>

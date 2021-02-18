@@ -2,23 +2,22 @@
   MyLibrary.import.add({
     title: 'import fs only (possible duplicates)',
     description: 'Import unmatched filenames to database. Filenames are stored into title and filename columns. Use Check Files to see what will be imported'
-  }, function () {
+  }, function (e, $result) {
     // get fs files only filenames
     $.get('api/config/import-files', function (data) {
       //console.table(data);
-      var records_total = data.length
-      var records_done = 0
-      var res = $('#sync-check-files-result')
-      res.empty()
+      let records_total = data.length
+      let records_done = 0
+      $result.empty()
       if (records_total === 0) {
-        res.setMsg('Nothing to do.', 'Import FS', true)
+        $result.setMsg('Nothing to do.', 'Import FS', true)
         return
       }
-      res.append('<br/><br/><progress/><br/><br/><span id="counter"></span><span id="message"></span>')
-      var bar = $('progress', res)
-      var span_counter = $('span#counter', res)
-      var span_message = $('span#message', res)
-      bar.css('width', res.css('width'))
+      $result.append('<br/><br/><progress/><br/><br/><span id="counter"></span><span id="message"></span>')
+      var bar = $('progress', $result)
+      var span_counter = $('span#counter', $result)
+      var span_message = $('span#message', $result)
+      bar.css('width', $result.css('width'))
       var width = parseInt(bar.css('width'))
       bar.attr('max', records_total)
       bar.attr('value', records_done)

@@ -1,0 +1,460 @@
+{% extends "_layout.html.twig" %}
+{% set title = t.get('Import') %}
+{% block content %}
+
+    <style type="text/css">
+        label.cfg {
+            width: 150px;
+            display: inline-block;
+        }
+
+        form.configuration-form input[type="text"] {
+            width: 550px;
+            display: inline-block;
+        }
+
+        form.configuration-form fieldset {
+            margin-bottom: 10px;
+        }
+
+        form.configuration-form fieldset legend, form.configuration-form fieldset label {
+            text-transform: capitalize;
+        }
+    </style>
+
+    <div id="tabs" style="width: 800px; margin: auto; text-align: left;">
+        <ul>
+            <li><a href="config#tabs-1">{{ t.get('settings') }}</a><span style="display: inline-block;" class="status ui-icon ui-icon-wrench"></span></li>
+            <li><a href="config#tabs-3">{{ t.get('syncronization') }}</a><span style="display: inline-block;" class="status ui-icon ui-icon-refresh"></span></li>
+        </ul>
+
+        <div id="tabs-1">
+            <form action="api/config" method="post" class="configuration-form">
+
+                <fieldset>
+                    <legend>&nbsp;{{ t.get('system') }}&nbsp;</legend>
+
+                    <label class="cfg" title="interface language"
+                           for="system_language">{{ t.get('language') }}</label>
+                    <select name="system_language" id="system_language">
+                        {% for v,txt in SUPPORTED_VALUES.system_language %}
+                            {% set selected = (config.system.language == v) ? 'selected="selected"' : '' %}
+                            <option {{ selected }} value="{{ v }}">{{ txt }}</option>
+                        {% endfor %}
+                    </select> (ICU support: <a href="http://site.icu-project.org/">v.{{ INTL_ICU_VERSION }}</a>)
+                    <br/><br/>
+
+                    <label class="cfg" title="library theme" for="system_theme">{{ t.get('theme') }}</label>
+                    <select name="system_theme" id="system_theme">
+                        {% for v in SUPPORTED_VALUES.system_theme %}
+                            {% set selected = config.system.theme == v ? 'selected="selected"' : '' %}
+                            <option {{ selected }} value="{{ v }}">{{ v }}</option>
+                        {% endfor %}
+                    </select>
+                    <br/><br/>
+
+                    <label class="cfg">{{ t.get('time zone') }}</label>
+                    <select name="system_timezone" id="system_timezone"
+                            title="PHP timezone used to show and store data">
+                        {% for v in timeZones %}
+                            {% set selected = (config.system.timezone == v ? 'selected="selected"' : '') %}
+                            <option {{ selected }} value="{{ v }}">{{ v }}</option>
+                        {% endfor %}
+                    </select>
+
+                </fieldset>
+
+
+                <fieldset>
+                    <legend>&nbsp;{{ t.get('library') }}&nbsp;</legend>
+
+                    <label class="cfg">{{ t.get('directory') }}</label>
+                    <input name="library_directory" id="library_directory" type="text"
+                           title="Location of your books. Must end with '\' or '/' "
+                           value="{{ config.library.directory }}"/>
+                    <br/><br/>
+
+                    <label class="cfg">{{ t.get('syncronization') }}</label>
+                    <div style="display: inline-block;" id="library_sync">
+                        <input type="radio" id="library_sync1" name="library_sync"
+                               value="1" {{ config.library.sync == true ? 'checked="checked"' : '' }} />
+                        <label for="library_sync1">{{ t.get('yes') }}</label>
+                        <input type="radio" id="library_sync2" name="library_sync"
+                               value="0" {{ config.library.sync == false ? 'checked="checked"' : '' }} />
+                        <label for="library_sync2">{{ t.get('no') }}</label>
+                    </div>
+                    <br/><br/>
+
+                </fieldset>
+
+
+                <fieldset>
+                    <legend>&nbsp;{{ t.get('database') }}&nbsp;</legend>
+
+                    <label class="cfg" for="database_format">{{ t.get('DB format') }}</label>
+                    <select id="database_format" name="database_format">
+                        {% for v, txt in SUPPORTED_DATABASES %}
+                            {% set selected = (config.database.format == v ? 'selected="selected"' : '') %}
+                            <option {{ selected }} value="{{ v }}">{{ txt }}</option>
+                        {% endfor %}
+                    </select>
+                    <br/><br/>
+
+                    <fieldset id="database_format_sqlite">
+                        <label class="cfg" for="database_filename">{{ t.get('file') }}</label>
+                        <input name="database_filename" id="database_filename" type="text"
+                               value="{{ config.database.filename }}"/>
+                    </fieldset>
+
+                    <fieldset id="database_format_mysql">
+                        <label class="cfg" for="database_dbname">{{ t.get('dbname') }}</label>
+                        <input name="database_dbname" id="database_dbname" type="text"
+                               value="{{ config.database.dbname }}"/>
+                        <label class="cfg" for="database_host">{{ t.get('host') }}</label>
+                        <input name="database_host" id="database_host" type="text" value="{{ config.database.host }}"/>
+                        <label class="cfg" for="database_login">{{ t.get('login') }}</label>
+                        <input name="database_login" id="database_login" type="text"
+                               value="{{ config.database.login }}"/>
+                        <label class="cfg" for="database_password">{{ t.get('password') }}</label>
+                        <input name="database_password" id="database_password" type="text"
+                               value="{{ config.database.password }}"/>
+                    </fieldset>
+                    <br/><br/>
+
+                </fieldset>
+
+                <fieldset>
+                    <legend>{{ t.get('book') }}</legend>
+
+                    <label class="cfg">{{ t.get('name format') }}</label>
+                    <input name="book_nameformat" id="book_nameformat" type="text" value="{{ config.book.nameformat }}"
+                           title="tags are limited to {year}, {title}, {publisher}, {author}, {isbn13}, {ext}"/>
+                    <br/><br/>
+                    <label class="cfg">{{ t.get('cover type') }}</label>
+                    <select name="book_covertype" id="book_covertype"
+                            title="All images will be saved as JPEG to database">
+                        <option>{{ config.book.covertype }}</option>
+                    </select>
+                    <br/><br/>
+                    <label class="cfg" for="book_covermaxwidth">{{ t.get('cover max width, px') }}</label>
+                    <input id="book_covermaxwidth" name="book_covermaxwidth" type="text"
+                           value="{{ config.book.covermaxwidth }}"/>
+                    <br/><br/>
+                    <label class="cfg">{{ t.get('GhostScript EXE') }}</label>
+                    <input id="book_ghostscript" name="book_ghostscript" type="text"
+                           value="{{ config.book.ghostscript }}"
+                           title="Provide to get option to extract book cover from PDF file"/>
+                </fieldset>
+
+            </form>
+            <div id="result-message"></div>
+        </div>
+
+        <div id="tabs-3">
+            <span id="sync-import-new-cover-from-pdf" title="Import new cover for books from its pdf file">Import new cover from pdf (safe)</span>
+            <br><br>
+            <span id="sync-check-files" title="Find mismatched records in database and library directory">check files (safe)</span>
+            <br><br>
+            <span id="sync-import-fs-files" title="Import unmatched filenames to database. Filenames are stored into title and filename columns. Use Check Files to see what will be imported">import fs only (possible duplicates)</span>
+            <br><br>
+            <span id="sync-clear-db-files" title="Removes records from databases that don't have matched real book files.">clear unmatched db files (unsafe!)</span>
+            <br><br>
+            <div id="sync-check-files-result"></div>
+        </div>
+
+    </div>
+
+    <script>
+      $(document).tooltip()
+
+      // JQuery fix for empty body on JSON response
+      $.ajaxSetup({
+        converters: {
+          'text json' : function(response) {
+            return (response === '') ? null : JSON.parse(response);
+          },
+        },
+      });
+      
+      // CONFIGURATION PARAMS
+      //
+      // radio buttons
+      //
+      //$("#system_email, #library_sync, #system_debug").buttonset()
+      $('input[name="system_email"], input[name="library_sync"], input[name="system_debug"]').on('click', function (e) {
+        saveParameter(this)
+      })
+      //
+      // text inputs
+      //
+      $("#system_emailto, #system_language, #system_theme, #system_timezone, #system_sessionpath, #library_directory, input[id^='database_'], input[id^='book_']")
+        .on('focusout', function (e) {
+
+          if ($(this).attr('id') === 'book_ghostscript') {
+            if ($(this).val() === '') {
+              // disable button instantly
+              $('#sync-import-new-cover-from-pdf').button("option", "disabled", true)
+            } else {
+              // enable button instantly
+              $('#sync-import-new-cover-from-pdf').button("option", "disabled", false)
+            }
+          }
+
+          saveParameter(this)
+        })
+
+      //
+      // db switch
+      //
+      $('#database_format').on('change', function (e) {
+        var format = $(this).val()
+        console.log('database_format change ' + $(this).val())
+        toggleDbForm(format)
+      })
+      toggleDbForm($('#database_format').val())
+
+      function toggleDbForm(format) {
+        $('[id^="database_format_"]').hide()
+        $('#database_format_' + format).show()
+      }
+
+
+      $("#sync-check-files, #sync-import-fs-files, #sync-clear-db-files, #sync-import-new-cover-from-pdf").button()
+
+      if ($('#book_ghostscript').val() === '') {
+        $('#sync-import-new-cover-from-pdf').button("option", "disabled", true)
+      }
+
+      $.fn.extend({
+        setMsg: function (message, field, result = true) {
+          if (message === '') {
+            return
+          }
+
+          let state = (result === true ? 'highlight' : 'error')
+          let icon = (result === true ? 'info' : 'alert')
+
+          this.html(
+            '<div class="ui-state-' + state + ' ui-corner-all" style="padding: 10px; margin-top: 20px; margin-bottom: 20px;">' +
+            '<p><span class="ui-icon ui-icon-' + icon + '" style="float: left; margin-right: .3em;"></span> ' +
+            '<b>' + field + '</b>&nbsp;&nbsp; ' + message + '</p>' +
+            '</div>')
+        }
+      })
+
+
+      function saveParameter(e) {
+        let action_url = $(e).closest("form").attr('action')
+        let field = $(e).attr('name')
+        let value = $(e).val()
+
+        $.post(action_url, {field: field, value: value}, function (response) {
+            $('#result-message').setMsg('Field was successfully updated', field)
+            if (field === 'system_theme' || field === 'system_language') {
+              location.reload()
+            }
+          },
+          'json')
+          .fail(function (response) {
+            if (response.status === 500) {
+              let exception = response.responseJSON[0]
+              $('#result-message').setMsg(exception.message, field, false)
+            } else {
+              console.error('failed', response)
+            }
+          })
+      }
+
+
+      //sync-clear-db-files
+      $('#sync-clear-db-files').click(function () {
+        let res = $('#sync-check-files-result')
+
+        // get number of unmatched records for progress bar
+        $.get('api/config/count-books-without-files', function (data) {
+          res.empty()
+          let records_to_remove = parseInt(data)
+          let records_removed = 0
+
+          if (records_to_remove === 0) {
+            res.html('<p>nothing to clear from database</p>')
+            return
+          }
+
+          res.append('<br/><br/><span></span><br/><br/><progress/>')
+          let bar = $('progress', res)
+          let span = $('span', res)
+          bar.css('width', res.css('width'))
+          let width = parseInt(bar.css('width'))
+          bar.attr('max', records_to_remove)
+          bar.attr('value', 0)
+          span.text(records_removed + '/' + records_to_remove)
+          let stepping = Math.ceil(width / records_to_remove)
+
+          let batcher = function (stepping) {
+            $.post('api/config/clear-books-without-files', { stepping: stepping }, function (data) {
+              if (data.length > 0 && bar.val() < bar.attr('max')) {
+                bar.attr('value', bar.val() + data.length)
+                records_removed += data.length
+                span.text(records_removed + '/' + records_to_remove)
+                batcher(stepping)
+              } else {
+                res.append('<br/><p><b>Database was cleared from unmatched records</b></p>' + '<ul>')
+              }
+              console.log(data)
+            }, 'json')
+          }
+
+          batcher(stepping)
+        }, 'json')
+      })
+
+
+      //---------------------
+      $('#sync-import-fs-files').click(function () {
+        // get fs files only filenames
+        $.get('api/config/import-files', function (data) {
+          //console.table(data);
+          var records_total = data.length
+          var records_done = 0
+          var res = $('#sync-check-files-result')
+          res.empty()
+          if (records_total === 0) {
+            res.setMsg('Nothing to do.', 'Import FS', true)
+            return
+          }
+          res.append('<br/><br/><progress/><br/><br/><span id="counter"></span><span id="message"></span>')
+          var bar = $('progress', res)
+          var span_counter = $('span#counter', res)
+          var span_message = $('span#message', res)
+          bar.css('width', res.css('width'))
+          var width = parseInt(bar.css('width'))
+          bar.attr('max', records_total)
+          bar.attr('value', records_done)
+          var stepping = 1 // items on 1 request
+          span_counter.text(records_done + '/' + records_total)
+
+          var batcher = function (stepping) {
+            var post = data.slice(records_done, records_done + stepping)
+            if (post.length <= 0) {
+              span_message.text(' Action was successful')
+              return
+            }
+            $.post('api/config/import-files',
+              {post: post}, function (response) {
+                //console.log(response);
+                if (response.result) { //continue adding
+                  records_done += post.length
+                  bar.attr('value', records_done)
+                  span_counter.text(records_done + '/' + records_total)
+                  span_message.text('')
+                  for (var i = 0; i < response.data.length; i++) {
+                    span_message.append('<p>' + response.data[i] + '</p>')
+                  }
+                  batcher(stepping)
+                } else {
+                  //error or success
+                  span_message.text('<p>' + response.error + '</p>')
+                  return
+                }
+              }, 'json')
+          }
+
+          batcher(stepping)
+        }, 'json')
+      })
+
+      $('#sync-import-new-cover-from-pdf').click(function () {
+        var res = $('#sync-check-files-result')
+
+        $.get('api/config/books-without-cover', function (data) {
+
+          var records_total = data.length
+          var records_done = 0
+          res.empty()
+          if (records_total === 0) {
+            res.setMsg('Nothing to do.', 'Import Book Cover', true)
+            return
+          }
+
+          res.append('<br/><br/><progress/><br/><br/><span id="counter"></span><span id="message"></span>')
+          var bar = $('progress', res)
+          var span_counter = $('span#counter', res)
+          var span_message = $('span#message', res)
+          bar.css('width', res.css('width'))
+          var width = parseInt(bar.css('width'))
+          bar.attr('max', records_total)
+          bar.attr('value', records_done)
+          var stepping = 1 // items on 1 request
+          span_counter.text(records_done + '/' + records_total)
+
+          var batcher = function (stepping) {
+            var post = data.slice(records_done, records_done + stepping)
+            if (post.length <= 0) {
+              span_message.text(' Action was successful')
+              return
+            }
+            $.post('api/config/import-new-cover-from-pdf',
+              {post: post}, function (response) {
+                //console.log(response);
+                if (response.result) { //continue adding
+                  records_done += post.length
+                  bar.attr('value', records_done)
+                  span_counter.text(records_done + '/' + records_total)
+                  span_message.html('')
+                  for (var i = 0; i < response.data.length; i++) {
+                    span_message.append('<p>' + response.data[i] + '</p>')
+                  }
+                  batcher(stepping)
+                } else {
+                  //error or success
+                  span_message.html('<p><pre>' + response.error + '</pre></p>')
+                  return
+                }
+              }, 'json')
+          }
+
+          batcher(stepping)
+        }, 'json')
+
+
+      })
+
+      $('#sync-check-files').click(function () {
+        var res = $('#sync-check-files-result')
+
+        $.get('api/config/check-files', function (data) {
+            res.empty()
+
+            if (data.fs.length === 0 && data.db.length === 0) {
+              res.setMsg('Great news! Your library is synced already. Keep it up.', 'Check files', true)
+              return
+            }
+
+            res.append('<br /><p><b>FileSystem only records (files)</b></p>' + '<ul>')
+            for (let i = 0; i < data.fs.length; i++) {
+              res.append('<li>' + data.fs[i] + '</li>')
+            }
+            res.append('</ul><br />')
+
+            res.append('<p><b>DB only records</b></p>' + '<ul>')
+            for (let i = 0; i < data.db.length; i++) {
+              res.append('<li>' + data.db[i] + '</li>')
+            }
+            res.append('</ul><br />')
+          },
+          'json')
+      })
+
+
+      $(function () {
+        $("#tabs").tabs({
+          beforeLoad: function (event, ui) {
+            ui.jqXHR.error(function () {
+              ui.panel.html("Couldn't load this tab. Please create a bug report")
+            })
+          }
+        })
+      })
+    </script>
+{% endblock %}

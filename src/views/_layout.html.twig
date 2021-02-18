@@ -25,6 +25,7 @@
         <div id="mylibrary-menu" class="no-selection">
             {% include '_menu_item.html.twig' with {'id': 'home', 'link': '/', 'title': t.get('Library'), 'path': path } only %}
             {% include '_menu_item.html.twig' with {'id': 'config', 'link': '/config', 'title': t.get('Configuration'), 'path': path } only %}
+            {% include '_menu_item.html.twig' with {'id': 'import', 'link': '/import', 'title': t.get('Import'), 'path': path } only %}
             {% include '_menu_item.html.twig' with {'id': 'about', 'link': '/about', 'title': t.get('About') ~ ' ' ~ APP_VERSION, 'path': path } only %}
         </div>
     </form>

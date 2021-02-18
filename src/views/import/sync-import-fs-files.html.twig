@@ -1,0 +1,59 @@
+
+<span id="sync-import-fs-files" title="Import unmatched filenames to database. Filenames are stored into title and filename columns. Use Check Files to see what will be imported">import fs only (possible duplicates)</span>
+
+<script>
+  $("#sync-import-fs-files").button()
+
+  $('#sync-import-fs-files').click(function () {
+    // get fs files only filenames
+    $.get('api/config/import-files', function (data) {
+      //console.table(data);
+      var records_total = data.length
+      var records_done = 0
+      var res = $('#sync-check-files-result')
+      res.empty()
+      if (records_total === 0) {
+        res.setMsg('Nothing to do.', 'Import FS', true)
+        return
+      }
+      res.append('<br/><br/><progress/><br/><br/><span id="counter"></span><span id="message"></span>')
+      var bar = $('progress', res)
+      var span_counter = $('span#counter', res)
+      var span_message = $('span#message', res)
+      bar.css('width', res.css('width'))
+      var width = parseInt(bar.css('width'))
+      bar.attr('max', records_total)
+      bar.attr('value', records_done)
+      var stepping = 1 // items on 1 request
+      span_counter.text(records_done + '/' + records_total)
+
+      var batcher = function (stepping) {
+        var post = data.slice(records_done, records_done + stepping)
+        if (post.length <= 0) {
+          span_message.text(' Action was successful')
+          return
+        }
+        $.post('api/config/import-files',
+          {post: post}, function (response) {
+            //console.log(response);
+            if (response.result) { //continue adding
+              records_done += post.length
+              bar.attr('value', records_done)
+              span_counter.text(records_done + '/' + records_total)
+              span_message.text('')
+              for (var i = 0; i < response.data.length; i++) {
+                span_message.append('<p>' + response.data[i] + '</p>')
+              }
+              batcher(stepping)
+            } else {
+              //error or success
+              span_message.text('<p>' + response.error + '</p>')
+              return
+            }
+          }, 'json')
+      }
+
+      batcher(stepping)
+    }, 'json')
+  })
+</script>

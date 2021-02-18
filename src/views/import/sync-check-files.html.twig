@@ -1,0 +1,32 @@
+
+<span id="sync-check-files" title="Find mismatched records in database and library directory">check files (safe)</span>
+
+<script>
+  $("#sync-check-files").button()
+
+  $('#sync-check-files').click(function () {
+    var res = $('#sync-check-files-result')
+
+    $.get('api/config/check-files', function (data) {
+        res.empty()
+
+        if (data.fs.length === 0 && data.db.length === 0) {
+          res.setMsg('Great news! Your library is synced already. Keep it up.', 'Check files', true)
+          return
+        }
+
+        res.append('<br /><p><b>FileSystem only records (files)</b></p>' + '<ul>')
+        for (let i = 0; i < data.fs.length; i++) {
+          res.append('<li>' + data.fs[i] + '</li>')
+        }
+        res.append('</ul><br />')
+
+        res.append('<p><b>DB only records</b></p>' + '<ul>')
+        for (let i = 0; i < data.db.length; i++) {
+          res.append('<li>' + data.db[i] + '</li>')
+        }
+        res.append('</ul><br />')
+      },
+      'json')
+  })
+</script>

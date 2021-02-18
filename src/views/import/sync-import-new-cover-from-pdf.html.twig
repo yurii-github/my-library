@@ -1,0 +1,65 @@
+<span id="sync-import-new-cover-from-pdf" title="Import new cover for books from its pdf file">Import new cover from pdf (safe)</span>
+
+<script>
+  $("#sync-import-new-cover-from-pdf").button()
+
+  // if ($('#book_ghostscript').val() === '') {
+  //   $('#sync-import-new-cover-from-pdf').button("option", "disabled", true)
+  // }
+  
+  $('#sync-import-new-cover-from-pdf').click(function () {
+    var res = $('#sync-check-files-result')
+
+    $.get('api/config/books-without-cover', function (data) {
+
+      var records_total = data.length
+      var records_done = 0
+      res.empty()
+      if (records_total === 0) {
+        res.setMsg('Nothing to do.', 'Import Book Cover', true)
+        return
+      }
+
+      res.append('<br/><br/><progress/><br/><br/><span id="counter"></span><span id="message"></span>')
+      var bar = $('progress', res)
+      var span_counter = $('span#counter', res)
+      var span_message = $('span#message', res)
+      bar.css('width', res.css('width'))
+      var width = parseInt(bar.css('width'))
+      bar.attr('max', records_total)
+      bar.attr('value', records_done)
+      var stepping = 1 // items on 1 request
+      span_counter.text(records_done + '/' + records_total)
+
+      var batcher = function (stepping) {
+        var post = data.slice(records_done, records_done + stepping)
+        if (post.length <= 0) {
+          span_message.text(' Action was successful')
+          return
+        }
+        $.post('api/config/import-new-cover-from-pdf',
+          {post: post}, function (response) {
+            //console.log(response);
+            if (response.result) { //continue adding
+              records_done += post.length
+              bar.attr('value', records_done)
+              span_counter.text(records_done + '/' + records_total)
+              span_message.html('')
+              for (var i = 0; i < response.data.length; i++) {
+                span_message.append('<p>' + response.data[i] + '</p>')
+              }
+              batcher(stepping)
+            } else {
+              //error or success
+              span_message.html('<p><pre>' + response.error + '</pre></p>')
+              return
+            }
+          }, 'json')
+      }
+
+      batcher(stepping)
+    }, 'json')
+
+
+  })
+</script>

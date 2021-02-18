@@ -1,7 +1,7 @@
 <script>
   MyLibrary.import.addAction({
     title: '{{ t.get('Import Books') }}',
-    description: '[POSSIBLE DUPLICATES] Import new book from files into database as new books. Book\'s filename is stored into title and filename columns. Use \'Check Files\' before to see what will be imported.'
+    description: '{{ t.get("Import new books from files into database. Use 'Check Books' before to see what will be imported.") }}'
   }, function (e, $result, button) {
     // get fs files only filenames
     $.get('api/config/import-files', function (data) {

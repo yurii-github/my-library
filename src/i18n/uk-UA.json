@@ -60,7 +60,8 @@
   "Delete Books Without File": "Видалити книги без файла",
   "Import Books": "Імпортувати книги",
   "Import Covers": "Імпортувати обкладинки",
-  "Import new covers for books from its files. Existing cover will not be updated.": "Імпортує нові обкладинки для книжок із файлів. Існуючі обкладинки не будуть замінені."
-  
-  
+  "Import new covers for books from its files. Existing cover will not be updated.": "Імпортує нові обкладинки для книжок із файлів. Існуючі обкладинки не будуть замінені.",
+  "Import new books from files into database. Use 'Check Books' before to see what will be imported.": "Імпортує нові книги з файлів в базу данних. Використовуйте 'Перевірити книги', щоб побачити що буде імпортовано.",
+  "Delete books from database that don't have a corresponding book file. Use 'Check Books' to see what will be removed.": "Видаляє книги із бази данних, які не мають відповідного книжкового файла. Використовуйте 'Перевірити книги', щоб побачити що буде видалено.",
+  "Nothing to delete from database.": "Немає чого видаляти із бази данних."
 }

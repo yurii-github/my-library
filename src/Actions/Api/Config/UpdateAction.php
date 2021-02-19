@@ -41,26 +41,29 @@ class UpdateAction extends AbstractApiAction
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $post = $request->getParsedBody();
+
+        // TODO: workaround, 1st step to better config update, do proper validation later
         $field = Arr::get($post, 'field');
         $value = Arr::get($post, 'value');
-
-        // TODO: workaround, 1st step to better config update, do as validator later
-        if ($field === 'library_directory') {
-            if (!Str::endsWith($value, ['/','\\'])) {
-                throw new \InvalidArgumentException("Library directory must end with a slash!");
-            }
-            if (!is_dir($value)) {
-                throw new \InvalidArgumentException("Library directory must exist!");
-            }
-            if (!is_readable($value)) {
-                throw new \InvalidArgumentException("Library directory must be readable!");
-            }
-        }
+        $this->validate($field, $value);
 
         list($group, $attr) = explode('_', $field);
         $this->config->$group->$attr = $value;
         $this->config->save();
-        
+
         return $this->asJSON();
+    }
+
+    protected function validate($field, $value)
+    {
+        if ($field === 'library_directory') {
+            if (!Str::endsWith($value, ['/', '\\'])) {
+                throw new \InvalidArgumentException("Library directory must end with a slash!");
+            } elseif (!is_dir($value)) {
+                throw new \InvalidArgumentException("Library directory must exist!");
+            } elseif (!is_readable($value)) {
+                throw new \InvalidArgumentException("Library directory must be readable!");
+            }
+        }
     }
 }

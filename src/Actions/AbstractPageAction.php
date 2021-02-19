@@ -46,7 +46,7 @@ abstract class AbstractPageAction
         $this->translator = $container->get(Translator::class);
     }
 
-    protected function asPage(ServerRequestInterface $request, string $view, array $data): Response
+    protected function asPage(ServerRequestInterface $request, string $view, array $data = []): Response
     {
         $body = $this->render($request, $view, $data);
         return new Response(200, ['Content-Type' => ['text/html']], $body);

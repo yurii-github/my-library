@@ -22,23 +22,11 @@ namespace App\Actions;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use \App\Models\Category;
-use \DateTimeZone;
 
 class ImportPageAction extends AbstractPageAction
 {
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        return $this->asPage($request, 'import.html.twig', [
-            'PHP_VERSION' => PHP_VERSION,
-            'SUPPORTED_VALUES' => $this->config::SUPPORTED_VALUES,
-            'SUPPORTED_DATABASES' => [
-                'sqlite' => 'SQLite',
-                'mysql' => 'MySQL'
-            ],
-            'INTL_ICU_VERSION' => INTL_ICU_VERSION,
-            'timeZones' => DateTimeZone::listIdentifiers(),
-            'categories' => Category::all(),
-        ]);
+        return $this->asPage($request, 'import.html.twig');
     }
 }

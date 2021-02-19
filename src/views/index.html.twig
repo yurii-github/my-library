@@ -88,15 +88,16 @@
             align: 'center',
             search: false,
             sortable: false,
-            formatter: function (cellvalue, options, rowObject) {
+            formatter: function (cellvalue, options, row) {
               let link = `api/book/cover/${options.rowId}?t=${Date.now()}`
-              return '<a class="book-cover-link" data-guid="' + options.rowId + '" data-fancybox-group="book-covers" href="' + link + '" title="' + rowObject[4] + ' : ' + rowObject[5] + '"' + '><img class="book-cover" src="' + link + '" /></a>'
+              let title = row.year ? `${row.year}: ${row.title}` : `${row.title}`
+              return `<a class="book-cover-link" data-guid="${row.book_guid}" data-fancybox-group="book-covers" href="${link}" title="${title}"><img alt="cover" class="book-cover" src="${link}"/></a>`
             }
           },
           {
             name: 'favorite', index: 'favorite', width: 80, search: false,
             editable: true,
-            formatter: function (cellvalue, options, rowObject) {
+            formatter: function (cellvalue, options, row) {
               return '<div class="book-favorite" data-write="false" data-guid="' + options.rowId + '" data-score="' + cellvalue + '" />'
             },
             unformat: function (cellvalue, options) {//BUG: cellvalue is empty!
@@ -347,7 +348,7 @@
           if (id && id !== lastSel) {
             if (typeof lastSel !== "undefined") {
               book_list.jqGrid('restoreRow', lastSel)
-              //$(".book-favorite").raty(ratyOptions); BUG: overhead!
+             // $(".book-favorite").raty(ratyOptions); //BUG: overhead!
             }
             lastSel = id
           }

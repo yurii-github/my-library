@@ -2,6 +2,7 @@
 
 namespace Tests\Functional\Api\Config;
 
+use Illuminate\Support\Str;
 use Tests\Functional\AbstractTestCase;
 
 class UpdateActionTest extends AbstractTestCase
@@ -25,6 +26,60 @@ class UpdateActionTest extends AbstractTestCase
         $this->assertStringNotContainsString('"language": "en-US",', file_get_contents($config->getConfigFile()));
     }
 
+    public function test_LibraryDirectory_MustEndWithSlash()
+    {
+        $config = $this->getLibraryConfig();
+        $this->assertStringEndsWith('/', $config->getLibrary()->directory);
+        $directoryWithoutSlash = Str::replaceLast('/', '', $config->getLibrary()->directory);
+        $this->assertStringEndsNotWith('/', $directoryWithoutSlash);
+
+        $request = $this->createJsonRequest('POST', '/api/config');
+        $request = $request->withParsedBody([
+            'field' => 'library_directory',
+            'value' => $directoryWithoutSlash
+        ]);
+        $response = $this->app->handle($request);
+
+        $this->assertSame(500, $response->getStatusCode());
+        $this->assertJsonError('Library directory must end with a slash!', 0, 'InvalidArgumentException', $response);
+    }
+
+    public function test_LibraryDirectory_DirectoryMustExist()
+    {
+        $config = $this->getLibraryConfig();
+        $this->assertDirectoryExists($config->getLibrary()->directory);
+        $invalidDirectory = $config->getLibrary()->directory . 'unknown-dir/';
+        $this->assertDirectoryDoesNotExist($invalidDirectory);
+
+        $request = $this->createJsonRequest('POST', '/api/config');
+        $request = $request->withParsedBody([
+            'field' => 'library_directory',
+            'value' => $invalidDirectory
+        ]);
+        $response = $this->app->handle($request);
+
+        $this->assertSame(500, $response->getStatusCode());
+        $this->assertJsonError('Library directory must exist!', 0, 'InvalidArgumentException', $response);
+    }
+
+    public function test_LibraryDirectory_DirectoryMustBeReadable()
+    {
+        $directory = $this->getLibraryConfig()->getLibrary()->directory;
+        $this->assertDirectoryExists($directory);
+        $this->assertDirectoryIsReadable($directory);
+        chmod($directory, 0000);
+        $this->assertDirectoryIsNotReadable($directory);
+
+        $request = $this->createJsonRequest('POST', '/api/config');
+        $request = $request->withParsedBody([
+            'field' => 'library_directory',
+            'value' => $directory
+        ]);
+        $response = $this->app->handle($request);
+
+        $this->assertSame(500, $response->getStatusCode());
+        $this->assertJsonError('Library directory must be readable!', 0, 'InvalidArgumentException', $response);
+    }
 
     public function testCannotSaveWithoutWriteAccess()
     {

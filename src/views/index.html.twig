@@ -18,7 +18,9 @@
       
       $.jgrid.no_legacy_api = true;
 
-      let book_list = $("#book-list"), lastSel, lastFavorite, lastRead, filterCategories
+      let $book_list = $("#book-list")
+      let lastSel, lastFavorite, lastRead, filterCategories
+      let $book_pager = $('#book-pager')
 
       function getCookie(n, v) {
         let val = Cookies.get(n)
@@ -29,8 +31,8 @@
       }
 
       window.onbeforeunload = function () {
-        Cookies.set('rowNum', book_list.jqGrid('getGridParam', 'rowNum'))
-        Cookies.set('page', book_list.jqGrid('getGridParam', 'page'))
+        Cookies.set('rowNum', $book_list.jqGrid('getGridParam', 'rowNum'))
+        Cookies.set('page', $book_list.jqGrid('getGridParam', 'page'))
       }
 
       let ratyOptions = {
@@ -51,7 +53,7 @@
         path: '3rd/raty-2.8.0/lib/images/'
       }
       
-      book_list.jqGrid({
+      $book_list.jqGrid({
         url: 'api/book',
         editurl: 'api/book/manage',
         datatype: "json",
@@ -187,16 +189,14 @@
         autowidth: true,
         height: '100%',
         rowList: [10, 20, 30, 40, 50],
-        pager: jQuery('#book-pager'),
+        pager: $book_pager,
         sortname: 'created_date',
         viewrecords: true,
         sortorder: "desc",
         sortable: true,
-        //support cell edit
         cellEdit: false,
         cellSubmit: 'remote',
         cellurl: 'api/book/manage', subGrid: true,
-        
         ajaxRowOptions: {
           beforeSend: function (jqXHR, settings) {
             jqXHR.setRequestHeader('Accept', "application/json")
@@ -255,7 +255,7 @@
         loadComplete: function () {
           // support category filters as checkboxes
           if (filterCategories == null) {
-            var $toolbar = $('#t_' + book_list.attr('id'))
+            var $toolbar = $('#t_' + $book_list.attr('id'))
             $widget = $('<div id="category_list" style="user-select: none;">')
             $widget.append($('<input id="category_ALL" type="checkbox" value="false" /> <label for="category_ALL">[ALL]</label>'))
 
@@ -293,7 +293,7 @@
 
               $("#category_list input").button('refresh')
 
-              book_list.jqGrid('setGridParam', {
+              $book_list.jqGrid('setGridParam', {
                 url: 'api/book?filterCategories=' + filterCategories,
                 page: 1
               }).trigger("reloadGrid")
@@ -329,12 +329,12 @@
           })
         },
         ondblClickRow: function (rowid, ri, ci) {
-          var row_obj = book_list.jqGrid('getInd', rowid, true) // row_obj is just piece of html - TR
+          var row_obj = $book_list.jqGrid('getInd', rowid, true) // row_obj is just piece of html - TR
           lastFavorite = $(row_obj).find('div.book-favorite').attr('data-score')
           lastRead = $(row_obj).find('div.book-read-yes').attr('class') !== undefined ? 'yes' : 'no'
 
           //.jqGrid('editRow', rowid, keys, oneditfunc, successfunc, url, extraparam, aftersavefunc,errorfunc, afterrestorefunc);
-          book_list.jqGrid('editRow', rowid, {
+          $book_list.jqGrid('editRow', rowid, {
             keys: true,
             aftersavefunc: function (id, response, options) {
               $('.book-favorite[data-guid=\"' + id + '\"]').raty(ratyOptions)//SOLUTION:http://stackoverflow.com/a/6246687/2032121
@@ -347,7 +347,7 @@
         onSelectRow: function (id) {
           if (id && id !== lastSel) {
             if (typeof lastSel !== "undefined") {
-              book_list.jqGrid('restoreRow', lastSel)
+              $book_list.jqGrid('restoreRow', lastSel)
              // $(".book-favorite").raty(ratyOptions); //BUG: overhead!
             }
             lastSel = id
@@ -406,7 +406,7 @@
                 r.readAsDataURL(file)
                 r.onload = function (e) {
                   $('.book-cover-holder > img').attr('src', e.target.result)
-                  $(book_list).jqGrid('setRowData', book_guid, {book_guid: book_guid});
+                  $($book_list).jqGrid('setRowData', book_guid, {book_guid: book_guid});
                 }
                 r.onprogress = function (e) {
                   if (e.lengthComputable) {

@@ -157,8 +157,8 @@
             resize: false,
             sortable: false,
             editable: false,
-            formatter: function (cellvalue, options, rowObject) {
-              return '<span title="click to copy filename to clipboard" class="book-filename ui-icon ui-icon-document" data-filename="{{ copy_book_dir() | raw }}' + cellvalue + '"></span>'
+            formatter: function (cellValue, options, rowObject) {
+              return '<span title="click to copy filename to clipboard" class="book-filename-clipboard ui-icon ui-icon-document" data-filename="{{ copy_book_dir() | raw }}' + cellValue + '"></span>'
             }
           },
           {
@@ -182,7 +182,6 @@
           editable: true,
           hidden: false
         },
-        caption: '',
         rowNum: parseInt(getCookie('rowNum', 10)),
         page: parseInt(getCookie('page', 1)),
         rownumbers: true,
@@ -194,9 +193,7 @@
         viewrecords: true,
         sortorder: "desc",
         sortable: true,
-        cellEdit: false,
-        cellSubmit: 'remote',
-        cellurl: 'api/book/manage', subGrid: true,
+        subGrid: true,
         ajaxRowOptions: {
           beforeSend: function (jqXHR, settings) {
             jqXHR.setRequestHeader('Accept', "application/json")
@@ -206,9 +203,8 @@
         serializeRowData: function (postData) {
           return JSON.stringify(postData);
         },
-        // TODO: better error message and unified
         errorTextFormat: function (response) {
-          return response.responseText;
+          return response.responseText; // TODO: better error message and unified
         },
         subGridRowExpanded: function (subgrid_id, row_id) {
           // If we want to pass additional parameters to the url we can use
@@ -301,11 +297,6 @@
             filterCategories = 0 // avoid another append
           }
 
-          $(".book-filename").on('click', function (e) {
-            let clipboardText =  `evince "${$(this).attr('data-filename')}"`
-            window.prompt("Copy to clipboard: Ctrl+C, Enter", clipboardText)
-          })
-
           $(".book-favorite").raty(ratyOptions) //rating init
 
           $(".book-cover-link").fancybox({
@@ -324,20 +315,21 @@
               var book_guid = $(this.element[0]).attr('data-guid') //1st element in visible group, we show 1 by 1
               coverUpload.init(book_guid)
             },
-            afterClose: function (e) {
-            }
+            afterClose: function (e) {}
           })
         },
         ondblClickRow: function (rowid, ri, ci) {
           var row_obj = $book_list.jqGrid('getInd', rowid, true) // row_obj is just piece of html - TR
           lastFavorite = $(row_obj).find('div.book-favorite').attr('data-score')
           lastRead = $(row_obj).find('div.book-read-yes').attr('class') !== undefined ? 'yes' : 'no'
-
-          //.jqGrid('editRow', rowid, keys, oneditfunc, successfunc, url, extraparam, aftersavefunc,errorfunc, afterrestorefunc);
+          // http://www.trirand.com/jqgridwiki/doku.php?id=wiki:inline_editing
+          // http://www.trirand.com/jqgridwiki/doku.php?id=wiki:methods
           $book_list.jqGrid('editRow', rowid, {
             keys: true,
             aftersavefunc: function (id, response, options) {
-              $('.book-favorite[data-guid=\"' + id + '\"]').raty(ratyOptions)//SOLUTION:http://stackoverflow.com/a/6246687/2032121
+              //SOLUTION:http://stackoverflow.com/a/6246687/2032121
+              $('.book-favorite[data-guid=\"' + id + '\"]').raty(ratyOptions)
+              $book_list.jqGrid('setCell', rowid, 'filename', response.responseJSON.filename)
             },
             afterrestorefunc: function (id, response, options) {
               $('.book-favorite[data-guid="' + id + '"]').raty(ratyOptions)
@@ -355,7 +347,6 @@
         }
       })
         .jqGrid('navGrid', '#book-pager', {
-          // navigation options
           edit: false,
           add: false,
           del: false,
@@ -366,6 +357,15 @@
           stringResult: true,
           searchOnEnter: false
         })
+      
+      //
+      // Helpers
+      //
+      // - shows modal to copy book filepath into clipboard
+      $('body').delegate('.book-filename-clipboard', 'click', function (e) {
+        let clipboardText =  `evince "${$(this).attr('data-filename')}"` // TODO: make configurable
+        window.prompt("Copy to clipboard: Ctrl+C, Enter", clipboardText)
+      })
     </script>
 
 

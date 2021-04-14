@@ -26,18 +26,29 @@ use Illuminate\Container\Container;
 class BookFile
 {
     protected string $filename;
+    protected string $extension;
     protected Configuration $config;
     
     
     public function __construct(string $filename)
     {
         $this->filename = $filename;
+        $this->extension = pathinfo($filename, PATHINFO_EXTENSION);
         $this->config = Container::getInstance()->get(Configuration::class);
+        
+        if ($this->extension === null) {
+            throw new \Exception("File '$filename' MUST contain extension!");
+        }
     }
     
     public function getFilename(): string
     {
         return $this->filename;
+    }
+    
+    public function getExtension(): string
+    {
+        return $this->extension;
     }
 
     public function getFilepath(): string
@@ -57,29 +68,6 @@ class BookFile
     public function exists(): bool
     {
         return file_exists($this->getFilepath());
-    }
-
-    public static function createForBook(Book $book): BookFile
-    {
-        $config = Container::getInstance()->get(Configuration::class);
-        $format = $config->book->nameformat;
-        $filename = str_replace(array(
-            '{year}',
-            '{title}',
-            '{publisher}',
-            '{author}',
-            '{isbn13}',
-            '{ext}'
-        ), array(
-            $book->year,
-            $book->title,
-            $book->publisher,
-            $book->author,
-            $book->isbn13,
-            $book->ext
-        ), $format);
-        
-        return new BookFile($filename);
     }
 }
    

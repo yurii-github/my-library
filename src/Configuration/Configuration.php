@@ -195,6 +195,10 @@ final class Configuration
 
         $this->config = json_decode(file_get_contents($filename), false);
         $this->populateNewProperties($this->config);
+        // BC: fix name format - ext is now included as we depend on it
+        if(str_ends_with($this->getBook()->nameformat, '.{ext}')) {
+            $this->getBook()->nameformat = substr($this->getBook()->nameformat, 0, -6);
+        }
     }
 
 

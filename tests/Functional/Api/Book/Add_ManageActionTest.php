@@ -60,7 +60,6 @@ class Add_ManageActionTest extends AbstractTestCase
             'isbn13' => null,
             'author' => null,
             'publisher' => null,
-            'ext' => null,
             'filename' => ", ''title book #1'',  []."
         ]);
         $this->assertTrue(

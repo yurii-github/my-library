@@ -21,7 +21,7 @@
     "book": {
         "covermaxwidth": 800,
         "covertype": "image\/jpeg",
-        "nameformat": "{year}, ''{title}'', {publisher} [{isbn13}].{ext}",
+        "nameformat": "{year}, ''{title}'', {publisher} [{isbn13}]",
         "ghostscript": ""
     }
 }

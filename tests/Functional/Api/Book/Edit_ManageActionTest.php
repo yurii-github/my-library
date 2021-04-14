@@ -160,7 +160,7 @@ class Edit_ManageActionTest extends AbstractTestCase
         ]);
         $book->refresh();
         $this->assertSame(
-            '{"book_guid":"'.$book->book_guid.'","title":"'.$book->title.'","created_date":"'.$book->created_date->toIso8601ZuluString('microsecond').'","updated_date":"'.$book->updated_date->toIso8601ZuluString('microsecond').'","favorite":0,"read":"no","year":null,"isbn13":null,"author":null,"publisher":null,"ext":null,"filename":", \'\'new title X\'\',  []."}',
+            '{"book_guid":"'.$book->book_guid.'","title":"'.$book->title.'","created_date":"'.$book->created_date->toIso8601ZuluString('microsecond').'","updated_date":"'.$book->updated_date->toIso8601ZuluString('microsecond').'","favorite":0,"read":"no","year":null,"isbn13":null,"author":null,"publisher":null,"filename":", \'\'new title X\'\',  []."}',
             (string)$response->getBody()
         );
 
@@ -189,7 +189,7 @@ class Edit_ManageActionTest extends AbstractTestCase
 
         $content = (string)$response->getBody();
         $this->assertSame(200, $response->getStatusCode());
-        $this->assertJson('{"book_guid":"68778F27-CF74-4113-99ED-BE481C96C678","title":"title book #1","created_date":"2021-02-03T13:58:20.000000Z","updated_date":"2021-02-03T13:58:20.000000Z","favorite":0,"read":"no","year":null,"isbn13":null,"author":null,"publisher":null,"ext":null,"filename":"filename-1"}',
+        $this->assertJson('{"book_guid":"68778F27-CF74-4113-99ED-BE481C96C678","title":"title book #1","created_date":"2021-02-03T13:58:20.000000Z","updated_date":"2021-02-03T13:58:20.000000Z","favorite":0,"read":"no","year":null,"isbn13":null,"author":null,"publisher":null,"filename":"filename-1"}',
             $content);
 
         $this->assertDatabaseHas('books', [

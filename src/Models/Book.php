@@ -43,7 +43,6 @@ use Ramsey\Uuid\Uuid;
  * @property string $isbn13
  * @property string $author
  * @property string $publisher
- * @property string $ext
  *
  * @property-read Collection|Category[] $categories
  * @property BookFile $file
@@ -68,15 +67,17 @@ class Book extends Model
         'isbn13',
         'author',
         'publisher',
-        'ext',
     ];
     protected $casts = [
         'favorite' => 'float'
     ];
 
-    protected ?BookFile $attrFile;
+    protected ?BookFile $attrFile = null; // set 'null' is a fix for ORM
 
 
+    /**
+     * @inheritDoc
+     */
     protected static function boot()
     {
         parent::boot();
@@ -94,7 +95,7 @@ class Book extends Model
             $book->book_guid = strtoupper(Uuid::uuid4());
             $book->favorite = $book->favorite == null ? 0 : $book->favorite;
             if (!$book->file) {
-                $book->file = BookFile::createForBook($book);
+                self::changeFileFormat($book, $config->book->nameformat);
             }
             if ($config->library->sync) {
                 if (!$book->file->exists()) {
@@ -109,7 +110,7 @@ class Book extends Model
         static::updating(function (self $book) use ($config) {
             if (self::filenameAttrsChanged($book)) {
                 $oldFilename = $book->getOriginal('filename');
-                $book->file = BookFile::createForBook($book);
+                self::changeFileFormat($book, $config->book->nameformat);
                 // sync with filesystem is enabled. update filename and rename physical file
                 if ($config->library->sync) {
                     $filepathOld = $config->getFilepath($oldFilename);
@@ -168,10 +169,6 @@ class Book extends Model
 
     public function getFileAttribute(): ?BookFile
     {
-        if (!isset($this->attrFile)) { // fix for ORM
-            $this->attrFile = null;
-        }
-
         if (!$this->attrFile && $filename = $this->getAttribute('filename')) {
             $this->attrFile = new BookFile($this->getAttribute('filename'));
         }
@@ -179,4 +176,25 @@ class Book extends Model
         return $this->attrFile;
     }
 
+
+    protected static function changeFileFormat(Book $book, $format): void
+    {
+        $oldFilename = $book->getAttribute('filename');
+        $newFilename = str_replace(array(
+            '{year}',
+            '{title}',
+            '{publisher}',
+            '{author}',
+            '{isbn13}',
+        ), array(
+            $book->year,
+            $book->title,
+            $book->publisher,
+            $book->author,
+            $book->isbn13,
+        ), $format);
+        $newFilename .= '.' . ($oldFilename ? (new BookFile($oldFilename))->getExtension() : '');
+
+        $book->file = new BookFile($newFilename);
+    }
 }

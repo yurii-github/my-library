@@ -33,7 +33,7 @@ class ListAction extends AbstractApiAction
     {
         $params = $request->getQueryParams();
         $filterCategories = $params['filterCategories'] ?? null;
-        $columns = ['created_date', 'book_guid', 'favorite', 'read', 'year', 'title', 'isbn13', 'author', 'publisher', 'ext', 'filename'];
+        $columns = ['created_date', 'book_guid', 'favorite', 'read', 'year', 'title', 'isbn13', 'author', 'publisher', 'filename'];
         $query = Book::query()->select($columns);
 
         if (!empty($filterCategories)) {

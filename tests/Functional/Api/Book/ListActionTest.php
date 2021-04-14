@@ -141,7 +141,6 @@ class ListActionTest extends AbstractTestCase
             'isbn13' => $bookWithCategory->isbn13,
             'author' => $bookWithCategory->author,
             'publisher' => $bookWithCategory->publisher,
-            'ext' => $bookWithCategory->ext,
             'filename' => $bookWithCategory->file->getFilename(),
         ], $data['rows'][0]['cell']);
     }

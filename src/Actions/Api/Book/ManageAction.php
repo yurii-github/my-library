@@ -74,7 +74,6 @@ class ManageAction extends AbstractApiAction
             'isbn13' => ['sometimes', 'sometimes'],
             'author' => ['sometimes', 'string'],
             'publisher' => ['sometimes', 'string'],
-            'ext' => ['sometimes'],
             'id' => ['required', 'exists:books,book_guid']
         ]);
 
@@ -111,7 +110,6 @@ class ManageAction extends AbstractApiAction
             'isbn13' => ['sometimes'],
             'author' => ['sometimes'],
             'publisher' => ['sometimes'],
-            'ext' => ['sometimes'],
         ]);
 
         $book = new Book();

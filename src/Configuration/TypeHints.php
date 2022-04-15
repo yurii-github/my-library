@@ -11,6 +11,8 @@ namespace App\Configuration {
         public $language;
         /** @var string */
         public $version;
+        /** @var string */
+        public $pdftool;
     }
 
     class Library

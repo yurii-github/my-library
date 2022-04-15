@@ -55,7 +55,16 @@
                         <option {{ selected }} value="{{ v }}">{{ v }}</option>
                     {% endfor %}
                 </select>
+                <br/><br/>
 
+                <label class="cfg">{{ t.get('PDF Tool') }}</label>
+                <select name="system_pdftool" id="system_pdftool"
+                        title="PDF tool to open PDF files">
+                    {% for v in SUPPORTED_VALUES.system_pdftools %}
+                        {% set selected = (config.system.pdftool == v ? 'selected="selected"' : '') %}
+                        <option {{ selected }} value="{{ v }}">{{ v }}</option>
+                    {% endfor %}
+                </select>
             </fieldset>
 
 
@@ -143,12 +152,12 @@
         </form>
         <div id="result-message"></div>
     </div>
-    
+
     <script>
       MyLibrary.withTooltips()
     </script>
     <script>
-      
+
       //
       // radio buttons
       //
@@ -159,7 +168,7 @@
       //
       // text inputs
       //
-      $("#system_emailto, #system_language, #system_theme, #system_timezone, #system_sessionpath, #library_directory, input[id^='database_'], input[id^='book_']")
+      $("#system_emailto, #system_language, #system_theme, #system_timezone, #system_pdftool, #system_sessionpath, #library_directory, input[id^='database_'], input[id^='book_']")
         .on('focusout', function (e) {
 
           if ($(this).attr('id') === 'book_ghostscript') {

@@ -72,8 +72,11 @@ final class Configuration
         ],
         'system_timezone' => [
             // based on system support of DateTimeZone::listIdentifiers()
-        ]
-
+        ],
+        'system_pdftools' => [
+            'evince',
+            'atril',
+        ],
     ];
 
     protected string $version;

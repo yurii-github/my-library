@@ -5,7 +5,7 @@
     <div id="book-pager"></div>
 
     <script type="text/javascript">
-      
+
       //INSPIRATION: http://stackoverflow.com/a/4842450/2032121
       //SOLUTION: http://stackoverflow.com/a/4073967/2032121
       //SOLUTION: http://www.trirand.com/blog/?page_id=393/help/to-get-the-rowid-of-the-nth-row-of-the-grid/
@@ -15,7 +15,7 @@
       //https://github.com/fancyapps/fancyBox/issues/40
       //JSON instead of FORM
       //https://stackoverflow.com/a/34654952
-      
+
       $.jgrid.no_legacy_api = true;
 
       let $book_list = $("#book-list")
@@ -52,7 +52,7 @@
         half: true,
         path: '3rd/raty-2.8.0/lib/images/'
       }
-      
+
       $book_list.jqGrid({
         url: 'api/book',
         editurl: 'api/book/manage',
@@ -211,7 +211,7 @@
           const jq_subgrid_table_id = '#' + subgrid_table_id
           const pager_id = "p_" + subgrid_table_id
           const jq_subgrid_id = '#' + subgrid_id
-          
+
           $(jq_subgrid_id).html("<table id='" + subgrid_table_id + "' class='scroll'></table><div id='" + pager_id + "' class='scroll'></div>")
           jQuery(jq_subgrid_table_id).jqGrid({
             caption: 'Categories',
@@ -355,13 +355,13 @@
           stringResult: true,
           searchOnEnter: false
         })
-      
+
       //
       // Helpers
       //
       // - shows modal to copy book filepath into clipboard
       $('body').delegate('.book-filename-clipboard', 'click', function (e) {
-        let clipboardText =  `evince "${$(this).attr('data-filename')}"` // TODO: make configurable
+        let clipboardText =  `{{ config.system.pdftool }} "${$(this).attr('data-filename')}"`
         window.prompt("Copy to clipboard: Ctrl+C, Enter", clipboardText)
       })
     </script>

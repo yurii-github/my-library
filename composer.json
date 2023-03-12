@@ -4,7 +4,6 @@
 	"description": "My book library",
 	"license": "GPL-3.0-only",
 	"minimum-stability" : "stable",
-	"version": "2.1.0",
 	"require": {
 		"php": "~8.3",
 		"ext-fileinfo": "*",
@@ -14,8 +13,8 @@
 		"ext-mbstring": "*",
 		"ext-pdo": "*",
 		"doctrine/dbal": "^3.0",
-		"guzzlehttp/psr7": "*",
-		"http-interop/http-factory-guzzle": "*",
+		"guzzlehttp/psr7": "^2.7",
+		"http-interop/http-factory-guzzle": "^1.0",
 		"illuminate/database": "^8.0",
 		"illuminate/events": "^8.0",
 		"illuminate/validation": "^8.0",

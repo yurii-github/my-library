@@ -38,7 +38,7 @@ use \Illuminate\Container\Container;
 
 class Application extends App
 {
-    public const CURRENT_APP_VERSION = '2.0';
+    public const CURRENT_APP_VERSION = '3.0';
     public const DEBUG_MODE = true;
     public const DISPLAY_ERRORS = self::DEBUG_MODE;
 

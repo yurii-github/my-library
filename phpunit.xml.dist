@@ -2,16 +2,18 @@
 <phpunit
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.4/phpunit.xsd"
-        stopOnFailure="true" colors="true"
+        stopOnFailure="false"
+        colors="true"
         bootstrap="./tests/bootstrap.php"
         beStrictAboutTestsThatDoNotTestAnything="true"
         beStrictAboutOutputDuringTests="true"
         beStrictAboutChangesToGlobalState="false"
+        displayDetailsOnPhpunitDeprecations="false"
         cacheDirectory=".phpunit.cache"
 >
   <coverage>
     <report>
-      <html outputDirectory=".phpunit.cache/coverage"/>
+      <html outputDirectory=".phpunit.cache/coverage" />
     </report>
   </coverage>
   <testsuites>

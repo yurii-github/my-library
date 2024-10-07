@@ -1,8 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /*
  * My Book Library
  *
- * Copyright (C) 2014-2021 Yurii K.
+ * Copyright (C) 2014-2024 Yurii K.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +30,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class UpdateAction extends AbstractApiAction
 {
-    /** @var Configuration */
-    protected $config;
+    protected Configuration $config;
 
     public function __construct(ContainerInterface $container)
     {

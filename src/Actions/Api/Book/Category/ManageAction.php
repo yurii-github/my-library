@@ -1,8 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /*
  * My Book Library
  *
- * Copyright (C) 2014-2021 Yurii K.
+ * Copyright (C) 2014-2024 Yurii K.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ use \App\Models\Category;
 class ManageAction extends AbstractApiAction
 {
     use WithValidateTrait;
-    
+
     protected Translator $translator;
     protected Manager $db;
 

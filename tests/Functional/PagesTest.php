@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Tests\Functional;
 
@@ -14,7 +14,7 @@ class PagesTest extends AbstractTestCase
         $this->assertStringContainsString('</html>', $content);
         $this->assertStringContainsString('<title>MyLibrary ~ Import</title>', $content);
     }
-    
+
     public function testConfigPage()
     {
         $request = $this->createRequest('GET', '/config');

@@ -76,3 +76,15 @@ If you have enabled synchronization application will sync changes to your filesy
 
 To import books into the library you have to drop your books to library folder you've set in configuration and then on *Import* tab press "Import Books". 
 It will import all books from file system that are not in database yet.
+
+# Development
+
+To configure tests' run you can create local env file `tests/local_test_env.php` with content like below
+```
+<?php
+putenv('DB_TYPE=sqlite_memory'); // sqlite_memory | sqlite | mysql
+putenv('DB_DBNAME=my_library_test2');
+putenv('DB_LOGIN=my_library_test');
+putenv('DB_PASSWORD=my_library_test_pass');
+```
+By default, `sqlite_memory` is used as database. See `tests/bootstrap.php` for more details.

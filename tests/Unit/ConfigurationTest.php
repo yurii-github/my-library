@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Tests\Unit;
 
@@ -6,10 +6,13 @@ use \App\Configuration\Configuration;
 use App\Exception\ConfigurationDirectoryDoesNotExistException;
 use App\Exception\ConfigurationDirectoryIsNotWritableException;
 use App\Exception\ConfigurationFileIsNotReadableException;
+use Illuminate\Support\Str;
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use \App\Exception\ConfigurationPropertyDoesNotExistException;
 
+#[CoversClass(Configuration::class)]
 class ConfigurationTest extends TestCase
 {
     protected function setUp(): void
@@ -34,15 +37,14 @@ class ConfigurationTest extends TestCase
         file_put_contents($vfsConfigFile, $configData);
         $configLoaded = new Configuration($vfsConfigFile, '1.3');
         $configDecoded = json_decode($configData);
-        
+
         return [$configLoaded, $configDecoded];
     }
 
-    
     public function testPopulateNewProperties()
     {
         $configDecoded = json_decode(file_get_contents(dirname(__DIR__) . '/data/config_sqlite.json'));
-        
+
         $this->assertTrue(property_exists($configDecoded->library, 'sync'));
         unset($configDecoded->library->sync);
         file_put_contents(vfsStream::url('base/data/config.json'), json_encode($configDecoded));
@@ -52,18 +54,18 @@ class ConfigurationTest extends TestCase
         $this->assertTrue(property_exists($config->library, 'sync'));
         $this->assertIsBool($config->library->sync);
         $this->assertFalse($config->library->sync);
-        
+
         $loaded = json_decode(file_get_contents(vfsStream::url('base/data/config.json')), false);
         $this->assertFalse(property_exists($loaded->library, 'sync'));
 
         $config->save();
         $loaded = json_decode(file_get_contents(vfsStream::url('base/data/config.json')), false);
-        
+
         $this->assertTrue(property_exists($loaded->library, 'sync'));
         $this->assertIsBool($loaded->library->sync);
         $this->assertFalse($loaded->library->sync);
     }
-    
+
     public function testSetVirtualProperty()
     {
         $this->setupGenericCheck($configLoaded, $configDecoded);
@@ -78,7 +80,7 @@ class ConfigurationTest extends TestCase
         $configFilename = vfsStream::url('base/data/config.json');
         $configDecoded = json_decode(file_get_contents(dirname(__DIR__) . '/data/config_sqlite.json'));
         $this->assertTrue(property_exists($configDecoded, 'library'));
-        
+
         unset($configDecoded->library);
         $this->assertFalse(property_exists($configDecoded, 'library'));
 
@@ -89,8 +91,8 @@ class ConfigurationTest extends TestCase
         $this->assertInstanceOf(\stdClass::class, $config->library);
         $this->assertFalse( $config->library->sync);
     }
-    
-    
+
+
     public function testConfigurationSetupFromDefaults()
     {
         $newFilename = vfsStream::url('base/data/config_new.json');
@@ -190,7 +192,6 @@ class ConfigurationTest extends TestCase
         $this->assertEquals($configDecoded, $saved, 'saved config file doesnt match default one');
     }
 
-
     public function testSaveChanges()
     {
         $this->setupGenericCheck($configLoaded, $configDecoded);
@@ -204,4 +205,19 @@ class ConfigurationTest extends TestCase
         $this->assertEquals($configLoaded->system->language, $saved->system->language, 'config change was not saved to file');
     }
 
+    public function testBackwardsCompatibilityAsExtensionWasMovedToDatabase()
+    {
+        $vfsConfigFile = vfsStream::url('base/data/config.json');
+        $configData = file_get_contents(dirname(__DIR__) . '/data/config_sqlite.json');
+        $configData = json_decode($configData, true);
+        $nameFormatNew = $configData['book']['nameformat'];
+        $this->assertFalse(Str::contains($nameFormatNew, '.{ext}'));
+        $nameFormatOld = $nameFormatNew . '.{ext}';
+        $configData['book']['nameformat'] = $nameFormatOld;
+        file_put_contents($vfsConfigFile, json_encode($configData));
+
+        $config = new Configuration($vfsConfigFile, '1.3');
+
+        $this->assertSame($nameFormatNew, $config->book->nameformat);
+    }
 }

@@ -1,10 +1,13 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Tests\Functional\Api\Book\Cover;
 
+use App\Actions\Api\Book\Cover\GetAction;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Functional\AbstractTestCase;
 use Tests\PopulateBooksTrait;
 
+#[CoversClass(GetAction::class)]
 class GetActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;

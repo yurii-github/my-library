@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Tests\Functional;
 
@@ -47,7 +47,7 @@ abstract class AbstractTestCase extends TestCase
     {
         $this->db->getConnection()->rollBack();
     }
-    
+
     protected function getConnection($connection = null)
     {
         return $this->db->getConnection($connection);
@@ -99,13 +99,13 @@ abstract class AbstractTestCase extends TestCase
         $actual = (string)$response->getBody();
         $this->assertSame($expected, (array)json_decode($actual, true, 512));
     }
-    
+
     protected function useSqliteInMemory(\stdClass $config)
     {
         $config->database->format = 'sqlite';
         $config->database->filename = ':memory:';
     }
-    
+
     protected function useSqliteInFile(\stdClass $config)
     {
         // SQLite does not support streams https://github.com/bovigo/vfsStream/issues/19
@@ -141,8 +141,8 @@ abstract class AbstractTestCase extends TestCase
         $config->database->login = $login;
         $config->database->password = $password;
     }
-    
-    
+
+
     protected function initVirtualFileSystem()
     {
         vfsStream::setup('base', null, [
@@ -177,19 +177,19 @@ abstract class AbstractTestCase extends TestCase
         file_put_contents(vfsStream::url('base/data/config.json'), json_encode($config, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
     }
 
-    
+
     protected function getLibraryConfig(): Configuration
     {
         return $this->app->getContainer()->get(Configuration::class);
     }
 
-    
+
     protected function setBookLibrarySync(bool $mode): void
     {
         $this->getLibraryConfig()->getLibrary()->sync = $mode;
     }
-    
-    
+
+
     public function assertJsonError($message, $code, $type, ResponseInterface $response)
     {
         $data  = (string)$response->getBody();

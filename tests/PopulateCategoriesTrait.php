@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+
 namespace Tests;
 
 use App\Models\Category;
@@ -11,7 +12,7 @@ trait PopulateCategoriesTrait
     protected function populateCategories()
     {
         $categories = [];
-        
+
         $category = new Category();
         $category->title = 'new category';
         $category->save();
@@ -21,7 +22,7 @@ trait PopulateCategoriesTrait
         $category->title = 'new category 2';
         $category->save();
         $categories[] = $category;
-        
+
         return $categories;
     }
 }

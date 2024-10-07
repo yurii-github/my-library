@@ -92,7 +92,7 @@ class GetBooksWithoutCoverActionTest extends AbstractTestCase
             return $book->book_guid !== $bookWithCover->book_guid;
         })->map(function (Book $book) {
             return ['filename' => $book->file->getFilename(), 'book_guid' => $book->book_guid];
-        })->toArray();
+        })->values()->toArray();
 
         $request = $this->createRequest('GET', '/api/config/books-without-cover');
         $response = $this->app->handle($request);

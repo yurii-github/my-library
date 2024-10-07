@@ -8,8 +8,6 @@
 # dev
 #
 /.idea
-/.phpunit.result.cache
-/reports/*
-/composer.lock
+/.phpunit.cache
 /tests/data/mytestdb.s3db
 /tests/local_test_env.php

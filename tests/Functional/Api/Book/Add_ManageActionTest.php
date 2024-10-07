@@ -1,11 +1,24 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Tests\Functional\Api\Book;
 
+use App\Actions\Api\Book\ManageAction;
+use App\Handlers\ErrorHandler;
+use App\Models\Book;
+use App\Models\BookFile;
+use App\Renderers\JsonErrorRenderer;
 use Illuminate\Support\Carbon;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use Tests\Functional\AbstractTestCase;
 use Tests\PopulateBooksTrait;
 
+#[CoversMethod(ManageAction::class, 'addBook')]
+#[CoversMethod(ManageAction::class, 'asJSON')]
+#[CoversClass(Book::class)]
+#[CoversClass(BookFile::class)]
+#[CoversClass(ErrorHandler::class)]
+#[CoversClass(JsonErrorRenderer::class)]
 class Add_ManageActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;

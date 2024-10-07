@@ -1,10 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Tests\Functional\Api\Config;
 
+use App\Actions\Api\Config\UpdateAction;
+use App\Configuration\Configuration;
 use Illuminate\Support\Str;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Functional\AbstractTestCase;
 
+#[CoversClass(UpdateAction::class)]
+#[CoversClass(Configuration::class)]
 class UpdateActionTest extends AbstractTestCase
 {
     public function testSave()

@@ -1,18 +1,25 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Tests\Functional\Api\Book\Category;
 
+use App\Actions\Api\Book\Category\ListAction;
+use App\JGrid\RequestQuery;
+use App\Models\Category;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Functional\AbstractTestCase;
 use Tests\PopulateBooksTrait;
 use Tests\PopulateCategoriesTrait;
 
+#[CoversClass(ListAction::class)]
+#[CoversClass(RequestQuery::class)]
+#[CoversClass(Category::class)]
 class ListActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;
     use PopulateCategoriesTrait;
 
     protected string $actionUrl = '/api/book/category';
-    
+
     function testNoFilters()
     {
         $categories = $this->populateCategories();
@@ -57,9 +64,9 @@ class ListActionTest extends AbstractTestCase
         $books = $this->populateBooks();
         $bookWithMarker = $books[0];
         $bookWithMarker->categories()->attach($categories[1]);
-        
+
         $this->assertDatabaseCount('books_categories', 1);
-        
+
         $request = $this->createJsonRequest('GET', $this->actionUrl."/{$bookWithMarker->book_guid}");
         $response = $this->app->handle($request);
         $this->assertSame(200, $response->getStatusCode());

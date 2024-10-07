@@ -1,13 +1,17 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Tests\Functional\Api\Config;
 
+use App\Actions\Api\Config\GetBooksWithoutCoverAction;
 use App\Models\Book;
 use App\Models\BookFile;
 use Illuminate\Support\Collection;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Functional\AbstractTestCase;
 use Tests\PopulateBooksTrait;
 
+#[CoversClass(GetBooksWithoutCoverAction::class)]
+#[CoversClass(Book::class)]
 class GetBooksWithoutCoverActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;

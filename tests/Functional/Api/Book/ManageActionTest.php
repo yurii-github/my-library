@@ -1,10 +1,17 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Tests\Functional\Api\Book;
 
+use App\Actions\Api\Book\ManageAction;
+use App\Exception\UnsupportedOperationException;
+use App\Renderers\JsonErrorRenderer;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Functional\AbstractTestCase;
 use Tests\PopulateBooksTrait;
 
+#[CoversClass(ManageAction::class)]
+#[CoversClass(UnsupportedOperationException::class)]
+#[CoversClass(JsonErrorRenderer::class)]
 class ManageActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;

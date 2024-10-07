@@ -1,14 +1,20 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Tests\Functional\Api\Config;
 
+use App\Actions\Api\Config\CheckFilesAction;
+use App\Configuration\Configuration;
+use App\Models\Book;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Functional\AbstractTestCase;
 use Tests\PopulateBooksTrait;
 
+#[CoversClass(CheckFilesAction::class)]
+#[CoversClass(Book::class)]
+#[CoversClass(Configuration::class)]
 class CheckFilesActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;
-
 
     public function testComplexCheck()
     {

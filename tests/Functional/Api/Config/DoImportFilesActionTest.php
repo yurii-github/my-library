@@ -1,14 +1,20 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Tests\Functional\Api\Config;
 
+use App\Actions\Api\Config\DoImportFilesAction;
+use App\Models\Book;
+use App\Models\BookFile;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Functional\AbstractTestCase;
 use Tests\PopulateBooksTrait;
 
+#[CoversClass(DoImportFilesAction::class)]
+#[CoversClass(BookFile::class)]
+#[CoversClass(Book::class)]
 class DoImportFilesActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;
-
 
     public function testDoNothingIfListIsEmpty()
     {
@@ -53,7 +59,7 @@ class DoImportFilesActionTest extends AbstractTestCase
         $this->setBookLibrarySync(false);
         $books = $this->populateBooks();
         $filename = 'fs-only.pdf';
-        
+
         $this->assertDatabaseCount('books', 3);
 
         $request = $this->createRequest('POST', '/api/config/import-files');

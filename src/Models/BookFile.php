@@ -28,24 +28,20 @@ class BookFile
     protected string $filename;
     protected string $extension;
     protected Configuration $config;
-    
-    
+
+
     public function __construct(string $filename)
     {
         $this->filename = $filename;
         $this->extension = pathinfo($filename, PATHINFO_EXTENSION);
         $this->config = Container::getInstance()->get(Configuration::class);
-        
-        if ($this->extension === null) {
-            throw new \Exception("File '$filename' MUST contain extension!");
-        }
     }
-    
+
     public function getFilename(): string
     {
         return $this->filename;
     }
-    
+
     public function getExtension(): string
     {
         return $this->extension;
@@ -55,19 +51,18 @@ class BookFile
     {
         return $this->config->getFilepath($this->filename);
     }
-    
+
     public function delete(): bool
     {
         if (!$this->exists()) {
             return false;
         }
-        
+
         return unlink($this->getFilepath());
     }
-    
+
     public function exists(): bool
     {
         return file_exists($this->getFilepath());
     }
 }
-   

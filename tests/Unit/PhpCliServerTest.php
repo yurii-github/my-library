@@ -1,14 +1,16 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Tests\Unit;
 
 use App\PhpCliServer;
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @runTestsInSeparateProcesses
- */
+#[RunTestsInSeparateProcesses]
+#[CoversClass(PhpCliServer::class)]
 class PhpCliServerTest extends TestCase
 {
     protected $webDir;
@@ -61,10 +63,7 @@ class PhpCliServerTest extends TestCase
         $this->assertSame('', $content);
     }
 
-    /**
-     * @dataProvider providesSupportedFilenames
-     * @param string $filename
-     */
+    #[DataProvider('providesSupportedFilenames')]
     public function testServesSupportedStaticFileWithFile(string $filename)
     {
         $cli = $this->enforcedCliServer();
@@ -83,9 +82,7 @@ class PhpCliServerTest extends TestCase
         $this->assertSame('some data', $content);
     }
 
-    /**
-     * @dataProvider providesSupportedFilenames
-     */
+    #[DataProvider('providesSupportedFilenames')]
     public function testServesSupportedStaticFilesWithoutFileIfCliServer(string $filename)
     {
         $cli = $this->enforcedCliServer();

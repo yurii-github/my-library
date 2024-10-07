@@ -1,12 +1,21 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Tests\Functional\Api\Book\Category;
 
+use App\Actions\Api\Book\Category\ManageAction;
+use App\Actions\WithValidateTrait;
+use App\Handlers\ErrorHandler;
+use App\Models\Book;
 use App\Models\Category;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Functional\AbstractTestCase;
 use Tests\PopulateBooksTrait;
 use Tests\PopulateCategoriesTrait;
 
+#[CoversClass(ManageAction::class)]
+#[CoversClass(Book::class)]
+#[CoversClass(Category::class)]
+#[CoversClass(ErrorHandler::class)]
 class ManageActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;

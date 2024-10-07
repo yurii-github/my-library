@@ -1,16 +1,24 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Tests\Functional\Api\Book;
 
+use App\Actions\Api\Book\ListAction;
+use App\JGrid\RequestQuery;
+use App\JGrid\RuleClause;
+use App\Models\Book;
+use App\Models\BookFile;
 use App\Models\Category;
 use Illuminate\Support\Collection;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Functional\AbstractTestCase;
 use Tests\PopulateBooksTrait;
 use Tests\PopulateCategoriesTrait;
 
-/**
- * @covers \App\Actions\Api\Book\ListAction
- */
+#[CoversClass(ListAction::class)]
+#[CoversClass(Book::class)]
+#[CoversClass(BookFile::class)]
+#[CoversClass(RequestQuery::class)]
+#[CoversClass(RuleClause::class)]
 class ListActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;

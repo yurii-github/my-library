@@ -1,17 +1,25 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Tests\Functional\Api\Config;
 
+use App\Actions\Api\Config\DoImportNewCoverFromPdfAction;
 use App\CoverExtractor;
+use App\Models\Book;
 use App\Models\BookFile;
+use App\Providers\CoverExtractorProvider;
 use Illuminate\Container\Container;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Functional\AbstractTestCase;
 use Tests\PopulateBooksTrait;
 
+#[CoversClass(DoImportNewCoverFromPdfAction::class)]
+#[CoversClass(CoverExtractor::class)]
+#[CoversClass(Book::class)]
+#[CoversClass(CoverExtractorProvider::class)]
 class DoImportNewCoverFromPdfActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;
-    
+
     protected string $actionUrl = '/api/config/import-new-cover-from-pdf';
 
     protected function withGhostscript()
@@ -146,7 +154,7 @@ class DoImportNewCoverFromPdfActionTest extends AbstractTestCase
     public function testFailsToExtractFromInvalidPdfFile()
     {
         $this->withGhostscript();
-        
+
         $books = $this->populateBooks();
         $bookWithCover = $books[0];
         $bookWithCover->file = new BookFile($bookWithCover->file->getFilename().'.pdf');

@@ -1,10 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Tests\Functional\Api\Config;
 
+use App\Actions\Api\Config\ClearBooksWithoutFilesAction;
+use App\Models\Book;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Functional\AbstractTestCase;
 use Tests\PopulateBooksTrait;
 
+#[CoversClass(ClearBooksWithoutFilesAction::class)]
+#[CoversClass(Book::class)]
 class ClearBooksWithoutFilesActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;
@@ -18,7 +23,7 @@ class ClearBooksWithoutFilesActionTest extends AbstractTestCase
         file_put_contents($this->getLibraryConfig()->getFilepath($book->file->getFilename()), 'test data');
 
         $this->assertDatabaseCount('books', 3);
-        
+
         $request = $this->createRequest('POST', '/api/config/clear-books-without-files');
         $response = $this->app->handle($request);
 
@@ -33,6 +38,6 @@ class ClearBooksWithoutFilesActionTest extends AbstractTestCase
             'title' => $book->title,
         ]);
     }
-    
-    
+
+
 }

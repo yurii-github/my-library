@@ -1,10 +1,13 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Tests\Functional\Api\Config;
 
+use App\Actions\Api\Config\CountBooksWithoutFilesAction;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Functional\AbstractTestCase;
 use Tests\PopulateBooksTrait;
 
+#[CoversClass(CountBooksWithoutFilesAction::class)]
 class CountBooksWithoutFilesActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;

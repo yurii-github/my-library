@@ -56,4 +56,4 @@ jobs:
           CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_REPORT_ID }}
         run: |
           ./cc-test-reporter format-coverage
-          ./cc-test-reporter after-build --exit-code
+          ./cc-test-reporter after-build --exit-code $TEST_RESULT_EXIT_CODE

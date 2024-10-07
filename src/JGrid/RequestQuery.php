@@ -48,7 +48,7 @@ class RequestQuery
 
     public function withFilters(): self
     {
-        $filters = json_decode($this->data['filters']);
+        $filters = json_decode($this->data['filters'] ?? '');
         if (!$this->validateFilters($filters)) {
             return $this;
         }

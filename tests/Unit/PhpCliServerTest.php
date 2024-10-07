@@ -101,7 +101,7 @@ class PhpCliServerTest extends TestCase
     }
 
 
-    public function providesSupportedFilenames()
+    public static function providesSupportedFilenames()
     {
         return [
             ['file.png'],

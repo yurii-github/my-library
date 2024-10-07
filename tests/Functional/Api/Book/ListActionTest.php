@@ -8,6 +8,9 @@ use Tests\Functional\AbstractTestCase;
 use Tests\PopulateBooksTrait;
 use Tests\PopulateCategoriesTrait;
 
+/**
+ * @covers \App\Actions\Api\Book\ListAction
+ */
 class ListActionTest extends AbstractTestCase
 {
     use PopulateBooksTrait;

@@ -239,16 +239,16 @@ final class Configuration
             'system' => (object)[
                 'version' => $this->getVersion(),
                 'theme' => 'smoothness',
-                'timezone' => 'Europe\/Kiev',
+                'timezone' => 'Europe/Helsinki',
                 'language' => 'en-US'
             ],
             'library' => (object)[
-                'directory' => sprintf('%s\/books\/', addslashes(DATA_DIR)),
+                'directory' => sprintf('%s/books/', addslashes(DATA_DIR)),
                 'sync' => false
             ],
             'database' => (object)[
                 'format' => 'sqlite',
-                'filename' => sprintf('%s\/mydb.s3db', addslashes(DATA_DIR)),
+                'filename' => sprintf('%s/mydb.s3db', addslashes(DATA_DIR)),
                 'host' => 'localhost',
                 'dbname' => 'mylib',
                 'login' => '',
@@ -256,8 +256,8 @@ final class Configuration
             ],
             'book' => (object)[
                 'covermaxwidth' => 800,
-                'covertype' => 'image\/jpeg',
-                'nameformat' => '{year}, \'\'{title}\'\', {publisher} [{isbn13}].{ext}',
+                'covertype' => 'image/jpeg',
+                'nameformat' => "{year}, ''{title}'', {publisher} [{isbn13}].{ext}",
                 'ghostscript' => ''
             ]
         ];

@@ -7,7 +7,7 @@ use App\Configuration\Configuration;
 use Http\Factory\Guzzle\ServerRequestFactory;
 use Illuminate\Container\Container;
 use Illuminate\Database\Capsule\Manager;
-use Illuminate\Testing\InteractsWithDatabase;
+use Illuminate\Foundation\Testing\Concerns\InteractsWithDatabase;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use \App\Application;

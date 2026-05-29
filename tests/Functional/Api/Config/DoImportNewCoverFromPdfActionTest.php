@@ -96,11 +96,12 @@ class DoImportNewCoverFromPdfActionTest extends AbstractTestCase
         ]);
 
         $response = $this->app->handle($request);
-        $content = (string)$response->getBody();
+        $content = json_decode((string)$response->getBody(), true);
 
+        $this->assertTrue($content['result']);
         $this->assertDatabaseHas('books', [
             'book_guid' => $bookWithCover->book_guid,
-            'book_cover' => file_get_contents(self::getTestFilepath('cover_from_test_pdf.jpg')),
+            'book_cover' => file_get_contents(self::getTestFilepath('cover_from_test_pdf_v2.jpg')),
             'filename' => $bookWithCover->file->getFilename(),
         ]);
 

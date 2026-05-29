@@ -16,7 +16,7 @@ jobs:
       # see https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/using-a-matrix-for-your-jobs
       fail-fast: false
       matrix:
-        php_version: ['8.3']
+        php_version: ['8.3', '8.4']
         db_type: ['sqlite', 'mysql']
     steps:
       - uses: actions/checkout@v4

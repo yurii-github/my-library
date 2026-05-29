@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace Illuminate\Testing\Constraints;
 
@@ -34,7 +34,6 @@ class CountInDatabase extends Constraint
      *
      * @param  \Illuminate\Database\Connection  $database
      * @param  int  $expectedCount
-     * @return void
      */
     public function __construct(Connection $database, int $expectedCount)
     {

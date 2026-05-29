@@ -2,6 +2,7 @@
 # app
 #
 /data/config.json
+/data/mydb.s3db
 /vendor
 
 #

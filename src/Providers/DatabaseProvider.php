@@ -56,6 +56,11 @@ class DatabaseProvider implements ProviderInterface
         $config = $container->get(Configuration::class);
         assert($config instanceof Configuration);
 
+        // Create file for SQLite database if it is missing, so it does not fail on initial setup.
+        if ($config->database->format === 'sqlite' && $config->database->filename !== ':memory:' && !file_exists($config->database->filename)) {
+            touch($config->database->filename);
+        }
+
         $capsule = new Manager($container);
         $capsule->addConnection([
             'driver' => $config->database->format,

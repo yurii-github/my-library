@@ -28,7 +28,7 @@ It supports all JQuery UI themes.
 
 ## Requirements
 
-- PHP 8.3 or higher
+- PHP 8.4 or higher (remove or update `composer.lock` if you use other version than PHP 8.4) 
 - SQLite or MySQL database
 
 

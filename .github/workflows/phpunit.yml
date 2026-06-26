@@ -42,22 +42,7 @@ jobs:
         run: |
           composer install --no-progress
           composer show --no-dev
-#      - name: CodeClimate - prepare
-#        if: github.event_name != 'pull_request' && matrix.db_type == 'sqlite'
-#        run: |
-#          wget -O cc-test-reporter https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64;
-#          chmod +x cc-test-reporter
-#          ./cc-test-reporter before-build
       - name: Run tests
         run: |
           XDEBUG_MODE=coverage ./vendor/bin/phpunit --no-coverage --do-not-cache-result --coverage-clover clover.xml
           echo "TEST_RESULT_EXIT_CODE=$?" >> "$GITHUB_ENV"
-      # https://docs.codeclimate.com/docs/configuring-test-coverage
-#      - name: Codeclimate - report
-#        if: github.event_name != 'pull_request' && matrix.db_type == 'sqlite'
-#        env:
-#          COVERAGE_FILE: clover.xml
-#          CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_REPORT_ID }}
-#        run: |
-#          ./cc-test-reporter format-coverage
-#          ./cc-test-reporter after-build --exit-code $TEST_RESULT_EXIT_CODE

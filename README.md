@@ -1,4 +1,3 @@
-[![Maintainability](https://api.codeclimate.com/v1/badges/24ed64181b13e21cd2ec/maintainability)](https://codeclimate.com/github/yurii-github/my-library/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/24ed64181b13e21cd2ec/test_coverage)](https://codeclimate.com/github/yurii-github/my-library/test_coverage)
 
 This is book library manager, written in PHP and based on Slim4 and JqueryUI.  
 The main purpose of it is to manage own book library as excel table with ratings and other stuff like filename synchronizations of your books and more.  

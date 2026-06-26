@@ -44,5 +44,5 @@ jobs:
           composer show --no-dev
       - name: Run tests
         run: |
-          XDEBUG_MODE=coverage ./vendor/bin/phpunit --no-coverage --do-not-cache-result --coverage-clover clover.xml
+          XDEBUG_MODE=coverage ./vendor/bin/phpunit
           echo "TEST_RESULT_EXIT_CODE=$?" >> "$GITHUB_ENV"
